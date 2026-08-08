@@ -98,7 +98,8 @@ class _MenuContent extends StatelessWidget {
         for (final item in items)
           if (item.divider)
             Padding(
-              padding: EdgeInsets.symmetric(vertical: theme.spacing[PlinthSize.xs]! * 0.5),
+              padding: EdgeInsets.symmetric(
+                  vertical: theme.spacing[PlinthSize.xs]! * 0.5),
               child: const Divider(height: 1),
             )
           else
