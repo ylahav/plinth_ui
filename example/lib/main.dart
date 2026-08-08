@@ -46,6 +46,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   num _quantity = 3;
   final Set<String> _selectedTags = {'flutter'};
   double _rating = 3;
+  int _page = 1;
 
   @override
   void initState() {
@@ -532,6 +533,75 @@ class _ShowcasePageState extends State<ShowcasePage> {
                 PlinthRating(
                   value: _rating,
                   onChanged: (v) => setState(() => _rating = v),
+                ),
+                _gap(),
+                _sectionTitle('Action Icon'),
+                _gap(12),
+                Row(
+                  children: [
+                    PlinthActionIcon(
+                      icon: const Icon(Icons.edit_outlined),
+                      onPressed: () {},
+                    ),
+                    const SizedBox(width: 8),
+                    PlinthActionIcon(
+                      icon: const Icon(Icons.delete_outline),
+                      color: 'red',
+                      variant: PlinthVariant.outline,
+                      onPressed: () {},
+                    ),
+                    const SizedBox(width: 8),
+                    PlinthActionIcon(
+                      icon: const Icon(Icons.share_outlined),
+                      variant: PlinthVariant.filled,
+                      circle: true,
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+                _gap(),
+                _sectionTitle('Textarea'),
+                _gap(12),
+                PlinthTextarea(
+                  label: 'Bio',
+                  placeholder: 'Tell us about yourself',
+                  onChanged: (v) {},
+                ),
+                _gap(),
+                _sectionTitle('Password Input'),
+                _gap(12),
+                PlinthPasswordInput(
+                  label: 'Password',
+                  placeholder: 'Enter your password',
+                  onChanged: (v) {},
+                ),
+                _gap(),
+                _sectionTitle('Pagination'),
+                _gap(12),
+                PlinthPagination(
+                  page: _page,
+                  total: 20,
+                  onChanged: (p) => setState(() => _page = p),
+                ),
+                _gap(),
+                _sectionTitle('Timeline'),
+                _gap(12),
+                const PlinthTimeline(
+                  items: [
+                    PlinthTimelineItem(
+                      title: 'Order placed',
+                      description: 'Jan 3, 10:24 AM',
+                      active: true,
+                    ),
+                    PlinthTimelineItem(
+                      title: 'Shipped',
+                      description: 'Jan 4, 2:10 PM',
+                    ),
+                    PlinthTimelineItem(
+                      title: 'Delivered',
+                      description: 'Pending',
+                    ),
+                  ],
                 ),
                 _gap(),
                 _sectionTitle('Box + Text + Disclosure'),

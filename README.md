@@ -12,10 +12,11 @@ plinth_ui/
   .github/workflows/regenerate-goldens.yml # manual — regenerates goldens on Linux to match CI
   packages/
     plinth_core/            # PlinthTheme, design tokens (colors, spacing, radius)
-    plinth_components/       # Widgets (Button, Box, Text, Divider, Modal, Drawer,
-    │                          TextInput, Checkbox, Radio/RadioGroup, Select, Badge,
-    │                          Alert, Switch, Slider, Progress, Avatar, Table,
-    │                          Accordion, Stepper, Breadcrumbs, Notification,
+    plinth_components/       # Widgets (Button, ActionIcon, Box, Text, Divider, Modal,
+    │                          Drawer, TextInput, Textarea, PasswordInput, Checkbox,
+    │                          Radio/RadioGroup, Select, Badge, Alert, Switch, Slider,
+    │                          Progress, Avatar, Table, Accordion, Stepper,
+    │                          Breadcrumbs, Pagination, Timeline, Notification,
     │                          Skeleton, Paper, Card, SegmentedControl, NumberInput,
     │                          Chip, Rating, Tooltip, Popover, Tabs/TabView, Menu)
     plinth_hooks/             # PlinthDisclosureController (useDisclosure equivalent)
@@ -76,10 +77,11 @@ a radio group, a select, a text input with live validation, a menu, tabs with
 switched content, progress bars, a slider, an accordion, a striped table, a
 notification trigger, an interactive stepper, skeleton loaders, breadcrumbs,
 a divider (plain and labeled), a card with header/footer, a segmented control,
-a number input with +/- steppers, filterable chips, a star rating,
-drawer/modal/popover triggers, a themed Box/Text/disclosure demo, and the full
-button variant/size/color matrix — all driven by `PlinthTheme.defaultTheme`
-in `plinth_core`.
+a number input with +/- steppers, filterable chips, a star rating, icon-only
+action buttons, a textarea, a password field with visibility toggle,
+pagination, an order-status timeline, drawer/modal/popover triggers, a
+themed Box/Text/disclosure demo, and the full button variant/size/color
+matrix — all driven by `PlinthTheme.defaultTheme` in `plinth_core`.
 
 The Widgetbook app organizes the same components into browsable categories
 (Buttons & Actions, Forms, Navigation, Feedback, Overlays, Data Display,
@@ -92,9 +94,11 @@ the sidebar.
   ramps (curve-based 10-shade generator with non-linear lightness
   stops + shade-dependent saturation), spacing, radius, and font-size
   scales.
-- **Primitives** (`plinth_components`) — `PlinthButton`, `PlinthBox`,
+- **Primitives** (`plinth_components`) — `PlinthButton`, `PlinthActionIcon`
+  (icon-only, same variant/size/color pattern as Button), `PlinthBox`,
   `PlinthText`, `PlinthDivider` (plain, labeled, or vertical).
-- **Forms** — `PlinthTextInput`, `PlinthCheckbox`, `PlinthRadio` /
+- **Forms** — `PlinthTextInput`, `PlinthTextarea`, `PlinthPasswordInput`
+  (show/hide toggle), `PlinthCheckbox`, `PlinthRadio` /
   `PlinthRadioGroup`, `PlinthSelect`, `PlinthSegmentedControl`,
   `PlinthNumberInput` (shares TextInput's chrome, +/- steppers with
   min/max clamping), `PlinthChip`, `PlinthRating` (half-star support
@@ -111,7 +115,9 @@ the sidebar.
   `PlinthStepper` (numbered step indicator — visual only, same
   controlled-component split as Tabs/TabView), `PlinthBreadcrumbs`
   (last item always non-interactive, matching the "current page isn't
-  a link" convention).
+  a link" convention), `PlinthPagination` (ellipsis-collapsed for
+  large page counts), `PlinthTimeline` (dot markers + connecting
+  line via `IntrinsicHeight`/`Expanded`).
 - **Surfaces** — `PlinthPaper` (base surface: padding, radius, shadow,
   border) and `PlinthCard` (built on `PlinthPaper`, adds an optional
   header/footer section convention with dividers).
@@ -135,9 +141,12 @@ the sidebar.
   `PlinthTabView`, `PlinthMenu`, `PlinthAccordion`, `PlinthTable`,
   `PlinthStepper`, `PlinthSkeleton`, `PlinthNotification`,
   `PlinthBreadcrumbs`, `PlinthCard`/`PlinthPaper`, `PlinthNumberInput`,
-  and `PlinthChip`/`PlinthRating`/`PlinthSegmentedControl`, plus a
-  golden (visual regression) test suite for `PlinthButton` covering
-  variants, a color override, disabled state, and all sizes.
+  `PlinthChip`/`PlinthRating`/`PlinthSegmentedControl`,
+  `PlinthPagination` (including its ellipsis-collapse logic at large
+  page counts), and `PlinthActionIcon`/`PlinthTextarea`/
+  `PlinthPasswordInput`/`PlinthTimeline`, plus a golden (visual
+  regression) test suite for `PlinthButton` covering variants, a
+  color override, disabled state, and all sizes.
   See `docs/TESTING.md`.
 - **CI is green** — `.github/workflows/ci.yml` passes end-to-end
   (bootstrap, format, analyze, test) on GitHub Actions as of this

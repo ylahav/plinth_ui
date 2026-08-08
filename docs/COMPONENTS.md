@@ -21,6 +21,11 @@ Shared enums used throughout: `PlinthSize` (`xs, sm, md, lg, xl`) and
 The reference implementation — every other component's variant/size/color
 resolution logic follows this one's pattern.
 
+### `PlinthActionIcon`
+`icon`, `onPressed`, `variant`, `size`, `color`, `radius`, `circle`. Same
+variant/size/color resolution as `PlinthButton`, but square (or fully
+circular) with no label — for icon-only actions.
+
 ### `PlinthBox`
 `child`, `p`/`px`/`py` (padding), `m`/`mx`/`my` (margin) — all keyed by
 `PlinthSize` and resolved through `theme.spacing`. Also `w`, `h`, `bg`,
@@ -61,6 +66,17 @@ left `null` are simply omitted, not rendered empty.
 `size`, `color`, `radius`, `obscureText`, `enabled`, `leadingIcon`.
 Border color: gray (default) -> theme color at shade 6 (focused) -> red
 (error present) — error takes precedence over focus.
+
+### `PlinthTextarea`
+`label`, `description`, `placeholder`, `error`, `controller`, `onChanged`,
+`size`, `color`, `radius`, `enabled`, `minLines` (default `3`), `maxLines`
+(default `6`). Shares `PlinthTextInput`'s chrome and border styling.
+
+### `PlinthPasswordInput`
+`label`, `description`, `placeholder`, `error`, `controller`, `onChanged`,
+`size`, `color`, `radius`, `enabled`. Shares `PlinthTextInput`'s chrome,
+with a show/hide visibility toggle icon instead of a plain `obscureText`
+flag.
 
 ### `PlinthCheckbox`
 `value`, `onChanged` (nullable — null disables), `label`, `size`, `color`, `radius`.
@@ -201,6 +217,20 @@ Each `PlinthBreadcrumbItem` has `label` and optional `onTap`. The *last*
 item is always rendered as plain, non-interactive text regardless of
 whether it has an `onTap` — matching the convention that the current page
 isn't itself a link.
+
+### `PlinthPagination`
+`page` (1-based), `total`, `onChanged`, `color`, `size`, `siblingCount`
+(default `1` — how many page numbers show on either side of `page` before
+collapsing into an ellipsis). For large `total`, always shows the first
+page, the last page, and `page`'s immediate neighbors; everything else
+collapses into a single `…` marker per side.
+
+### `PlinthTimeline` + `PlinthTimelineItem`
+`items` (`List<PlinthTimelineItem>`), `color`. Each `PlinthTimelineItem`
+has `title`, optional `description`/`icon`, and `active` (highlights the
+dot in the theme color — use for the current/most-recent event). Dots are
+connected by a line via `IntrinsicHeight` + `Expanded`, a standard Flutter
+pattern for "match this column's height to its sibling."
 
 ### `PlinthTabs<T>` + `PlinthTabView<T>`
 `PlinthTabs`: `tabs` (`List<PlinthTabItem<T>>`), `value`, `onChanged`, `size`,

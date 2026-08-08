@@ -129,6 +129,39 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 ),
               ],
             ),
+            WidgetbookComponent(
+              name: 'PlinthActionIcon',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'All variants',
+                  builder: (context) => _themed(
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final v in PlinthVariant.values)
+                          PlinthActionIcon(
+                            icon: const Icon(Icons.star),
+                            variant: v,
+                            onPressed: () {},
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+                WidgetbookUseCase(
+                  name: 'Circle',
+                  builder: (context) => _themed(
+                    PlinthActionIcon(
+                      icon: const Icon(Icons.share_outlined),
+                      variant: PlinthVariant.filled,
+                      circle: true,
+                      onPressed: () {},
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
         WidgetbookCategory(
@@ -173,6 +206,36 @@ class PlinthWidgetbookApp extends StatelessWidget {
                       label: 'Email',
                       placeholder: 'you@example.com',
                       enabled: false,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthTextarea',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Default',
+                  builder: (context) => _themed(
+                    PlinthTextarea(
+                      label: 'Bio',
+                      placeholder: 'Tell us about yourself',
+                      onChanged: (_) {},
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthPasswordInput',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Interactive (toggle visibility)',
+                  builder: (context) => _themed(
+                    PlinthPasswordInput(
+                      label: 'Password',
+                      placeholder: 'Enter your password',
+                      onChanged: (_) {},
                     ),
                   ),
                 ),
@@ -503,6 +566,47 @@ class PlinthWidgetbookApp extends StatelessWidget {
                       items: [
                         PlinthBreadcrumbItem(label: 'Home', onTap: () {}),
                         const PlinthBreadcrumbItem(label: 'Profile'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthPagination',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Small total (no ellipsis)',
+                  builder: (context) => _themed(_PaginationDemo(total: 5)),
+                ),
+                WidgetbookUseCase(
+                  name: 'Large total (ellipsis)',
+                  builder: (context) =>
+                      _themed(_PaginationDemo(total: 20, initialPage: 10)),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthTimeline',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Default',
+                  builder: (context) => _themed(
+                    const PlinthTimeline(
+                      items: [
+                        PlinthTimelineItem(
+                          title: 'Order placed',
+                          description: 'Jan 3, 10:24 AM',
+                          active: true,
+                        ),
+                        PlinthTimelineItem(
+                          title: 'Shipped',
+                          description: 'Jan 4, 2:10 PM',
+                        ),
+                        PlinthTimelineItem(
+                          title: 'Delivered',
+                          description: 'Pending',
+                        ),
                       ],
                     ),
                   ),
@@ -1153,6 +1257,33 @@ class _RatingDemoState extends State<_RatingDemo> {
     return PlinthRating(
       value: _value,
       onChanged: (v) => setState(() => _value = v),
+    );
+  }
+}
+
+/// Owns the current page for the Pagination use case. [total] and
+/// [initialPage] are constructor params (not hardcoded) so the two
+/// use cases above can share this one demo widget with different
+/// starting conditions.
+class _PaginationDemo extends StatefulWidget {
+  const _PaginationDemo({required this.total, this.initialPage = 1});
+
+  final int total;
+  final int initialPage;
+
+  @override
+  State<_PaginationDemo> createState() => _PaginationDemoState();
+}
+
+class _PaginationDemoState extends State<_PaginationDemo> {
+  late int _page = widget.initialPage;
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthPagination(
+      page: _page,
+      total: widget.total,
+      onChanged: (p) => setState(() => _page = p),
     );
   }
 }
