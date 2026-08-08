@@ -42,6 +42,10 @@ class _ShowcasePageState extends State<ShowcasePage> {
   String _activeTab = 'account';
   double _sliderValue = 40;
   int _currentStep = 0;
+  String _view = 'list';
+  num _quantity = 3;
+  final Set<String> _selectedTags = {'flutter'};
+  double _rating = 3;
 
   @override
   void initState() {
@@ -444,6 +448,90 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   variant: PlinthVariant.outline,
                   onPressed: _modal.open,
                   child: const Text('Open delete confirmation'),
+                ),
+                _gap(),
+                _sectionTitle('Breadcrumbs'),
+                _gap(12),
+                PlinthBreadcrumbs(
+                  items: [
+                    PlinthBreadcrumbItem(label: 'Home', onTap: () {}),
+                    PlinthBreadcrumbItem(label: 'Settings', onTap: () {}),
+                    const PlinthBreadcrumbItem(label: 'Profile'),
+                  ],
+                ),
+                _gap(),
+                _sectionTitle('Divider'),
+                _gap(12),
+                const PlinthDivider(),
+                _gap(12),
+                const PlinthDivider(label: 'OR'),
+                _gap(),
+                _sectionTitle('Card'),
+                _gap(12),
+                PlinthCard(
+                  withBorder: true,
+                  header: const Text(
+                    'Card title',
+                    style: TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  footer: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      PlinthButton(
+                        size: PlinthSize.sm,
+                        onPressed: () {},
+                        child: const Text('Action'),
+                      ),
+                    ],
+                  ),
+                  child: const Text('Card body content goes here.'),
+                ),
+                _gap(),
+                _sectionTitle('Segmented Control'),
+                _gap(12),
+                PlinthSegmentedControl<String>(
+                  value: _view,
+                  onChanged: (v) => setState(() => _view = v),
+                  items: const [
+                    PlinthSegmentedControlItem('list', 'List'),
+                    PlinthSegmentedControlItem('grid', 'Grid'),
+                    PlinthSegmentedControlItem('table', 'Table'),
+                  ],
+                ),
+                _gap(),
+                _sectionTitle('Number Input'),
+                _gap(12),
+                PlinthNumberInput(
+                  label: 'Quantity',
+                  value: _quantity,
+                  min: 0,
+                  max: 10,
+                  onChanged: (v) => setState(() => _quantity = v),
+                ),
+                _gap(),
+                _sectionTitle('Chip'),
+                _gap(12),
+                Wrap(
+                  spacing: 8,
+                  children: [
+                    for (final tag in ['flutter', 'dart', 'ui', 'design'])
+                      PlinthChip(
+                        label: tag,
+                        selected: _selectedTags.contains(tag),
+                        onSelected: (selected) => setState(() {
+                          selected
+                              ? _selectedTags.add(tag)
+                              : _selectedTags.remove(tag);
+                        }),
+                      ),
+                  ],
+                ),
+                _gap(),
+                _sectionTitle('Rating'),
+                _gap(12),
+                PlinthRating(
+                  value: _rating,
+                  onChanged: (v) => setState(() => _rating = v),
                 ),
                 _gap(),
                 _sectionTitle('Box + Text + Disclosure'),

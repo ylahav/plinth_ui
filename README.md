@@ -12,11 +12,12 @@ plinth_ui/
   .github/workflows/regenerate-goldens.yml # manual — regenerates goldens on Linux to match CI
   packages/
     plinth_core/            # PlinthTheme, design tokens (colors, spacing, radius)
-    plinth_components/       # Widgets (Button, Box, Text, Modal, Drawer, TextInput,
-    │                          Checkbox, Radio/RadioGroup, Select, Badge, Alert,
-    │                          Switch, Slider, Progress, Avatar, Table, Accordion,
-    │                          Stepper, Notification, Skeleton, Tooltip, Popover,
-    │                          Tabs/TabView, Menu)
+    plinth_components/       # Widgets (Button, Box, Text, Divider, Modal, Drawer,
+    │                          TextInput, Checkbox, Radio/RadioGroup, Select, Badge,
+    │                          Alert, Switch, Slider, Progress, Avatar, Table,
+    │                          Accordion, Stepper, Breadcrumbs, Notification,
+    │                          Skeleton, Paper, Card, SegmentedControl, NumberInput,
+    │                          Chip, Rating, Tooltip, Popover, Tabs/TabView, Menu)
     plinth_hooks/             # PlinthDisclosureController (useDisclosure equivalent)
   example/                  # Showcase app — run this to see every component live
   widgetbook/               # Isolated component gallery (manual/non-codegen setup)
@@ -73,14 +74,17 @@ flutter run
 You should see, in the example app: a dismissible info Alert, badges, a checkbox,
 a radio group, a select, a text input with live validation, a menu, tabs with
 switched content, progress bars, a slider, an accordion, a striped table, a
-notification trigger, an interactive stepper, skeleton loaders,
+notification trigger, an interactive stepper, skeleton loaders, breadcrumbs,
+a divider (plain and labeled), a card with header/footer, a segmented control,
+a number input with +/- steppers, filterable chips, a star rating,
 drawer/modal/popover triggers, a themed Box/Text/disclosure demo, and the full
 button variant/size/color matrix — all driven by `PlinthTheme.defaultTheme`
 in `plinth_core`.
 
 The Widgetbook app organizes the same components into browsable categories
 (Buttons & Actions, Forms, Navigation, Feedback, Overlays, Data Display,
-Layout & Typography) with each variant as its own use case in the sidebar.
+Surfaces, Layout & Typography) with each variant as its own use case in
+the sidebar.
 
 ## What's implemented
 
@@ -89,9 +93,12 @@ Layout & Typography) with each variant as its own use case in the sidebar.
   stops + shade-dependent saturation), spacing, radius, and font-size
   scales.
 - **Primitives** (`plinth_components`) — `PlinthButton`, `PlinthBox`,
-  `PlinthText`.
+  `PlinthText`, `PlinthDivider` (plain, labeled, or vertical).
 - **Forms** — `PlinthTextInput`, `PlinthCheckbox`, `PlinthRadio` /
-  `PlinthRadioGroup`, `PlinthSelect`.
+  `PlinthRadioGroup`, `PlinthSelect`, `PlinthSegmentedControl`,
+  `PlinthNumberInput` (shares TextInput's chrome, +/- steppers with
+  min/max clamping), `PlinthChip`, `PlinthRating` (half-star support
+  for read-only display).
 - **Feedback** — `PlinthBadge`, `PlinthAlert`, `PlinthProgress`,
   `PlinthNotification` (toast-style, shown via the static `.show()`
   as a themed `SnackBar` — distinct from `PlinthAlert`'s inline
@@ -102,7 +109,12 @@ Layout & Typography) with each variant as its own use case in the sidebar.
   fade-switched content, generic over the tab value type),
   `PlinthAccordion` (single/multiple-open expand/collapse),
   `PlinthStepper` (numbered step indicator — visual only, same
-  controlled-component split as Tabs/TabView).
+  controlled-component split as Tabs/TabView), `PlinthBreadcrumbs`
+  (last item always non-interactive, matching the "current page isn't
+  a link" convention).
+- **Surfaces** — `PlinthPaper` (base surface: padding, radius, shadow,
+  border) and `PlinthCard` (built on `PlinthPaper`, adds an optional
+  header/footer section convention with dividers).
 - **Overlays** — `PlinthModal`, `PlinthDrawer`, `PlinthPopover` (anchored,
   `CompositedTransformFollower`-based, tracks its target across scroll),
   `PlinthMenu` (built directly on `PlinthPopover`), `PlinthTooltip`
@@ -121,7 +133,9 @@ Layout & Typography) with each variant as its own use case in the sidebar.
   `PlinthTheme`'s shade generator and `PlinthDisclosureController`,
   widget behavior test suites for `PlinthButton`, `PlinthTabs`/
   `PlinthTabView`, `PlinthMenu`, `PlinthAccordion`, `PlinthTable`,
-  `PlinthStepper`, `PlinthSkeleton`, and `PlinthNotification`, plus a
+  `PlinthStepper`, `PlinthSkeleton`, `PlinthNotification`,
+  `PlinthBreadcrumbs`, `PlinthCard`/`PlinthPaper`, `PlinthNumberInput`,
+  and `PlinthChip`/`PlinthRating`/`PlinthSegmentedControl`, plus a
   golden (visual regression) test suite for `PlinthButton` covering
   variants, a color override, disabled state, and all sizes.
   See `docs/TESTING.md`.

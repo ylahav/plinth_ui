@@ -30,6 +30,28 @@ resolution logic follows this one's pattern.
 `data`, `size`, `color`, `weight`, `textAlign`, `italic`, `maxLines`, `overflow`.
 `size` resolves through `theme.fontSizes` instead of a raw `fontSize` double.
 
+### `PlinthDivider`
+`label` (optional, centers a label with rules on either side, e.g. "OR"),
+`vertical`, `height` (only meaningful when `vertical` — `VerticalDivider`
+needs an explicit extent from its parent to render visibly in an
+unconstrained context), `color`.
+
+---
+
+## Surfaces
+
+### `PlinthPaper`
+`child`, `p` (padding, default `md`), `radius`, `shadow` (`PlinthShadow`:
+`none, sm, md, lg`), `withBorder`, `bg`. The base surface primitive
+`PlinthCard` builds on — reach for this directly when you just need a
+raised/bordered container without card section conventions.
+
+### `PlinthCard`
+`child`, `header`, `footer`, `p`, `radius`, `shadow` (default `sm`),
+`withBorder`. Built on `PlinthPaper` — adds a header/body/footer section
+convention with a divider between whichever sections are present. Sections
+left `null` are simply omitted, not rendered empty.
+
 ---
 
 ## Forms
@@ -74,6 +96,32 @@ continuous), `color`, `size`, `label` (shown above the thumb while
 dragging). A themed wrapper around Flutter's built-in `Slider` (via
 `SliderTheme`) — same rationale as `PlinthTooltip`: drag handling,
 keyboard stepping, and accessibility are worth not reimplementing.
+
+### `PlinthSegmentedControl<T>` + `PlinthSegmentedControlItem<T>`
+`items` (`List<PlinthSegmentedControlItem<T>>`), `value`, `onChanged`,
+`color`, `size`, `fullWidth`. Like `PlinthTabs`, uses a static
+per-segment fill rather than a measured sliding indicator, for the same
+simplicity/reliability reasons.
+
+### `PlinthNumberInput`
+`value` (`num`), `onChanged`, `min`, `max`, `step` (default `1`), `label`,
+`description`, `error`, `size`, `color`, `radius`, `enabled`. Shares
+`PlinthTextInput`'s label/description/error chrome and focus/error border
+styling, with +/- step buttons that respect `min`/`max`. Typing a value
+directly is also supported and clamped the same way.
+
+### `PlinthChip`
+`label`, `selected`, `onSelected` (nullable — null disables), `color`,
+`size`. Standalone toggle — for a group, manage a `Set`/value in your own
+state and pass `selected` per chip, same controlled-component pattern as
+`PlinthCheckbox`/`PlinthRadio`.
+
+### `PlinthRating`
+`value` (supports half-values like `3.5` for read-only display), `onChanged`
+(omit for a read-only display — e.g. showing an existing average rating),
+`count` (default `5`), `color` (defaults to an amber gold, not the theme's
+primary color — a rating in brand blue reads oddly against the
+conventional gold-star look), `size`.
 
 ---
 
@@ -146,6 +194,13 @@ manage step *content*; pair with your own conditional rendering driven by
 the same `currentStep` you pass in. Tapping a step calls `onStepTapped`
 but doesn't change `currentStep` itself — controlled-component pattern,
 same as `PlinthTabs`.
+
+### `PlinthBreadcrumbs` + `PlinthBreadcrumbItem`
+`items` (`List<PlinthBreadcrumbItem>`), `separator` (default `'/'`), `color`.
+Each `PlinthBreadcrumbItem` has `label` and optional `onTap`. The *last*
+item is always rendered as plain, non-interactive text regardless of
+whether it has an `onTap` — matching the convention that the current page
+isn't itself a link.
 
 ### `PlinthTabs<T>` + `PlinthTabView<T>`
 `PlinthTabs`: `tabs` (`List<PlinthTabItem<T>>`), `value`, `onChanged`, `size`,

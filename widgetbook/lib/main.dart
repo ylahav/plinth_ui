@@ -333,6 +333,72 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 ),
               ],
             ),
+            WidgetbookComponent(
+              name: 'PlinthSegmentedControl',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Interactive',
+                  builder: (context) => _themed(_SegmentedControlDemo()),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthNumberInput',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Interactive',
+                  builder: (context) => _themed(_NumberInputDemo()),
+                ),
+                WidgetbookUseCase(
+                  name: 'With min/max',
+                  builder: (context) => _themed(
+                    PlinthNumberInput(
+                      label: 'Quantity',
+                      value: 5,
+                      min: 0,
+                      max: 10,
+                      onChanged: (_) {},
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthChip',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Selected and unselected',
+                  builder: (context) => _themed(
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        PlinthChip(
+                            label: 'Selected',
+                            selected: true,
+                            onSelected: (_) {}),
+                        PlinthChip(
+                            label: 'Unselected',
+                            selected: false,
+                            onSelected: (_) {}),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthRating',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Interactive',
+                  builder: (context) => _themed(_RatingDemo()),
+                ),
+                WidgetbookUseCase(
+                  name: 'Read-only, half star',
+                  builder: (context) => _themed(const PlinthRating(value: 3.5)),
+                ),
+              ],
+            ),
           ],
         ),
         WidgetbookCategory(
@@ -408,6 +474,35 @@ class PlinthWidgetbookApp extends StatelessWidget {
                         PlinthStep(label: 'Account'),
                         PlinthStep(label: 'Shipping'),
                         PlinthStep(label: 'Confirm'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthBreadcrumbs',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Default',
+                  builder: (context) => _themed(
+                    PlinthBreadcrumbs(
+                      items: [
+                        PlinthBreadcrumbItem(label: 'Home', onTap: () {}),
+                        PlinthBreadcrumbItem(label: 'Settings', onTap: () {}),
+                        const PlinthBreadcrumbItem(label: 'Profile'),
+                      ],
+                    ),
+                  ),
+                ),
+                WidgetbookUseCase(
+                  name: 'Custom separator',
+                  builder: (context) => _themed(
+                    PlinthBreadcrumbs(
+                      separator: '>',
+                      items: [
+                        PlinthBreadcrumbItem(label: 'Home', onTap: () {}),
+                        const PlinthBreadcrumbItem(label: 'Profile'),
                       ],
                     ),
                   ),
@@ -743,6 +838,93 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 ),
               ],
             ),
+            WidgetbookComponent(
+              name: 'PlinthDivider',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Plain',
+                  builder: (context) => _themed(const PlinthDivider()),
+                ),
+                WidgetbookUseCase(
+                  name: 'With label',
+                  builder: (context) =>
+                      _themed(const PlinthDivider(label: 'OR')),
+                ),
+                WidgetbookUseCase(
+                  name: 'Vertical',
+                  builder: (context) => _themed(
+                    const SizedBox(
+                      height: 60,
+                      child: PlinthDivider(vertical: true, height: 60),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        WidgetbookCategory(
+          name: 'Surfaces',
+          children: [
+            WidgetbookComponent(
+              name: 'PlinthPaper',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'All shadow levels',
+                  builder: (context) => _themed(
+                    Wrap(
+                      spacing: 16,
+                      runSpacing: 16,
+                      children: [
+                        for (final shadow in PlinthShadow.values)
+                          PlinthPaper(
+                            shadow: shadow,
+                            withBorder: shadow == PlinthShadow.none,
+                            child: Text(shadow.name),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthCard',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Body only',
+                  builder: (context) => _themed(
+                    const PlinthCard(
+                      withBorder: true,
+                      child: Text('Card body content.'),
+                    ),
+                  ),
+                ),
+                WidgetbookUseCase(
+                  name: 'With header and footer',
+                  builder: (context) => _themed(
+                    PlinthCard(
+                      withBorder: true,
+                      header: const Text(
+                        'Card title',
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      footer: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          PlinthButton(
+                            size: PlinthSize.sm,
+                            onPressed: () {},
+                            child: const Text('Action'),
+                          ),
+                        ],
+                      ),
+                      child: const Text('Card body content.'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ],
@@ -910,6 +1092,67 @@ class _StepperDemoState extends State<_StepperDemo> {
         PlinthStep(label: 'Shipping'),
         PlinthStep(label: 'Confirm'),
       ],
+    );
+  }
+}
+
+/// Owns the current value for the SegmentedControl use case, since it
+/// needs a value that changes on tap — a stateless use-case builder
+/// can't hold that itself.
+class _SegmentedControlDemo extends StatefulWidget {
+  @override
+  State<_SegmentedControlDemo> createState() => _SegmentedControlDemoState();
+}
+
+class _SegmentedControlDemoState extends State<_SegmentedControlDemo> {
+  String _value = 'list';
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthSegmentedControl<String>(
+      value: _value,
+      onChanged: (v) => setState(() => _value = v),
+      items: const [
+        PlinthSegmentedControlItem('list', 'List'),
+        PlinthSegmentedControlItem('grid', 'Grid'),
+      ],
+    );
+  }
+}
+
+/// Owns the current value for the NumberInput use case.
+class _NumberInputDemo extends StatefulWidget {
+  @override
+  State<_NumberInputDemo> createState() => _NumberInputDemoState();
+}
+
+class _NumberInputDemoState extends State<_NumberInputDemo> {
+  num _value = 3;
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthNumberInput(
+      label: 'Quantity',
+      value: _value,
+      onChanged: (v) => setState(() => _value = v),
+    );
+  }
+}
+
+/// Owns the current value for the Rating use case.
+class _RatingDemo extends StatefulWidget {
+  @override
+  State<_RatingDemo> createState() => _RatingDemoState();
+}
+
+class _RatingDemoState extends State<_RatingDemo> {
+  double _value = 3;
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthRating(
+      value: _value,
+      onChanged: (v) => setState(() => _value = v),
     );
   }
 }
