@@ -1,0 +1,21 @@
+name: plinth_components
+description: Themeable, accessible Flutter widgets for Plinth UI.
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plinth_core:
+    path: ../plinth_core
+  plinth_hooks:
+    path: ../plinth_hooks
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0

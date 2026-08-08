@@ -1,0 +1,30 @@
+name: plinth_widgetbook
+description: Isolated component gallery for Plinth UI, built with Widgetbook.
+publish_to: none
+version: 0.0.1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plinth_components:
+    path: ../packages/plinth_components
+  plinth_hooks:
+    path: ../packages/plinth_hooks
+  # Manual (non-generator) API — no build_runner / codegen dependency,
+  # so this stays runnable without a Dart codegen step. Pin the exact
+  # version against Widgetbook's published changelog before running:
+  # the manual WidgetbookApp/WidgetbookUseCase API is stable across
+  # 3.x but knob parameter names have shifted between minors before.
+  widgetbook: ^3.10.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

@@ -1,0 +1,55 @@
+name: CI
+
+# Runs the exact sequence verified locally this session:
+#   melos bootstrap && melos run analyze && melos run test
+# plus a format check, split into separate steps so a failure in one
+# doesn't hide whether the others would also have failed.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  analyze-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          # Pin this to the Flutter version you're developing against
+          # once you've confirmed it locally — an unpinned "stable"
+          # channel means CI can start failing from an SDK upgrade
+          # alone, unrelated to any code change in a PR.
+          # flutter-version: '3.24.0'
+
+      - name: Activate Melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        run: melos bootstrap
+
+      - name: Analyze
+        run: melos run analyze
+
+      - name: Check formatting
+        run: melos run format
+
+      - name: Run tests
+        run: melos run test
+
+      - name: Upload golden test failures
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-test-failures
+          # If a golden test fails, Flutter writes a "failures/"
+          # folder next to the test with the actual-vs-expected
+          # images — upload it so you can inspect the diff from the
+          # Actions run instead of only seeing a pass/fail status.
+          path: packages/*/test/failures/
+          if-no-files-found: ignore

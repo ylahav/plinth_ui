@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/packages/plinth_components/melos_plinth_components.iml" filepath="$PROJECT_DIR$/packages/plinth_components/melos_plinth_components.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/plinth_core/melos_plinth_core.iml" filepath="$PROJECT_DIR$/packages/plinth_core/melos_plinth_core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/example/melos_plinth_example.iml" filepath="$PROJECT_DIR$/example/melos_plinth_example.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/plinth_hooks/melos_plinth_hooks.iml" filepath="$PROJECT_DIR$/packages/plinth_hooks/melos_plinth_hooks.iml" />
+      <module fileurl="file://$PROJECT_DIR$/widgetbook/melos_plinth_widgetbook.iml" filepath="$PROJECT_DIR$/widgetbook/melos_plinth_widgetbook.iml" />
+      <module fileurl="file://$PROJECT_DIR$/melos_plinth_ui.iml" filepath="$PROJECT_DIR$/melos_plinth_ui.iml" />
+    </modules>
+  </component>
+</project>
