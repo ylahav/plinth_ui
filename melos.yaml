@@ -20,7 +20,11 @@ scripts:
 
   format:
     run: melos exec -- "dart format . --set-exit-if-changed"
-    description: Check formatting in all packages
+    description: Check formatting in all packages (fails if anything needs reformatting — used by CI)
+
+  format-fix:
+    run: melos exec -- "dart format ."
+    description: Apply formatting fixes in all packages (run this, then commit, if `format` fails)
 
   test:
     run: melos exec --dir-exists="test" -- "flutter test"

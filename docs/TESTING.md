@@ -51,12 +51,25 @@ are fixable in one exchange.
 ## 4. Formatting
 
 ```bash
+melos run format-fix
+```
+
+Applies formatting fixes across every package (equivalent to `dart format .`
+with no flags). Run this once after cloning — the files in this repo were
+originally written without a local Dart SDK to format against, so several
+needed reformatting the first time this ran for real.
+
+Then verify with the check-only version (this is what CI runs):
+
+```bash
 melos run format
 ```
 
-Some files (particularly the ones edited in place with `str_replace` rather
-than written fresh) may have inconsistent indentation — this is purely
-cosmetic and `dart format .` (no `--set-exit-if-changed`) will auto-fix it.
+This uses `dart format . --set-exit-if-changed`, which fails if anything
+still needs reformatting rather than silently fixing it — that's
+intentional for a CI check, but means `format` alone won't fix a failure,
+only report one. If `melos run format` fails, run `melos run format-fix`,
+then commit the result.
 
 ## 5. Run the actual tests
 
@@ -202,12 +215,13 @@ point to as the cause.
 ## Summary — the fastest path to confidence
 
 ```bash
-melos bootstrap && melos run analyze && melos run test
+melos bootstrap && melos run format-fix && melos run analyze && melos run test
 ```
 
-If all three succeed, you can trust the code compiles, is internally
-consistent, and the logic and appearance covered by tests behaves as
-documented. `PlinthButton` has both behavior and golden coverage as of
+If all three checks (`analyze`, `format`, `test`) succeed — `format-fix`
+itself never fails, it just applies changes — you can trust the code
+compiles, is internally consistent, is formatted the way CI expects, and
+the logic and appearance covered by tests behaves as documented. `PlinthButton` has both behavior and golden coverage as of
 this writing; everything else still needs the manual pass in step 6 for
 appearance, and the "Next steps" list in the main README tracks which
 components are next in line for golden tests.
