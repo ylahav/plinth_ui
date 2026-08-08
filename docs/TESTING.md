@@ -190,6 +190,32 @@ the ones most likely to have a subtle visual regression slip through
 focus/error states or `PlinthAlert`'s color tinting) over ones that are
 mostly just text (`PlinthText`, `PlinthBadge`'s label).
 
+**Platform sensitivity — read this before regenerating goldens locally.**
+Golden images are sensitive to the platform they were generated on: font
+hinting and anti-aliasing differ slightly between Windows, macOS, and
+Linux, even though Flutter's placeholder test font makes them
+reproducible *within* a platform. If you run `--update-goldens` on
+Windows or macOS and CI runs on `ubuntu-latest` (as this repo's does),
+expect small pixel diffs (typically under 1%) that are platform
+rendering noise, not real regressions.
+
+The fix isn't to loosen the comparison tolerance — it's to generate the
+reference images on the same platform CI uses. Use the
+**"Regenerate goldens"** workflow
+(`.github/workflows/regenerate-goldens.yml`): trigger it manually from
+the Actions tab (`workflow_dispatch`), it runs `melos run update-goldens`
+on `ubuntu-latest` and uploads the resulting `test/goldens/` folders as a
+downloadable artifact. Download that artifact, replace your local
+`test/goldens/*.png` files with its contents, review the diff (`git diff`
+won't show a meaningful text diff for binary PNGs, but `git status` will
+show which files changed), and commit.
+
+If you only have Windows/macOS available and don't want to touch GitHub
+Actions for this, running goldens inside a Linux Docker container with
+the same Flutter version installed would work equivalently — the
+regenerate-goldens workflow is just a ready-made way to get an Ubuntu
+environment without setting that up yourself.
+
 ## 8. Continuous integration
 
 `.github/workflows/ci.yml` runs the exact sequence documented above —

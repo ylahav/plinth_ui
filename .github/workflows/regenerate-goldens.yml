@@ -1,0 +1,42 @@
+name: Regenerate goldens
+
+# Golden test reference images are sensitive to the platform they were
+# generated on (font hinting/anti-aliasing differ between Windows,
+# macOS, and Linux, even with Flutter's placeholder test font) — a
+# golden generated on Windows can show a small pixel diff when CI
+# compares against it on Ubuntu. This workflow regenerates the
+# reference images on the same Ubuntu environment CI uses, then
+# uploads them as a downloadable artifact rather than auto-committing,
+# so you can review the diff before it becomes the new reference.
+#
+# Run this manually whenever CI reports a golden mismatch that isn't
+# an actual visual regression, or after intentionally changing a
+# component's appearance.
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  update-goldens:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Activate Melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        run: melos bootstrap
+
+      - name: Regenerate golden images
+        run: melos run update-goldens
+
+      - name: Upload updated goldens
+        uses: actions/upload-artifact@v4
+        with:
+          name: updated-goldens
+          path: packages/*/test/goldens/

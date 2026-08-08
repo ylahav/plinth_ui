@@ -39,12 +39,9 @@ void main() {
     test('spacing/radius/fontSizes cover every PlinthSize', () {
       final theme = PlinthTheme.defaultTheme;
       for (final size in PlinthSize.values) {
-        expect(theme.spacing[size], isNotNull,
-            reason: 'missing spacing for $size');
-        expect(theme.radius[size], isNotNull,
-            reason: 'missing radius for $size');
-        expect(theme.fontSizes[size], isNotNull,
-            reason: 'missing fontSize for $size');
+        expect(theme.spacing[size], isNotNull, reason: 'missing spacing for $size');
+        expect(theme.radius[size], isNotNull, reason: 'missing radius for $size');
+        expect(theme.fontSizes[size], isNotNull, reason: 'missing fontSize for $size');
       }
     });
   });

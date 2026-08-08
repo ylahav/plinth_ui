@@ -92,8 +92,7 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 WidgetbookUseCase(
                   name: 'Disabled',
                   builder: (context) => _themed(
-                    const PlinthButton(
-                        onPressed: null, child: Text('Disabled')),
+                    const PlinthButton(onPressed: null, child: Text('Disabled')),
                   ),
                 ),
               ],
@@ -497,8 +496,7 @@ class PlinthWidgetbookApp extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         for (final size in PlinthSize.values) ...[
-                          PlinthAvatar(
-                              initials: 'YR', color: 'blue', size: size),
+                          PlinthAvatar(initials: 'YR', color: 'blue', size: size),
                           const SizedBox(width: 12),
                         ],
                       ],
@@ -554,8 +552,7 @@ class PlinthWidgetbookApp extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         for (final size in PlinthSize.values)
-                          PlinthText('${size.name} — the quick brown fox',
-                              size: size),
+                          PlinthText('${size.name} — the quick brown fox', size: size),
                       ],
                     ),
                   ),

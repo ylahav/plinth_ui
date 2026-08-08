@@ -9,6 +9,7 @@ on a shared design-token foundation.
 plinth_ui/
   melos.yaml               # workspace config
   .github/workflows/ci.yml # analyze + format + test on every push/PR (see below)
+  .github/workflows/regenerate-goldens.yml # manual — regenerates goldens on Linux to match CI
   packages/
     plinth_core/            # PlinthTheme, design tokens (colors, spacing, radius)
     plinth_components/       # Widgets (Button, Box, Text, Modal, Drawer, TextInput,
