@@ -318,6 +318,21 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 ),
               ],
             ),
+            WidgetbookComponent(
+              name: 'PlinthSlider',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Interactive',
+                  builder: (context) => _themed(_SliderDemo()),
+                ),
+                WidgetbookUseCase(
+                  name: 'Disabled',
+                  builder: (context) => _themed(
+                    const PlinthSlider(value: 30, onChanged: null),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
         WidgetbookCategory(
@@ -329,6 +344,51 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 WidgetbookUseCase(
                   name: 'With content (interactive)',
                   builder: (context) => _themed(_TabsDemo()),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthAccordion',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Single open (default)',
+                  builder: (context) => _themed(
+                    const PlinthAccordion(
+                      items: [
+                        PlinthAccordionItem(
+                          value: 'shipping',
+                          title: 'Shipping details',
+                          content: Text('Ships within 3-5 business days.'),
+                        ),
+                        PlinthAccordionItem(
+                          value: 'returns',
+                          title: 'Return policy',
+                          content: Text('30-day returns, no questions asked.'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                WidgetbookUseCase(
+                  name: 'Multiple open',
+                  builder: (context) => _themed(
+                    const PlinthAccordion(
+                      multiple: true,
+                      initiallyOpen: {'shipping'},
+                      items: [
+                        PlinthAccordionItem(
+                          value: 'shipping',
+                          title: 'Shipping details',
+                          content: Text('Ships within 3-5 business days.'),
+                        ),
+                        PlinthAccordionItem(
+                          value: 'returns',
+                          title: 'Return policy',
+                          content: Text('30-day returns, no questions asked.'),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -371,6 +431,26 @@ class PlinthWidgetbookApp extends StatelessWidget {
                       icon: const Icon(Icons.check_circle_outline),
                       onClose: () {},
                       child: const Text('Tap the close icon to dismiss.'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthProgress',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Various fill levels',
+                  builder: (context) => _themed(
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        PlinthProgress(value: 0.25, color: 'blue'),
+                        SizedBox(height: 8),
+                        PlinthProgress(value: 0.6, color: 'green'),
+                        SizedBox(height: 8),
+                        PlinthProgress(value: 0.9, color: 'red'),
+                      ],
                     ),
                   ),
                 ),
@@ -518,6 +598,37 @@ class PlinthWidgetbookApp extends StatelessWidget {
                       initials: 'SQ',
                       color: 'red',
                       radius: PlinthSize.sm,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthTable',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Default',
+                  builder: (context) => _themed(
+                    const PlinthTable(
+                      columns: ['Name', 'Role', 'Status'],
+                      rows: [
+                        ['Alice', 'Engineer', 'Active'],
+                        ['Bob', 'Designer', 'Invited'],
+                      ],
+                    ),
+                  ),
+                ),
+                WidgetbookUseCase(
+                  name: 'Striped',
+                  builder: (context) => _themed(
+                    const PlinthTable(
+                      striped: true,
+                      columns: ['Name', 'Role', 'Status'],
+                      rows: [
+                        ['Alice', 'Engineer', 'Active'],
+                        ['Bob', 'Designer', 'Invited'],
+                        ['Carol', 'PM', 'Active'],
+                      ],
                     ),
                   ),
                 ),
@@ -683,6 +794,27 @@ class _TabsDemoState extends State<_TabsDemo> {
           },
         ),
       ],
+    );
+  }
+}
+
+/// Owns the current value for the Slider use case, since [PlinthSlider]
+/// needs a value that changes on drag — a stateless use-case builder
+/// can't hold that itself.
+class _SliderDemo extends StatefulWidget {
+  @override
+  State<_SliderDemo> createState() => _SliderDemoState();
+}
+
+class _SliderDemoState extends State<_SliderDemo> {
+  double _value = 40;
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthSlider(
+      value: _value,
+      onChanged: (v) => setState(() => _value = v),
+      label: _value.round().toString(),
     );
   }
 }

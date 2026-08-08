@@ -40,6 +40,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   bool _alertVisible = true;
   bool _notifications = true;
   String _activeTab = 'account';
+  double _sliderValue = 40;
 
   @override
   void initState() {
@@ -251,6 +252,49 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   label: 'Enable notifications',
                   value: _notifications,
                   onChanged: (v) => setState(() => _notifications = v),
+                ),
+                _gap(),
+                _sectionTitle('Progress'),
+                _gap(12),
+                const PlinthProgress(value: 0.35, color: 'blue'),
+                _gap(8),
+                const PlinthProgress(value: 0.7, color: 'green'),
+                _gap(),
+                _sectionTitle('Slider'),
+                _gap(12),
+                PlinthSlider(
+                  value: _sliderValue,
+                  onChanged: (v) => setState(() => _sliderValue = v),
+                  label: _sliderValue.round().toString(),
+                ),
+                _gap(),
+                _sectionTitle('Accordion'),
+                _gap(12),
+                const PlinthAccordion(
+                  items: [
+                    PlinthAccordionItem(
+                      value: 'shipping',
+                      title: 'Shipping details',
+                      content: Text('Ships within 3-5 business days.'),
+                    ),
+                    PlinthAccordionItem(
+                      value: 'returns',
+                      title: 'Return policy',
+                      content: Text('30-day returns, no questions asked.'),
+                    ),
+                  ],
+                ),
+                _gap(),
+                _sectionTitle('Table'),
+                _gap(12),
+                const PlinthTable(
+                  striped: true,
+                  columns: ['Name', 'Role', 'Status'],
+                  rows: [
+                    ['Alice', 'Engineer', 'Active'],
+                    ['Bob', 'Designer', 'Invited'],
+                    ['Carol', 'PM', 'Active'],
+                  ],
                 ),
                 _gap(),
                 _sectionTitle('Badges'),

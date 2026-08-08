@@ -68,6 +68,13 @@ Shares `PlinthTextInput`'s label/description/error chrome; wraps
 `value`, `onChanged` (nullable), `label`, `size`, `color`. Same
 animated-fill pattern as `PlinthCheckbox`, pill-shaped instead of square.
 
+### `PlinthSlider`
+`value`, `onChanged` (nullable), `min`, `max`, `divisions` (omit for
+continuous), `color`, `size`, `label` (shown above the thumb while
+dragging). A themed wrapper around Flutter's built-in `Slider` (via
+`SliderTheme`) — same rationale as `PlinthTooltip`: drag handling,
+keyboard stepping, and accessibility are worth not reimplementing.
+
 ---
 
 ## Feedback
@@ -81,6 +88,11 @@ uppercase by default, pill-shaped (`borderRadius: 999`).
 (non-null shows a close button), `radius`. Background at shade 0, accent
 (icon/title/border) at shade 6.
 
+### `PlinthProgress`
+`value` (0.0–1.0, asserted in range), `color`, `size` (controls track
+height), `radius`, `trackColor`. Fill animates smoothly on value change
+via an internal `AnimatedFractionallySizedBox` helper.
+
 ---
 
 ## Data Display
@@ -90,9 +102,25 @@ uppercase by default, pill-shaped (`borderRadius: 999`).
 Fallback chain: `imageUrl` -> `initials` on a tinted background -> generic
 person icon.
 
+### `PlinthTable`
+`columns` (`List<String>`), `rows` (`List<List<String>>` — each inner
+list must match `columns.length`), `striped`, `size`. Built on Flutter's
+low-level `Table` widget rather than `DataTable`, since `DataTable`'s
+built-in Material styling (fixed row heights, sort/selection chrome)
+fights against a themeable design system more than it helps. No custom
+per-cell widget support yet — cells are plain text.
+
 ---
 
 ## Navigation
+
+### `PlinthAccordion` + `PlinthAccordionItem`
+`items` (`List<PlinthAccordionItem>`), `multiple` (default `false` — only
+one item open at a time), `initiallyOpen` (`Set<String>` of item
+`value`s), `color`. Each `PlinthAccordionItem` has `value` (unique id),
+`title`, `content`, `icon`. Manages its own open/closed state
+internally — unlike the overlay components, there's no external
+controller, since expanded state is presentation-local to the widget.
 
 ### `PlinthTabs<T>` + `PlinthTabView<T>`
 `PlinthTabs`: `tabs` (`List<PlinthTabItem<T>>`), `value`, `onChanged`, `size`,

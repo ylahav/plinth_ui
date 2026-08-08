@@ -14,7 +14,8 @@ plinth_ui/
     plinth_core/            # PlinthTheme, design tokens (colors, spacing, radius)
     plinth_components/       # Widgets (Button, Box, Text, Modal, Drawer, TextInput,
     │                          Checkbox, Radio/RadioGroup, Select, Badge, Alert,
-    │                          Switch, Avatar, Tooltip, Popover, Tabs/TabView, Menu)
+    │                          Switch, Slider, Progress, Avatar, Table, Accordion,
+    │                          Tooltip, Popover, Tabs/TabView, Menu)
     plinth_hooks/             # PlinthDisclosureController (useDisclosure equivalent)
   example/                  # Showcase app — run this to see every component live
   widgetbook/               # Isolated component gallery (manual/non-codegen setup)
@@ -70,9 +71,10 @@ flutter run
 
 You should see, in the example app: a dismissible info Alert, badges, a checkbox,
 a radio group, a select, a text input with live validation, a menu, tabs with
-switched content, drawer/modal/popover triggers, a themed Box/Text/disclosure
-demo, and the full button variant/size/color matrix — all driven by
-`PlinthTheme.defaultTheme` in `plinth_core`.
+switched content, progress bars, a slider, an accordion, a striped table,
+drawer/modal/popover triggers, a themed Box/Text/disclosure demo, and the full
+button variant/size/color matrix — all driven by `PlinthTheme.defaultTheme`
+in `plinth_core`.
 
 The Widgetbook app organizes the same components into browsable categories
 (Buttons & Actions, Forms, Navigation, Feedback, Overlays, Data Display,
@@ -101,14 +103,33 @@ Layout & Typography) with each variant as its own use case in the sidebar.
   use the same controller type but their own show/hide mechanics since
   they aren't route-based.
 - **`PlinthSwitch`** — animated toggle, same size/color pattern as Checkbox.
+- **`PlinthSlider`** — themed wrapper around Flutter's built-in `Slider`
+  (via `SliderTheme`), same rationale as `PlinthTooltip` — drag handling
+  and accessibility aren't worth reimplementing.
+- **`PlinthProgress`** — animated linear progress bar.
+- **`PlinthAccordion`** / `PlinthAccordionItem` — single or
+  multiple-open expand/collapse list, manages its own state internally.
+- **`PlinthTable`** — built on Flutter's low-level `Table` widget
+  (not `DataTable`, which fights theming more than it helps), with
+  optional row striping.
 - **Widgetbook gallery** (`widgetbook/`) — manual (non-codegen)
   registration of every component's key states as browsable use cases.
 - **Tests** — a first checked-in test per package: pure-logic tests for
   `PlinthTheme`'s shade generator and `PlinthDisclosureController`,
   widget behavior test suites for `PlinthButton`, `PlinthTabs`/
-  `PlinthTabView`, and `PlinthMenu`, plus a golden (visual regression)
-  test suite for `PlinthButton` covering variants, a color override,
-  disabled state, and all sizes. See `docs/TESTING.md`.
+  `PlinthTabView`, `PlinthMenu`, `PlinthAccordion`, and `PlinthTable`,
+  plus a golden (visual regression) test suite for `PlinthButton`
+  covering variants, a color override, disabled state, and all sizes.
+  See `docs/TESTING.md`.
+- **CI is green** — `.github/workflows/ci.yml` passes end-to-end
+  (bootstrap, format, analyze, test) on GitHub Actions as of this
+  writing. Getting there surfaced two real, non-obvious issues worth
+  knowing about if you add more golden tests or touch formatting:
+  golden images are platform-sensitive (see `docs/TESTING.md` §7 —
+  regenerate on Linux via `.github/workflows/regenerate-goldens.yml`,
+  don't loosen tolerances), and `dart format` needs to actually be run
+  locally at least once (`melos run format-fix`) since code written
+  without a live SDK won't match its output exactly.
 
 ## Next steps (not yet built)
 
