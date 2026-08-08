@@ -71,7 +71,8 @@ class PlinthSwitch extends StatelessWidget {
             color: Colors.white,
             shape: BoxShape.circle,
             boxShadow: [
-              BoxShadow(color: Colors.black26, blurRadius: 2, offset: Offset(0, 1)),
+              BoxShadow(
+                  color: Colors.black26, blurRadius: 2, offset: Offset(0, 1)),
             ],
           ),
         ),
