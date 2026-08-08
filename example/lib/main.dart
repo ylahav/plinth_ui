@@ -41,6 +41,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   bool _notifications = true;
   String _activeTab = 'account';
   double _sliderValue = 40;
+  int _currentStep = 0;
 
   @override
   void initState() {
@@ -294,6 +295,74 @@ class _ShowcasePageState extends State<ShowcasePage> {
                     ['Alice', 'Engineer', 'Active'],
                     ['Bob', 'Designer', 'Invited'],
                     ['Carol', 'PM', 'Active'],
+                  ],
+                ),
+                _gap(),
+                _sectionTitle('Notification'),
+                _gap(12),
+                PlinthButton(
+                  variant: PlinthVariant.outline,
+                  color: 'green',
+                  onPressed: () => PlinthNotification.show(
+                    context,
+                    title: 'Saved',
+                    color: 'green',
+                    icon: const Icon(Icons.check_circle_outline),
+                    child: const Text('Your changes have been saved.'),
+                  ),
+                  child: const Text('Show notification'),
+                ),
+                _gap(),
+                _sectionTitle('Stepper'),
+                _gap(12),
+                PlinthStepper(
+                  currentStep: _currentStep,
+                  onStepTapped: (i) => setState(() => _currentStep = i),
+                  steps: const [
+                    PlinthStep(label: 'Account'),
+                    PlinthStep(label: 'Shipping'),
+                    PlinthStep(label: 'Confirm'),
+                  ],
+                ),
+                _gap(12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    PlinthButton(
+                      variant: PlinthVariant.subtle,
+                      color: 'gray',
+                      onPressed: _currentStep == 0
+                          ? null
+                          : () => setState(() => _currentStep -= 1),
+                      child: const Text('Back'),
+                    ),
+                    const SizedBox(width: 8),
+                    PlinthButton(
+                      onPressed: _currentStep == 2
+                          ? null
+                          : () => setState(() => _currentStep += 1),
+                      child: const Text('Next'),
+                    ),
+                  ],
+                ),
+                _gap(),
+                _sectionTitle('Skeleton'),
+                _gap(12),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const PlinthSkeleton(width: 40, height: 40, circle: true),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          PlinthSkeleton(height: 14),
+                          SizedBox(height: 8),
+                          PlinthSkeleton(height: 14, width: 160),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
                 _gap(),

@@ -216,6 +216,16 @@ the same Flutter version installed would work equivalently — the
 regenerate-goldens workflow is just a ready-made way to get an Ubuntu
 environment without setting that up yourself.
 
+**Important consequence, once you've regenerated goldens on Linux:**
+your local `flutter test` on Windows/macOS will now show the *same kind*
+of small pixel diff on the golden test — just flipped, since the
+reference images are now Linux-rendered and your local machine isn't.
+This is expected, not a regression — don't chase it locally. Treat
+GitHub Actions CI (which runs on `ubuntu-latest`, matching the goldens)
+as the source of truth for whether golden tests actually pass. If a
+local golden failure is the *only* failure and CI is green, there's
+nothing to fix.
+
 ## 8. Continuous integration
 
 `.github/workflows/ci.yml` runs the exact sequence documented above —

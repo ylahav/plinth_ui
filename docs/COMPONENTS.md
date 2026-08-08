@@ -93,6 +93,22 @@ uppercase by default, pill-shaped (`borderRadius: 999`).
 height), `radius`, `trackColor`. Fill animates smoothly on value change
 via an internal `AnimatedFractionallySizedBox` helper.
 
+### `PlinthNotification`
+`title` (optional), `child`, `color` (default `'blue'`), `icon`, `onClose`,
+`radius`. Distinct from `PlinthAlert`: Alert is an inline callout meant to
+sit in normal page layout flow; Notification is meant to float. Use the
+static `PlinthNotification.show(context, ...)` to push it as a `SnackBar`
+via `ScaffoldMessenger` — inherits Flutter's own stacking, auto-dismiss
+timing, and swipe-to-dismiss rather than reimplementing a toast stack.
+`onClose` is wired up automatically when shown via `show()`.
+
+### `PlinthSkeleton`
+`width` (omit to fill parent), `height` (default `16`), `radius`, `circle`
+(renders as a circle instead of a rounded rect, for avatar placeholders).
+Pulses via a self-triggering `TweenAnimationBuilder` rather than a
+shimmer-gradient + `AnimationController` — simpler lifecycle, same
+"this is loading" signal.
+
 ---
 
 ## Data Display
@@ -121,6 +137,15 @@ one item open at a time), `initiallyOpen` (`Set<String>` of item
 `title`, `content`, `icon`. Manages its own open/closed state
 internally — unlike the overlay components, there's no external
 controller, since expanded state is presentation-local to the widget.
+
+### `PlinthStepper` + `PlinthStep`
+`steps` (`List<PlinthStep>`), `currentStep` (zero-based index), `onStepTapped`,
+`color`. Each `PlinthStep` has `label` and optional `description`. Purely
+a visual progress indicator — like `PlinthTabs`/`PlinthTabView`, it doesn't
+manage step *content*; pair with your own conditional rendering driven by
+the same `currentStep` you pass in. Tapping a step calls `onStepTapped`
+but doesn't change `currentStep` itself — controlled-component pattern,
+same as `PlinthTabs`.
 
 ### `PlinthTabs<T>` + `PlinthTabView<T>`
 `PlinthTabs`: `tabs` (`List<PlinthTabItem<T>>`), `value`, `onChanged`, `size`,

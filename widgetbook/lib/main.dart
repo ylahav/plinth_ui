@@ -392,6 +392,28 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 ),
               ],
             ),
+            WidgetbookComponent(
+              name: 'PlinthStepper',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Interactive',
+                  builder: (context) => _themed(_StepperDemo()),
+                ),
+                WidgetbookUseCase(
+                  name: 'All completed',
+                  builder: (context) => _themed(
+                    const PlinthStepper(
+                      currentStep: 3,
+                      steps: [
+                        PlinthStep(label: 'Account'),
+                        PlinthStep(label: 'Shipping'),
+                        PlinthStep(label: 'Confirm'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
         WidgetbookCategory(
@@ -450,6 +472,54 @@ class PlinthWidgetbookApp extends StatelessWidget {
                         PlinthProgress(value: 0.6, color: 'green'),
                         SizedBox(height: 8),
                         PlinthProgress(value: 0.9, color: 'red'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthNotification',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Static preview',
+                  // Like Modal, the interesting entry point (show())
+                  // is imperative and needs a Scaffold context to push
+                  // a SnackBar — this shows the inner content layout
+                  // only. See the example app for the full trigger flow.
+                  builder: (context) => _themed(
+                    PlinthNotification(
+                      title: 'Saved',
+                      color: 'green',
+                      icon: const Icon(Icons.check_circle_outline),
+                      onClose: () {},
+                      child: const Text('Your changes have been saved.'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthSkeleton',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Text lines + avatar',
+                  builder: (context) => _themed(
+                    const Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        PlinthSkeleton(width: 40, height: 40, circle: true),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              PlinthSkeleton(height: 14),
+                              SizedBox(height: 8),
+                              PlinthSkeleton(height: 14, width: 160),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -815,6 +885,31 @@ class _SliderDemoState extends State<_SliderDemo> {
       value: _value,
       onChanged: (v) => setState(() => _value = v),
       label: _value.round().toString(),
+    );
+  }
+}
+
+/// Owns the current step index for the Stepper use case, since
+/// [PlinthStepper] needs a value that changes on tap — a stateless
+/// use-case builder can't hold that itself.
+class _StepperDemo extends StatefulWidget {
+  @override
+  State<_StepperDemo> createState() => _StepperDemoState();
+}
+
+class _StepperDemoState extends State<_StepperDemo> {
+  int _step = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthStepper(
+      currentStep: _step,
+      onStepTapped: (i) => setState(() => _step = i),
+      steps: const [
+        PlinthStep(label: 'Account'),
+        PlinthStep(label: 'Shipping'),
+        PlinthStep(label: 'Confirm'),
+      ],
     );
   }
 }
