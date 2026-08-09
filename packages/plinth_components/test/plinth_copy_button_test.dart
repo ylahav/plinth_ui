@@ -65,7 +65,13 @@ void main() {
       await tester.pump();
       expect(find.byIcon(Icons.check), findsOneWidget);
 
+      // Elapsing time via pump(duration) fires the Timer (and its
+      // setState) within the fake-async window, but the resulting
+      // frame isn't reliably captured by that same pump() call across
+      // all Flutter SDK versions — a follow-up zero-duration pump()
+      // guarantees the rebuilt frame is what find() sees.
       await tester.pump(const Duration(milliseconds: 250));
+      await tester.pump();
       expect(find.byIcon(Icons.copy_outlined), findsOneWidget);
       expect(find.byIcon(Icons.check), findsNothing);
     });
