@@ -124,7 +124,8 @@ class _ShowcasePageState extends State<ShowcasePage> {
                 color: 'gray',
                 fullWidth: true,
                 onPressed: () => Navigator.of(dialogContext).pop(),
-                child: Align(alignment: Alignment.centerLeft, child: Text(item)),
+                child:
+                    Align(alignment: Alignment.centerLeft, child: Text(item)),
               ),
           ],
         ),
@@ -154,14 +155,14 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ),
                   _gap(),
                 ],
-
                 _sectionTitle('Avatars'),
                 _gap(12),
                 Row(
                   children: [
                     const PlinthAvatar(initials: 'YR', color: 'blue'),
                     const SizedBox(width: 12),
-                    const PlinthAvatar(initials: 'AB', color: 'green', size: PlinthSize.lg),
+                    const PlinthAvatar(
+                        initials: 'AB', color: 'green', size: PlinthSize.lg),
                     const SizedBox(width: 12),
                     PlinthAvatar(color: 'gray', size: PlinthSize.sm),
                     const SizedBox(width: 12),
@@ -173,7 +174,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Tooltip'),
                 _gap(12),
                 PlinthTooltip(
@@ -186,7 +186,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ),
                 ),
                 _gap(),
-
                 _sectionTitle('Popover'),
                 _gap(12),
                 PlinthPopover(
@@ -204,7 +203,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ),
                 ),
                 _gap(),
-
                 _sectionTitle('Menu'),
                 _gap(12),
                 PlinthMenu(
@@ -235,7 +233,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Tabs'),
                 _gap(12),
                 PlinthTabs<String>(
@@ -257,7 +254,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   },
                 ),
                 _gap(),
-
                 _sectionTitle('Switch'),
                 _gap(12),
                 PlinthSwitch(
@@ -266,14 +262,12 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   onChanged: (v) => setState(() => _notifications = v),
                 ),
                 _gap(),
-
                 _sectionTitle('Progress'),
                 _gap(12),
                 const PlinthProgress(value: 0.35, color: 'blue'),
                 _gap(8),
                 const PlinthProgress(value: 0.7, color: 'green'),
                 _gap(),
-
                 _sectionTitle('Slider'),
                 _gap(12),
                 PlinthSlider(
@@ -282,7 +276,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   label: _sliderValue.round().toString(),
                 ),
                 _gap(),
-
                 _sectionTitle('Accordion'),
                 _gap(12),
                 const PlinthAccordion(
@@ -300,7 +293,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Table'),
                 _gap(12),
                 const PlinthTable(
@@ -313,7 +305,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Notification'),
                 _gap(12),
                 PlinthButton(
@@ -329,7 +320,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   child: const Text('Show notification'),
                 ),
                 _gap(),
-
                 _sectionTitle('Stepper'),
                 _gap(12),
                 PlinthStepper(
@@ -363,7 +353,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Skeleton'),
                 _gap(12),
                 Row(
@@ -384,7 +373,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Badges'),
                 _gap(12),
                 Wrap(
@@ -392,13 +380,15 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   runSpacing: 8,
                   children: const [
                     PlinthBadge('New', color: 'green'),
-                    PlinthBadge('Beta', variant: PlinthVariant.outline, color: 'blue'),
-                    PlinthBadge('Deprecated', variant: PlinthVariant.filled, color: 'red'),
-                    PlinthBadge('Draft', variant: PlinthVariant.subtle, color: 'gray'),
+                    PlinthBadge('Beta',
+                        variant: PlinthVariant.outline, color: 'blue'),
+                    PlinthBadge('Deprecated',
+                        variant: PlinthVariant.filled, color: 'red'),
+                    PlinthBadge('Draft',
+                        variant: PlinthVariant.subtle, color: 'gray'),
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Checkbox'),
                 _gap(12),
                 PlinthCheckbox(
@@ -407,7 +397,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   onChanged: (v) => setState(() => _agreed = v),
                 ),
                 _gap(),
-
                 _sectionTitle('Radio Group'),
                 _gap(12),
                 PlinthRadioGroup<String>(
@@ -421,7 +410,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Select'),
                 _gap(12),
                 PlinthSelect<String>(
@@ -436,7 +424,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Text Input'),
                 _gap(12),
                 PlinthTextInput(
@@ -449,7 +436,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   onChanged: (value) => setState(() => _email = value),
                 ),
                 _gap(),
-
                 _sectionTitle('Drawer'),
                 _gap(12),
                 PlinthButton(
@@ -458,7 +444,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   child: const Text('Open navigation drawer'),
                 ),
                 _gap(),
-
                 _sectionTitle('Modal'),
                 _gap(12),
                 PlinthButton(
@@ -468,7 +453,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   child: const Text('Open delete confirmation'),
                 ),
                 _gap(),
-
                 _sectionTitle('Breadcrumbs'),
                 _gap(12),
                 PlinthBreadcrumbs(
@@ -479,14 +463,12 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Divider'),
                 _gap(12),
                 const PlinthDivider(),
                 _gap(12),
                 const PlinthDivider(label: 'OR'),
                 _gap(),
-
                 _sectionTitle('Card'),
                 _gap(12),
                 PlinthCard(
@@ -508,7 +490,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   child: const Text('Card body content goes here.'),
                 ),
                 _gap(),
-
                 _sectionTitle('Segmented Control'),
                 _gap(12),
                 PlinthSegmentedControl<String>(
@@ -521,7 +502,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Number Input'),
                 _gap(12),
                 PlinthNumberInput(
@@ -532,7 +512,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   onChanged: (v) => setState(() => _quantity = v),
                 ),
                 _gap(),
-
                 _sectionTitle('Chip'),
                 _gap(12),
                 Wrap(
@@ -543,13 +522,14 @@ class _ShowcasePageState extends State<ShowcasePage> {
                         label: tag,
                         selected: _selectedTags.contains(tag),
                         onSelected: (selected) => setState(() {
-                          selected ? _selectedTags.add(tag) : _selectedTags.remove(tag);
+                          selected
+                              ? _selectedTags.add(tag)
+                              : _selectedTags.remove(tag);
                         }),
                       ),
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Rating'),
                 _gap(12),
                 PlinthRating(
@@ -557,7 +537,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   onChanged: (v) => setState(() => _rating = v),
                 ),
                 _gap(),
-
                 _sectionTitle('Action Icon'),
                 _gap(12),
                 Row(
@@ -583,7 +562,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Textarea'),
                 _gap(12),
                 PlinthTextarea(
@@ -592,7 +570,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   onChanged: (v) {},
                 ),
                 _gap(),
-
                 _sectionTitle('Password Input'),
                 _gap(12),
                 PlinthPasswordInput(
@@ -601,7 +578,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   onChanged: (v) {},
                 ),
                 _gap(),
-
                 _sectionTitle('Pagination'),
                 _gap(12),
                 PlinthPagination(
@@ -610,7 +586,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   onChanged: (p) => setState(() => _page = p),
                 ),
                 _gap(),
-
                 _sectionTitle('Timeline'),
                 _gap(12),
                 const PlinthTimeline(
@@ -631,7 +606,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Kbd'),
                 _gap(12),
                 const Row(
@@ -644,12 +618,12 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Theme Icon'),
                 _gap(12),
                 Row(
                   children: [
-                    PlinthThemeIcon(icon: const Icon(Icons.check), color: 'green'),
+                    PlinthThemeIcon(
+                        icon: const Icon(Icons.check), color: 'green'),
                     const SizedBox(width: 8),
                     PlinthThemeIcon(
                       icon: const Icon(Icons.info_outline),
@@ -664,7 +638,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Indicator'),
                 _gap(12),
                 Row(
@@ -681,7 +654,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Spoiler'),
                 _gap(12),
                 const PlinthSpoiler(
@@ -695,7 +667,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ),
                 ),
                 _gap(),
-
                 _sectionTitle('Loading Overlay'),
                 _gap(12),
                 PlinthButton(
@@ -714,16 +685,15 @@ class _ShowcasePageState extends State<ShowcasePage> {
                     p: PlinthSize.md,
                     radius: PlinthSize.md,
                     border: Colors.grey.shade300,
-                    child: const Text('Form content that gets dimmed while saving.'),
+                    child: const Text(
+                        'Form content that gets dimmed while saving.'),
                   ),
                 ),
                 _gap(),
-
                 _sectionTitle('Anchor'),
                 _gap(12),
                 PlinthAnchor('Forgot password?', onTap: () {}),
                 _gap(),
-
                 _sectionTitle('Blockquote'),
                 _gap(12),
                 const PlinthBlockquote(
@@ -731,7 +701,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   citation: 'Alan Kay',
                 ),
                 _gap(),
-
                 _sectionTitle('Copy Button'),
                 _gap(12),
                 Row(
@@ -742,7 +711,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Nav Link'),
                 _gap(12),
                 Column(
@@ -761,7 +729,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Color Swatch'),
                 _gap(12),
                 Row(
@@ -777,7 +744,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Box + Text + Disclosure'),
                 _gap(12),
                 PlinthBox(
@@ -807,7 +773,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ),
                 ),
                 _gap(),
-
                 _sectionTitle('Button Variants'),
                 _gap(12),
                 Wrap(
@@ -823,7 +788,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Button Sizes'),
                 _gap(12),
                 Wrap(
@@ -840,7 +804,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   ],
                 ),
                 _gap(),
-
                 _sectionTitle('Button Colors'),
                 _gap(12),
                 Wrap(

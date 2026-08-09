@@ -46,9 +46,8 @@ class _PlinthSkeletonState extends State<PlinthSkeleton> {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final resolvedRadius = widget.circle
-        ? 999.0
-        : theme.radius[widget.radius ?? PlinthSize.sm]!;
+    final resolvedRadius =
+        widget.circle ? 999.0 : theme.radius[widget.radius ?? PlinthSize.sm]!;
 
     // A self-triggering TweenAnimationBuilder: each time the target
     // opacity is reached, onEnd flips `_dim` and the widget rebuilds
@@ -66,7 +65,8 @@ class _PlinthSkeletonState extends State<PlinthSkeleton> {
             height: widget.height,
             decoration: BoxDecoration(
               color: const Color(0xFFE9ECEF),
-              borderRadius: widget.circle ? null : BorderRadius.circular(resolvedRadius),
+              borderRadius:
+                  widget.circle ? null : BorderRadius.circular(resolvedRadius),
               shape: widget.circle ? BoxShape.circle : BoxShape.rectangle,
             ),
           ),

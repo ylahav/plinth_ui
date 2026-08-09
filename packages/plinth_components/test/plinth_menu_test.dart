@@ -11,7 +11,8 @@ Widget _wrap(Widget child) {
 
 void main() {
   group('PlinthMenu', () {
-    testWidgets('items are not visible before the controller opens', (tester) async {
+    testWidgets('items are not visible before the controller opens',
+        (tester) async {
       final controller = PlinthDisclosureController();
       addTearDown(controller.dispose);
 
@@ -48,7 +49,8 @@ void main() {
       expect(find.text('Edit'), findsOneWidget);
     });
 
-    testWidgets('tapping an item fires its onTap and closes the controller', (tester) async {
+    testWidgets('tapping an item fires its onTap and closes the controller',
+        (tester) async {
       final controller = PlinthDisclosureController();
       addTearDown(controller.dispose);
       var tapped = false;

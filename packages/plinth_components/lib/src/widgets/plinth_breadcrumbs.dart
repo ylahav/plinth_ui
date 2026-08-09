@@ -71,7 +71,8 @@ class PlinthBreadcrumbs extends StatelessWidget {
 }
 
 class _Crumb extends StatelessWidget {
-  const _Crumb({required this.item, required this.isLast, required this.linkColor});
+  const _Crumb(
+      {required this.item, required this.isLast, required this.linkColor});
 
   final PlinthBreadcrumbItem item;
   final bool isLast;

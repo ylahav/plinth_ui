@@ -30,7 +30,8 @@ void main() {
     testWidgets('every variant renders without throwing', (tester) async {
       for (final variant in PlinthVariant.values) {
         await tester.pumpWidget(
-          _wrap(PlinthThemeIcon(icon: const Icon(Icons.star), variant: variant)),
+          _wrap(
+              PlinthThemeIcon(icon: const Icon(Icons.star), variant: variant)),
         );
         expect(find.byIcon(Icons.star), findsOneWidget);
       }

@@ -19,7 +19,8 @@ void main() {
       expect(find.text('5'), findsOneWidget);
     });
 
-    testWidgets('tapping increment calls onChanged with value + step', (tester) async {
+    testWidgets('tapping increment calls onChanged with value + step',
+        (tester) async {
       num? changed;
       await tester.pumpWidget(
         _wrap(PlinthNumberInput(value: 5, onChanged: (v) => changed = v)),
@@ -31,7 +32,8 @@ void main() {
       expect(changed, equals(6));
     });
 
-    testWidgets('tapping decrement calls onChanged with value - step', (tester) async {
+    testWidgets('tapping decrement calls onChanged with value - step',
+        (tester) async {
       num? changed;
       await tester.pumpWidget(
         _wrap(PlinthNumberInput(value: 5, onChanged: (v) => changed = v)),

@@ -55,7 +55,8 @@ class PlinthThemeIcon extends StatelessWidget {
     final baseColor = theme.color(colorKey, 6);
     final lightColor = theme.color(colorKey, 1);
     final dimension = _dimensions[size]!;
-    final resolvedRadius = circle ? dimension / 2 : theme.radius[radius ?? theme.defaultRadius]!;
+    final resolvedRadius =
+        circle ? dimension / 2 : theme.radius[radius ?? theme.defaultRadius]!;
 
     final (background, foreground) = switch (variant) {
       PlinthVariant.filled => (baseColor, Colors.white),
@@ -73,7 +74,9 @@ class PlinthThemeIcon extends StatelessWidget {
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(resolvedRadius),
-        border: variant == PlinthVariant.outline ? Border.all(color: baseColor) : null,
+        border: variant == PlinthVariant.outline
+            ? Border.all(color: baseColor)
+            : null,
       ),
       child: IconTheme(
         data: IconThemeData(size: _iconSizes[size], color: foreground),
