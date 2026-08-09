@@ -51,8 +51,7 @@ void main() {
       expect(find.text('3'), findsOneWidget);
     });
 
-    testWidgets('tapping a step calls onStepTapped with its index',
-        (tester) async {
+    testWidgets('tapping a step calls onStepTapped with its index', (tester) async {
       int? tapped;
       await tester.pumpWidget(
         _wrap(

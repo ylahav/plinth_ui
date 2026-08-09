@@ -70,8 +70,7 @@ void main() {
       expect(find.text('Panel A'), findsNothing);
     });
 
-    testWidgets('renders nothing for a value with no matching child',
-        (tester) async {
+    testWidgets('renders nothing for a value with no matching child', (tester) async {
       await tester.pumpWidget(
         _wrap(
           const PlinthTabView<String>(

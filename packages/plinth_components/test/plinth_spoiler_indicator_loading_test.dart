@@ -20,8 +20,7 @@ void main() {
       expect(find.text('Show less'), findsNothing);
     });
 
-    testWidgets('tapping the toggle switches to the hide-label',
-        (tester) async {
+    testWidgets('tapping the toggle switches to the hide-label', (tester) async {
       await tester.pumpWidget(
         _wrap(const PlinthSpoiler(child: Text('Long content'))),
       );
@@ -63,8 +62,7 @@ void main() {
       expect(find.text('3'), findsOneWidget);
     });
 
-    testWidgets('hides the indicator label when disabled, keeps the child',
-        (tester) async {
+    testWidgets('hides the indicator label when disabled, keeps the child', (tester) async {
       await tester.pumpWidget(
         _wrap(
           const PlinthIndicator(
@@ -98,8 +96,7 @@ void main() {
     testWidgets('shows a spinner when visible', (tester) async {
       await tester.pumpWidget(
         _wrap(
-          const PlinthLoadingOverlay(
-              visible: true, child: Text('Form content')),
+          const PlinthLoadingOverlay(visible: true, child: Text('Form content')),
         ),
       );
 
@@ -109,8 +106,7 @@ void main() {
     testWidgets('hides the spinner when not visible', (tester) async {
       await tester.pumpWidget(
         _wrap(
-          const PlinthLoadingOverlay(
-              visible: false, child: Text('Form content')),
+          const PlinthLoadingOverlay(visible: false, child: Text('Form content')),
         ),
       );
 
@@ -118,12 +114,10 @@ void main() {
       expect(find.text('Form content'), findsOneWidget);
     });
 
-    testWidgets('child stays in the tree (not removed) while visible',
-        (tester) async {
+    testWidgets('child stays in the tree (not removed) while visible', (tester) async {
       await tester.pumpWidget(
         _wrap(
-          const PlinthLoadingOverlay(
-              visible: true, child: Text('Form content')),
+          const PlinthLoadingOverlay(visible: true, child: Text('Form content')),
         ),
       );
 

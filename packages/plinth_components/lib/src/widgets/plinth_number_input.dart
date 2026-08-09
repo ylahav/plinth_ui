@@ -64,15 +64,13 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
   final _focusNode = FocusNode();
   bool _isFocused = false;
 
-  String _format(num value) => value == value.roundToDouble()
-      ? value.toInt().toString()
-      : value.toString();
+  String _format(num value) =>
+      value == value.roundToDouble() ? value.toInt().toString() : value.toString();
 
   @override
   void initState() {
     super.initState();
-    _focusNode
-        .addListener(() => setState(() => _isFocused = _focusNode.hasFocus));
+    _focusNode.addListener(() => setState(() => _isFocused = _focusNode.hasFocus));
   }
 
   @override
@@ -150,8 +148,7 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(resolvedRadius),
-            border: Border.all(
-                color: borderColor, width: _isFocused || hasError ? 2 : 1),
+            border: Border.all(color: borderColor, width: _isFocused || hasError ? 2 : 1),
             color: widget.enabled ? Colors.white : const Color(0xFFF1F3F5),
           ),
           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -162,8 +159,7 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
                   controller: _controller,
                   focusNode: _focusNode,
                   enabled: widget.enabled,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*')),
                   ],
@@ -172,8 +168,7 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     isDense: true,
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: verticalPadding),
+                    contentPadding: EdgeInsets.symmetric(vertical: verticalPadding),
                   ),
                 ),
               ),
@@ -200,8 +195,7 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
 }
 
 class _StepButton extends StatelessWidget {
-  const _StepButton(
-      {required this.icon, required this.enabled, required this.onTap});
+  const _StepButton({required this.icon, required this.enabled, required this.onTap});
 
   final IconData icon;
   final bool enabled;

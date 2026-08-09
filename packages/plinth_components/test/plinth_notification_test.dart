@@ -44,8 +44,7 @@ void main() {
       expect(closed, isTrue);
     });
 
-    testWidgets('show() displays the notification as a SnackBar',
-        (tester) async {
+    testWidgets('show() displays the notification as a SnackBar', (tester) async {
       await tester.pumpWidget(
         _wrap(
           Builder(

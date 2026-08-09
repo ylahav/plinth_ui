@@ -41,8 +41,7 @@ class PlinthKbd extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: const Color(0xFFDEE2E6)),
         boxShadow: const [
-          BoxShadow(
-              color: Color(0x1A000000), blurRadius: 0, offset: Offset(0, 1)),
+          BoxShadow(color: Color(0x1A000000), blurRadius: 0, offset: Offset(0, 1)),
         ],
       ),
       child: Text(

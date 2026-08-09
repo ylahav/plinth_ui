@@ -84,8 +84,7 @@ class PlinthTabs<T> extends StatelessWidget {
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color:
-                          tab.value == value ? activeColor : Colors.transparent,
+                      color: tab.value == value ? activeColor : Colors.transparent,
                       width: 2,
                     ),
                   ),
@@ -106,9 +105,7 @@ class PlinthTabs<T> extends StatelessWidget {
                     PlinthText(
                       tab.label,
                       size: size,
-                      weight: tab.value == value
-                          ? FontWeight.w600
-                          : FontWeight.w400,
+                      weight: tab.value == value ? FontWeight.w600 : FontWeight.w400,
                       color: tab.value == value ? colorKey : null,
                     ),
                   ],
