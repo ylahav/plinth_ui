@@ -41,6 +41,10 @@ circular) with no label — for icon-only actions.
 needs an explicit extent from its parent to render visibly in an
 unconstrained context), `color`.
 
+### `PlinthKbd`
+`label` (positional), `size`. A styled keyboard-key badge for documenting
+shortcuts, e.g. `PlinthKbd('Ctrl')` + `PlinthKbd('K')`.
+
 ---
 
 ## Surfaces
@@ -173,6 +177,20 @@ Pulses via a self-triggering `TweenAnimationBuilder` rather than a
 shimmer-gradient + `AnimationController` — simpler lifecycle, same
 "this is loading" signal.
 
+### `PlinthSpoiler`
+`child`, `maxHeight` (default `100`), `showLabel`/`hideLabel`, `color`.
+"Show more/less" wrapper for a single block of content — distinct from
+`PlinthAccordion` (a list of independently toggleable sections), this is
+one block that's either fully shown or height-clipped.
+
+### `PlinthLoadingOverlay`
+`child`, `visible`, `color`. Dims `child` and shows a centered spinner on
+top when `visible`, blocking interaction underneath via `IgnorePointer`
+rather than removing `child` from the tree — layout stays stable across
+the loading toggle. Distinct from `PlinthSkeleton`: this overlays
+*existing* content during an async operation, rather than standing in for
+content that doesn't exist yet.
+
 ---
 
 ## Data Display
@@ -181,6 +199,21 @@ shimmer-gradient + `AnimationController` — simpler lifecycle, same
 `imageUrl`, `initials`, `color`, `size`, `radius` (omit for fully circular).
 Fallback chain: `imageUrl` -> `initials` on a tinted background -> generic
 person icon.
+
+### `PlinthThemeIcon`
+`icon`, `variant`, `size`, `color`, `radius`, `circle`. A colored icon
+container for use as a leading visual in list items or feature cards —
+same variant/size/color resolution as `PlinthActionIcon`, but not
+tappable (`ThemeIcon` is decorative, `ActionIcon` is interactive).
+
+### `PlinthIndicator`
+`child`, `label` (omit for a plain dot), `color` (defaults to `'red'`,
+not the theme's primary color — a notification dot conventionally reads
+as red/attention regardless of brand color), `position`
+(`PlinthIndicatorPosition`: `topStart, topEnd, bottomStart, bottomEnd`),
+`disabled` (hides the indicator without removing `child` from the tree).
+Anchors a small badge/dot to a corner of `child` via `Stack` +
+`FractionalTranslation`.
 
 ### `PlinthTable`
 `columns` (`List<String>`), `rows` (`List<List<String>>` — each inner

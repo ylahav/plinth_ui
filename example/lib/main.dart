@@ -47,6 +47,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   final Set<String> _selectedTags = {'flutter'};
   double _rating = 3;
   int _page = 1;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -602,6 +603,90 @@ class _ShowcasePageState extends State<ShowcasePage> {
                       description: 'Pending',
                     ),
                   ],
+                ),
+                _gap(),
+                _sectionTitle('Kbd'),
+                _gap(12),
+                const Row(
+                  children: [
+                    PlinthKbd('Ctrl'),
+                    SizedBox(width: 4),
+                    Text(' + '),
+                    SizedBox(width: 4),
+                    PlinthKbd('K'),
+                  ],
+                ),
+                _gap(),
+                _sectionTitle('Theme Icon'),
+                _gap(12),
+                Row(
+                  children: [
+                    PlinthThemeIcon(
+                        icon: const Icon(Icons.check), color: 'green'),
+                    const SizedBox(width: 8),
+                    PlinthThemeIcon(
+                      icon: const Icon(Icons.info_outline),
+                      variant: PlinthVariant.light,
+                    ),
+                    const SizedBox(width: 8),
+                    PlinthThemeIcon(
+                      icon: const Icon(Icons.star),
+                      color: 'red',
+                      circle: true,
+                    ),
+                  ],
+                ),
+                _gap(),
+                _sectionTitle('Indicator'),
+                _gap(12),
+                Row(
+                  children: [
+                    const PlinthIndicator(
+                      label: '3',
+                      child: Icon(Icons.notifications_outlined, size: 28),
+                    ),
+                    const SizedBox(width: 24),
+                    const PlinthIndicator(
+                      color: 'green',
+                      child: PlinthAvatar(initials: 'AB'),
+                    ),
+                  ],
+                ),
+                _gap(),
+                _sectionTitle('Spoiler'),
+                _gap(12),
+                const PlinthSpoiler(
+                  maxHeight: 60,
+                  child: Text(
+                    'This is a long block of text that gets clipped to a fixed '
+                    'height until the user taps "Show more" to reveal the rest '
+                    'of the content, and "Show less" to collapse it again. '
+                    'Useful for long descriptions, comments, or bios where you '
+                    "don't want to overwhelm the page by default.",
+                  ),
+                ),
+                _gap(),
+                _sectionTitle('Loading Overlay'),
+                _gap(12),
+                PlinthButton(
+                  variant: PlinthVariant.outline,
+                  onPressed: () async {
+                    setState(() => _isSaving = true);
+                    await Future.delayed(const Duration(seconds: 2));
+                    if (mounted) setState(() => _isSaving = false);
+                  },
+                  child: const Text('Simulate save (2s)'),
+                ),
+                _gap(12),
+                PlinthLoadingOverlay(
+                  visible: _isSaving,
+                  child: PlinthBox(
+                    p: PlinthSize.md,
+                    radius: PlinthSize.md,
+                    border: Colors.grey.shade300,
+                    child: const Text(
+                        'Form content that gets dimmed while saving.'),
+                  ),
                 ),
                 _gap(),
                 _sectionTitle('Box + Text + Disclosure'),

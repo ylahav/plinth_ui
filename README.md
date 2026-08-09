@@ -12,13 +12,15 @@ plinth_ui/
   .github/workflows/regenerate-goldens.yml # manual — regenerates goldens on Linux to match CI
   packages/
     plinth_core/            # PlinthTheme, design tokens (colors, spacing, radius)
-    plinth_components/       # Widgets (Button, ActionIcon, Box, Text, Divider, Modal,
-    │                          Drawer, TextInput, Textarea, PasswordInput, Checkbox,
-    │                          Radio/RadioGroup, Select, Badge, Alert, Switch, Slider,
-    │                          Progress, Avatar, Table, Accordion, Stepper,
-    │                          Breadcrumbs, Pagination, Timeline, Notification,
-    │                          Skeleton, Paper, Card, SegmentedControl, NumberInput,
-    │                          Chip, Rating, Tooltip, Popover, Tabs/TabView, Menu)
+    plinth_components/       # Widgets (Button, ActionIcon, Box, Text, Divider, Kbd,
+    │                          Modal, Drawer, TextInput, Textarea, PasswordInput,
+    │                          Checkbox, Radio/RadioGroup, Select, Badge, Alert,
+    │                          Switch, Slider, Progress, Spoiler, LoadingOverlay,
+    │                          Avatar, ThemeIcon, Indicator, Table, Accordion,
+    │                          Stepper, Breadcrumbs, Pagination, Timeline,
+    │                          Notification, Skeleton, Paper, Card, SegmentedControl,
+    │                          NumberInput, Chip, Rating, Tooltip, Popover,
+    │                          Tabs/TabView, Menu)
     plinth_hooks/             # PlinthDisclosureController (useDisclosure equivalent)
   example/                  # Showcase app — run this to see every component live
   widgetbook/               # Isolated component gallery (manual/non-codegen setup)
@@ -79,9 +81,11 @@ notification trigger, an interactive stepper, skeleton loaders, breadcrumbs,
 a divider (plain and labeled), a card with header/footer, a segmented control,
 a number input with +/- steppers, filterable chips, a star rating, icon-only
 action buttons, a textarea, a password field with visibility toggle,
-pagination, an order-status timeline, drawer/modal/popover triggers, a
-themed Box/Text/disclosure demo, and the full button variant/size/color
-matrix — all driven by `PlinthTheme.defaultTheme` in `plinth_core`.
+pagination, an order-status timeline, a keyboard-shortcut example, colored
+theme icons, a notification indicator, a collapsible spoiler, a simulated
+loading overlay, drawer/modal/popover triggers, a themed Box/Text/disclosure
+demo, and the full button variant/size/color matrix — all driven by
+`PlinthTheme.defaultTheme` in `plinth_core`.
 
 The Widgetbook app organizes the same components into browsable categories
 (Buttons & Actions, Forms, Navigation, Feedback, Overlays, Data Display,
@@ -96,7 +100,8 @@ the sidebar.
   scales.
 - **Primitives** (`plinth_components`) — `PlinthButton`, `PlinthActionIcon`
   (icon-only, same variant/size/color pattern as Button), `PlinthBox`,
-  `PlinthText`, `PlinthDivider` (plain, labeled, or vertical).
+  `PlinthText`, `PlinthDivider` (plain, labeled, or vertical), `PlinthKbd`
+  (keyboard-key badge).
 - **Forms** — `PlinthTextInput`, `PlinthTextarea`, `PlinthPasswordInput`
   (show/hide toggle), `PlinthCheckbox`, `PlinthRadio` /
   `PlinthRadioGroup`, `PlinthSelect`, `PlinthSegmentedControl`,
@@ -106,8 +111,14 @@ the sidebar.
 - **Feedback** — `PlinthBadge`, `PlinthAlert`, `PlinthProgress`,
   `PlinthNotification` (toast-style, shown via the static `.show()`
   as a themed `SnackBar` — distinct from `PlinthAlert`'s inline
-  callout), `PlinthSkeleton` (pulsing loading placeholder).
+  callout), `PlinthSkeleton` (pulsing loading placeholder),
+  `PlinthSpoiler` (single-block "show more/less", distinct from
+  `PlinthAccordion`'s independently toggleable sections),
+  `PlinthLoadingOverlay` (dims existing content during an async op,
+  distinct from `PlinthSkeleton`'s pre-content placeholder).
 - **Data display** — `PlinthAvatar` (image → initials → icon fallback chain),
+  `PlinthThemeIcon` (colored icon container, decorative counterpart to
+  `PlinthActionIcon`), `PlinthIndicator` (corner-anchored dot/badge),
   `PlinthTable` (built on Flutter's `Table`, not `DataTable`).
 - **Navigation** — `PlinthTabs` / `PlinthTabView` (underline tab bar +
   fade-switched content, generic over the tab value type),
@@ -135,19 +146,16 @@ the sidebar.
   and accessibility aren't worth reimplementing.
 - **Widgetbook gallery** (`widgetbook/`) — manual (non-codegen)
   registration of every component's key states as browsable use cases.
-- **Tests** — a first checked-in test per package: pure-logic tests for
-  `PlinthTheme`'s shade generator and `PlinthDisclosureController`,
-  widget behavior test suites for `PlinthButton`, `PlinthTabs`/
-  `PlinthTabView`, `PlinthMenu`, `PlinthAccordion`, `PlinthTable`,
-  `PlinthStepper`, `PlinthSkeleton`, `PlinthNotification`,
-  `PlinthBreadcrumbs`, `PlinthCard`/`PlinthPaper`, `PlinthNumberInput`,
-  `PlinthChip`/`PlinthRating`/`PlinthSegmentedControl`,
-  `PlinthPagination` (including its ellipsis-collapse logic at large
-  page counts), and `PlinthActionIcon`/`PlinthTextarea`/
-  `PlinthPasswordInput`/`PlinthTimeline`, plus a golden (visual
-  regression) test suite for `PlinthButton` covering variants, a
-  color override, disabled state, and all sizes.
-  See `docs/TESTING.md`.
+- **Tests** — pure-logic tests for `PlinthTheme`'s shade generator and
+  `PlinthDisclosureController`, a golden (visual regression) test suite
+  for `PlinthButton` (variants, a color override, disabled state, all
+  sizes), and widget behavior tests for most other components — 17 test
+  files covering the majority of the 42 public components as of this
+  writing.
+  Notable coverage: `PlinthPagination`'s ellipsis-collapse logic at large
+  page counts, `PlinthAccordion`'s single/multiple-open modes,
+  `PlinthMenu`/`PlinthNotification`'s overlay-dismissal behavior. See
+  `docs/TESTING.md` for the full breakdown and how to run them.
 - **CI is green** — `.github/workflows/ci.yml` passes end-to-end
   (bootstrap, format, analyze, test) on GitHub Actions as of this
   writing. Getting there surfaced two real, non-obvious issues worth

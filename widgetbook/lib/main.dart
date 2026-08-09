@@ -725,6 +725,60 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 ),
               ],
             ),
+            WidgetbookComponent(
+              name: 'PlinthSpoiler',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Interactive',
+                  builder: (context) => _themed(
+                    const PlinthSpoiler(
+                      maxHeight: 60,
+                      child: Text(
+                        'This is a long block of text that gets clipped to a '
+                        'fixed height until the user taps "Show more" to '
+                        'reveal the rest of the content, and "Show less" to '
+                        'collapse it again.',
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthLoadingOverlay',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Loading',
+                  builder: (context) => _themed(
+                    PlinthLoadingOverlay(
+                      visible: true,
+                      child: Container(
+                        width: 240,
+                        height: 100,
+                        alignment: Alignment.center,
+                        color: Colors.grey.shade100,
+                        child: const Text('Form content'),
+                      ),
+                    ),
+                  ),
+                ),
+                WidgetbookUseCase(
+                  name: 'Not loading',
+                  builder: (context) => _themed(
+                    PlinthLoadingOverlay(
+                      visible: false,
+                      child: Container(
+                        width: 240,
+                        height: 100,
+                        alignment: Alignment.center,
+                        color: Colors.grey.shade100,
+                        child: const Text('Form content'),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
         WidgetbookCategory(
@@ -898,6 +952,67 @@ class PlinthWidgetbookApp extends StatelessWidget {
                         ['Bob', 'Designer', 'Invited'],
                         ['Carol', 'PM', 'Active'],
                       ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthKbd',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Shortcut example',
+                  builder: (context) => _themed(
+                    const Row(
+                      children: [
+                        PlinthKbd('Ctrl'),
+                        SizedBox(width: 4),
+                        Text(' + '),
+                        SizedBox(width: 4),
+                        PlinthKbd('K'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthThemeIcon',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'All variants',
+                  builder: (context) => _themed(
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final v in PlinthVariant.values)
+                          PlinthThemeIcon(
+                              icon: const Icon(Icons.check), variant: v),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthIndicator',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'With label',
+                  builder: (context) => _themed(
+                    const PlinthIndicator(
+                      label: '3',
+                      child: Icon(Icons.notifications_outlined, size: 28),
+                    ),
+                  ),
+                ),
+                WidgetbookUseCase(
+                  name: 'Plain dot on an avatar',
+                  builder: (context) => _themed(
+                    const PlinthIndicator(
+                      color: 'green',
+                      child: PlinthAvatar(initials: 'AB'),
                     ),
                   ),
                 ),
