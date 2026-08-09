@@ -11,7 +11,8 @@ Widget _wrap(Widget child) {
 
 void main() {
   group('PlinthBreadcrumbs', () {
-    testWidgets('renders every label and a separator between each', (tester) async {
+    testWidgets('renders every label and a separator between each',
+        (tester) async {
       await tester.pumpWidget(
         _wrap(
           PlinthBreadcrumbs(
@@ -50,14 +51,16 @@ void main() {
       expect(tapped, isTrue);
     });
 
-    testWidgets('the last crumb is not tappable even if given onTap', (tester) async {
+    testWidgets('the last crumb is not tappable even if given onTap',
+        (tester) async {
       var tapped = false;
       await tester.pumpWidget(
         _wrap(
           PlinthBreadcrumbs(
             items: [
               const PlinthBreadcrumbItem(label: 'Home'),
-              PlinthBreadcrumbItem(label: 'Profile', onTap: () => tapped = true),
+              PlinthBreadcrumbItem(
+                  label: 'Profile', onTap: () => tapped = true),
             ],
           ),
         ),

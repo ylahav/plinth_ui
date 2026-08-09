@@ -19,7 +19,8 @@ void main() {
       expect(find.byIcon(Icons.check), findsNothing);
     });
 
-    testWidgets('writes value to the clipboard and shows a checkmark', (tester) async {
+    testWidgets('writes value to the clipboard and shows a checkmark',
+        (tester) async {
       final calls = <MethodCall>[];
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         SystemChannels.platform,
@@ -41,14 +42,16 @@ void main() {
       await tester.pump();
 
       expect(
-        calls.any((c) => c.method == 'Clipboard.setData' && c.arguments['text'] == 'hello'),
+        calls.any((c) =>
+            c.method == 'Clipboard.setData' && c.arguments['text'] == 'hello'),
         isTrue,
       );
       expect(find.byIcon(Icons.check), findsOneWidget);
       expect(find.byIcon(Icons.copy_outlined), findsNothing);
     });
 
-    testWidgets('reverts to the copy icon after confirmDuration', (tester) async {
+    testWidgets('reverts to the copy icon after confirmDuration',
+        (tester) async {
       await tester.pumpWidget(
         _wrap(
           const PlinthCopyButton(

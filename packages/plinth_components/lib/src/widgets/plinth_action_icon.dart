@@ -58,7 +58,8 @@ class PlinthActionIcon extends StatelessWidget {
     final baseColor = theme.color(colorKey, 6);
     final lightColor = theme.color(colorKey, 1);
     final dimension = _dimensions[size]!;
-    final resolvedRadius = circle ? dimension / 2 : theme.radius[radius ?? theme.defaultRadius]!;
+    final resolvedRadius =
+        circle ? dimension / 2 : theme.radius[radius ?? theme.defaultRadius]!;
 
     final (background, foreground, border) = switch (variant) {
       PlinthVariant.filled => (baseColor, Colors.white, null),

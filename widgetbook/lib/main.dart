@@ -92,7 +92,8 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 WidgetbookUseCase(
                   name: 'Disabled',
                   builder: (context) => _themed(
-                    const PlinthButton(onPressed: null, child: Text('Disabled')),
+                    const PlinthButton(
+                        onPressed: null, child: Text('Disabled')),
                   ),
                 ),
               ],
@@ -445,8 +446,14 @@ class PlinthWidgetbookApp extends StatelessWidget {
                     Wrap(
                       spacing: 8,
                       children: [
-                        PlinthChip(label: 'Selected', selected: true, onSelected: (_) {}),
-                        PlinthChip(label: 'Unselected', selected: false, onSelected: (_) {}),
+                        PlinthChip(
+                            label: 'Selected',
+                            selected: true,
+                            onSelected: (_) {}),
+                        PlinthChip(
+                            label: 'Unselected',
+                            selected: false,
+                            onSelected: (_) {}),
                       ],
                     ),
                   ),
@@ -585,7 +592,8 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 ),
                 WidgetbookUseCase(
                   name: 'Large total (ellipsis)',
-                  builder: (context) => _themed(_PaginationDemo(total: 20, initialPage: 10)),
+                  builder: (context) =>
+                      _themed(_PaginationDemo(total: 20, initialPage: 10)),
                 ),
               ],
             ),
@@ -928,7 +936,8 @@ class PlinthWidgetbookApp extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         for (final size in PlinthSize.values) ...[
-                          PlinthAvatar(initials: 'YR', color: 'blue', size: size),
+                          PlinthAvatar(
+                              initials: 'YR', color: 'blue', size: size),
                           const SizedBox(width: 12),
                         ],
                       ],
@@ -1014,7 +1023,8 @@ class PlinthWidgetbookApp extends StatelessWidget {
                       runSpacing: 8,
                       children: [
                         for (final v in PlinthVariant.values)
-                          PlinthThemeIcon(icon: const Icon(Icons.check), variant: v),
+                          PlinthThemeIcon(
+                              icon: const Icon(Icons.check), variant: v),
                       ],
                     ),
                   ),
@@ -1084,7 +1094,8 @@ class PlinthWidgetbookApp extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         for (final size in PlinthSize.values)
-                          PlinthText('${size.name} — the quick brown fox', size: size),
+                          PlinthText('${size.name} — the quick brown fox',
+                              size: size),
                       ],
                     ),
                   ),
@@ -1100,7 +1111,8 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 ),
                 WidgetbookUseCase(
                   name: 'With label',
-                  builder: (context) => _themed(const PlinthDivider(label: 'OR')),
+                  builder: (context) =>
+                      _themed(const PlinthDivider(label: 'OR')),
                 ),
                 WidgetbookUseCase(
                   name: 'Vertical',
@@ -1131,7 +1143,8 @@ class PlinthWidgetbookApp extends StatelessWidget {
                   name: 'With citation',
                   builder: (context) => _themed(
                     const PlinthBlockquote(
-                      quote: 'The best way to predict the future is to invent it.',
+                      quote:
+                          'The best way to predict the future is to invent it.',
                       citation: 'Alan Kay',
                     ),
                   ),

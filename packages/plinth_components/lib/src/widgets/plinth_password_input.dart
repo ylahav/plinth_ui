@@ -118,17 +118,22 @@ class _PlinthPasswordInputState extends State<PlinthPasswordInput> {
                     hintText: widget.placeholder,
                     border: InputBorder.none,
                     isDense: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: verticalPadding),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: verticalPadding),
                   ),
                 ),
               ),
               InkWell(
-                onTap: widget.enabled ? () => setState(() => _visible = !_visible) : null,
+                onTap: widget.enabled
+                    ? () => setState(() => _visible = !_visible)
+                    : null,
                 borderRadius: BorderRadius.circular(4),
                 child: Padding(
                   padding: const EdgeInsets.all(4),
                   child: Icon(
-                    _visible ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                    _visible
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
                     size: 18,
                     color: Colors.black54,
                   ),

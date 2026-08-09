@@ -69,7 +69,8 @@ class _PlinthSpoilerState extends State<PlinthSpoiler> {
           onTap: () => setState(() => _expanded = !_expanded),
           child: Text(
             _expanded ? widget.hideLabel : widget.showLabel,
-            style: TextStyle(color: linkColor, fontSize: 13, fontWeight: FontWeight.w600),
+            style: TextStyle(
+                color: linkColor, fontSize: 13, fontWeight: FontWeight.w600),
           ),
         ),
       ],

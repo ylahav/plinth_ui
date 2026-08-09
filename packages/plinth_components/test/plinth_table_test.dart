@@ -32,7 +32,8 @@ void main() {
       expect(find.text('Designer'), findsOneWidget);
     });
 
-    testWidgets('renders with striping enabled without throwing', (tester) async {
+    testWidgets('renders with striping enabled without throwing',
+        (tester) async {
       await tester.pumpWidget(
         _wrap(
           const PlinthTable(
@@ -51,7 +52,8 @@ void main() {
       expect(find.text('Carol'), findsOneWidget);
     });
 
-    testWidgets('renders with an empty row list without throwing', (tester) async {
+    testWidgets('renders with an empty row list without throwing',
+        (tester) async {
       await tester.pumpWidget(
         _wrap(
           const PlinthTable(columns: ['Name'], rows: []),

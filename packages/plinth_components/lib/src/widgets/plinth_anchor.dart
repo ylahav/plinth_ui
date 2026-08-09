@@ -58,7 +58,8 @@ class _PlinthAnchorState extends State<PlinthAnchor> {
           style: TextStyle(
             color: linkColor,
             fontSize: theme.fontSizes[widget.size],
-            decoration: showUnderline ? TextDecoration.underline : TextDecoration.none,
+            decoration:
+                showUnderline ? TextDecoration.underline : TextDecoration.none,
             decorationColor: linkColor,
           ),
         ),

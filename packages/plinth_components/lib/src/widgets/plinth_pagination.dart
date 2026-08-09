@@ -76,7 +76,9 @@ class PlinthPagination extends StatelessWidget {
       return _PageCell(
         dimension: dimension,
         onTap: enabled ? onTap : null,
-        child: Icon(icon, size: dimension * 0.5, color: enabled ? Colors.black87 : Colors.black26),
+        child: Icon(icon,
+            size: dimension * 0.5,
+            color: enabled ? Colors.black87 : Colors.black26),
       );
     }
 

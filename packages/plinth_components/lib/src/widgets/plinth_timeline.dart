@@ -71,7 +71,8 @@ class PlinthTimeline extends StatelessWidget {
 }
 
 class _TimelineRow extends StatelessWidget {
-  const _TimelineRow({required this.item, required this.isLast, required this.activeColor});
+  const _TimelineRow(
+      {required this.item, required this.isLast, required this.activeColor});
 
   final PlinthTimelineItem item;
   final bool isLast;
@@ -107,7 +108,9 @@ class _TimelineRow extends StatelessWidget {
                       )
                     : null,
               ),
-              if (!isLast) Expanded(child: Container(width: 2, color: const Color(0xFFE9ECEF))),
+              if (!isLast)
+                Expanded(
+                    child: Container(width: 2, color: const Color(0xFFE9ECEF))),
             ],
           ),
           SizedBox(width: theme.spacing[PlinthSize.sm]),
@@ -120,7 +123,8 @@ class _TimelineRow extends StatelessWidget {
                   PlinthText(item.title, weight: FontWeight.w600),
                   if (item.description != null) ...[
                     SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.3),
-                    PlinthText(item.description!, size: PlinthSize.sm, color: 'gray'),
+                    PlinthText(item.description!,
+                        size: PlinthSize.sm, color: 'gray'),
                   ],
                 ],
               ),

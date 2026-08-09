@@ -11,13 +11,16 @@ Widget _wrap(Widget child) {
 
 void main() {
   group('PlinthAccordion', () {
-    testWidgets('renders every item title, content hidden by default', (tester) async {
+    testWidgets('renders every item title, content hidden by default',
+        (tester) async {
       await tester.pumpWidget(
         _wrap(
           PlinthAccordion(
             items: const [
-              PlinthAccordionItem(value: 'a', title: 'First', content: Text('Content A')),
-              PlinthAccordionItem(value: 'b', title: 'Second', content: Text('Content B')),
+              PlinthAccordionItem(
+                  value: 'a', title: 'First', content: Text('Content A')),
+              PlinthAccordionItem(
+                  value: 'b', title: 'Second', content: Text('Content B')),
             ],
           ),
         ),
@@ -34,7 +37,8 @@ void main() {
         _wrap(
           PlinthAccordion(
             items: const [
-              PlinthAccordionItem(value: 'a', title: 'First', content: Text('Content A')),
+              PlinthAccordionItem(
+                  value: 'a', title: 'First', content: Text('Content A')),
             ],
           ),
         ),
@@ -51,8 +55,10 @@ void main() {
         _wrap(
           PlinthAccordion(
             items: const [
-              PlinthAccordionItem(value: 'a', title: 'First', content: Text('Content A')),
-              PlinthAccordionItem(value: 'b', title: 'Second', content: Text('Content B')),
+              PlinthAccordionItem(
+                  value: 'a', title: 'First', content: Text('Content A')),
+              PlinthAccordionItem(
+                  value: 'b', title: 'Second', content: Text('Content B')),
             ],
           ),
         ),
@@ -75,8 +81,10 @@ void main() {
           PlinthAccordion(
             multiple: true,
             items: const [
-              PlinthAccordionItem(value: 'a', title: 'First', content: Text('Content A')),
-              PlinthAccordionItem(value: 'b', title: 'Second', content: Text('Content B')),
+              PlinthAccordionItem(
+                  value: 'a', title: 'First', content: Text('Content A')),
+              PlinthAccordionItem(
+                  value: 'b', title: 'Second', content: Text('Content B')),
             ],
           ),
         ),
@@ -96,7 +104,8 @@ void main() {
         _wrap(
           PlinthAccordion(
             items: const [
-              PlinthAccordionItem(value: 'a', title: 'First', content: Text('Content A')),
+              PlinthAccordionItem(
+                  value: 'a', title: 'First', content: Text('Content A')),
             ],
           ),
         ),
@@ -117,7 +126,8 @@ void main() {
           PlinthAccordion(
             initiallyOpen: const {'a'},
             items: const [
-              PlinthAccordionItem(value: 'a', title: 'First', content: Text('Content A')),
+              PlinthAccordionItem(
+                  value: 'a', title: 'First', content: Text('Content A')),
             ],
           ),
         ),
