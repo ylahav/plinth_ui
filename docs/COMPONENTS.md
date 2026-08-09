@@ -26,6 +26,11 @@ resolution logic follows this one's pattern.
 variant/size/color resolution as `PlinthButton`, but square (or fully
 circular) with no label — for icon-only actions.
 
+### `PlinthCopyButton`
+`value` (the text to copy), `color`, `size`, `confirmDuration` (default
+2 seconds). Copies `value` to the clipboard on tap, showing a transient
+checkmark before reverting to the copy icon.
+
 ### `PlinthBox`
 `child`, `p`/`px`/`py` (padding), `m`/`mx`/`my` (margin) — all keyed by
 `PlinthSize` and resolved through `theme.spacing`. Also `w`, `h`, `bg`,
@@ -44,6 +49,16 @@ unconstrained context), `color`.
 ### `PlinthKbd`
 `label` (positional), `size`. A styled keyboard-key badge for documenting
 shortcuts, e.g. `PlinthKbd('Ctrl')` + `PlinthKbd('K')`.
+
+### `PlinthAnchor`
+`label` (positional), `onTap`, `color`, `size`, `underline`
+(`PlinthAnchorUnderline`: `always, hover, never` — default `hover`,
+matching conventional link affordance). Styled link text; not a
+navigation widget itself, just a themed tap target.
+
+### `PlinthBlockquote`
+`quote`, `citation`, `color`, `icon`. Colored left border with italic
+quote text and an optional citation line.
 
 ---
 
@@ -215,6 +230,12 @@ as red/attention regardless of brand color), `position`
 Anchors a small badge/dot to a corner of `child` via `Stack` +
 `FractionalTranslation`.
 
+### `PlinthColorSwatch`
+`color` (a theme palette key, e.g. `'blue'`), `selected`, `onTap`, `size`.
+Standalone selectable color square — for a picker, lay out several with
+your own selected-color state, same controlled-component pattern as
+`PlinthChip`.
+
 ### `PlinthTable`
 `columns` (`List<String>`), `rows` (`List<List<String>>` — each inner
 list must match `columns.length`), `striped`, `size`. Built on Flutter's
@@ -264,6 +285,11 @@ has `title`, optional `description`/`icon`, and `active` (highlights the
 dot in the theme color — use for the current/most-recent event). Dots are
 connected by a line via `IntrinsicHeight` + `Expanded`, a standard Flutter
 pattern for "match this column's height to its sibling."
+
+### `PlinthNavLink`
+`label`, `icon`, `trailing` (e.g. a `PlinthBadge` for an unread count),
+`active`, `onTap`, `color`. Sidebar-style navigation item — active state
+tints the background and label in the theme color.
 
 ### `PlinthTabs<T>` + `PlinthTabView<T>`
 `PlinthTabs`: `tabs` (`List<PlinthTabItem<T>>`), `value`, `onChanged`, `size`,

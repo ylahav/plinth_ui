@@ -162,6 +162,17 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 ),
               ],
             ),
+            WidgetbookComponent(
+              name: 'PlinthCopyButton',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Interactive',
+                  builder: (context) => _themed(
+                    const PlinthCopyButton(value: 'sk_live_51H8xExampleKey'),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
         WidgetbookCategory(
@@ -613,6 +624,31 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 ),
               ],
             ),
+            WidgetbookComponent(
+              name: 'PlinthNavLink',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Active and inactive',
+                  builder: (context) => _themed(
+                    Column(
+                      children: [
+                        PlinthNavLink(
+                          label: 'Dashboard',
+                          icon: const Icon(Icons.dashboard_outlined),
+                          active: true,
+                          onTap: () {},
+                        ),
+                        PlinthNavLink(
+                          label: 'Settings',
+                          icon: const Icon(Icons.settings_outlined),
+                          onTap: () {},
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
         WidgetbookCategory(
@@ -1018,6 +1054,15 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 ),
               ],
             ),
+            WidgetbookComponent(
+              name: 'PlinthColorSwatch',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Palette selector',
+                  builder: (context) => _themed(_ColorSwatchDemo()),
+                ),
+              ],
+            ),
           ],
         ),
         WidgetbookCategory(
@@ -1075,6 +1120,32 @@ class PlinthWidgetbookApp extends StatelessWidget {
                     const SizedBox(
                       height: 60,
                       child: PlinthDivider(vertical: true, height: 60),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthAnchor',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Default',
+                  builder: (context) => _themed(
+                    PlinthAnchor('Forgot password?', onTap: () {}),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthBlockquote',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'With citation',
+                  builder: (context) => _themed(
+                    const PlinthBlockquote(
+                      quote:
+                          'The best way to predict the future is to invent it.',
+                      citation: 'Alan Kay',
                     ),
                   ),
                 ),
@@ -1399,6 +1470,33 @@ class _PaginationDemoState extends State<_PaginationDemo> {
       page: _page,
       total: widget.total,
       onChanged: (p) => setState(() => _page = p),
+    );
+  }
+}
+
+/// Owns the selected color for the ColorSwatch use case.
+class _ColorSwatchDemo extends StatefulWidget {
+  @override
+  State<_ColorSwatchDemo> createState() => _ColorSwatchDemoState();
+}
+
+class _ColorSwatchDemoState extends State<_ColorSwatchDemo> {
+  String _selected = 'blue';
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (final c in ['blue', 'red', 'green', 'gray']) ...[
+          PlinthColorSwatch(
+            color: c,
+            selected: _selected == c,
+            onTap: () => setState(() => _selected = c),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ],
     );
   }
 }

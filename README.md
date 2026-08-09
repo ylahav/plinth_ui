@@ -12,12 +12,13 @@ plinth_ui/
   .github/workflows/regenerate-goldens.yml # manual — regenerates goldens on Linux to match CI
   packages/
     plinth_core/            # PlinthTheme, design tokens (colors, spacing, radius)
-    plinth_components/       # Widgets (Button, ActionIcon, Box, Text, Divider, Kbd,
-    │                          Modal, Drawer, TextInput, Textarea, PasswordInput,
-    │                          Checkbox, Radio/RadioGroup, Select, Badge, Alert,
-    │                          Switch, Slider, Progress, Spoiler, LoadingOverlay,
-    │                          Avatar, ThemeIcon, Indicator, Table, Accordion,
-    │                          Stepper, Breadcrumbs, Pagination, Timeline,
+    plinth_components/       # Widgets (Button, ActionIcon, CopyButton, Box, Text,
+    │                          Divider, Kbd, Anchor, Blockquote, Modal, Drawer,
+    │                          TextInput, Textarea, PasswordInput, Checkbox,
+    │                          Radio/RadioGroup, Select, Badge, Alert, Switch, Slider,
+    │                          Progress, Spoiler, LoadingOverlay, Avatar, ThemeIcon,
+    │                          Indicator, ColorSwatch, Table, Accordion, Stepper,
+    │                          Breadcrumbs, Pagination, Timeline, NavLink,
     │                          Notification, Skeleton, Paper, Card, SegmentedControl,
     │                          NumberInput, Chip, Rating, Tooltip, Popover,
     │                          Tabs/TabView, Menu)
@@ -74,18 +75,9 @@ cd ../widgetbook
 flutter run
 ```
 
-You should see, in the example app: a dismissible info Alert, badges, a checkbox,
-a radio group, a select, a text input with live validation, a menu, tabs with
-switched content, progress bars, a slider, an accordion, a striped table, a
-notification trigger, an interactive stepper, skeleton loaders, breadcrumbs,
-a divider (plain and labeled), a card with header/footer, a segmented control,
-a number input with +/- steppers, filterable chips, a star rating, icon-only
-action buttons, a textarea, a password field with visibility toggle,
-pagination, an order-status timeline, a keyboard-shortcut example, colored
-theme icons, a notification indicator, a collapsible spoiler, a simulated
-loading overlay, drawer/modal/popover triggers, a themed Box/Text/disclosure
-demo, and the full button variant/size/color matrix — all driven by
-`PlinthTheme.defaultTheme` in `plinth_core`.
+The example app demonstrates every component in one scrollable page —
+run it to see the full set live, or browse `docs/COMPONENTS.md` for the
+complete reference without running anything.
 
 The Widgetbook app organizes the same components into browsable categories
 (Buttons & Actions, Forms, Navigation, Feedback, Overlays, Data Display,
@@ -98,62 +90,36 @@ the sidebar.
   ramps (curve-based 10-shade generator with non-linear lightness
   stops + shade-dependent saturation), spacing, radius, and font-size
   scales.
-- **Primitives** (`plinth_components`) — `PlinthButton`, `PlinthActionIcon`
-  (icon-only, same variant/size/color pattern as Button), `PlinthBox`,
-  `PlinthText`, `PlinthDivider` (plain, labeled, or vertical), `PlinthKbd`
-  (keyboard-key badge).
-- **Forms** — `PlinthTextInput`, `PlinthTextarea`, `PlinthPasswordInput`
-  (show/hide toggle), `PlinthCheckbox`, `PlinthRadio` /
-  `PlinthRadioGroup`, `PlinthSelect`, `PlinthSegmentedControl`,
-  `PlinthNumberInput` (shares TextInput's chrome, +/- steppers with
-  min/max clamping), `PlinthChip`, `PlinthRating` (half-star support
-  for read-only display).
-- **Feedback** — `PlinthBadge`, `PlinthAlert`, `PlinthProgress`,
-  `PlinthNotification` (toast-style, shown via the static `.show()`
-  as a themed `SnackBar` — distinct from `PlinthAlert`'s inline
-  callout), `PlinthSkeleton` (pulsing loading placeholder),
-  `PlinthSpoiler` (single-block "show more/less", distinct from
-  `PlinthAccordion`'s independently toggleable sections),
-  `PlinthLoadingOverlay` (dims existing content during an async op,
-  distinct from `PlinthSkeleton`'s pre-content placeholder).
-- **Data display** — `PlinthAvatar` (image → initials → icon fallback chain),
-  `PlinthThemeIcon` (colored icon container, decorative counterpart to
-  `PlinthActionIcon`), `PlinthIndicator` (corner-anchored dot/badge),
-  `PlinthTable` (built on Flutter's `Table`, not `DataTable`).
-- **Navigation** — `PlinthTabs` / `PlinthTabView` (underline tab bar +
-  fade-switched content, generic over the tab value type),
-  `PlinthAccordion` (single/multiple-open expand/collapse),
-  `PlinthStepper` (numbered step indicator — visual only, same
-  controlled-component split as Tabs/TabView), `PlinthBreadcrumbs`
-  (last item always non-interactive, matching the "current page isn't
-  a link" convention), `PlinthPagination` (ellipsis-collapsed for
-  large page counts), `PlinthTimeline` (dot markers + connecting
-  line via `IntrinsicHeight`/`Expanded`).
-- **Surfaces** — `PlinthPaper` (base surface: padding, radius, shadow,
-  border) and `PlinthCard` (built on `PlinthPaper`, adds an optional
-  header/footer section convention with dividers).
-- **Overlays** — `PlinthModal`, `PlinthDrawer`, `PlinthPopover` (anchored,
-  `CompositedTransformFollower`-based, tracks its target across scroll),
-  `PlinthMenu` (built directly on `PlinthPopover`), `PlinthTooltip`
-  (themed wrapper over Flutter's built-in `Tooltip`).
-  Modal/Drawer are driven by a shared `PlinthDisclosureController`
-  (`plinth_hooks`) and a shared internal `PlinthOverlayHost`; Popover/Menu
-  use the same controller type but their own show/hide mechanics since
-  they aren't route-based.
-- **`PlinthSwitch`** — animated toggle, same size/color pattern as Checkbox.
-- **`PlinthSlider`** — themed wrapper around Flutter's built-in `Slider`
-  (via `SliderTheme`), same rationale as `PlinthTooltip` — drag handling
-  and accessibility aren't worth reimplementing.
+- **47 components** across Primitives, Forms, Feedback, Data Display,
+  Navigation, Surfaces, and Overlays — full list with props in
+  **[docs/COMPONENTS.md](docs/COMPONENTS.md)**, kept current every round
+  rather than duplicated here. A few architectural patterns worth
+  knowing up front:
+  - Several components deliberately **wrap Flutter's own widgets**
+    rather than reimplementing them — `PlinthSlider` (`Slider`),
+    `PlinthTooltip` (`Tooltip`), `PlinthTable` (`Table`, not
+    `DataTable`) — because drag handling, accessibility, and layout
+    correctness aren't worth re-deriving from scratch.
+  - **Overlays** (`PlinthModal`, `PlinthDrawer`, `PlinthPopover`,
+    `PlinthMenu`) share a `PlinthDisclosureController`
+    (`plinth_hooks`) for open/close state. Modal/Drawer additionally
+    share an internal `PlinthOverlayHost`; Popover/Menu use their own
+    show/hide mechanics since they aren't route-based.
+  - **Controlled-component pairs** split visual indicator from content
+    ownership — `PlinthTabs`/`PlinthTabView`, `PlinthStepper` (visual
+    only), `PlinthSegmentedControl` all leave state ownership to the
+    caller rather than managing it internally.
 - **Widgetbook gallery** (`widgetbook/`) — manual (non-codegen)
   registration of every component's key states as browsable use cases.
 - **Tests** — pure-logic tests for `PlinthTheme`'s shade generator and
   `PlinthDisclosureController`, a golden (visual regression) test suite
   for `PlinthButton` (variants, a color override, disabled state, all
-  sizes), and widget behavior tests for most other components — 17 test
-  files covering the majority of the 42 public components as of this
+  sizes), and widget behavior tests for most other components — 19 test
+  files covering the majority of the 47 public components as of this
   writing.
   Notable coverage: `PlinthPagination`'s ellipsis-collapse logic at large
   page counts, `PlinthAccordion`'s single/multiple-open modes,
+  `PlinthCopyButton`'s clipboard write + timer-based revert,
   `PlinthMenu`/`PlinthNotification`'s overlay-dismissal behavior. See
   `docs/TESTING.md` for the full breakdown and how to run them.
 - **CI is green** — `.github/workflows/ci.yml` passes end-to-end

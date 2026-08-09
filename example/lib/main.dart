@@ -48,6 +48,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   double _rating = 3;
   int _page = 1;
   bool _isSaving = false;
+  String _selectedColor = 'blue';
 
   @override
   void initState() {
@@ -687,6 +688,60 @@ class _ShowcasePageState extends State<ShowcasePage> {
                     child: const Text(
                         'Form content that gets dimmed while saving.'),
                   ),
+                ),
+                _gap(),
+                _sectionTitle('Anchor'),
+                _gap(12),
+                PlinthAnchor('Forgot password?', onTap: () {}),
+                _gap(),
+                _sectionTitle('Blockquote'),
+                _gap(12),
+                const PlinthBlockquote(
+                  quote: 'The best way to predict the future is to invent it.',
+                  citation: 'Alan Kay',
+                ),
+                _gap(),
+                _sectionTitle('Copy Button'),
+                _gap(12),
+                Row(
+                  children: [
+                    const Text('sk_live_51H8x...'),
+                    const SizedBox(width: 4),
+                    const PlinthCopyButton(value: 'sk_live_51H8xExampleKey'),
+                  ],
+                ),
+                _gap(),
+                _sectionTitle('Nav Link'),
+                _gap(12),
+                Column(
+                  children: [
+                    PlinthNavLink(
+                      label: 'Dashboard',
+                      icon: const Icon(Icons.dashboard_outlined),
+                      active: true,
+                      onTap: () {},
+                    ),
+                    PlinthNavLink(
+                      label: 'Settings',
+                      icon: const Icon(Icons.settings_outlined),
+                      onTap: () {},
+                    ),
+                  ],
+                ),
+                _gap(),
+                _sectionTitle('Color Swatch'),
+                _gap(12),
+                Row(
+                  children: [
+                    for (final c in ['blue', 'red', 'green', 'gray']) ...[
+                      PlinthColorSwatch(
+                        color: c,
+                        selected: _selectedColor == c,
+                        onTap: () => setState(() => _selectedColor = c),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                  ],
                 ),
                 _gap(),
                 _sectionTitle('Box + Text + Disclosure'),
