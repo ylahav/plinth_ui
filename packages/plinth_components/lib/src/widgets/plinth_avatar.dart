@@ -73,8 +73,7 @@ class PlinthAvatar extends StatelessWidget {
         );
       }
       return Center(
-        child:
-            Icon(Icons.person, color: foregroundColor, size: diameter * 0.55),
+        child: Icon(Icons.person, color: foregroundColor, size: diameter * 0.55),
       );
     }
 

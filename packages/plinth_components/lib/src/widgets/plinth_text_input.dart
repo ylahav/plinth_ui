@@ -148,8 +148,7 @@ class _PlinthTextInputState extends State<PlinthTextInput> {
                     hintText: widget.placeholder,
                     border: InputBorder.none,
                     isDense: true,
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: verticalPadding),
+                    contentPadding: EdgeInsets.symmetric(vertical: verticalPadding),
                   ),
                 ),
               ),

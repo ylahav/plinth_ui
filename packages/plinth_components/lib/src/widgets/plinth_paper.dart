@@ -49,8 +49,7 @@ class PlinthPaper extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final resolvedRadius = theme.radius[radius ?? theme.defaultRadius]!;
-    final padding =
-        p != null ? EdgeInsets.all(theme.spacing[p]!) : EdgeInsets.zero;
+    final padding = p != null ? EdgeInsets.all(theme.spacing[p]!) : EdgeInsets.zero;
 
     return Container(
       padding: padding,

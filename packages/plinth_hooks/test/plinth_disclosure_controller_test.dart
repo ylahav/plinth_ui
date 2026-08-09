@@ -31,8 +31,7 @@ void main() {
 
       controller.open();
 
-      expect(notifications, equals(0),
-          reason: 'no-op open() should not notify');
+      expect(notifications, equals(0), reason: 'no-op open() should not notify');
     });
 
     test('close() sets isOpen to false and notifies listeners', () {
@@ -66,8 +65,7 @@ void main() {
       controller.removeListener(listener);
       controller.close();
 
-      expect(notifications, equals(1),
-          reason: 'only the open() call should have notified');
+      expect(notifications, equals(1), reason: 'only the open() call should have notified');
     });
   });
 }

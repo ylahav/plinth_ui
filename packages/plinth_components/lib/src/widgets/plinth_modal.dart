@@ -73,8 +73,7 @@ class PlinthModal extends StatelessWidget {
       transitionDuration: const Duration(milliseconds: 150),
       pageBuilder: (context, _, __) => _buildContent(context),
       transitionBuilder: (context, animation, _, child) {
-        final curved =
-            CurvedAnimation(parent: animation, curve: Curves.easeOut);
+        final curved = CurvedAnimation(parent: animation, curve: Curves.easeOut);
         return FadeTransition(
           opacity: curved,
           child: ScaleTransition(

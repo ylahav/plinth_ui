@@ -109,32 +109,14 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     // base color's natural saturation/lightness for filled buttons,
     // badges, etc.
     const lightnessStops = [
-      0.96,
-      0.91,
-      0.83,
-      0.74,
-      0.64,
-      0.55,
-      0.47,
-      0.39,
-      0.32,
-      0.25,
+      0.96, 0.91, 0.83, 0.74, 0.64, 0.55, 0.47, 0.39, 0.32, 0.25,
     ];
 
     // Light shades are pulled toward white (desaturated) so they
     // read as soft tints rather than pale versions of the same hue;
     // dark shades are boosted slightly for richness.
     const saturationMultipliers = [
-      0.55,
-      0.65,
-      0.75,
-      0.85,
-      0.92,
-      1.0,
-      1.0,
-      0.95,
-      0.90,
-      0.85,
+      0.55, 0.65, 0.75, 0.85, 0.92, 1.0, 1.0, 0.95, 0.90, 0.85,
     ];
 
     return List.generate(10, (i) {

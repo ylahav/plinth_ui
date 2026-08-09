@@ -61,8 +61,7 @@ class _PlinthCopyButtonState extends State<PlinthCopyButton> {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = widget.color ?? theme.primaryColor;
-    final iconColor =
-        _copied ? theme.color('green', 6) : theme.color(colorKey, 6);
+    final iconColor = _copied ? theme.color('green', 6) : theme.color(colorKey, 6);
 
     return InkWell(
       onTap: _handleTap,

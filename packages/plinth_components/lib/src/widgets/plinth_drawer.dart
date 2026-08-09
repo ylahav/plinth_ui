@@ -65,8 +65,7 @@ class PlinthDrawer extends StatelessWidget {
   };
 
   bool get _isHorizontal =>
-      position == PlinthDrawerPosition.left ||
-      position == PlinthDrawerPosition.right;
+      position == PlinthDrawerPosition.left || position == PlinthDrawerPosition.right;
 
   Offset get _beginOffset {
     switch (position) {
@@ -106,11 +105,9 @@ class PlinthDrawer extends StatelessWidget {
       transitionDuration: const Duration(milliseconds: 220),
       pageBuilder: (context, _, __) => _buildContent(context),
       transitionBuilder: (context, animation, _, child) {
-        final curved =
-            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
+        final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
         return SlideTransition(
-          position:
-              Tween(begin: _beginOffset, end: Offset.zero).animate(curved),
+          position: Tween(begin: _beginOffset, end: Offset.zero).animate(curved),
           child: child,
         );
       },
@@ -149,10 +146,7 @@ class PlinthDrawer extends StatelessWidget {
                 ),
                 SizedBox(height: theme.spacing[PlinthSize.sm]),
               ],
-              if (_isHorizontal)
-                Expanded(child: child)
-              else
-                Flexible(child: child),
+              if (_isHorizontal) Expanded(child: child) else Flexible(child: child),
             ],
           ),
         ),
@@ -181,8 +175,7 @@ class PlinthDrawer extends StatelessWidget {
 /// [drawer]'s controller opens — the [PlinthDrawer] equivalent of
 /// [PlinthModalHost].
 class PlinthDrawerHost extends StatelessWidget {
-  const PlinthDrawerHost(
-      {super.key, required this.drawer, required this.child});
+  const PlinthDrawerHost({super.key, required this.drawer, required this.child});
 
   final PlinthDrawer drawer;
   final Widget child;

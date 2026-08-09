@@ -46,9 +46,7 @@ class PlinthBlockquote extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (icon != null) ...[
-            IconTheme(
-                data: IconThemeData(color: accentColor, size: 24),
-                child: icon!),
+            IconTheme(data: IconThemeData(color: accentColor, size: 24), child: icon!),
             SizedBox(height: theme.spacing[PlinthSize.xs]),
           ],
           PlinthText(quote, size: PlinthSize.lg, italic: true),

@@ -29,8 +29,7 @@ void main() {
       expect(find.byType(PlinthSkeleton), findsOneWidget);
     });
 
-    testWidgets('pulses without throwing across several animation frames',
-        (tester) async {
+    testWidgets('pulses without throwing across several animation frames', (tester) async {
       await tester.pumpWidget(
         _wrap(const PlinthSkeleton(width: 100, height: 16)),
       );
