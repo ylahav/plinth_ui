@@ -1,9 +1,6 @@
 name: plinth_components
 description: Themeable, accessible Flutter widgets for Plinth UI.
 version: 0.0.1
-# Deliberately kept as a publish safety guard — remove this line only
-# when actually ready to run `dart pub publish` for real.
-publish_to: none
 homepage: https://github.com/ylahav/plinth_ui
 repository: https://github.com/ylahav/plinth_ui
 issue_tracker: https://github.com/ylahav/plinth_ui/issues
