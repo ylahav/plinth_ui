@@ -192,8 +192,24 @@ the sidebar.
 - Pin the Flutter version in `.github/workflows/ci.yml` (currently
   tracks the `stable` channel) once you've confirmed the version
   you're developing against locally.
-- Publishing prep: `CHANGELOG.md` per package, decide on a version
-  bump strategy (`melos version` now works since `repository:` is set).
+- Publishing prep — **in progress**: LICENSE (MIT) and `CHANGELOG.md`
+  now exist in each of the three publishable packages
+  (`plinth_core`, `plinth_hooks`, `plinth_components`), and their
+  `pubspec.yaml`s have `homepage`/`repository`/`issue_tracker` set.
+  Still open before an actual `dart pub publish` is possible:
+  - Switch `plinth_components`'s `path:` dependencies on `plinth_core`/
+    `plinth_hooks` to real version constraints — only possible *after*
+    those two are published first (path deps aren't valid on pub.dev).
+  - Remove each package's `publish_to: none` guard when actually ready
+    (kept intentionally until then, as a safety default).
+  - Run `dart pub publish --dry-run` per package, in dependency order.
+  - Re-check the `plinth`/`plinth_ui` name is still unclaimed — the
+    original check was early in this project's life relative to how
+    much has shipped since.
+  - Consider an API-consistency review across all 51 components
+    before committing to a `1.0.0` — publishing `0.1.0` first and
+    iterating is lower-risk than locking in an API surface that grew
+    quickly across many rounds.
 
 ## Naming note
 
