@@ -50,6 +50,16 @@ unconstrained context), `color`.
 `label` (positional), `size`. A styled keyboard-key badge for documenting
 shortcuts, e.g. `PlinthKbd('Ctrl')` + `PlinthKbd('K')`.
 
+### `PlinthCode`
+`text` (positional), `color` (default `'gray'`), `size`. Inline monospace
+snippet on a tinted background — for referencing identifiers, commands,
+or file names within a sentence (typically inside a `WidgetSpan`).
+
+### `PlinthMark`
+`text` (positional), `color` (defaults to `'yellow'` if the active theme
+defines it, else a literal amber fallback). Highlighted inline text, e.g.
+for search-match terms.
+
 ### `PlinthAnchor`
 `label` (positional), `onTap`, `color`, `size`, `underline`
 (`PlinthAnchorUnderline`: `always, hover, never` — default `hover`,
@@ -175,6 +185,13 @@ uppercase by default, pill-shaped (`borderRadius: 999`).
 `value` (0.0–1.0, asserted in range), `color`, `size` (controls track
 height), `radius`, `trackColor`. Fill animates smoothly on value change
 via an internal `AnimatedFractionallySizedBox` helper.
+
+### `PlinthRingProgress`
+`value` (0.0–1.0, asserted in range), `color`, `size` (outer diameter,
+default 80), `thickness` (default 8), `trackColor`, `label` (optional
+centered content, e.g. a percentage). Circular companion to
+`PlinthProgress` — built on `CustomPaint`, sweeping clockwise from 12
+o'clock.
 
 ### `PlinthNotification`
 `title` (optional), `child`, `color` (default `'blue'`), `icon`, `onClose`,
@@ -325,10 +342,17 @@ PlinthTabView<String>(
 
 ## Overlays
 
-All four overlay components share `PlinthDisclosureController`
+All four controller-based overlay components share `PlinthDisclosureController`
 (`plinth_hooks`) for open/close state — `open()`, `close()`, `toggle()`,
 `isOpen`. Always call `.dispose()` on the controller when its owning
 State is disposed.
+
+### `PlinthAffix`
+`child`, `top`, `right`, `bottom`, `left`. The one overlay-adjacent
+component *without* a controller — it's a thin wrapper around `Positioned`
+for anchoring a widget (e.g. a "scroll to top" button) to a screen corner
+within an existing `Stack`, rather than an inserted floating overlay like
+the others below.
 
 ### `PlinthModal` + `PlinthModalHost`
 `controller`, `title`, `child`, `size`, `closeOnBackdropTap`, `radius`.
