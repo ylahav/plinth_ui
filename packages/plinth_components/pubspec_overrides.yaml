@@ -1,6 +1,0 @@
-# melos_managed_dependency_overrides: plinth_core,plinth_hooks
-dependency_overrides:
-  plinth_core:
-    path: ..\\plinth_core
-  plinth_hooks:
-    path: ..\\plinth_hooks
