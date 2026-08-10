@@ -13,10 +13,10 @@ import 'package:plinth_core/plinth_core.dart';
 /// ]))
 /// ```
 class PlinthCode extends StatelessWidget {
-  const PlinthCode(this.text,
+  const PlinthCode(this.label,
       {super.key, this.color, this.size = PlinthSize.md});
 
-  final String text;
+  final String label;
   final String? color;
   final PlinthSize size;
 
@@ -42,7 +42,7 @@ class PlinthCode extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        text,
+        label,
         style: TextStyle(
           fontFamily: 'monospace',
           fontSize: _fontSizes[size],

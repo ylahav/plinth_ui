@@ -177,6 +177,44 @@ the sidebar.
   locally at least once (`melos run format-fix`) since code written
   without a live SDK won't match its output exactly.
 
+## API consistency review
+
+Before locking in any version number, every component's public
+constructor was audited against the others for naming/type drift. One
+real inconsistency was found and fixed: `PlinthMark` and `PlinthCode`
+used `text` for their single positional content field while
+`PlinthBadge`/`PlinthKbd`/`PlinthAnchor` (the same "wraps one short
+string" pattern) used `label` — both renamed to `label` for consistency.
+Since the field is positional-only, this didn't require updating any
+call sites (`PlinthMark('...')` is unaffected by the internal field
+name). `PlinthText.data` was deliberately left as-is — it intentionally
+mirrors Flutter's own built-in `Text.data`, not an inconsistency.
+
+Several other apparent differences were checked and confirmed
+intentional rather than bugs:
+- `onTap` (`PlinthNavLink`, `PlinthAnchor`, `PlinthColorSwatch`) vs.
+  `onPressed` (`PlinthButton`, `PlinthActionIcon`) mirrors Flutter's own
+  split — `ListTile`/`InkWell`-style tappable tiles use `onTap`,
+  button-styled widgets use `onPressed`.
+- `PlinthAlert`/`PlinthNotification` use a non-nullable `color` with a
+  `'blue'` default, unlike every other component's nullable `color`
+  falling back to the theme's primary color — deliberate, since a
+  feedback banner reading in your brand's primary color regardless of
+  intent (info vs. error vs. success) would be a worse default than a
+  conventional blue.
+- `PlinthBadge`/`PlinthTooltip` default to `PlinthSize.sm` rather than
+  the `.md` every other component defaults to — matches how badges and
+  tooltips actually look in practice; defaulting them to `.md` would
+  make them oversized by default.
+- Five form-field components (`TextInput`, `Textarea`, `PasswordInput`,
+  `NumberInput`, `Select`) have an explicit `enabled: bool` alongside a
+  nullable `onChanged`, while every other interactive component infers
+  disabled state purely from a null callback. Justified: for a text
+  field, "no `onChanged` provided" and "field is disabled" are
+  genuinely different states (a read-only-but-still-selectable field
+  vs. a grayed-out, non-focusable one) — for a button, they're the
+  same state.
+
 ## Next steps (not yet built)
 
 - Add knobs to the Widgetbook use cases (`context.knobs.*`) once the
@@ -206,10 +244,11 @@ the sidebar.
   - Re-check the `plinth`/`plinth_ui` name is still unclaimed — the
     original check was early in this project's life relative to how
     much has shipped since.
-  - Consider an API-consistency review across all 51 components
-    before committing to a `1.0.0` — publishing `0.1.0` first and
-    iterating is lower-risk than locking in an API surface that grew
-    quickly across many rounds.
+  - ~~Consider an API-consistency review across all 51 components~~ —
+    **done**, see "API consistency review" above. Still worth
+    publishing `0.1.0` first rather than `1.0.0`, and iterating, since
+    the review covered naming/type consistency but not real-world
+    usage feedback.
 
 ## Naming note
 

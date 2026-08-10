@@ -51,12 +51,12 @@ unconstrained context), `color`.
 shortcuts, e.g. `PlinthKbd('Ctrl')` + `PlinthKbd('K')`.
 
 ### `PlinthCode`
-`text` (positional), `color` (default `'gray'`), `size`. Inline monospace
+`label` (positional), `color` (default `'gray'`), `size`. Inline monospace
 snippet on a tinted background — for referencing identifiers, commands,
 or file names within a sentence (typically inside a `WidgetSpan`).
 
 ### `PlinthMark`
-`text` (positional), `color` (defaults to `'yellow'` if the active theme
+`label` (positional), `color` (defaults to `'yellow'` if the active theme
 defines it, else a literal amber fallback). Highlighted inline text, e.g.
 for search-match terms.
 

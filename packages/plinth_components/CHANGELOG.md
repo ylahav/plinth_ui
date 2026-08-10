@@ -46,6 +46,11 @@ for the full prop reference.
 `PlinthTooltip`, `PlinthAffix`.
 
 ### Notes on this release
+- `PlinthMark` and `PlinthCode`'s single positional content field is
+  named `label`, matching `PlinthBadge`/`PlinthKbd`/`PlinthAnchor`'s
+  convention for the same pattern (found and fixed during an API
+  consistency pass — see the main README's "API consistency review"
+  section for the full audit).
 - Golden (visual regression) test coverage currently exists only for
   `PlinthButton` — other components have behavior tests but not
   appearance tests yet.

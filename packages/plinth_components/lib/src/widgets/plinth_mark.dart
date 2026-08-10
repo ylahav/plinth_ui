@@ -12,9 +12,9 @@ import 'package:plinth_core/plinth_core.dart';
 /// ]))
 /// ```
 class PlinthMark extends StatelessWidget {
-  const PlinthMark(this.text, {super.key, this.color});
+  const PlinthMark(this.label, {super.key, this.color});
 
-  final String text;
+  final String label;
 
   /// Highlight color key. Defaults to `'yellow'` if the active theme
   /// defines it, matching the conventional highlighter look;
@@ -33,7 +33,7 @@ class PlinthMark extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 2),
       color: background,
-      child: Text(text),
+      child: Text(label),
     );
   }
 }
