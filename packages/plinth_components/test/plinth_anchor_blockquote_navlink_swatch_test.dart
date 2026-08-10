@@ -12,8 +12,7 @@ Widget _wrap(Widget child) {
 void main() {
   group('PlinthAnchor', () {
     testWidgets('renders its label', (tester) async {
-      await tester
-          .pumpWidget(_wrap(PlinthAnchor('Forgot password?', onTap: () {})));
+      await tester.pumpWidget(_wrap(PlinthAnchor('Forgot password?', onTap: () {})));
 
       expect(find.text('Forgot password?'), findsOneWidget);
     });

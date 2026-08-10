@@ -73,8 +73,7 @@ class PlinthTable extends StatelessWidget {
       children: [
         TableRow(
           decoration: const BoxDecoration(
-            border:
-                Border(bottom: BorderSide(color: Color(0xFFDEE2E6), width: 2)),
+            border: Border(bottom: BorderSide(color: Color(0xFFDEE2E6), width: 2)),
           ),
           children: [for (final column in columns) cell(column, header: true)],
         ),

@@ -70,13 +70,10 @@ class PlinthIndicator extends StatelessWidget {
     final hasLabel = label != null && label!.isNotEmpty;
 
     final indicator = Container(
-      padding: hasLabel
-          ? const EdgeInsets.symmetric(horizontal: 4)
-          : EdgeInsets.zero,
+      padding: hasLabel ? const EdgeInsets.symmetric(horizontal: 4) : EdgeInsets.zero,
       constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-          color: fillColor, borderRadius: BorderRadius.circular(999)),
+      decoration: BoxDecoration(color: fillColor, borderRadius: BorderRadius.circular(999)),
       child: hasLabel
           ? Text(
               label!,

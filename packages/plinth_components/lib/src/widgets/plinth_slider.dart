@@ -76,8 +76,7 @@ class PlinthSlider extends StatelessWidget {
         thumbColor: activeColor,
         overlayColor: activeColor.withValues(alpha: 0.15),
         trackHeight: _trackHeights[size],
-        thumbShape:
-            RoundSliderThumbShape(enabledThumbRadius: _thumbRadii[size]!),
+        thumbShape: RoundSliderThumbShape(enabledThumbRadius: _thumbRadii[size]!),
         valueIndicatorColor: activeColor,
       ),
       child: Slider(

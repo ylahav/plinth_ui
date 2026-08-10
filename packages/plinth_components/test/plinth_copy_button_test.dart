@@ -19,8 +19,7 @@ void main() {
       expect(find.byIcon(Icons.check), findsNothing);
     });
 
-    testWidgets('writes value to the clipboard and shows a checkmark',
-        (tester) async {
+    testWidgets('writes value to the clipboard and shows a checkmark', (tester) async {
       final calls = <MethodCall>[];
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         SystemChannels.platform,
@@ -42,16 +41,14 @@ void main() {
       await tester.pump();
 
       expect(
-        calls.any((c) =>
-            c.method == 'Clipboard.setData' && c.arguments['text'] == 'hello'),
+        calls.any((c) => c.method == 'Clipboard.setData' && c.arguments['text'] == 'hello'),
         isTrue,
       );
       expect(find.byIcon(Icons.check), findsOneWidget);
       expect(find.byIcon(Icons.copy_outlined), findsNothing);
     });
 
-    testWidgets('reverts to the copy icon after confirmDuration',
-        (tester) async {
+    testWidgets('reverts to the copy icon after confirmDuration', (tester) async {
       // Mock the clipboard platform channel explicitly, same as the
       // previous test — without this, Clipboard.setData()'s await
       // depends on the default unmocked handler's timing, which

@@ -124,11 +124,7 @@ class _Segment<T> extends StatelessWidget {
           color: selected ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(radius),
           boxShadow: selected
-              ? [
-                  BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
-                      blurRadius: 2)
-                ]
+              ? [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 2)]
               : null,
         ),
         child: Text(

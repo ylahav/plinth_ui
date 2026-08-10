@@ -60,8 +60,7 @@ class PlinthNotification extends StatelessWidget {
     Duration duration = const Duration(seconds: 4),
   }) {
     final messenger = ScaffoldMessenger.of(context);
-    late final ScaffoldFeatureController<SnackBar, SnackBarClosedReason>
-        controller;
+    late final ScaffoldFeatureController<SnackBar, SnackBarClosedReason> controller;
     controller = messenger.showSnackBar(
       SnackBar(
         duration: duration,

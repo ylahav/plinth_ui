@@ -27,8 +27,7 @@ void main() {
     });
 
     testWidgets('respects the size parameter', (tester) async {
-      await tester
-          .pumpWidget(_wrap(const PlinthRingProgress(value: 0.5, size: 120)));
+      await tester.pumpWidget(_wrap(const PlinthRingProgress(value: 0.5, size: 120)));
 
       final size = tester.getSize(find.byType(PlinthRingProgress));
       expect(size.width, equals(120));
@@ -59,8 +58,7 @@ void main() {
           Stack(
             children: [
               const Positioned.fill(child: SizedBox()),
-              PlinthAffix(
-                  bottom: 20, right: 20, child: const Icon(Icons.arrow_upward)),
+              PlinthAffix(bottom: 20, right: 20, child: const Icon(Icons.arrow_upward)),
             ],
           ),
         ),

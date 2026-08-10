@@ -98,8 +98,7 @@ class PlinthChip extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (selected) ...[
-                Icon(Icons.check,
-                    size: _fontSizes[size]! + 2, color: Colors.white),
+                Icon(Icons.check, size: _fontSizes[size]! + 2, color: Colors.white),
                 const SizedBox(width: 4),
               ],
               Text(

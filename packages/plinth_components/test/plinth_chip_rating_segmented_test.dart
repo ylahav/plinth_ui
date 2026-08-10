@@ -11,8 +11,7 @@ Widget _wrap(Widget child) {
 
 void main() {
   group('PlinthChip', () {
-    testWidgets('renders label and shows a checkmark when selected',
-        (tester) async {
+    testWidgets('renders label and shows a checkmark when selected', (tester) async {
       await tester.pumpWidget(
         _wrap(PlinthChip(label: 'Blue', selected: true, onSelected: (_) {})),
       );
@@ -33,8 +32,7 @@ void main() {
       bool? result;
       await tester.pumpWidget(
         _wrap(
-          PlinthChip(
-              label: 'Blue', selected: false, onSelected: (v) => result = v),
+          PlinthChip(label: 'Blue', selected: false, onSelected: (v) => result = v),
         ),
       );
 
@@ -46,8 +44,7 @@ void main() {
 
     testWidgets('does nothing when onSelected is null', (tester) async {
       await tester.pumpWidget(
-        _wrap(
-            const PlinthChip(label: 'Blue', selected: false, onSelected: null)),
+        _wrap(const PlinthChip(label: 'Blue', selected: false, onSelected: null)),
       );
 
       await tester.tap(find.text('Blue'), warnIfMissed: false);
@@ -65,8 +62,7 @@ void main() {
       expect(find.byIcon(Icons.star_border), findsNWidgets(2));
     });
 
-    testWidgets('tapping a star calls onChanged with its index',
-        (tester) async {
+    testWidgets('tapping a star calls onChanged with its index', (tester) async {
       double? changed;
       await tester.pumpWidget(
         _wrap(PlinthRating(value: 0, onChanged: (v) => changed = v)),
@@ -80,8 +76,7 @@ void main() {
       expect(changed, equals(3.0));
     });
 
-    testWidgets('read-only mode (no onChanged) does not throw when tapped',
-        (tester) async {
+    testWidgets('read-only mode (no onChanged) does not throw when tapped', (tester) async {
       await tester.pumpWidget(const _RatingReadOnlyHarness());
 
       await tester.tap(find.byIcon(Icons.star).first, warnIfMissed: false);
@@ -112,8 +107,7 @@ void main() {
       expect(find.text('Grid'), findsOneWidget);
     });
 
-    testWidgets('tapping an option calls onChanged with its value',
-        (tester) async {
+    testWidgets('tapping an option calls onChanged with its value', (tester) async {
       String? changed;
       await tester.pumpWidget(
         _wrap(
