@@ -121,6 +121,8 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
                   children: [
                     for (final option in _unselected)
                       InkWell(
+                        key: ValueKey(
+                            'plinth_multi_select_option_${option.value}'),
                         onTap: () {
                           widget.onChanged([...widget.value, option.value]);
                           setState(() {});
@@ -190,6 +192,7 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
             SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
           ],
           InkWell(
+            key: const Key('plinth_multi_select_field'),
             onTap: _toggleDropdown,
             borderRadius: BorderRadius.circular(resolvedRadius),
             child: Container(
