@@ -15,16 +15,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # These `path:` dependencies work fine for local development but
-  # are NOT valid for a published package — pub.dev doesn't resolve
-  # local paths. plinth_core and plinth_hooks need to be published
-  # first, then these two lines switch to real version constraints,
-  # e.g. `plinth_core: ^0.0.1`, before this package itself can be
-  # published.
-  plinth_core:
-    path: ../plinth_core
-  plinth_hooks:
-    path: ../plinth_hooks
+  # Switched from path: deps to real published versions now that
+  # both are live on pub.dev.
+  plinth_core: ^0.0.1
+  plinth_hooks: ^0.0.1
 
 dev_dependencies:
   flutter_test:
