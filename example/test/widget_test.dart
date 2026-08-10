@@ -9,7 +9,8 @@ import 'package:plinth_example/main.dart';
 // web/desktop platforms. This is a real smoke test for the actual
 // app instead.
 void main() {
-  testWidgets('PlinthExampleApp launches and shows the hero title', (tester) async {
+  testWidgets('PlinthExampleApp launches and shows the hero title',
+      (tester) async {
     await tester.pumpWidget(const PlinthExampleApp());
     await tester.pump();
 

@@ -30,7 +30,8 @@ void main() {
   });
 
   group('PlinthCard', () {
-    testWidgets('renders child only when header/footer are omitted', (tester) async {
+    testWidgets('renders child only when header/footer are omitted',
+        (tester) async {
       await tester.pumpWidget(
         _wrap(const PlinthCard(child: Text('Body only'))),
       );
@@ -40,7 +41,8 @@ void main() {
       expect(find.byType(Divider), findsNothing);
     });
 
-    testWidgets('renders header, body, and footer with dividers between them', (tester) async {
+    testWidgets('renders header, body, and footer with dividers between them',
+        (tester) async {
       await tester.pumpWidget(
         _wrap(
           const PlinthCard(
@@ -58,7 +60,8 @@ void main() {
       expect(find.byType(Divider), findsNWidgets(2));
     });
 
-    testWidgets('renders only a header divider when footer is omitted', (tester) async {
+    testWidgets('renders only a header divider when footer is omitted',
+        (tester) async {
       await tester.pumpWidget(
         _wrap(
           const PlinthCard(

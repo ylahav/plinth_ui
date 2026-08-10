@@ -105,7 +105,8 @@ void main() {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               for (final size in PlinthSize.values) ...[
-                PlinthButton(size: size, onPressed: () {}, child: Text(size.name)),
+                PlinthButton(
+                    size: size, onPressed: () {}, child: Text(size.name)),
                 const SizedBox(width: 8),
               ],
             ],

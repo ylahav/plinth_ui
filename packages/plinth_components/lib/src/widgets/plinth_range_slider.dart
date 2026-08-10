@@ -1,51 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
-/// A themeable slider matching Mantine's `Slider`.
+/// A dual-thumb range slider matching Mantine's `RangeSlider`.
 ///
-/// Like [PlinthTooltip], this wraps Flutter's built-in [Slider]
-/// (via [SliderTheme]) rather than reimplementing drag handling from
-/// scratch — pointer tracking, keyboard step support, and
-/// accessibility (screen reader value announcements) are exactly the
-/// kind of thing that's easy to get subtly wrong in a hand-rolled
-/// version, and Flutter's implementation already handles them well.
-/// Plinth only restyles the track/thumb colors and thickness.
+/// Like [PlinthSlider], this wraps Flutter's built-in [RangeSlider]
+/// (via [SliderTheme]) rather than reimplementing dual-thumb drag
+/// handling — the same reasoning as `PlinthSlider`: pointer tracking
+/// and accessibility are worth not re-deriving from scratch.
 ///
 /// ```dart
-/// PlinthSlider(
-///   value: _volume,
-///   onChanged: (v) => setState(() => _volume = v),
-///   color: 'blue',
+/// PlinthRangeSlider(
+///   values: _priceRange,
+///   min: 0,
+///   max: 500,
+///   onChanged: (v) => setState(() => _priceRange = v),
 /// )
 /// ```
-class PlinthSlider extends StatelessWidget {
-  const PlinthSlider({
+class PlinthRangeSlider extends StatelessWidget {
+  const PlinthRangeSlider({
     super.key,
-    required this.value,
+    required this.values,
     required this.onChanged,
     this.min = 0,
     this.max = 100,
     this.divisions,
     this.color,
     this.size = PlinthSize.md,
-    this.label,
+    this.labels,
   });
 
-  final double value;
+  final RangeValues values;
 
   /// Null disables the slider.
-  final ValueChanged<double>? onChanged;
+  final ValueChanged<RangeValues>? onChanged;
   final double min;
   final double max;
-
-  /// Number of discrete steps. Omit for a continuous slider.
   final int? divisions;
-
   final String? color;
   final PlinthSize size;
 
-  /// Optional value label shown above the thumb while dragging.
-  final String? label;
+  /// Optional value labels shown above each thumb while dragging.
+  final RangeLabels? labels;
 
   static const Map<PlinthSize, double> _trackHeights = {
     PlinthSize.xs: 2,
@@ -76,17 +71,18 @@ class PlinthSlider extends StatelessWidget {
         thumbColor: activeColor,
         overlayColor: activeColor.withValues(alpha: 0.15),
         trackHeight: _trackHeights[size],
-        thumbShape:
-            RoundSliderThumbShape(enabledThumbRadius: _thumbRadii[size]!),
+        rangeThumbShape:
+            RoundRangeSliderThumbShape(enabledThumbRadius: _thumbRadii[size]!),
         valueIndicatorColor: activeColor,
       ),
-      child: Slider(
-        value: value.clamp(min, max),
+      child: RangeSlider(
+        values: RangeValues(
+            values.start.clamp(min, max), values.end.clamp(min, max)),
         onChanged: onChanged,
         min: min,
         max: max,
         divisions: divisions,
-        label: label,
+        labels: labels,
       ),
     );
   }

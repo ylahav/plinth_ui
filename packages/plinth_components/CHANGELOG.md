@@ -7,6 +7,22 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.1.0
+
+### Added
+- `PlinthBurger` — animated hamburger→X toggle icon.
+- `PlinthHoverCard` — hover-triggered anchored panel (desktop/web),
+  the same underlying `CompositedTransformTarget`/`Follower` technique
+  as `PlinthPopover` but with its own implementation, since a hover
+  trigger and a "stay open while the pointer travels onto the panel"
+  grace period don't fit `Popover`'s tap-based design.
+- `PlinthRangeSlider` — dual-thumb range slider, wrapping Flutter's
+  built-in `RangeSlider` (same rationale as `PlinthSlider`).
+- `PlinthMultiSelect<T>` + `PlinthMultiSelectOption<T>` — multi-value
+  select with removable chips in the field and a dropdown to add more.
+
+55 components total.
+
 ## 0.0.1 — Initial development release
 
 51 themeable components, all reading color/spacing/radius from a single

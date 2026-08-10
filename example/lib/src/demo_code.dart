@@ -618,6 +618,42 @@ Row(
   ],
 ),
 ''',
+  'Burger': r'''
+PlinthBurger(
+  opened: _burgerOpen,
+  onPressed: () => setState(() => _burgerOpen = !_burgerOpen),
+),
+''',
+  'Hover Card': r'''
+PlinthHoverCard(
+  target: PlinthAnchor('Hover for details', onTap: () {}),
+  content: const PlinthText(
+    'Extra context shown on hover — desktop/web only, '
+    'touch devices have no hover concept.',
+    size: PlinthSize.sm,
+  ),
+),
+''',
+  'Range Slider': r'''
+PlinthRangeSlider(
+  values: _priceRange,
+  onChanged: (v) => setState(() => _priceRange = v),
+),
+''',
+  'Multi Select': r'''
+PlinthMultiSelect<String>(
+  label: 'Skills',
+  placeholder: 'Choose skills',
+  value: _skills,
+  onChanged: (v) => setState(() => _skills = v),
+  options: const [
+    PlinthMultiSelectOption('dart', 'Dart'),
+    PlinthMultiSelectOption('flutter', 'Flutter'),
+    PlinthMultiSelectOption('ui', 'UI Design'),
+    PlinthMultiSelectOption('testing', 'Testing'),
+  ],
+),
+''',
   'Box + Text + Disclosure': r'''
 PlinthBox(
   p: PlinthSize.md,

@@ -92,7 +92,8 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 WidgetbookUseCase(
                   name: 'Disabled',
                   builder: (context) => _themed(
-                    const PlinthButton(onPressed: null, child: Text('Disabled')),
+                    const PlinthButton(
+                        onPressed: null, child: Text('Disabled')),
                   ),
                 ),
               ],
@@ -169,6 +170,15 @@ class PlinthWidgetbookApp extends StatelessWidget {
                   builder: (context) => _themed(
                     const PlinthCopyButton(value: 'sk_live_51H8xExampleKey'),
                   ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthBurger',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Interactive',
+                  builder: (context) => _themed(_BurgerDemo()),
                 ),
               ],
             ),
@@ -407,6 +417,31 @@ class PlinthWidgetbookApp extends StatelessWidget {
               ],
             ),
             WidgetbookComponent(
+              name: 'PlinthRangeSlider',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Interactive',
+                  builder: (context) => _themed(_RangeSliderDemo()),
+                ),
+                WidgetbookUseCase(
+                  name: 'Disabled',
+                  builder: (context) => _themed(
+                    const PlinthRangeSlider(
+                        values: RangeValues(20, 80), onChanged: null),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthMultiSelect',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Interactive',
+                  builder: (context) => _themed(_MultiSelectDemo()),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
               name: 'PlinthSegmentedControl',
               useCases: [
                 WidgetbookUseCase(
@@ -445,8 +480,14 @@ class PlinthWidgetbookApp extends StatelessWidget {
                     Wrap(
                       spacing: 8,
                       children: [
-                        PlinthChip(label: 'Selected', selected: true, onSelected: (_) {}),
-                        PlinthChip(label: 'Unselected', selected: false, onSelected: (_) {}),
+                        PlinthChip(
+                            label: 'Selected',
+                            selected: true,
+                            onSelected: (_) {}),
+                        PlinthChip(
+                            label: 'Unselected',
+                            selected: false,
+                            onSelected: (_) {}),
                       ],
                     ),
                   ),
@@ -585,7 +626,8 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 ),
                 WidgetbookUseCase(
                   name: 'Large total (ellipsis)',
-                  builder: (context) => _themed(_PaginationDemo(total: 20, initialPage: 10)),
+                  builder: (context) =>
+                      _themed(_PaginationDemo(total: 20, initialPage: 10)),
                 ),
               ],
             ),
@@ -903,6 +945,26 @@ class PlinthWidgetbookApp extends StatelessWidget {
               ],
             ),
             WidgetbookComponent(
+              name: 'PlinthHoverCard',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Hover the target',
+                  // Desktop/web-oriented — hover the target text in a
+                  // browser or desktop build to see the card; there's
+                  // no hover concept to simulate on touch.
+                  builder: (context) => _themed(
+                    PlinthHoverCard(
+                      target: PlinthAnchor('Hover for details', onTap: () {}),
+                      content: const PlinthText(
+                        'Extra context shown on hover.',
+                        size: PlinthSize.sm,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
               name: 'PlinthMenu',
               useCases: [
                 WidgetbookUseCase(
@@ -928,7 +990,8 @@ class PlinthWidgetbookApp extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         for (final size in PlinthSize.values) ...[
-                          PlinthAvatar(initials: 'YR', color: 'blue', size: size),
+                          PlinthAvatar(
+                              initials: 'YR', color: 'blue', size: size),
                           const SizedBox(width: 12),
                         ],
                       ],
@@ -1014,7 +1077,8 @@ class PlinthWidgetbookApp extends StatelessWidget {
                       runSpacing: 8,
                       children: [
                         for (final v in PlinthVariant.values)
-                          PlinthThemeIcon(icon: const Icon(Icons.check), variant: v),
+                          PlinthThemeIcon(
+                              icon: const Icon(Icons.check), variant: v),
                       ],
                     ),
                   ),
@@ -1084,7 +1148,8 @@ class PlinthWidgetbookApp extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         for (final size in PlinthSize.values)
-                          PlinthText('${size.name} — the quick brown fox', size: size),
+                          PlinthText('${size.name} — the quick brown fox',
+                              size: size),
                       ],
                     ),
                   ),
@@ -1100,7 +1165,8 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 ),
                 WidgetbookUseCase(
                   name: 'With label',
-                  builder: (context) => _themed(const PlinthDivider(label: 'OR')),
+                  builder: (context) =>
+                      _themed(const PlinthDivider(label: 'OR')),
                 ),
                 WidgetbookUseCase(
                   name: 'Vertical',
@@ -1131,7 +1197,8 @@ class PlinthWidgetbookApp extends StatelessWidget {
                   name: 'With citation',
                   builder: (context) => _themed(
                     const PlinthBlockquote(
-                      quote: 'The best way to predict the future is to invent it.',
+                      quote:
+                          'The best way to predict the future is to invent it.',
                       citation: 'Alan Kay',
                     ),
                   ),
@@ -1483,6 +1550,68 @@ class _ColorSwatchDemoState extends State<_ColorSwatchDemo> {
           ),
           const SizedBox(width: 8),
         ],
+      ],
+    );
+  }
+}
+
+/// Owns the opened state for the Burger use case.
+class _BurgerDemo extends StatefulWidget {
+  @override
+  State<_BurgerDemo> createState() => _BurgerDemoState();
+}
+
+class _BurgerDemoState extends State<_BurgerDemo> {
+  bool _opened = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthBurger(
+      opened: _opened,
+      onPressed: () => setState(() => _opened = !_opened),
+    );
+  }
+}
+
+/// Owns the current range for the RangeSlider use case.
+class _RangeSliderDemo extends StatefulWidget {
+  @override
+  State<_RangeSliderDemo> createState() => _RangeSliderDemoState();
+}
+
+class _RangeSliderDemoState extends State<_RangeSliderDemo> {
+  RangeValues _values = const RangeValues(20, 80);
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthRangeSlider(
+      values: _values,
+      onChanged: (v) => setState(() => _values = v),
+    );
+  }
+}
+
+/// Owns the selected values for the MultiSelect use case.
+class _MultiSelectDemo extends StatefulWidget {
+  @override
+  State<_MultiSelectDemo> createState() => _MultiSelectDemoState();
+}
+
+class _MultiSelectDemoState extends State<_MultiSelectDemo> {
+  List<String> _value = ['dart'];
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthMultiSelect<String>(
+      label: 'Skills',
+      placeholder: 'Choose skills',
+      value: _value,
+      onChanged: (v) => setState(() => _value = v),
+      options: const [
+        PlinthMultiSelectOption('dart', 'Dart'),
+        PlinthMultiSelectOption('flutter', 'Flutter'),
+        PlinthMultiSelectOption('ui', 'UI Design'),
+        PlinthMultiSelectOption('testing', 'Testing'),
       ],
     );
   }

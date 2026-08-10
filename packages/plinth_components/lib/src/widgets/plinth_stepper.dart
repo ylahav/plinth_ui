@@ -107,7 +107,8 @@ class _StepCircleAndLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final isFilled = state == _StepState.completed || state == _StepState.active;
+    final isFilled =
+        state == _StepState.completed || state == _StepState.active;
 
     return InkWell(
       onTap: onTap,
@@ -142,7 +143,8 @@ class _StepCircleAndLabel extends StatelessWidget {
           PlinthText(
             step.label,
             size: PlinthSize.sm,
-            weight: state == _StepState.active ? FontWeight.w700 : FontWeight.w400,
+            weight:
+                state == _StepState.active ? FontWeight.w700 : FontWeight.w400,
             textAlign: TextAlign.center,
           ),
           if (step.description != null)

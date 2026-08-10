@@ -66,7 +66,8 @@ class PlinthSelect<T> extends StatelessWidget {
     final verticalPadding = theme.spacing[size]! * 0.5;
     final horizontalPadding = theme.spacing[size]!;
 
-    final borderColor = hasError ? theme.color('red', 6) : const Color(0xFFCED4DA);
+    final borderColor =
+        hasError ? theme.color('red', 6) : const Color(0xFFCED4DA);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,7 +100,8 @@ class PlinthSelect<T> extends StatelessWidget {
                 hint: placeholder != null
                     ? Text(
                         placeholder!,
-                        style: TextStyle(fontSize: fontSize, color: Colors.grey),
+                        style:
+                            TextStyle(fontSize: fontSize, color: Colors.grey),
                       )
                     : null,
                 icon: const Icon(Icons.keyboard_arrow_down, size: 18),
@@ -108,7 +110,8 @@ class PlinthSelect<T> extends StatelessWidget {
                   for (final option in options)
                     DropdownMenuItem<T>(
                       value: option.value,
-                      child: Text(option.label, style: TextStyle(fontSize: fontSize)),
+                      child: Text(option.label,
+                          style: TextStyle(fontSize: fontSize)),
                     ),
                 ],
                 selectedItemBuilder: (context) => [

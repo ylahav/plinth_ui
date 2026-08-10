@@ -25,7 +25,8 @@ void main() {
       var tapped = false;
       await tester.pumpWidget(
         _wrap(
-          PlinthActionIcon(icon: const Icon(Icons.delete), onPressed: () => tapped = true),
+          PlinthActionIcon(
+              icon: const Icon(Icons.delete), onPressed: () => tapped = true),
         ),
       );
 
@@ -39,7 +40,10 @@ void main() {
       for (final variant in PlinthVariant.values) {
         await tester.pumpWidget(
           _wrap(
-            PlinthActionIcon(icon: const Icon(Icons.star), variant: variant, onPressed: () {}),
+            PlinthActionIcon(
+                icon: const Icon(Icons.star),
+                variant: variant,
+                onPressed: () {}),
           ),
         );
         expect(find.byIcon(Icons.star), findsOneWidget);
@@ -67,7 +71,8 @@ void main() {
   });
 
   group('PlinthPasswordInput', () {
-    testWidgets('obscures text by default and toggles visibility', (tester) async {
+    testWidgets('obscures text by default and toggles visibility',
+        (tester) async {
       await tester.pumpWidget(
         _wrap(PlinthPasswordInput(label: 'Password', onChanged: (_) {})),
       );

@@ -12,16 +12,16 @@ plinth_ui/
   .github/workflows/regenerate-goldens.yml # manual — regenerates goldens on Linux to match CI
   packages/
     plinth_core/            # PlinthTheme, design tokens (colors, spacing, radius)
-    plinth_components/       # Widgets (Button, ActionIcon, CopyButton, Box, Text,
-    │                          Divider, Kbd, Anchor, Blockquote, Modal, Drawer,
+    plinth_components/       # Widgets (Button, ActionIcon, CopyButton, Burger, Box,
+    │                          Text, Divider, Kbd, Anchor, Blockquote, Modal, Drawer,
     │                          TextInput, Textarea, PasswordInput, Checkbox,
-    │                          Radio/RadioGroup, Select, Badge, Alert, Switch, Slider,
-    │                          Progress, Spoiler, LoadingOverlay, Avatar, ThemeIcon,
-    │                          Indicator, ColorSwatch, Table, Accordion, Stepper,
-    │                          Breadcrumbs, Pagination, Timeline, NavLink,
-    │                          Notification, Skeleton, Paper, Card, SegmentedControl,
-    │                          NumberInput, Chip, Rating, Tooltip, Popover,
-    │                          Tabs/TabView, Menu)
+    │                          Radio/RadioGroup, Select, MultiSelect, Badge, Alert,
+    │                          Switch, Slider, RangeSlider, Progress, Spoiler,
+    │                          LoadingOverlay, Avatar, ThemeIcon, Indicator,
+    │                          ColorSwatch, Table, Accordion, Stepper, Breadcrumbs,
+    │                          Pagination, Timeline, NavLink, Notification, Skeleton,
+    │                          Paper, Card, SegmentedControl, NumberInput, Chip,
+    │                          Rating, Tooltip, Popover, HoverCard, Tabs/TabView, Menu)
     plinth_hooks/             # PlinthDisclosureController (useDisclosure equivalent)
   example/                  # Showcase app — run this to see every component live
   widgetbook/               # Isolated component gallery (manual/non-codegen setup)
@@ -135,7 +135,7 @@ the sidebar.
   ramps (curve-based 10-shade generator with non-linear lightness
   stops + shade-dependent saturation), spacing, radius, and font-size
   scales.
-- **51 components** across Primitives, Forms, Feedback, Data Display,
+- **55 components** across Primitives, Forms, Feedback, Data Display,
   Navigation, Surfaces, and Overlays — full list with props in
   **[docs/COMPONENTS.md](docs/COMPONENTS.md)**, kept current every round
   rather than duplicated here. A few architectural patterns worth
@@ -159,8 +159,8 @@ the sidebar.
 - **Tests** — pure-logic tests for `PlinthTheme`'s shade generator and
   `PlinthDisclosureController`, a golden (visual regression) test suite
   for `PlinthButton` (variants, a color override, disabled state, all
-  sizes), and widget behavior tests for most other components — 19 test
-  files covering the majority of the 51 public components as of this
+  sizes), and widget behavior tests for most other components — 22 test
+  files covering the majority of the 55 public components as of this
   writing.
   Notable coverage: `PlinthPagination`'s ellipsis-collapse logic at large
   page counts, `PlinthAccordion`'s single/multiple-open modes,

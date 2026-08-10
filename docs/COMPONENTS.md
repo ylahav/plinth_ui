@@ -31,6 +31,14 @@ circular) with no label — for icon-only actions.
 2 seconds). Copies `value` to the clipboard on tap, showing a transient
 checkmark before reverting to the copy icon.
 
+### `PlinthBurger`
+`opened`, `onPressed`, `color`, `size`. Animated hamburger→X toggle icon
+using `AnimatedPositioned` with explicit pixel targets (not
+`AnimatedSlide`, whose offset is relative to each thin bar's own tiny
+height rather than the icon's overall size). Controlled component —
+doesn't open anything itself, pair with a `PlinthDisclosureController`
+or your own bool state.
+
 ### `PlinthBox`
 `child`, `p`/`px`/`py` (padding), `m`/`mx`/`my` (margin) — all keyed by
 `PlinthSize` and resolved through `theme.spacing`. Also `w`, `h`, `bg`,
@@ -141,6 +149,22 @@ continuous), `color`, `size`, `label` (shown above the thumb while
 dragging). A themed wrapper around Flutter's built-in `Slider` (via
 `SliderTheme`) — same rationale as `PlinthTooltip`: drag handling,
 keyboard stepping, and accessibility are worth not reimplementing.
+
+### `PlinthRangeSlider`
+`values` (`RangeValues`), `onChanged` (nullable), `min`, `max`,
+`divisions`, `color`, `size`, `labels` (`RangeLabels`). Same wrap-not-
+reimplement rationale as `PlinthSlider`, wrapping Flutter's built-in
+`RangeSlider` for dual-thumb range selection.
+
+### `PlinthMultiSelect<T>` + `PlinthMultiSelectOption<T>`
+`options`, `value` (`List<T>`), `onChanged`, `label`, `description`,
+`placeholder`, `error`, `size`, `color`, `radius`, `enabled`. Chosen
+values render as removable chips inside the field (via Flutter's
+built-in `Chip`, not `PlinthChip` — that's a *selectable toggle*
+pattern, a different semantic than a removable value chip); tapping
+the field opens a dropdown of the remaining options. A bespoke
+implementation, not a `PlinthSelect` variant — `DropdownButton` (which
+`PlinthSelect` wraps) has no multi-select mode.
 
 ### `PlinthSegmentedControl<T>` + `PlinthSegmentedControlItem<T>`
 `items` (`List<PlinthSegmentedControlItem<T>>`), `value`, `onChanged`,
@@ -376,6 +400,16 @@ Modal/Drawer, **not** route-based — built on
 (including through scrolling). Tapping `target` toggles the controller
 directly; no separate host widget needed since the popover wraps its
 own trigger.
+
+### `PlinthHoverCard`
+`target`, `content`, `position`, `width`, `closeDelay` (default 100ms).
+Hover-triggered — desktop/web-oriented, effectively inert on touch
+devices (see `PlinthPopover` for a tap-triggered equivalent that works
+everywhere). Not built by composing `PlinthPopover` — its trigger is
+hardcoded to tap, and a hover card additionally needs to stay open
+while the pointer travels from `target` onto `content` itself, which
+`closeDelay` (a grace-period `Timer`) provides. No controller — hover
+state is managed internally via `MouseRegion`.
 
 ### `PlinthTooltip`
 `message`, `child`, `size`, `radius`. A themed wrapper around Flutter's
