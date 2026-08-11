@@ -7,6 +7,23 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.2.0
+
+### Added
+- `PlinthPinInput` — segmented OTP/PIN entry, one box per character,
+  with auto-advancing focus as digits are typed and auto-retreating
+  focus on backspace from an already-empty box.
+- `PlinthButtonGroup` — visually joins a row of buttons into one
+  connected group (shared borders, squared-off inner corners).
+- `PlinthOverlay` — generic dimming backdrop, distinct from
+  `PlinthLoadingOverlay` (which always shows a spinner and always
+  blocks pointer events) — this is the more general primitive for
+  dimming a background without necessarily blocking interaction.
+- `PlinthVisuallyHidden` — content visible to screen readers but not
+  sighted users, for supplementary context on icon-only controls.
+
+59 components total.
+
 ## 0.1.0
 
 ### Added

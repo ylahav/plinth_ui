@@ -654,6 +654,85 @@ PlinthMultiSelect<String>(
   ],
 ),
 ''',
+  'Pin Input': r'''
+PlinthPinInput(
+  length: 4,
+  value: _pin,
+  onChanged: (v) => setState(() => _pin = v),
+  onCompleted: (v) => debugPrint('PIN complete: $v'),
+),
+''',
+  'Button Group': r'''
+PlinthButtonGroup(
+  children: [
+    PlinthButton(
+      variant: PlinthVariant.outline,
+      onPressed: () {},
+      child: const Text('Day'),
+    ),
+    PlinthButton(
+      variant: PlinthVariant.outline,
+      onPressed: () {},
+      child: const Text('Week'),
+    ),
+    PlinthButton(
+      variant: PlinthVariant.outline,
+      onPressed: () {},
+      child: const Text('Month'),
+    ),
+  ],
+),
+''',
+  'Overlay': r'''
+SizedBox(
+  width: double.infinity,
+  height: 100,
+  child: Stack(
+    children: [
+      Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF228BE6),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      const PlinthOverlay(
+        opacity: 0.5,
+        child: Center(
+          child: Text(
+            'Dimmed content',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          ),
+        ),
+      ),
+    ],
+  ),
+),
+''',
+  'Visually Hidden': r'''
+Row(
+  crossAxisAlignment: CrossAxisAlignment.center,
+  children: [
+    PlinthActionIcon(
+      icon: Stack(
+        children: [
+          const Icon(Icons.close),
+          const PlinthVisuallyHidden(child: Text('Close dialog')),
+        ],
+      ),
+      onPressed: () {},
+    ),
+    const SizedBox(width: 12),
+    Expanded(
+      child: PlinthText(
+        'The icon button to the left has a screen-reader-only '
+        '"Close dialog" label alongside its visible icon.',
+        size: PlinthSize.sm,
+        color: 'gray',
+      ),
+    ),
+  ],
+),
+''',
   'Box + Text + Disclosure': r'''
 PlinthBox(
   p: PlinthSize.md,

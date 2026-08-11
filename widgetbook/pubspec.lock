@@ -174,7 +174,7 @@ packages:
       path: "../packages/plinth_components"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "0.2.0"
   plinth_core:
     dependency: "direct overridden"
     description:

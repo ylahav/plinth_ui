@@ -182,6 +182,35 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 ),
               ],
             ),
+            WidgetbookComponent(
+              name: 'PlinthButtonGroup',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Default',
+                  builder: (context) => _themed(
+                    PlinthButtonGroup(
+                      children: [
+                        PlinthButton(
+                          variant: PlinthVariant.outline,
+                          onPressed: () {},
+                          child: const Text('Day'),
+                        ),
+                        PlinthButton(
+                          variant: PlinthVariant.outline,
+                          onPressed: () {},
+                          child: const Text('Week'),
+                        ),
+                        PlinthButton(
+                          variant: PlinthVariant.outline,
+                          onPressed: () {},
+                          child: const Text('Month'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
         WidgetbookCategory(
@@ -438,6 +467,15 @@ class PlinthWidgetbookApp extends StatelessWidget {
                 WidgetbookUseCase(
                   name: 'Interactive',
                   builder: (context) => _themed(_MultiSelectDemo()),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthPinInput',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Interactive',
+                  builder: (context) => _themed(_PinInputDemo()),
                 ),
               ],
             ),
@@ -931,6 +969,41 @@ class PlinthWidgetbookApp extends StatelessWidget {
               ],
             ),
             WidgetbookComponent(
+              name: 'PlinthOverlay',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Dimmed content',
+                  builder: (context) => _themed(
+                    SizedBox(
+                      width: 240,
+                      height: 100,
+                      child: Stack(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF228BE6),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          const PlinthOverlay(
+                            opacity: 0.5,
+                            child: Center(
+                              child: Text(
+                                'Dimmed content',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
               name: 'PlinthPopover',
               useCases: [
                 WidgetbookUseCase(
@@ -1186,6 +1259,26 @@ class PlinthWidgetbookApp extends StatelessWidget {
                   name: 'Default',
                   builder: (context) => _themed(
                     PlinthAnchor('Forgot password?', onTap: () {}),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthVisuallyHidden',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Icon button with a hidden label',
+                  builder: (context) => _themed(
+                    PlinthActionIcon(
+                      icon: Stack(
+                        children: [
+                          const Icon(Icons.close),
+                          const PlinthVisuallyHidden(
+                              child: Text('Close dialog')),
+                        ],
+                      ),
+                      onPressed: () {},
+                    ),
                   ),
                 ),
               ],
@@ -1613,6 +1706,25 @@ class _MultiSelectDemoState extends State<_MultiSelectDemo> {
         PlinthMultiSelectOption('ui', 'UI Design'),
         PlinthMultiSelectOption('testing', 'Testing'),
       ],
+    );
+  }
+}
+
+/// Owns the entered code for the PinInput use case.
+class _PinInputDemo extends StatefulWidget {
+  @override
+  State<_PinInputDemo> createState() => _PinInputDemoState();
+}
+
+class _PinInputDemoState extends State<_PinInputDemo> {
+  String _value = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthPinInput(
+      length: 4,
+      value: _value,
+      onChanged: (v) => setState(() => _value = v),
     );
   }
 }

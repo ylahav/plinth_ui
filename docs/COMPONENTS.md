@@ -21,6 +21,13 @@ Shared enums used throughout: `PlinthSize` (`xs, sm, md, lg, xl`) and
 The reference implementation — every other component's variant/size/color
 resolution logic follows this one's pattern.
 
+### `PlinthButtonGroup`
+`children`. Visually joins a row of buttons (or any bordered children)
+into one connected group — outer corners stay rounded, inner corners
+square off, adjacent borders collapse into a shared hairline instead of
+doubling up. A layout wrapper only; doesn't alter children's own
+behavior.
+
 ### `PlinthActionIcon`
 `icon`, `onPressed`, `variant`, `size`, `color`, `radius`, `circle`. Same
 variant/size/color resolution as `PlinthButton`, but square (or fully
@@ -74,6 +81,13 @@ for search-match terms.
 matching conventional link affordance). Styled link text; not a
 navigation widget itself, just a themed tap target.
 
+### `PlinthVisuallyHidden`
+`child`. Renders `child` so screen readers announce it while sighted
+users never see it — e.g. supplementary context for an icon-only
+control. Uses the standard "clip to a near-zero size" technique rather
+than `Opacity`/`Visibility.invisible`, which some screen readers still
+treat as hidden from *them* too.
+
 ### `PlinthBlockquote`
 `quote`, `citation`, `color`, `icon`. Colored left border with italic
 quote text and an optional citation line.
@@ -114,6 +128,13 @@ Border color: gray (default) -> theme color at shade 6 (focused) -> red
 `size`, `color`, `radius`, `enabled`. Shares `PlinthTextInput`'s chrome,
 with a show/hide visibility toggle icon instead of a plain `obscureText`
 flag.
+
+### `PlinthPinInput`
+`length` (default `4`), `value`, `onChanged`, `onCompleted` (fires once
+when the value reaches `length` characters), `obscureText`, `numbersOnly`
+(default `true`), `size`, `color`, `error`. One box per character, with
+auto-advancing focus as each digit is typed and auto-retreating focus on
+backspace from an already-empty box.
 
 ### `PlinthCheckbox`
 `value`, `onChanged` (nullable — null disables), `label`, `size`, `color`, `radius`.
@@ -246,6 +267,17 @@ rather than removing `child` from the tree — layout stays stable across
 the loading toggle. Distinct from `PlinthSkeleton`: this overlays
 *existing* content during an async operation, rather than standing in for
 content that doesn't exist yet.
+
+### `PlinthOverlay`
+`child`, `color` (default black), `opacity` (default `0.6`),
+`blockPointerEvents` (default `false`). A generic dimming backdrop —
+distinct from `PlinthLoadingOverlay`, which is specifically a loading
+state (always shows a spinner, always blocks pointer events). This is
+the more general primitive: dim a background image behind text, gray
+out a section without necessarily blocking interaction, or build a
+custom loading/empty state with your own content. Renders via
+`Positioned.fill`, so — like `PlinthAffix` — it needs a `Stack`
+ancestor; place it as a sibling of whatever it should dim.
 
 ---
 
