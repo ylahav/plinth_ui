@@ -6,18 +6,91 @@ import 'src/showcase/home_page.dart';
 
 void main() => runApp(const PlinthExampleApp());
 
-class PlinthExampleApp extends StatelessWidget {
-  const PlinthExampleApp({super.key});
+/// Lets any page below flip the app between light and dark.
+///
+/// An `InheritedWidget` rather than passing a callback down: the toggle
+/// button sits several levels inside the page tree, and threading a
+/// setter through every intermediate widget to reach it is worse than
+/// looking it up.
+class ThemeSwitcher extends InheritedWidget {
+  const ThemeSwitcher({
+    super.key,
+    required this.mode,
+    required this.onChanged,
+    required super.child,
+  });
+
+  final ThemeMode mode;
+  final ValueChanged<ThemeMode> onChanged;
+
+  static ThemeSwitcher of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<ThemeSwitcher>()!;
+
+  bool get isDark => mode == ThemeMode.dark;
+
+  void toggle() => onChanged(isDark ? ThemeMode.light : ThemeMode.dark);
+
+  @override
+  bool updateShouldNotify(ThemeSwitcher oldWidget) => mode != oldWidget.mode;
+}
+
+/// The button itself, so every page can drop one in without repeating
+/// the lookup.
+class ThemeToggleButton extends StatelessWidget {
+  const ThemeToggleButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Plinth UI',
-      theme: ThemeData(
-        useMaterial3: true,
-        extensions: [PlinthTheme.defaultTheme],
+    final switcher = ThemeSwitcher.of(context);
+
+    return PlinthTooltip(
+      message: switcher.isDark ? 'Switch to light' : 'Switch to dark',
+      child: PlinthActionIcon(
+        icon: Icon(
+          switcher.isDark
+              ? Icons.light_mode_outlined
+              : Icons.dark_mode_outlined,
+          size: 18,
+        ),
+        variant: PlinthVariant.subtle,
+        onPressed: switcher.toggle,
       ),
-      home: const HomePage(),
+    );
+  }
+}
+
+class PlinthExampleApp extends StatefulWidget {
+  const PlinthExampleApp({super.key});
+
+  @override
+  State<PlinthExampleApp> createState() => _PlinthExampleAppState();
+}
+
+class _PlinthExampleAppState extends State<PlinthExampleApp> {
+  ThemeMode _mode = ThemeMode.light;
+
+  @override
+  Widget build(BuildContext context) {
+    return ThemeSwitcher(
+      mode: _mode,
+      onChanged: (mode) => setState(() => _mode = mode),
+      child: MaterialApp(
+        title: 'Plinth UI',
+        themeMode: _mode,
+        theme: ThemeData(
+          useMaterial3: true,
+          brightness: Brightness.light,
+          scaffoldBackgroundColor: PlinthTheme.defaultTheme.surface,
+          extensions: [PlinthTheme.defaultTheme],
+        ),
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: PlinthTheme.darkTheme.surface,
+          extensions: [PlinthTheme.darkTheme],
+        ),
+        home: const HomePage(),
+      ),
     );
   }
 }
@@ -173,7 +246,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isFirst) ...[
-            const Divider(height: 1, color: Color(0xFFE9ECEF)),
+            Divider(height: 1, color: context.plinth.surfaceSunken),
             const SizedBox(height: 32),
           ],
           Row(
@@ -408,8 +481,9 @@ class _ShowcasePageState extends State<ShowcasePage> {
     return SizedBox(
       width: 220,
       child: DecoratedBox(
-        decoration: const BoxDecoration(
-          border: Border(right: BorderSide(color: Color(0xFFE9ECEF))),
+        decoration: BoxDecoration(
+          border:
+              Border(right: BorderSide(color: context.plinth.surfaceSunken)),
         ),
         child: content,
       ),
@@ -486,7 +560,10 @@ class _ShowcasePageState extends State<ShowcasePage> {
       child: PlinthDrawerHost(
         drawer: navDrawer,
         child: Scaffold(
-          appBar: AppBar(title: const Text('Plinth UI — Component Showcase')),
+          appBar: AppBar(
+            title: const Text('Plinth UI — Component Showcase'),
+            actions: const [ThemeToggleButton(), SizedBox(width: 8)],
+          ),
           // Only offered as a drawer (hamburger icon) on narrow
           // screens — on wide screens the persistent sidebar below
           // already provides this navigation, so showing both would

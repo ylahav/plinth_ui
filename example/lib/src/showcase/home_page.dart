@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_components/plinth_components.dart';
 
-import '../../main.dart' show ShowcasePage;
+import '../../main.dart' show ShowcasePage, ThemeToggleButton;
 import 'category_detail_page.dart';
 import 'showcase_data.dart';
 
@@ -25,6 +25,8 @@ class HomePage extends StatelessWidget {
             icon: const Icon(Icons.widgets_outlined, size: 18),
             label: const Text('Component gallery'),
           ),
+          const SizedBox(width: 8),
+          const ThemeToggleButton(),
           const SizedBox(width: 8),
         ],
       ),
