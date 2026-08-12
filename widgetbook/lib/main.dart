@@ -52,6 +52,37 @@ class _LocalState<T> extends State<_Local<T>> {
       widget.builder(_value, (v) => setState(() => _value = v));
 }
 
+/// Owns a [PlinthDisclosureController] for a use case — the overlay
+/// analogue of [_Local].
+///
+/// Use-case builders are stateless functions, but Modal/Drawer/Popover/
+/// Menu need a controller that survives rebuilds (a knob change
+/// rebuilds the builder, and a fresh controller each time would drop
+/// the open state) and that gets disposed when the use case goes away.
+/// Generalizes the per-component `_PopoverDemo`/`_MenuDemo` widgets
+/// further down, which each exist only to do exactly this.
+class _Disclosed extends StatefulWidget {
+  const _Disclosed({required this.builder});
+
+  final Widget Function(PlinthDisclosureController controller) builder;
+
+  @override
+  State<_Disclosed> createState() => _DisclosedState();
+}
+
+class _DisclosedState extends State<_Disclosed> {
+  final _controller = PlinthDisclosureController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.builder(_controller);
+}
+
 /// The palette keys `PlinthTheme.defaultTheme` actually defines.
 ///
 /// Keep this in step with that map: an unrecognized color name falls
@@ -120,6 +151,18 @@ IconData? _iconKnob(BuildContext context, {String label = 'leadingIcon'}) {
       ?.icon;
 }
 
+/// Shared by Popover, HoverCard, and Menu — Menu is built directly on
+/// Popover, and HoverCard reuses its position enum, so all three offer
+/// the same four anchor points.
+PlinthPopoverPosition _popoverPositionKnob(BuildContext context) {
+  return context.knobs.object.dropdown(
+    label: 'position',
+    options: PlinthPopoverPosition.values,
+    initialOption: PlinthPopoverPosition.bottom,
+    labelBuilder: (position) => position.name,
+  );
+}
+
 PlinthSize? _radiusKnob(BuildContext context) {
   return context.knobs.objectOrNull.dropdown(
     label: 'radius',
@@ -149,8 +192,11 @@ PlinthSize? _radiusKnob(BuildContext context) {
 ///   `subtle` against `transparent`, or `xs` against `sm`, needs them
 ///   on screen together, which a single knob-driven instance can't do.
 ///
-/// Playgrounds currently exist for the Buttons & Actions and Forms
-/// categories; the remaining six still have static use cases only.
+/// Playgrounds currently exist for the Buttons & Actions, Forms, and
+/// Overlays categories; the remaining five still have static use
+/// cases only. Not every component needs one — a thin wrapper with a
+/// single `child` prop (`PlinthPortal`, most of Layout & Typography)
+/// has nothing to vary, and a playground there would be ceremony.
 /// Follow the same shape when adding more: knobs for presentational
 /// props, `_Local` for any value the user should be able to change by
 /// interacting with the component itself, and a knob per prop the
@@ -1689,6 +1735,46 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthModal',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final title = context.knobs.stringOrNull(
+                label: 'title',
+                initialValue: 'Confirm deletion',
+                defaultToNull: true,
+              );
+              final size = _sizeKnob(context);
+              final radius = _radiusKnob(context);
+              final closeOnBackdropTap = context.knobs.boolean(
+                label: 'closeOnBackdropTap',
+                initialValue: true,
+              );
+              return _themed(
+                _Disclosed(
+                  // PlinthModal doesn't render inline — the host shows
+                  // it whenever the controller opens, so the use case
+                  // is the trigger, not the modal itself.
+                  builder: (controller) => PlinthModalHost(
+                    modal: PlinthModal(
+                      controller: controller,
+                      title: title,
+                      size: size,
+                      radius: radius,
+                      closeOnBackdropTap: closeOnBackdropTap,
+                      child: const PlinthText(
+                        'This action cannot be undone.',
+                        size: PlinthSize.sm,
+                      ),
+                    ),
+                    child: PlinthButton(
+                      onPressed: controller.open,
+                      child: const Text('Open modal'),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'Static content preview',
             // Modal is driven imperatively via a controller and
             // Navigator, which doesn't render meaningfully as a
@@ -1746,6 +1832,26 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthTooltip',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              PlinthTooltip(
+                message: context.knobs.string(
+                  label: 'message',
+                  initialValue: 'Copied to clipboard',
+                ),
+                // Tooltips default to sm, not the md most components
+                // use — an md tooltip reads oversized.
+                size: _sizeKnob(context, initial: PlinthSize.sm),
+                radius: _radiusKnob(context),
+                child: PlinthButton(
+                  variant: PlinthVariant.outline,
+                  onPressed: () {},
+                  child: const Text('Hover me'),
+                ),
+              ),
+            ),
+          ),
+          WidgetbookUseCase(
             name: 'Hover to reveal',
             builder: (context) => _themed(
               PlinthTooltip(
@@ -1764,6 +1870,43 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthOverlay',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 320,
+                height: 180,
+                // PlinthOverlay renders via Positioned.fill, so it
+                // needs a Stack ancestor and a bounded box to dim.
+                child: Stack(
+                  children: [
+                    const PlinthPaper(
+                      child: PlinthText(
+                        'Content sitting underneath the overlay.',
+                      ),
+                    ),
+                    PlinthOverlay(
+                      color: context.knobs.boolean(label: 'white overlay')
+                          ? Colors.white
+                          : Colors.black,
+                      opacity: context.knobs.double.slider(
+                        label: 'opacity',
+                        initialValue: 0.6,
+                        min: 0,
+                        max: 1,
+                        divisions: 20,
+                      ),
+                      blockPointerEvents: context.knobs.boolean(
+                        label: 'blockPointerEvents',
+                        description: 'Off by default, unlike '
+                            'PlinthLoadingOverlay which always blocks',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
           WidgetbookUseCase(
             name: 'Dimmed content',
             builder: (context) => _themed(
@@ -1799,6 +1942,59 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthScrollArea',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final direction = context.knobs.object.dropdown(
+                label: 'direction',
+                options: Axis.values,
+                initialOption: Axis.vertical,
+                labelBuilder: (axis) => axis.name,
+              );
+              final itemCount = context.knobs.int.slider(
+                label: 'items',
+                initialValue: 12,
+                min: 1,
+                max: 30,
+                description: 'Enough to overflow, or the scrollbar has '
+                    'nothing to show',
+              );
+              final isVertical = direction == Axis.vertical;
+              return _themed(
+                SizedBox(
+                  width: isVertical ? 260 : 320,
+                  height: isVertical ? 160 : 80,
+                  child: PlinthScrollArea(
+                    direction: direction,
+                    child: isVertical
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              for (var i = 0; i < itemCount; i++)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 6,
+                                  ),
+                                  child: PlinthText('Row ${i + 1}'),
+                                ),
+                            ],
+                          )
+                        : Row(
+                            children: [
+                              for (var i = 0; i < itemCount; i++)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
+                                  child: PlinthText('Col ${i + 1}'),
+                                ),
+                            ],
+                          ),
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'Always-visible scrollbar',
             builder: (context) => _themed(
               SizedBox(
@@ -1833,6 +2029,45 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthPopover',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final position = _popoverPositionKnob(context);
+              final width = context.knobs.double.slider(
+                label: 'width',
+                initialValue: 240,
+                min: 120,
+                max: 360,
+              );
+              final closeOnOutsideTap = context.knobs.boolean(
+                label: 'closeOnOutsideTap',
+                initialValue: true,
+              );
+              return _themed(
+                _Disclosed(
+                  builder: (controller) => PlinthPopover(
+                    controller: controller,
+                    position: position,
+                    width: width,
+                    closeOnOutsideTap: closeOnOutsideTap,
+                    // The popover wraps its own trigger, so tapping
+                    // the target toggles the controller directly —
+                    // no separate host widget.
+                    target: PlinthButton(
+                      variant: PlinthVariant.outline,
+                      onPressed: () {},
+                      child: const Text('Show info'),
+                    ),
+                    content: const PlinthText(
+                      'Anchored to its target, tracks scroll position, '
+                      'dismisses on outside tap.',
+                      size: PlinthSize.sm,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'Click to toggle',
             // Unlike Modal, Popover doesn't use a dialog route —
             // it renders live via CompositedTransformFollower, so
@@ -1846,6 +2081,40 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthHoverCard',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              PlinthHoverCard(
+                position: _popoverPositionKnob(context),
+                width: context.knobs.double.slider(
+                  label: 'width',
+                  initialValue: 260,
+                  min: 140,
+                  max: 380,
+                ),
+                closeDelay: Duration(
+                  milliseconds: context.knobs.int.slider(
+                    label: 'closeDelay (ms)',
+                    initialValue: 100,
+                    min: 0,
+                    max: 1000,
+                    description: 'Grace period so the pointer can '
+                        'travel from target onto content without the '
+                        'card closing underneath it',
+                  ),
+                ),
+                target: PlinthAnchor('@yairlahav', onTap: () {}),
+                content: const PlinthGroup(
+                  gap: PlinthSize.sm,
+                  children: [
+                    PlinthAvatar(initials: 'YL', size: PlinthSize.md),
+                    PlinthText('Hover-triggered — inert on touch devices.',
+                        size: PlinthSize.sm),
+                  ],
+                ),
+              ),
+            ),
+          ),
           WidgetbookUseCase(
             name: 'Hover the target',
             // Desktop/web-oriented — hover the target text in a
@@ -1867,10 +2136,168 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthMenu',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final position = _popoverPositionKnob(context);
+              final width = context.knobs.double.slider(
+                label: 'width',
+                initialValue: 200,
+                min: 120,
+                max: 320,
+              );
+              final showDivider = context.knobs.boolean(
+                label: 'divider before destructive item',
+                initialValue: true,
+              );
+              return _themed(
+                _Disclosed(
+                  builder: (controller) => PlinthMenu(
+                    controller: controller,
+                    position: position,
+                    width: width,
+                    target: PlinthActionIcon(
+                      icon: const Icon(Icons.more_vert, size: 18),
+                      variant: PlinthVariant.subtle,
+                      onPressed: () {},
+                    ),
+                    items: [
+                      PlinthMenuItem(
+                        label: 'Edit',
+                        icon: const Icon(Icons.edit_outlined),
+                        onTap: () {},
+                      ),
+                      PlinthMenuItem(
+                        label: 'Duplicate',
+                        icon: const Icon(Icons.copy_outlined),
+                        onTap: () {},
+                      ),
+                      if (showDivider) PlinthMenuItem.divider(),
+                      PlinthMenuItem(
+                        label: 'Delete',
+                        icon: const Icon(Icons.delete_outline),
+                        // A destructive item is coloured per-item
+                        // rather than by a menu-wide setting.
+                        color: 'red',
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'Click to toggle',
             // Same interactive-live rationale as Popover — Menu
             // is built directly on PlinthPopover.
             builder: (context) => _themed(_MenuDemo()),
+          ),
+        ],
+      ),
+      // PlinthDrawer and PlinthAffix had no use cases at all before
+      // this — they were the only two exported overlay components
+      // missing from the gallery entirely.
+      WidgetbookComponent(
+        name: 'PlinthDrawer',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final position = context.knobs.object.dropdown(
+                label: 'position',
+                options: PlinthDrawerPosition.values,
+                initialOption: PlinthDrawerPosition.right,
+                labelBuilder: (value) => value.name,
+              );
+              final title = context.knobs.stringOrNull(
+                label: 'title',
+                initialValue: 'Filters',
+                defaultToNull: true,
+              );
+              final size = _sizeKnob(context);
+              final closeOnBackdropTap = context.knobs.boolean(
+                label: 'closeOnBackdropTap',
+                initialValue: true,
+              );
+              return _themed(
+                _Disclosed(
+                  builder: (controller) => PlinthDrawerHost(
+                    drawer: PlinthDrawer(
+                      controller: controller,
+                      title: title,
+                      // size is a width for left/right and a height
+                      // for top/bottom.
+                      size: size,
+                      position: position,
+                      closeOnBackdropTap: closeOnBackdropTap,
+                      child: const PlinthText(
+                        'Drawer body content.',
+                        size: PlinthSize.sm,
+                      ),
+                    ),
+                    child: PlinthButton(
+                      onPressed: controller.open,
+                      child: const Text('Open drawer'),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthAffix',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final inset = context.knobs.double.slider(
+                label: 'inset',
+                initialValue: 16,
+                min: 0,
+                max: 48,
+              );
+              final corner = context.knobs.object.dropdown(
+                label: 'corner',
+                options: const [
+                  'bottomRight',
+                  'bottomLeft',
+                  'topRight',
+                  'topLeft'
+                ],
+                initialOption: 'bottomRight',
+              );
+              final isTop = corner.startsWith('top');
+              final isLeft = corner.endsWith('Left');
+              return _themed(
+                SizedBox(
+                  width: 320,
+                  height: 200,
+                  // Affix is a thin wrapper around Positioned, so it
+                  // needs a Stack ancestor — it anchors within an
+                  // existing stack rather than inserting an overlay.
+                  child: Stack(
+                    children: [
+                      const PlinthPaper(
+                        child: PlinthText('Scrollable page content.'),
+                      ),
+                      PlinthAffix(
+                        top: isTop ? inset : null,
+                        bottom: isTop ? null : inset,
+                        left: isLeft ? inset : null,
+                        right: isLeft ? null : inset,
+                        child: PlinthActionIcon(
+                          icon: const Icon(Icons.arrow_upward),
+                          circle: true,
+                          onPressed: () {},
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
