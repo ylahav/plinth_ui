@@ -161,11 +161,19 @@ the sidebar.
 - **Tests** — pure-logic tests for `PlinthTheme`'s shade generator and
   `PlinthDisclosureController`, a golden (visual regression) test suite
   for `PlinthButton` (variants, a color override, disabled state, all
-  sizes), and widget behavior tests for most other components — 30 test
-  files as of this writing. Coverage is uneven and worth knowing about
-  before trusting it: 18 public components still have no test at all,
-  including `PlinthTextInput`, `PlinthAlert`, and the Modal/Drawer/
-  Popover trio.
+  sizes), and widget behavior tests across 34 test files. **Every
+  public component has at least one test** — the only untested class is
+  `PlinthOverlayHost`, which is internal and exercised indirectly
+  through `PlinthModalHost`/`PlinthDrawerHost`.
+
+  Coverage is behavioral rather than visual, so it pins down what a
+  component *does*, not how it looks: border-colour precedence on
+  `PlinthTextInput` (error beats focus), overlay teardown across
+  repeated open/close cycles, controlled components reporting the value
+  they would become rather than changing it themselves, and the
+  fallback paths that only appear when something fails —
+  `PlinthAvatar`'s missing-image chain, `PlinthImage`'s broken-URL
+  icon.
   Notable coverage: `PlinthPagination`'s ellipsis-collapse logic at large
   page counts, `PlinthAccordion`'s single/multiple-open modes,
   `PlinthCopyButton`'s clipboard write + timer-based revert,
