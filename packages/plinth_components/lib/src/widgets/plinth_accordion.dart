@@ -157,6 +157,11 @@ class _AccordionTile extends StatelessWidget {
               ),
             ),
           ),
+          // Deliberately *not* PlinthCollapse. That keeps its child
+          // mounted so state survives, which is right for a filter
+          // panel but wrong here: an accordion holds page content, and
+          // a closed panel should leave the tree entirely rather than
+          // linger as something a screen reader can still reach.
           AnimatedSize(
             duration: const Duration(milliseconds: 150),
             curve: Curves.easeOut,

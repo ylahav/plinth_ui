@@ -2271,6 +2271,104 @@ final List<WidgetbookNode> plinthDirectories = [
         ],
       ),
       WidgetbookComponent(
+        name: 'PlinthCollapse',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final duration = context.knobs.int.slider(
+                label: 'duration (ms)',
+                initialValue: 200,
+                min: 50,
+                max: 1000,
+              );
+              return _themed(
+                SizedBox(
+                  width: 360,
+                  child: _Local<bool>(
+                    initial: true,
+                    builder: (opened, onChanged) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        PlinthButton(
+                          variant: PlinthVariant.subtle,
+                          leadingIcon: Icon(
+                            opened ? Icons.expand_less : Icons.expand_more,
+                            size: 16,
+                          ),
+                          onPressed: () => onChanged(!opened),
+                          child: Text(opened ? 'Hide filters' : 'Show filters'),
+                        ),
+                        PlinthCollapse(
+                          opened: opened,
+                          duration: Duration(milliseconds: duration),
+                          child: PlinthPaper(
+                            withBorder: true,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                PlinthCheckbox(
+                                  label: 'In stock only',
+                                  value: true,
+                                  onChanged: (_) {},
+                                ),
+                                PlinthCheckbox(
+                                  label: 'On sale',
+                                  value: false,
+                                  onChanged: (_) {},
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthCloseButton',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final enabled = context.knobs.boolean(
+                label: 'enabled',
+                initialValue: true,
+              );
+              return _themed(
+                PlinthCloseButton(
+                  size: _sizeKnob(context),
+                  color: _colorKnob(context),
+                  radius: _radiusKnob(context),
+                  semanticLabel: context.knobs.string(
+                    label: 'semanticLabel',
+                    initialValue: 'Close',
+                    description: 'What a screen reader announces',
+                  ),
+                  onPressed: enabled ? () {} : null,
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'All sizes',
+            builder: (context) => _themed(
+              PlinthGroup(
+                children: [
+                  for (final size in PlinthSize.values)
+                    PlinthCloseButton(size: size, onPressed: () {}),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
         name: 'PlinthSpoiler',
         useCases: [
           WidgetbookUseCase(
@@ -4202,6 +4300,37 @@ final List<WidgetbookNode> plinthDirectories = [
                 child: PlinthDivider(vertical: true, height: 60),
               ),
             ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthHighlight',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final query = context.knobs.string(
+                label: 'query',
+                initialValue: 'disclosure controller',
+                description: 'Split on spaces — every term is marked',
+              );
+              return _themed(
+                SizedBox(
+                  width: 420,
+                  child: PlinthHighlight(
+                    context.knobs.string(
+                      label: 'data',
+                      initialValue: 'The disclosure controller drives every '
+                          'overlay component in this library.',
+                      maxLines: 3,
+                    ),
+                    highlight: query.split(' '),
+                    color: _colorKnob(context),
+                    size: _sizeKnob(context),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),

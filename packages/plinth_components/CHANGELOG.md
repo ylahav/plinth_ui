@@ -7,6 +7,33 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.8.0
+
+### Added
+- `PlinthCloseButton` — the dismiss affordance `PlinthAlert`,
+  `PlinthNotification`, `PlinthModal`, and `PlinthDrawer` each built
+  inline. They had drifted apart in the process: two used a bare `Icon`
+  inside an `InkWell` with no semantics, so a screen reader announced
+  nothing where a sighted user saw a close button. All four now share
+  it, and it carries a `Close` label by default.
+- `PlinthCollapse` — an animated height reveal for a filter panel, an
+  "advanced options" section, or a validation summary. Keeps its child
+  mounted so a half-filled form survives being hidden, and excludes it
+  from semantics and hit-testing while closed, since a clipped child is
+  still in the tree.
+- `PlinthHighlight` — text with matching substrings marked. `PlinthMark`
+  highlights a span you have already split out; this does the splitting,
+  which is what a search result needs. Matching is case-insensitive,
+  preserves the original casing, and escapes its terms — a query
+  containing `.` matches a full stop rather than any character.
+
+### Changed
+- `PlinthAccordion` deliberately does *not* use `PlinthCollapse`. It was
+  refactored to, and three tests caught the consequence: `PlinthCollapse`
+  keeps its child mounted, which left closed panels readable by a screen
+  reader. An accordion holds page content and should unmount it, so the
+  original behaviour stands and the difference is now documented on both.
+
 ## 0.7.0
 
 ### Fixed

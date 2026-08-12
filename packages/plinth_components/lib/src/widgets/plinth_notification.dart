@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_close_button.dart';
 import 'plinth_text.dart';
 
 /// A toast-style notification matching Mantine's `Notification`.
@@ -124,10 +125,9 @@ class PlinthNotification extends StatelessWidget {
             ),
             if (onClose != null) ...[
               SizedBox(width: theme.spacing[PlinthSize.xs]),
-              InkWell(
-                onTap: onClose,
-                borderRadius: BorderRadius.circular(4),
-                child: Icon(Icons.close, size: 16, color: theme.textMuted),
+              PlinthCloseButton(
+                onPressed: onClose,
+                semanticLabel: 'Dismiss notification',
               ),
             ],
           ],

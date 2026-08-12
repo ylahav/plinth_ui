@@ -259,6 +259,22 @@ shortcuts, e.g. `PlinthKbd('Ctrl')` + `PlinthKbd('K')`.
 snippet on a tinted background — for referencing identifiers, commands,
 or file names within a sentence (typically inside a `WidgetSpan`).
 
+### `PlinthHighlight`
+`data` (positional), `highlight` (`List<String>` of terms), `color`
+(default `'yellow'`), `size`, `textColor`, `weight`, `textAlign`,
+`maxLines`, `overflow`. Text with matching substrings marked.
+
+`PlinthMark` highlights a span you've already split out yourself; this
+does the splitting, which is what you want when the terms come from a
+search box and you don't know where they land. Matching is
+case-insensitive but preserves the original casing in what's rendered,
+and terms are escaped before use — a query containing `.` or `(`
+matches those characters rather than acting as a pattern. Overlapping
+terms resolve to the longest, blank terms are ignored (so a raw
+`query.split(' ')` with a trailing space doesn't mark everything), and
+matches are styled with `backgroundColor` rather than a `WidgetSpan`
+so a long match still wraps.
+
 ### `PlinthMark`
 `label` (positional), `color` (defaults to `'yellow'` if the active theme
 defines it, else a literal amber fallback). Highlighted inline text, e.g.
@@ -447,6 +463,33 @@ wrap-don't-reimplement rationale as `PlinthSlider`); `dots` and `bars`
 are three elements pulsing a third of a cycle out of phase. Uses its own
 size scale (16/20/28/36/44 px) — none of spacing, radius, or font size
 means "how big is this circle".
+
+### `PlinthCloseButton`
+`onPressed` (null disables), `size`, `color`, `radius`, `semanticLabel`
+(default `'Close'`). The dismiss affordance shared by `PlinthAlert`,
+`PlinthNotification`, `PlinthModal`, and `PlinthDrawer`, which each
+built one inline before this existed — two of them as a bare `Icon` in
+an `InkWell` with no semantics, so a screen reader announced nothing
+where a sighted user saw a close button.
+
+Narrower than `PlinthActionIcon` on purpose: it always carries the same
+glyph and the same semantics, so the components using it can't drift
+apart again. Override `semanticLabel` where "Close" is ambiguous —
+"Dismiss notification", say.
+
+### `PlinthCollapse`
+`opened`, `child`, `duration` (default 200ms), `curve`. An animated
+height reveal — a filter panel above a table, an "advanced options"
+section, a validation summary that appears on submit. Controlled by the
+caller, like every other disclosure here.
+
+Keeps `child` **mounted** while collapsed, so a half-filled form or a
+scroll position survives being hidden. That's the trade-off to weigh:
+a clipped child is still built and laid out, so for a long list of
+panels, or content that should genuinely go away, swapping it out is
+the better shape. It's excluded from semantics and hit-testing when
+fully closed — otherwise a screen reader would read a panel nobody can
+see. `PlinthAccordion` deliberately unmounts instead, for that reason.
 
 ### `PlinthSkeleton`
 `width` (omit to fill parent), `height` (default `16`), `radius`, `circle`
@@ -715,15 +758,6 @@ need at all or because the work is mostly extraction:
 - **`PlinthTagsInput`** — free-text entry producing removable chips.
   `PlinthMultiSelect` is the fixed-options equivalent; this is the one
   where the user invents the values.
-- **`PlinthCollapse`** — animated height reveal. Already implemented
-  privately inside `PlinthAccordion` and `PlinthSpoiler`, so this is
-  mostly extracting what exists.
-- **`PlinthCloseButton`** — the dismiss affordance `PlinthAlert`,
-  `PlinthNotification`, `PlinthModal`, and `PlinthDrawer` each build
-  inline today.
-- **`PlinthHighlight`** — text with matching substrings marked. Builds
-  on `PlinthMark`, which highlights a span you have already split out;
-  this does the splitting.
 - **`PlinthEmptyState`** — the "no results" placeholder. Common enough
   in real apps that most teams write their own.
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_close_button.dart';
 import 'plinth_text.dart';
 
 /// A colored callout box matching Mantine's `Alert`: an icon, optional
@@ -81,10 +82,11 @@ class PlinthAlert extends StatelessWidget {
           ),
           if (onClose != null) ...[
             SizedBox(width: theme.spacing[PlinthSize.xs]),
-            InkWell(
-              onTap: onClose,
-              borderRadius: BorderRadius.circular(4),
-              child: Icon(Icons.close, size: 16, color: accentColor),
+            PlinthCloseButton(
+              onPressed: onClose,
+              size: PlinthSize.md,
+              color: color,
+              semanticLabel: 'Dismiss alert',
             ),
           ],
         ],

@@ -3,6 +3,7 @@ import 'package:plinth_core/plinth_core.dart';
 import 'package:plinth_hooks/plinth_hooks.dart';
 
 import 'plinth_box.dart';
+import 'plinth_close_button.dart';
 import 'plinth_text.dart';
 import 'overlay_host.dart';
 
@@ -113,9 +114,8 @@ class PlinthModal extends StatelessWidget {
                           weight: FontWeight.w700,
                         ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.close, size: 18),
-                        splashRadius: 18,
+                      PlinthCloseButton(
+                        size: PlinthSize.lg,
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ],
