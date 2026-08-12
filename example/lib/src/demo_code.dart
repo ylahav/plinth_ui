@@ -843,6 +843,54 @@ PlinthSimpleGrid(
   ],
 ),
 ''',
+  'Flex': r'''
+PlinthFlex(
+  direction: Axis.horizontal,
+  gap: PlinthSize.sm,
+  children: [
+    PlinthBadge('Dart'),
+    PlinthBadge('Flutter'),
+    PlinthBadge('Widgets'),
+  ],
+),
+''',
+  'Scroll Area': r'''
+SizedBox(
+  height: 120,
+  child: PlinthScrollArea(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var i = 1; i <= 12; i++)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: PlinthText('Scrollable item $i', size: PlinthSize.sm),
+          ),
+      ],
+    ),
+  ),
+),
+''',
+  'Portal': r'''
+const PlinthText(
+  'PlinthPortal renders its child into the ambient Overlay rather than '
+  'in place — every overlay component (Modal, Drawer, Popover, Menu) in '
+  'this section is already built on it. There is no standalone visual '
+  'to show here beyond those.',
+  size: PlinthSize.sm,
+  color: 'gray',
+),
+''',
+  'Image': r'''
+const SizedBox(
+  width: 240,
+  height: 160,
+  child: PlinthImage(
+    src: 'https://picsum.photos/id/1015/480/320',
+    radius: PlinthSize.sm,
+  ),
+),
+''',
   'Box + Text + Disclosure': r'''
 PlinthBox(
   p: PlinthSize.md,

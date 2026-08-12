@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plinth_components/plinth_components.dart';
 
 import 'src/demo_code.dart';
+import 'src/showcase/home_page.dart';
 
 void main() => runApp(const PlinthExampleApp());
 
@@ -16,7 +17,7 @@ class PlinthExampleApp extends StatelessWidget {
         useMaterial3: true,
         extensions: [PlinthTheme.defaultTheme],
       ),
-      home: const ShowcasePage(),
+      home: const HomePage(),
     );
   }
 }
@@ -131,6 +132,10 @@ class _ShowcasePageState extends State<ShowcasePage> {
     'Space',
     'Unstyled Button',
     'Simple Grid',
+    'Flex',
+    'Scroll Area',
+    'Portal',
+    'Image',
     'Box + Text + Disclosure',
     'Button Variants',
     'Button Sizes',
@@ -1445,6 +1450,60 @@ class _ShowcasePageState extends State<ShowcasePage> {
                               child: PlinthText('$n', size: PlinthSize.sm),
                             ),
                         ],
+                      ),
+                      _gap(),
+                      _sectionTitle('Flex'),
+                      _gap(12),
+                      PlinthFlex(
+                        direction: Axis.horizontal,
+                        gap: PlinthSize.sm,
+                        children: [
+                          PlinthBadge('Dart'),
+                          PlinthBadge('Flutter'),
+                          PlinthBadge('Widgets'),
+                        ],
+                      ),
+                      _gap(),
+                      _sectionTitle('Scroll Area'),
+                      _gap(12),
+                      SizedBox(
+                        height: 120,
+                        child: PlinthScrollArea(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              for (var i = 1; i <= 12; i++)
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4),
+                                  child: PlinthText('Scrollable item $i',
+                                      size: PlinthSize.sm),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Portal'),
+                      _gap(12),
+                      const PlinthText(
+                        'PlinthPortal renders its child into the ambient Overlay rather than '
+                        'in place — every overlay component (Modal, Drawer, Popover, Menu) in '
+                        'this section is already built on it. There is no standalone visual '
+                        'to show here beyond those.',
+                        size: PlinthSize.sm,
+                        color: 'gray',
+                      ),
+                      _gap(),
+                      _sectionTitle('Image'),
+                      _gap(12),
+                      const SizedBox(
+                        width: 240,
+                        height: 160,
+                        child: PlinthImage(
+                          src: 'https://picsum.photos/id/1015/480/320',
+                          radius: PlinthSize.sm,
+                        ),
                       ),
                       _gap(),
                       _sectionTitle('Box + Text + Disclosure'),

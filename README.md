@@ -127,7 +127,7 @@ the sidebar.
   ramps (curve-based 10-shade generator with non-linear lightness
   stops + shade-dependent saturation), spacing, radius, and font-size
   scales.
-- **67 components** across Primitives, Forms, Feedback, Data Display,
+- **71 components** across Primitives, Forms, Feedback, Data Display,
   Navigation, Surfaces, and Overlays — full list with props in
   **[docs/COMPONENTS.md](docs/COMPONENTS.md)**, kept current every round
   rather than duplicated here. A few architectural patterns worth
@@ -151,8 +151,8 @@ the sidebar.
 - **Tests** — pure-logic tests for `PlinthTheme`'s shade generator and
   `PlinthDisclosureController`, a golden (visual regression) test suite
   for `PlinthButton` (variants, a color override, disabled state, all
-  sizes), and widget behavior tests for most other components — 26 test
-  files covering the majority of the 67 public components as of this
+  sizes), and widget behavior tests for most other components — 27 test
+  files covering the majority of the 71 public components as of this
   writing.
   Notable coverage: `PlinthPagination`'s ellipsis-collapse logic at large
   page counts, `PlinthAccordion`'s single/multiple-open modes,

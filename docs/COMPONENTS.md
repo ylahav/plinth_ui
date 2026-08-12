@@ -108,6 +108,22 @@ internally to compute cell width; an unbounded-width parent, like a
 horizontal `ListView`, will throw). For a large or unbounded item
 list, use `GridView.builder` directly instead.
 
+### `PlinthFlex`
+`children`, `direction` (`Axis` — default `horizontal`), `gap` (default
+`PlinthSize.md`), `mainAxisAlignment`, `crossAxisAlignment`,
+`mainAxisSize`. A direction-configurable flex layout with a consistent
+gap. `PlinthGroup` is this same idea specialized to the horizontal case
+with wrap-by-default — reach for `PlinthFlex` when the direction itself
+needs to vary (horizontal on wide screens, vertical on narrow ones)
+rather than always being a row.
+
+### `PlinthImage`
+`src`, `width`, `height`, `fit` (default `BoxFit.cover`), `radius`. A
+network image with an automatic loading placeholder and error
+fallback — Flutter's own `Image.network` shows nothing while loading
+and lets a failed URL surface as a raw render error, so this fills
+both gaps with a themed spinner and a broken-image icon.
+
 ### `PlinthText`
 `data`, `size`, `color`, `weight`, `textAlign`, `italic`, `maxLines`, `overflow`.
 `size` resolves through `theme.fontSizes` instead of a raw `fontSize` double.
@@ -335,6 +351,24 @@ out a section without necessarily blocking interaction, or build a
 custom loading/empty state with your own content. Renders via
 `Positioned.fill`, so — like `PlinthAffix` — it needs a `Stack`
 ancestor; place it as a sibling of whatever it should dim.
+
+### `PlinthScrollArea`
+`child`, `direction` (default `Axis.vertical`). A scrollable region
+with a themed, always-visible, draggable scrollbar — a thin wrapper
+around `Scrollbar` + `SingleChildScrollView`, since Flutter's default
+scrollbar is platform-styled and easy to miss on desktop/web. Good fit
+for a custom-styled scrolling panel: a sidebar, a long settings list,
+a code panel.
+
+### `PlinthPortal`
+`child`. Renders `child` into the ambient `Overlay` rather than its
+normal place in the tree — the building block underneath every
+overlay component in this library (`PlinthModal`, `PlinthDrawer`,
+`PlinthPopover`, ...), exposed directly for cases outside those: a
+custom floating panel that needs to escape a parent's `ClipRect`, an
+overflow-hidden container, or a clipping scroll ancestor. Has no
+show/hide state of its own — mount it conditionally to control when
+its content appears.
 
 ---
 

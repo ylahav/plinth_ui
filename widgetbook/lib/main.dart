@@ -1004,6 +1004,40 @@ class PlinthWidgetbookApp extends StatelessWidget {
               ],
             ),
             WidgetbookComponent(
+              name: 'PlinthScrollArea',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Always-visible scrollbar',
+                  builder: (context) => _themed(
+                    SizedBox(
+                      height: 120,
+                      width: 200,
+                      child: PlinthScrollArea(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            for (var i = 1; i <= 10; i++) Text('Item $i'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthPortal',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Basic',
+                  builder: (context) => _themed(
+                    const PlinthPortal(
+                        child: Text('Rendered via the ambient Overlay')),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
               name: 'PlinthPopover',
               useCases: [
                 WidgetbookUseCase(
@@ -1356,6 +1390,41 @@ class PlinthWidgetbookApp extends StatelessWidget {
                               child: Text('$n'),
                             ),
                         ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthFlex',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Horizontal',
+                  builder: (context) => _themed(
+                    PlinthFlex(
+                      gap: PlinthSize.sm,
+                      children: const [
+                        PlinthBadge('Dart'),
+                        PlinthBadge('Flutter'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthImage',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Network image',
+                  builder: (context) => _themed(
+                    const SizedBox(
+                      width: 200,
+                      height: 140,
+                      child: PlinthImage(
+                        src: 'https://picsum.photos/id/1015/480/320',
+                        radius: PlinthSize.sm,
                       ),
                     ),
                   ),

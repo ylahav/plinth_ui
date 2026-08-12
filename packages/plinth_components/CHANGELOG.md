@@ -7,6 +7,23 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.4.0
+
+### Added
+- `PlinthFlex` — direction-configurable flex layout with a
+  consistent gap; `PlinthGroup` specialized to a fixed horizontal
+  direction, `PlinthFlex` for when the direction itself needs to
+  vary.
+- `PlinthImage` — network image with an automatic loading
+  placeholder and error fallback.
+- `PlinthScrollArea` — a scrollable region with a themed,
+  always-visible, draggable scrollbar.
+- `PlinthPortal` — renders its child into the ambient `Overlay`
+  rather than in place; the primitive every other overlay component
+  in this library is already built on, exposed directly.
+
+71 components total.
+
 ## 0.3.0
 
 ### Added
