@@ -12,6 +12,10 @@ MaterialApp(
 Shared enums used throughout: `PlinthSize` (`xs, sm, md, lg, xl`) and
 `PlinthVariant` (`filled, light, outline, subtle, transparent, defaultVariant`).
 
+Looking for something that isn't here? **[Coming soon](#coming-soon)** at
+the end lists the components Plinth doesn't have yet and why, so a gap
+reads as a known one rather than an oversight.
+
 ---
 
 ## Primitives
@@ -619,3 +623,67 @@ Tapping an item closes the controller *then* calls its `onTap`.
   — shared listener/dispose plumbing behind `PlinthModalHost` and
   `PlinthDrawerHost`. Not part of the public API; any future route-based
   overlay host should wrap this the same way.
+
+---
+
+## Coming soon
+
+Components from Mantine's catalog that Plinth doesn't have yet, roughly
+in the order they're worth building. Nothing here is scheduled — it's a
+map of the gaps, so you can tell "not built yet" from "deliberately
+absent" without reading the source.
+
+### Likely next
+
+- **`PlinthFileInput`** — a file picker. The form set has no way to
+  take a file at all, which is the largest hole in it.
+- **`PlinthAutocomplete`** — a text field with suggestions. `PlinthSelect`
+  covers choosing from a fixed list, but nothing here accepts free text
+  with completion.
+- **`PlinthTagsInput`** — free-text entry producing removable chips.
+  `PlinthMultiSelect` is the fixed-options equivalent; this is the one
+  where the user invents the values.
+- **`PlinthCollapse`** — animated height reveal. Already implemented
+  privately inside `PlinthAccordion` and `PlinthSpoiler`, so this is
+  mostly extracting what exists into a public widget.
+- **`PlinthHighlight`** — text with matching substrings marked. Builds
+  on `PlinthMark`, which highlights a span you've already split out;
+  this would do the splitting for you.
+- **`PlinthCloseButton`** — the dismiss affordance `PlinthAlert`,
+  `PlinthNotification`, and `PlinthModal` each currently build inline.
+
+### Lower priority
+
+- **`PlinthStack`** — a vertical `PlinthGroup`. `PlinthFlex(direction:
+  Axis.vertical)` already does this, so it would be a convenience alias
+  rather than new capability.
+- **`PlinthDialog`** — a small floating panel that doesn't take over the
+  screen the way `PlinthModal` does.
+- **`PlinthFieldset`** — a bordered group with a legend, for related
+  form fields.
+- **`PlinthColorPicker`** — a full picker. `PlinthColorSwatch` covers
+  choosing from a preset palette, which is the common case.
+- **`PlinthTree`** — hierarchical navigation. Substantial work
+  (expansion state, keyboard traversal, selection) for a narrower need
+  than the rest of this list.
+- **`PlinthBackgroundImage`** — an image behind arbitrary content. A
+  `Container` with a `DecorationImage` is close enough that the wrapper
+  earns little.
+- **`PlinthSemiCircleProgress`** — a gauge variant of
+  `PlinthRingProgress`.
+- **`PlinthNumberFormatter`** — locale-aware number display. Dart's
+  `intl` package already does the formatting; this would only be the
+  themed text around it.
+
+### Deliberately not planned
+
+- **`PlinthTransition`** — Flutter's `AnimatedSwitcher` and the implicit
+  animation widgets already cover this, and better than a wrapper would.
+- **`PlinthFocusTrap`** — `FocusScope` is the Flutter-native answer, and
+  the overlay components already use it where it matters.
+
+Mantine's separate packages — Carousel, Dropzone, Spotlight, Dates,
+Charts, RichTextEditor — are a different scope question, not simply
+missing components. Each is a substantial library in its own right and
+would belong in its own package here too, rather than in
+`plinth_components`.
