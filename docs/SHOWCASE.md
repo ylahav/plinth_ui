@@ -29,7 +29,7 @@ code panel will quietly show something the demo no longer does.
 
 ## What exists
 
-20 examples across 3 categories, borrowing Mantine UI's own category
+30 examples across 3 categories, borrowing Mantine UI's own category
 names so the two are directly comparable.
 
 | Category | Subcategory | Examples |
@@ -37,17 +37,22 @@ names so the two are directly comparable.
 | Application UI | Navbars | Simple navbar, Navbar with avatar |
 | Application UI | Headers | Centered header, Header with breadcrumbs |
 | Application UI | Stats | Stat tiles, Stat with progress |
+| Application UI | User Info & Controls | User button, Profile card |
+| Application UI | Application Cards | Project card, Task card |
 | Application UI | Footers | Simple footer, Footer with link columns |
 | Page Sections | Hero Sections | Centered hero, Split hero |
 | Page Sections | Feature Sections | Feature grid, Feature list |
 | Page Sections | Authentication | Sign in, Sign up |
+| Page Sections | FAQ | FAQ accordion, FAQ with contact |
+| Page Sections | Banners | Announcement, Consent banner |
 | Page Sections | Error Pages | 404 not found, 500 server error |
 | Blog UI | Article Cards | Simple article card, Article card with author |
+| Blog UI | Comments | Single comment, Comment thread |
 | Blog UI | Author Info | Inline author, Author card |
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 20. The gap is mostly whole
+Mantine UI has ~123 blocks against these 30. The gap is mostly whole
 subcategories with nothing in them, and — this is the point — **almost
 none of it is blocked on missing components.** The Authentication,
 Stats, Error Pages, and Footers subcategories were all built from
@@ -61,14 +66,14 @@ components that already shipped.
 | Headers | 6 | 2 | |
 | Footers | 4 | 2 | |
 | Grids | 3 | **0** | `PlinthGrid` landed in 0.5.0, so these are now buildable |
-| User info and controls | 8 | **0** | `PlinthAvatar` + `PlinthMenu` cover it |
+| User info and controls | 8 | 2 | |
 | Inputs | 14 | **0** | Composed field arrangements, not new inputs |
 | Buttons | 6 | **0** | |
 | Sliders | 6 | **0** | |
-| Application cards | 7 | **0** | `PlinthCard` + `PlinthGroup` |
+| Application cards | 7 | 2 | |
 | Stats | 9 | 2 | |
 | Tables | 4 | **0** | `PlinthTable` takes plain strings only, so richer cells would need it extended first |
-| Dropzones | 1 | **0** | Needs `PlinthFileInput`, which doesn't exist yet |
+| Dropzones | 1 | **0** | Unblocked — `PlinthFileInput` shipped in 0.9.0 |
 | Drag'n'Drop | 3 | **0** | Flutter's own `Draggable`/`DragTarget` |
 | Carousels | 2 | **0** | Mantine's is a separate package; same call applies here |
 
@@ -79,10 +84,10 @@ components that already shipped.
 | Hero headers | 6 | 2 | |
 | Features section | 5 | 2 | |
 | Authentication | 4 | 2 | Sign-in and sign-up; password reset and a split-screen variant are the obvious next ones |
-| Frequently asked questions | 4 | **0** | `PlinthAccordion` already does the work |
+| Frequently asked questions | 4 | 2 | |
 | Contact us section | 3 | **0** | |
 | Error pages | 5 | 2 | 404 and 500; maintenance and permission-denied remain |
-| Banners | 3 | **0** | |
+| Banners | 3 | 2 | |
 
 ### Blog UI
 
@@ -90,24 +95,26 @@ components that already shipped.
 |---|---|---|---|
 | Article cards | 7 | 2 | |
 | Table of contents | 2 | **0** | Would pair with a `PlinthTableOfContents` component, which also doesn't exist |
-| Comments | 2 | **0** | `PlinthAvatar` + `PlinthPaper` |
+| Comments | 2 | 2 | Complete |
 
 ### Where to start
 
 Ordered by value against effort, given what already ships:
 
-1. **FAQ** — `PlinthAccordion` with content wrapped around it. The
-   cheapest remaining block.
-2. **User info and controls** — an avatar with a menu, the account
-   corner every app has. `PlinthAvatar` + `PlinthMenu`.
-3. **Application cards** — `PlinthCard` + `PlinthGroup` arrangements.
-4. **Comments** — `PlinthAvatar` + `PlinthPaper`.
-5. **Banners** — `PlinthAlert` in page-width form.
+1. **Inputs** — composed field arrangements (a search bar with a
+   button, an inline edit, a field with a unit suffix), not new inputs.
+2. **Buttons** and **Sliders** — the same idea for those.
+3. **Grids** — now that `PlinthGrid` exists.
+4. **Contact us** — a form section; every part already ships.
+5. **Navbars** and **Headers** beyond the two each already here —
+   collapsible and sectioned variants, now that `PlinthAppShell` exists.
 
-Three are blocked on component work rather than composition:
-**Dropzones** needs `PlinthFileInput`, **Tables** needs `PlinthTable` to
-accept widget cells rather than strings, and **Table of contents** wants
-a `PlinthTableOfContents`. See
+**Dropzones** is no longer blocked: `PlinthFileInput` shipped in 0.9.0,
+and a dropzone is that plus a drag target.
+
+Two remain blocked on component work rather than composition:
+**Tables** needs `PlinthTable` to accept widget cells rather than plain
+strings, and **Table of contents** wants a `PlinthTableOfContents`. See
 [COMPONENTS.md § Coming soon](COMPONENTS.md#coming-soon).
 
 ## Adding an example

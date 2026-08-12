@@ -63,6 +63,17 @@ final List<CategoryData> showcaseCategories = [
         ExampleEntry('Stat with progress', _statWithProgress,
             exampleCode['StatWithProgressExample']!),
       ]),
+      SubcategoryData('User Info & Controls', Icons.account_circle_outlined, [
+        ExampleEntry(
+            'User button', _userButton, exampleCode['UserButtonExample']!),
+        ExampleEntry('Profile card', _userProfileCard,
+            exampleCode['UserProfileCardExample']!),
+      ]),
+      SubcategoryData('Application Cards', Icons.dashboard_outlined, [
+        ExampleEntry(
+            'Project card', _projectCard, exampleCode['ProjectCardExample']!),
+        ExampleEntry('Task card', _taskCard, exampleCode['TaskCardExample']!),
+      ]),
       SubcategoryData('Footers', Icons.horizontal_rule, [
         ExampleEntry('Simple footer', _simpleFooter,
             exampleCode['SimpleFooterExample']!),
@@ -94,6 +105,18 @@ final List<CategoryData> showcaseCategories = [
         ExampleEntry('Sign in', _signInForm, exampleCode['SignInFormExample']!),
         ExampleEntry('Sign up', _signUpForm, exampleCode['SignUpFormExample']!),
       ]),
+      SubcategoryData('FAQ', Icons.help_outline, [
+        ExampleEntry('FAQ accordion', _faqAccordion,
+            exampleCode['FaqAccordionExample']!),
+        ExampleEntry('FAQ with contact', _faqWithContact,
+            exampleCode['FaqWithContactExample']!),
+      ]),
+      SubcategoryData('Banners', Icons.campaign_outlined, [
+        ExampleEntry('Announcement', _announcementBanner,
+            exampleCode['AnnouncementBannerExample']!),
+        ExampleEntry('Consent banner', _consentBanner,
+            exampleCode['ConsentBannerExample']!),
+      ]),
       SubcategoryData('Error Pages', Icons.error_outline, [
         ExampleEntry('404 not found', _notFoundPage,
             exampleCode['NotFoundPageExample']!),
@@ -117,6 +140,12 @@ final List<CategoryData> showcaseCategories = [
           _articleCardWithAuthor,
           exampleCode['ArticleCardWithAuthorExample']!,
         ),
+      ]),
+      SubcategoryData('Comments', Icons.forum_outlined, [
+        ExampleEntry('Single comment', _singleComment,
+            exampleCode['SingleCommentExample']!),
+        ExampleEntry('Comment thread', _commentThread,
+            exampleCode['CommentThreadExample']!),
       ]),
       SubcategoryData('Author Info', Icons.person_outline, [
         ExampleEntry('Inline author', _authorInline,
@@ -158,3 +187,14 @@ Widget _serverErrorPage(BuildContext context) => const ServerErrorPageExample();
 Widget _simpleFooter(BuildContext context) => const SimpleFooterExample();
 Widget _footerWithLinkColumns(BuildContext context) =>
     const FooterWithLinkColumnsExample();
+Widget _faqAccordion(BuildContext context) => const FaqAccordionExample();
+Widget _faqWithContact(BuildContext context) => const FaqWithContactExample();
+Widget _userButton(BuildContext context) => const UserButtonExample();
+Widget _userProfileCard(BuildContext context) => const UserProfileCardExample();
+Widget _projectCard(BuildContext context) => const ProjectCardExample();
+Widget _taskCard(BuildContext context) => const TaskCardExample();
+Widget _singleComment(BuildContext context) => const SingleCommentExample();
+Widget _commentThread(BuildContext context) => const CommentThreadExample();
+Widget _announcementBanner(BuildContext context) =>
+    const AnnouncementBannerExample();
+Widget _consentBanner(BuildContext context) => const ConsentBannerExample();

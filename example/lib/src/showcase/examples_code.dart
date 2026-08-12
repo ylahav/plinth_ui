@@ -672,4 +672,414 @@ return SizedBox(
   ),
 );
 ''',
+  'FaqAccordionExample': r'''
+return const SizedBox(
+  width: 520,
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      PlinthTitle('Frequently asked questions', order: 3),
+      SizedBox(height: 20),
+      PlinthAccordion(
+        items: [
+          PlinthAccordionItem(
+            value: 'billing',
+            title: 'When am I billed?',
+            content: PlinthText(
+              'On the same day each month, starting the day you '
+              'upgrade. Downgrades take effect at the end of the '
+              'current period.',
+              size: PlinthSize.sm,
+            ),
+          ),
+          PlinthAccordionItem(
+            value: 'cancel',
+            title: 'Can I cancel at any time?',
+            content: PlinthText(
+              'Yes. Your plan stays active until the end of the '
+              'period you have already paid for.',
+              size: PlinthSize.sm,
+            ),
+          ),
+          PlinthAccordionItem(
+            value: 'refund',
+            title: 'Do you offer refunds?',
+            content: PlinthText(
+              'Within 30 days of purchase, no questions asked.',
+              size: PlinthSize.sm,
+            ),
+          ),
+        ],
+      ),
+    ],
+  ),
+);
+''',
+  'FaqWithContactExample': r'''
+return SizedBox(
+  width: 560,
+  child: PlinthGrid(
+    children: [
+      PlinthGridCol(
+        span: 12,
+        spanMd: 5,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const PlinthTitle('Still deciding?', order: 4),
+            const SizedBox(height: 8),
+            const PlinthText(
+              'The answers most people need are on the right. If '
+              'yours is not, we read every message.',
+              size: PlinthSize.sm,
+              color: 'gray',
+            ),
+            const SizedBox(height: 16),
+            PlinthButton(
+              variant: PlinthVariant.light,
+              leadingIcon: const Icon(Icons.mail_outline, size: 16),
+              onPressed: () {},
+              child: const Text('Contact support'),
+            ),
+          ],
+        ),
+      ),
+      const PlinthGridCol(
+        span: 12,
+        spanMd: 7,
+        child: PlinthAccordion(
+          items: [
+            PlinthAccordionItem(
+              value: 'trial',
+              title: 'Is there a free trial?',
+              content: PlinthText(
+                '14 days, no card required.',
+                size: PlinthSize.sm,
+              ),
+            ),
+            PlinthAccordionItem(
+              value: 'seats',
+              title: 'Can I add seats later?',
+              content: PlinthText(
+                'At any time — you are billed the prorated '
+                'difference.',
+                size: PlinthSize.sm,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  ),
+);
+''',
+  'UserButtonExample': r'''
+return SizedBox(
+  width: 260,
+  child: PlinthPaper(
+    withBorder: true,
+    p: PlinthSize.sm,
+    child: Row(
+      children: [
+        const PlinthAvatar(initials: 'YL'),
+        const SizedBox(width: 12),
+        const Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              PlinthText('Yair Lahav', weight: FontWeight.w600),
+              PlinthText(
+                'yair@example.com',
+                size: PlinthSize.xs,
+                color: 'gray',
+              ),
+            ],
+          ),
+        ),
+        PlinthActionIcon(
+          icon: const Icon(Icons.unfold_more, size: 16),
+          variant: PlinthVariant.subtle,
+          onPressed: () {},
+        ),
+      ],
+    ),
+  ),
+);
+''',
+  'UserProfileCardExample': r'''
+return SizedBox(
+  width: 300,
+  child: PlinthCard(
+    withBorder: true,
+    child: Column(
+      children: [
+        const PlinthAvatar(initials: 'YL', size: PlinthSize.xl),
+        const SizedBox(height: 12),
+        const PlinthTitle('Yair Lahav', order: 4),
+        const SizedBox(height: 4),
+        const PlinthBadge('Maintainer', color: 'grape'),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            // Expanded rather than spaceEvenly: three fixed-width
+            // columns overflow a narrow card once the labels grow
+            // or the text scale does.
+            for (final stat in _stats)
+              Expanded(
+                child: Column(
+                  children: [
+                    PlinthText(stat.value, weight: FontWeight.w700),
+                    PlinthText(
+                      stat.label,
+                      size: PlinthSize.xs,
+                      color: 'gray',
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        PlinthButton(
+          fullWidth: true,
+          variant: PlinthVariant.light,
+          onPressed: () {},
+          child: const Text('Follow'),
+        ),
+      ],
+    ),
+  ),
+);
+''',
+  'ProjectCardExample': r'''
+return const SizedBox(
+  width: 320,
+  child: PlinthCard(
+    withBorder: true,
+    header: Row(
+      children: [
+        PlinthThemeIcon(
+          icon: Icon(Icons.rocket_launch_outlined),
+          variant: PlinthVariant.light,
+          color: 'grape',
+        ),
+        SizedBox(width: 12),
+        Expanded(
+            child: PlinthText('Launch checklist', weight: FontWeight.w600)),
+        PlinthBadge('Active', color: 'green'),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        PlinthText(
+          'Everything that has to land before the public beta.',
+          size: PlinthSize.sm,
+          color: 'gray',
+        ),
+        SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            PlinthText('12 of 18 done', size: PlinthSize.xs),
+            PlinthText('67%', size: PlinthSize.xs, color: 'gray'),
+          ],
+        ),
+        SizedBox(height: 6),
+        PlinthProgress(value: 0.67, color: 'grape'),
+      ],
+    ),
+  ),
+);
+''',
+  'TaskCardExample': r'''
+return const SizedBox(
+  width: 300,
+  child: PlinthPaper(
+    withBorder: true,
+    p: PlinthSize.md,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: PlinthText(
+                'Regenerate goldens on Linux',
+                weight: FontWeight.w600,
+              ),
+            ),
+            PlinthBadge('High', color: 'red'),
+          ],
+        ),
+        SizedBox(height: 8),
+        PlinthText(
+          'CI renders differently to a dev machine, so the '
+          'reference images have to come from CI.',
+          size: PlinthSize.xs,
+          color: 'gray',
+        ),
+        SizedBox(height: 16),
+        Row(
+          children: [
+            PlinthAvatar(initials: 'YL', size: PlinthSize.sm),
+            SizedBox(width: 6),
+            PlinthAvatar(initials: 'AB', size: PlinthSize.sm),
+            Spacer(),
+            PlinthGroup(
+              gap: PlinthSize.xs,
+              children: [
+                Icon(Icons.chat_bubble_outline, size: 14),
+                PlinthText('4', size: PlinthSize.xs, color: 'gray'),
+                SizedBox(width: 4),
+                Icon(Icons.attach_file, size: 14),
+                PlinthText('2', size: PlinthSize.xs, color: 'gray'),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ),
+  ),
+);
+''',
+  'SingleCommentExample': r'''
+return SizedBox(
+  width: 460,
+  child: PlinthPaper(
+    withBorder: true,
+    p: PlinthSize.md,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const PlinthAvatar(initials: 'AB', size: PlinthSize.sm),
+            const SizedBox(width: 8),
+            const PlinthText('Ada Byron',
+                weight: FontWeight.w600, size: PlinthSize.sm),
+            const SizedBox(width: 8),
+            const PlinthText('2 hours ago',
+                size: PlinthSize.xs, color: 'gray'),
+            const Spacer(),
+            PlinthActionIcon(
+              icon: const Icon(Icons.more_horiz, size: 16),
+              variant: PlinthVariant.subtle,
+              onPressed: () {},
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        const PlinthText(
+          'The contrast work is the part I would have missed — a '
+          'colour being visible is not the same as it being '
+          'readable.',
+          size: PlinthSize.sm,
+        ),
+      ],
+    ),
+  ),
+);
+''',
+  'CommentThreadExample': r'''
+return SizedBox(
+  width: 460,
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const _ThreadComment(
+        initials: 'AB',
+        name: 'Ada Byron',
+        when: '2 hours ago',
+        body: 'Does the shade mirroring apply to custom palettes too, '
+            'or only the built-in ramps?',
+      ),
+      Padding(
+        // Indent marks the reply as a reply — the whole reason a
+        // thread reads differently to a list.
+        padding: const EdgeInsets.only(left: 32, top: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const _ThreadComment(
+              initials: 'YL',
+              name: 'Yair Lahav',
+              when: '1 hour ago',
+              body: 'Any ramp registered on the theme — mirroring is '
+                  'by shade index, not by colour name.',
+            ),
+            const SizedBox(height: 12),
+            PlinthAnchor('Reply', size: PlinthSize.xs, onTap: () {}),
+          ],
+        ),
+      ),
+    ],
+  ),
+);
+''',
+  'AnnouncementBannerExample': r'''
+return SizedBox(
+  width: 560,
+  child: PlinthAlert(
+    color: 'grape',
+    icon: const Icon(Icons.campaign_outlined),
+    onClose: () {},
+    title: 'Plinth UI 0.9.0 is out',
+    child: PlinthGroup(
+      gap: PlinthSize.sm,
+      children: [
+        const PlinthText(
+          'Dark mode, contrast-aware colours, and three new form '
+          'components.',
+          size: PlinthSize.sm,
+        ),
+        PlinthAnchor('Read the changelog',
+            size: PlinthSize.sm, onTap: () {}),
+      ],
+    ),
+  ),
+);
+''',
+  'ConsentBannerExample': r'''
+return SizedBox(
+  width: 560,
+  child: PlinthPaper(
+    withBorder: true,
+    shadow: PlinthShadow.md,
+    p: PlinthSize.md,
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Expanded(
+          child: PlinthText(
+            'We use a single cookie to remember your theme. Nothing '
+            'is shared with anyone.',
+            size: PlinthSize.sm,
+          ),
+        ),
+        const SizedBox(width: 16),
+        PlinthGroup(
+          gap: PlinthSize.xs,
+          wrap: false,
+          children: [
+            PlinthButton(
+              variant: PlinthVariant.subtle,
+              size: PlinthSize.sm,
+              onPressed: () {},
+              child: const Text('Decline'),
+            ),
+            PlinthButton(
+              size: PlinthSize.sm,
+              onPressed: () {},
+              child: const Text('Accept'),
+            ),
+          ],
+        ),
+      ],
+    ),
+  ),
+);
+''',
 };
