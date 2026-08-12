@@ -79,6 +79,35 @@ that overrides that item's marker — e.g. a checklist mixing checkmarks
 and crosses while other items fall back to the list's default
 bullet/numbering.
 
+### `PlinthContainer`
+`child`, `size` (`PlinthContainerSize`: `xs, sm, md, lg, xl` — default
+`md`), `padding` (default `PlinthSize.md`). Constrains `child` to a
+max width and centers it — the standard "page content shouldn't get
+absurdly wide on a big monitor" wrapper.
+
+### `PlinthSpace`
+`w`, `h` (both nullable `PlinthSize`). A fixed-size spacer resolved
+through `theme.spacing` — for a themed gap without a raw `SizedBox`
+and a magic-number pixel value. Provide `w`, `h`, or both; omitting
+both collapses to zero size.
+
+### `PlinthUnstyledButton`
+`child`, `onPressed`. A bare tap target with no visual chrome — no
+color, border, padding, or ripple by default. The building block for
+fully custom-styled clickable elements where `PlinthButton`'s built-in
+variant/color/size resolution would fight the custom look. Still
+provides proper semantics (announced as a button) and a disabled
+state when `onPressed` is null.
+
+### `PlinthSimpleGrid`
+`children`, `columns`, `spacing` (default `PlinthSize.md`). A grid with
+a fixed number of columns per row and consistent spacing. Unlike
+`GridView`, this isn't scrollable or virtualized — it sizes to its
+content and expects a bounded-width ancestor (uses `LayoutBuilder`
+internally to compute cell width; an unbounded-width parent, like a
+horizontal `ListView`, will throw). For a large or unbounded item
+list, use `GridView.builder` directly instead.
+
 ### `PlinthText`
 `data`, `size`, `color`, `weight`, `textAlign`, `italic`, `maxLines`, `overflow`.
 `size` resolves through `theme.fontSizes` instead of a raw `fontSize` double.

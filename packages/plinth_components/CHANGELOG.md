@@ -21,8 +21,17 @@ breaking changes without a major version bump.
 - `PlinthList` + `PlinthListItem` — bulleted or numbered list, with
   each item able to override its own marker (e.g. a checklist mixing
   checkmarks and crosses).
+- `PlinthContainer` — max-width content wrapper that centers its
+  child, the standard "page content shouldn't get absurdly wide"
+  primitive.
+- `PlinthSpace` — a themed fixed-size spacer resolved through
+  `theme.spacing`.
+- `PlinthUnstyledButton` — a bare tap target with no visual chrome,
+  for fully custom-styled clickable elements.
+- `PlinthSimpleGrid` — a non-scrolling grid with a fixed number of
+  columns and consistent spacing.
 
-63 components total.
+67 components total.
 
 ## 0.2.0
 

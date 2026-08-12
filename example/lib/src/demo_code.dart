@@ -783,6 +783,66 @@ PlinthList(
   ],
 ),
 ''',
+  'Container': r'''
+PlinthContainer(
+  size: PlinthContainerSize.xs,
+  child: Container(
+    color: const Color(0xFFE7F5FF),
+    padding: const EdgeInsets.all(12),
+    child: const PlinthText(
+      'This content is capped at the "xs" container width and centered.',
+      size: PlinthSize.sm,
+    ),
+  ),
+),
+''',
+  'Space': r'''
+Row(
+  children: [
+    const PlinthText('Left', size: PlinthSize.sm),
+    const PlinthSpace(w: PlinthSize.xl),
+    const PlinthText('Right (spaced apart)', size: PlinthSize.sm),
+  ],
+),
+''',
+  'Unstyled Button': r'''
+PlinthUnstyledButton(
+  onPressed: () {},
+  child: Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: const Color(0xFFF1F3F5),
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: const Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.star_border, size: 18),
+        SizedBox(width: 8),
+        PlinthText('Fully custom tap target', size: PlinthSize.sm),
+      ],
+    ),
+  ),
+),
+''',
+  'Simple Grid': r'''
+PlinthSimpleGrid(
+  columns: 3,
+  spacing: PlinthSize.sm,
+  children: [
+    for (final n in [1, 2, 3, 4, 5, 6])
+      Container(
+        height: 48,
+        decoration: BoxDecoration(
+          color: const Color(0xFFE7F5FF),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        alignment: Alignment.center,
+        child: PlinthText('$n', size: PlinthSize.sm),
+      ),
+  ],
+),
+''',
   'Box + Text + Disclosure': r'''
 PlinthBox(
   p: PlinthSize.md,

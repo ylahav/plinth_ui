@@ -1281,6 +1281,88 @@ class PlinthWidgetbookApp extends StatelessWidget {
               ],
             ),
             WidgetbookComponent(
+              name: 'PlinthContainer',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'xs width',
+                  builder: (context) => _themed(
+                    PlinthContainer(
+                      size: PlinthContainerSize.xs,
+                      child: Container(
+                        color: Colors.blue.shade50,
+                        padding: const EdgeInsets.all(12),
+                        child: const Text('Capped-width content'),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthSpace',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Horizontal',
+                  builder: (context) => _themed(
+                    const Row(
+                      children: [
+                        Text('Left'),
+                        PlinthSpace(w: PlinthSize.xl),
+                        Text('Right'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthUnstyledButton',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Custom tap target',
+                  builder: (context) => _themed(
+                    PlinthUnstyledButton(
+                      onPressed: () {},
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Text('Fully custom'),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthSimpleGrid',
+              useCases: [
+                WidgetbookUseCase(
+                  name: '3 columns',
+                  builder: (context) => _themed(
+                    SizedBox(
+                      width: 240,
+                      child: PlinthSimpleGrid(
+                        columns: 3,
+                        spacing: PlinthSize.sm,
+                        children: [
+                          for (final n in [1, 2, 3])
+                            Container(
+                              height: 40,
+                              color: Colors.blue.shade50,
+                              alignment: Alignment.center,
+                              child: Text('$n'),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
               name: 'PlinthText',
               useCases: [
                 WidgetbookUseCase(

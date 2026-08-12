@@ -1,0 +1,137 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:plinth_components/plinth_components.dart';
+
+Widget _wrap(Widget child) {
+  return MaterialApp(
+    theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
+    home: Scaffold(body: child),
+  );
+}
+
+void main() {
+  group('PlinthContainer', () {
+    testWidgets('renders its child', (tester) async {
+      await tester
+          .pumpWidget(_wrap(const PlinthContainer(child: Text('Content'))));
+
+      expect(find.text('Content'), findsOneWidget);
+    });
+
+    testWidgets('constrains width to the size preset', (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          PlinthContainer(
+            size: PlinthContainerSize.xs,
+            child: Container(
+                key: const Key('inner'), color: Colors.red, height: 10),
+          ),
+        ),
+      );
+
+      final size = tester.getSize(find.byKey(const Key('inner')));
+      // xs max-width is 540, minus default md padding (16) on each side.
+      expect(size.width, lessThanOrEqualTo(540));
+    });
+  });
+
+  group('PlinthSpace', () {
+    testWidgets('reserves the given height', (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Above'),
+              PlinthSpace(h: PlinthSize.lg),
+              Text('Below'),
+            ],
+          ),
+        ),
+      );
+
+      expect(find.byType(SizedBox), findsWidgets);
+      expect(find.text('Above'), findsOneWidget);
+      expect(find.text('Below'), findsOneWidget);
+    });
+  });
+
+  group('PlinthUnstyledButton', () {
+    testWidgets('renders its child', (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthUnstyledButton(
+            onPressed: () {}, child: const Text('Custom'))),
+      );
+
+      expect(find.text('Custom'), findsOneWidget);
+    });
+
+    testWidgets('calls onPressed when tapped', (tester) async {
+      var tapped = false;
+      await tester.pumpWidget(
+        _wrap(
+          PlinthUnstyledButton(
+              onPressed: () => tapped = true, child: const Text('Custom')),
+        ),
+      );
+
+      await tester.tap(find.text('Custom'));
+      await tester.pump();
+
+      expect(tapped, isTrue);
+    });
+
+    testWidgets('is marked as a button for accessibility', (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthUnstyledButton(
+            onPressed: () {}, child: const Text('Custom'))),
+      );
+
+      final semantics = tester.getSemantics(find.text('Custom'));
+      expect(semantics.hasFlag(SemanticsFlag.isButton), isTrue);
+    });
+  });
+
+  group('PlinthSimpleGrid', () {
+    testWidgets('renders every child', (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          const PlinthSimpleGrid(
+            columns: 2,
+            children: [Text('One'), Text('Two'), Text('Three')],
+          ),
+        ),
+      );
+
+      expect(find.text('One'), findsOneWidget);
+      expect(find.text('Two'), findsOneWidget);
+      expect(find.text('Three'), findsOneWidget);
+    });
+
+    testWidgets('divides available width evenly across columns',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          SizedBox(
+            width: 300,
+            child: PlinthSimpleGrid(
+              columns: 3,
+              spacing: PlinthSize.md,
+              children: [
+                Container(key: const Key('cell'), height: 10),
+                Container(height: 10),
+                Container(height: 10),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      final theme = PlinthTheme.defaultTheme;
+      final gap = theme.spacing[PlinthSize.md]!;
+      final expectedWidth = (300 - gap * 2) / 3;
+      final size = tester.getSize(find.byKey(const Key('cell')));
+      expect(size.width, closeTo(expectedWidth, 0.5));
+    });
+  });
+}
