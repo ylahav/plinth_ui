@@ -7,6 +7,32 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.9.0
+
+### Added
+- `PlinthFileInput<T>` — a file field that **does not open a picker**.
+  Flutter has no built-in one, and taking `file_picker` or
+  `file_selector` as a dependency would push it onto every app using any
+  part of this library, for one component. So `onPick` is the caller's:
+  open whichever picker you use, return what it gives you, and this
+  renders the field, the chips, the remove affordances, and the error
+  state. `T` is your own file type, so nothing needs converting.
+- `PlinthTagsInput` — free-text entry producing removable chips, the
+  counterpart to `PlinthMultiSelect`'s fixed options. Enter or a comma
+  commits, backspace on an empty field removes the last tag, and
+  duplicates are rejected by default.
+- `PlinthAutocomplete` — a text field with suggestions. Unlike
+  `PlinthSelect` it accepts anything typed; the options are a
+  convenience rather than a constraint. Matches anywhere in an option,
+  so `mail` still offers `Gmail`, and highlights the matched run.
+
+### Fixed
+- `PlinthMultiSelect`'s dropdown anchored to the whole widget rather
+  than to its field. The outer `Column` stretches to fill a tall
+  parent, so in one the list rendered a screen-height below the field —
+  off the bottom of the viewport and untappable. Found while building
+  `PlinthAutocomplete`, which had inherited the same shape from it.
+
 ## 0.8.0
 
 ### Added

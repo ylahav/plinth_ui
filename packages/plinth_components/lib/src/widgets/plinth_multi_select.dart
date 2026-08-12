@@ -69,6 +69,10 @@ class PlinthMultiSelect<T> extends StatefulWidget {
 
 class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
   final _layerLink = LayerLink();
+  // Anchors to the field rather than the whole widget: the outer Column
+  // stretches to whatever height it is given, so linking to that put the
+  // dropdown a screen-height below the field inside a tall parent.
+  final _fieldKey = GlobalKey();
   OverlayEntry? _entry;
 
   List<PlinthMultiSelectOption<T>> get _unselected =>
@@ -86,7 +90,8 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
     if (!widget.enabled || _unselected.isEmpty) return;
     final theme = context.plinth;
     final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
-    final renderBox = context.findRenderObject() as RenderBox?;
+    final renderBox =
+        _fieldKey.currentContext?.findRenderObject() as RenderBox?;
     final fieldWidth = renderBox?.size.width;
 
     _entry = OverlayEntry(
@@ -176,21 +181,23 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
       for (final o in widget.options) o.value: o.label,
     };
 
-    return CompositedTransformTarget(
-      link: _layerLink,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (widget.label != null) ...[
-            PlinthText(widget.label!,
-                size: widget.size, weight: FontWeight.w600),
-            SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          ],
-          if (widget.description != null) ...[
-            PlinthText(widget.description!, size: PlinthSize.xs, color: 'gray'),
-            SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          ],
-          InkWell(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (widget.label != null) ...[
+          PlinthText(widget.label!, size: widget.size, weight: FontWeight.w600),
+          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
+        ],
+        if (widget.description != null) ...[
+          PlinthText(widget.description!, size: PlinthSize.xs, color: 'gray'),
+          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
+        ],
+        CompositedTransformTarget(
+          key: _fieldKey,
+          link: _layerLink,
+          child: InkWell(
+            // Kept as-is: existing tests and callers target this key.
             key: const Key('plinth_multi_select_field'),
             onTap: _toggleDropdown,
             borderRadius: BorderRadius.circular(resolvedRadius),
@@ -241,12 +248,12 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
                     ),
             ),
           ),
-          if (hasError) ...[
-            SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-            PlinthText(widget.error!, size: PlinthSize.xs, color: 'red'),
-          ],
+        ),
+        if (hasError) ...[
+          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
+          PlinthText(widget.error!, size: PlinthSize.xs, color: 'red'),
         ],
-      ),
+      ],
     );
   }
 }

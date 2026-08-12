@@ -359,6 +359,51 @@ PlinthRadioGroup<String>(
 )
 ```
 
+### `PlinthFileInput<T>`
+`value` (`List<T>`), `onPick`, `onChanged`, `labelBuilder`, `label`,
+`description`, `placeholder`, `error`, `size`, `color`, `radius`,
+`enabled`, `multiple`, `icon`.
+
+**It does not open a file picker.** Flutter has no built-in one, and
+every package providing it (`file_picker`, `file_selector`,
+`image_picker`) would become a dependency of `plinth_components` and so
+of every app using any part of this library — a disproportionate cost
+for one component, and a choice each app is better placed to make.
+
+So `onPick` is yours: open whichever picker you use and return what it
+gives you. This renders the field, the selected files, the remove
+affordances, and the error state. `T` is your own file type —
+`PlatformFile`, `XFile`, a record — and `labelBuilder` says how to show
+one. A cancelled picker (null or an empty list) leaves the selection
+untouched rather than clearing it.
+
+### `PlinthTagsInput`
+`value` (`List<String>`), `onChanged`, `label`, `description`,
+`placeholder`, `error`, `size`, `color`, `radius`, `enabled`,
+`maxTags`, `allowDuplicates`. Free-text entry producing removable
+chips.
+
+`PlinthMultiSelect` is the fixed-options equivalent, where the user
+picks from a list you supply; this is where they invent the values.
+Enter or a comma commits — so pasting `dart, flutter` yields two tags —
+and backspace in an empty field removes the last one. Duplicates are
+rejected by default, since two identical chips give the user no way to
+tell them apart.
+
+### `PlinthAutocomplete`
+`value`, `onChanged`, `options`, `label`, `description`, `placeholder`,
+`error`, `size`, `color`, `radius`, `enabled`, `limit` (default `8`),
+`onOptionSelected`. A text field with suggestions.
+
+The difference from `PlinthSelect` is what the field accepts, not how
+it looks: a select constrains the user to your list, while this takes
+any text and merely *offers* it. Suggestions match anywhere in an
+option rather than only at the start — typing `mail` still offers
+`Gmail` — and the matched run is highlighted via `PlinthHighlight` so
+it's clear why each is being suggested. `onOptionSelected` fires in
+addition to `onChanged` when a suggestion is picked, for when that
+should do more than set the text.
+
 ### `PlinthSelect<T>`
 `options` (`List<PlinthSelectOption<T>>`), `value`, `onChanged`, `label`,
 `description`, `placeholder`, `error`, `size`, `color`, `radius`, `enabled`.
@@ -750,14 +795,6 @@ from this one.
 The gaps worth closing first, either because nothing here covers the
 need at all or because the work is mostly extraction:
 
-- **`PlinthFileInput`** + **`PlinthFileButton`** — the form set cannot
-  take a file at all. The largest single hole in it.
-- **`PlinthAutocomplete`** — a text field with suggestions.
-  `PlinthSelect` covers picking from a fixed list; nothing accepts free
-  text with completion.
-- **`PlinthTagsInput`** — free-text entry producing removable chips.
-  `PlinthMultiSelect` is the fixed-options equivalent; this is the one
-  where the user invents the values.
 - **`PlinthEmptyState`** — the "no results" placeholder. Common enough
   in real apps that most teams write their own.
 

@@ -1223,6 +1223,151 @@ final List<WidgetbookNode> plinthDirectories = [
         ],
       ),
       WidgetbookComponent(
+        name: 'PlinthTagsInput',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final label = context.knobs.string(
+                label: 'label',
+                initialValue: 'Skills',
+              );
+              final maxTags = context.knobs.intOrNull.slider(
+                label: 'maxTags',
+                initialValue: 5,
+                min: 1,
+                max: 10,
+                description: 'null for no limit',
+                defaultToNull: true,
+              );
+              final allowDuplicates =
+                  context.knobs.boolean(label: 'allowDuplicates');
+              final enabled = context.knobs.boolean(
+                label: 'enabled',
+                initialValue: true,
+              );
+              final size = _sizeKnob(context);
+              final color = _colorKnob(context);
+              return _themed(
+                SizedBox(
+                  width: 360,
+                  child: _Local<List<String>>(
+                    initial: const ['dart', 'flutter'],
+                    builder: (tags, onChanged) => PlinthTagsInput(
+                      label: label,
+                      placeholder: 'Type and press Enter',
+                      value: tags,
+                      onChanged: onChanged,
+                      maxTags: maxTags,
+                      allowDuplicates: allowDuplicates,
+                      enabled: enabled,
+                      size: size,
+                      color: color,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthAutocomplete',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final limit = context.knobs.int.slider(
+                label: 'limit',
+                initialValue: 8,
+                min: 1,
+                max: 10,
+                description: 'How many suggestions show at once',
+              );
+              final enabled = context.knobs.boolean(
+                label: 'enabled',
+                initialValue: true,
+              );
+              final size = _sizeKnob(context);
+              final color = _colorKnob(context);
+              return _themed(
+                SizedBox(
+                  width: 320,
+                  child: _Local<String>(
+                    initial: '',
+                    builder: (value, onChanged) => PlinthAutocomplete(
+                      label: 'Company',
+                      placeholder: 'Start typing…',
+                      description: 'Free text is accepted — the list only '
+                          'offers suggestions',
+                      value: value,
+                      onChanged: onChanged,
+                      limit: limit,
+                      enabled: enabled,
+                      size: size,
+                      color: color,
+                      options: const [
+                        'Acme',
+                        'Globex',
+                        'Initech',
+                        'Umbrella',
+                        'Soylent',
+                        'Hooli',
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthFileInput',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final multiple = context.knobs.boolean(label: 'multiple');
+              final enabled = context.knobs.boolean(
+                label: 'enabled',
+                initialValue: true,
+              );
+              final error = context.knobs.stringOrNull(
+                label: 'error',
+                initialValue: 'Attach at least one file',
+                defaultToNull: true,
+              );
+              final size = _sizeKnob(context);
+              return _themed(
+                SizedBox(
+                  width: 360,
+                  child: _Local<List<String>>(
+                    initial: const [],
+                    builder: (files, onChanged) => PlinthFileInput<String>(
+                      label: 'Attachments',
+                      placeholder: 'Choose a file',
+                      description: 'The picker is supplied by the caller — '
+                          'this component takes no file-picking dependency',
+                      error: error,
+                      value: files,
+                      labelBuilder: (f) => f,
+                      multiple: multiple,
+                      enabled: enabled,
+                      size: size,
+                      // Stands in for a real picker, which is exactly
+                      // the seam this component is built around.
+                      onPick: () async => ['document-${files.length + 1}.pdf'],
+                      onChanged: onChanged,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      WidgetbookComponent(
         name: 'PlinthMultiSelect',
         useCases: [
           WidgetbookUseCase(
