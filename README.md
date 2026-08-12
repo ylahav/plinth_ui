@@ -154,7 +154,7 @@ the sidebar.
 - **Tests** — pure-logic tests for `PlinthTheme`'s shade generator and
   `PlinthDisclosureController`, a golden (visual regression) test suite
   for `PlinthButton` (variants, a color override, disabled state, all
-  sizes), and widget behavior tests for most other components — 27 test
+  sizes), and widget behavior tests for most other components — 29 test
   files covering the majority of the 71 public components as of this
   writing.
   Notable coverage: `PlinthPagination`'s ellipsis-collapse logic at large
@@ -162,6 +162,9 @@ the sidebar.
   `PlinthCopyButton`'s clipboard write + timer-based revert,
   `PlinthMenu`/`PlinthNotification`'s overlay-dismissal behavior. See
   `docs/TESTING.md` for the full breakdown and how to run them.
+  Note that the golden test fails locally on Windows/macOS by design
+  (the reference images are Linux-rendered to match CI) — see
+  `docs/TESTING.md` §7 before chasing it.
 - **CI is green** — `.github/workflows/ci.yml` passes end-to-end
   (bootstrap, format, analyze, test) on GitHub Actions as of this
   writing. Getting there surfaced two real, non-obvious issues worth
@@ -222,14 +225,13 @@ intentional rather than bugs:
   visual logic. See `docs/TESTING.md`.
 - Consider hue-drift at the extremes of the color-shade ramp for
   richer darks/lights (currently hue is held fixed).
-- Pin the Flutter version in `.github/workflows/ci.yml` (currently
-  tracks the `stable` channel) once you've confirmed the version
-  you're developing against locally.
-- Publishing prep — see **[docs/PUBLISHING.md](docs/PUBLISHING.md)**
-  for the full ordered checklist. LICENSE, `CHANGELOG.md`, pubspec
-  metadata, and the API-consistency review are done; publishing itself
-  (in dependency order, with a fresh name-availability check first)
-  is the remaining work, and needs the real SDK + a pub.dev account.
+- Release `plinth_components` 0.4.0. All three packages are live on
+  pub.dev, but pub.dev still serves 0.3.0 — the version bump and
+  CHANGELOG entry for `PlinthFlex`/`PlinthImage`/`PlinthScrollArea`/
+  `PlinthPortal` are committed and `flutter pub publish --dry-run`
+  comes back with 0 warnings, so the remaining step is the publish
+  itself (interactive, needs a pub.dev account). See
+  **[docs/PUBLISHING.md](docs/PUBLISHING.md)**.
 
 ## Naming note
 

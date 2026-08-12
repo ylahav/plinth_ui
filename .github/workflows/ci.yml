@@ -21,11 +21,13 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          # Pin this to the Flutter version you're developing against
-          # once you've confirmed it locally — an unpinned "stable"
-          # channel means CI can start failing from an SDK upgrade
-          # alone, unrelated to any code change in a PR.
-          # flutter-version: '3.24.0'
+          # Pinned to the version this project is developed against, so
+          # CI can't start failing from an SDK upgrade alone, unrelated
+          # to any code change in a PR. Bump deliberately, and re-run
+          # the golden tests when you do — a Flutter upgrade can shift
+          # rendering enough to invalidate the committed reference
+          # images (see docs/TESTING.md §7).
+          flutter-version: '3.44.8'
 
       - name: Activate Melos
         run: dart pub global activate melos

@@ -1,108 +1,117 @@
 # Publishing Plinth UI to pub.dev
 
-This is a Melos monorepo with three publishable packages, connected by
-local `path:` dependencies that only work for development — pub.dev
-doesn't understand `path:`. That constrains the order things have to
-happen in. This doc is the full checklist, in order.
+All three packages are live on pub.dev. The first-publish sequence
+(publish the leaf packages, then switch `plinth_components` off its
+local `path:` dependencies onto hosted versions) is **done** — this doc
+now covers releasing an update.
 
-## What's already done
+## Current state
 
-- MIT `LICENSE` in the repo root and in each of the three packages.
-- `CHANGELOG.md` in each of the three packages (a `0.0.1` initial entry).
-- `homepage` / `repository` / `issue_tracker` set in each `pubspec.yaml`,
-  pointing at https://github.com/ylahav/plinth_ui.
-- An API-consistency pass across all 51 components in
-  `plinth_components` (see the main README's "API consistency review").
+| Package | pub.dev | In this repo |
+|---|---|---|
+| `plinth_core` | 0.0.1 | 0.0.1 — `publish_to: none` guard in place |
+| `plinth_hooks` | 0.0.1 | 0.0.1 — `publish_to: none` guard in place |
+| `plinth_components` | 0.3.0 | **0.4.0 — unreleased** |
 
-## What's still open, in order
+`plinth_components` depends on the other two by hosted version
+(`plinth_core: ^0.0.1`, `plinth_hooks: ^0.0.1`), not by path. Melos
+still writes a `pubspec_overrides.yaml` pointing at the local copies so
+the workspace builds against your working tree — see the caveat below.
 
-### 1. Publish `plinth_core` first
+`plinth_core` and `plinth_hooks` carry `publish_to: none` as a guard
+against an accidental publish. Neither needs a release right now;
+remove the line only when you actually intend to push a new version,
+and restore it afterward.
 
-It has no dependency on the other two packages, so it's unblocked.
+## Releasing `plinth_components` 0.4.0
 
-```bash
-cd packages/plinth_core
-dart pub publish --dry-run
-```
-
-Fix anything the dry run flags (missing fields, formatting, lint
-issues — `pana`, the same tool pub.dev runs, drives this check). Once
-it's clean:
-
-1. Remove the `publish_to: none` line from `packages/plinth_core/pubspec.yaml`
-   — that line is a deliberate safety guard against an accidental
-   publish; only remove it right before you actually intend to publish.
-2. `dart pub publish` for real. You'll need a pub.dev account
-   (Google sign-in) and to confirm the publish interactively.
-
-### 2. Publish `plinth_hooks` next
-
-Same shape, and also has no dependency on the other two:
+The version is already bumped and the CHANGELOG entry is written
+(`PlinthFlex`, `PlinthImage`, `PlinthScrollArea`, `PlinthPortal`).
 
 ```bash
-cd packages/plinth_hooks
-dart pub publish --dry-run
-# remove publish_to: none, then:
-dart pub publish
-```
-
-### 3. Update `plinth_components` to depend on the published versions
-
-Only after steps 1 and 2 are live on pub.dev. Edit
-`packages/plinth_components/pubspec.yaml`:
-
-```yaml
-dependencies:
-  flutter:
-    sdk: flutter
-  plinth_core: ^0.0.1      # was: path: ../plinth_core
-  plinth_hooks: ^0.0.1     # was: path: ../plinth_hooks
-```
-
-Then re-run `melos bootstrap` (or `flutter pub get` inside
-`packages/plinth_components`) to confirm it resolves against the real
-published packages rather than the local paths, and run the full test
-suite again — this is a real dependency-resolution change, not just a
-paperwork one, so it's worth the same verification as any other change:
-
-```bash
-melos run analyze && melos run test
-```
-
-### 4. Publish `plinth_components`
-
-```bash
+melos bootstrap
+melos run analyze && melos run format && melos run test
 cd packages/plinth_components
-dart pub publish --dry-run
-# remove publish_to: none, then:
-dart pub publish
+flutter pub publish --dry-run
+flutter pub publish          # interactive confirmation, needs a pub.dev account
 ```
 
-## Before any of the above: re-confirm the name is free
+Publishing is **irreversible** — a version can't be retracted after
+seven days, and the version number can never be reused. Treat the dry
+run as the last checkpoint.
 
-This project verified `plinth` / `plinth_ui` were unclaimed on pub.dev
-early on — that check is now old relative to how much has shipped
-since. Right before step 1, check directly on pub.dev's own search
-(https://pub.dev/packages?q=plinth) for `plinth_core`, `plinth_hooks`,
-and `plinth_components` specifically, since those are the exact names
-being published (a web search engine isn't a reliable enough substitute
-— pub.dev's live namespace isn't fully indexed by general search).
+Expect the golden test to fail locally on Windows/macOS while passing
+in CI; that's the documented platform sensitivity in
+[TESTING.md §7](TESTING.md), not a release blocker. GitHub Actions is
+the source of truth.
+
+### The `pubspec_overrides.yaml` hint
+
+The dry run reports two hints, both of this form:
+
+> Non-dev dependencies are overridden in pubspec_overrides.yaml. This
+> indicates you are not testing your package against the same versions
+> of its dependencies that users will have when they use it.
+
+This is real and worth taking seriously: your tests run against the
+**local** `plinth_core`/`plinth_hooks`, but consumers get the published
+0.0.1. If the local copies have drifted without a version bump, you'd
+be shipping something you never actually tested in the configuration
+users will get.
+
+To check rather than assume, diff the published archive against your
+working tree:
+
+```bash
+curl -s https://pub.dev/api/packages/plinth_core \
+  | grep -o '"archive_url":"[^"]*"' | head -1 | sed 's/.*archive_url":"//;s/"//'
+# download that URL, extract, and diff its lib/ against packages/plinth_core/lib
+```
+
+As of the 0.4.0 prep this came back clean — `plinth_hooks` is
+byte-identical to its published 0.0.1, and `plinth_core` differs only
+in `dart format` line reflow (identical once whitespace is stripped),
+so the override is not masking a behavioral difference.
+
+If a future check *does* find a real difference, the fix is to bump and
+publish that package first, then raise the constraint in
+`plinth_components` — not to publish over the top of it.
+
+## Releasing a change to `plinth_core` or `plinth_hooks`
+
+Order matters, because pub.dev resolves the hosted constraint:
+
+1. Bump the version and add a CHANGELOG entry in that package.
+2. Remove its `publish_to: none`, `flutter pub publish`, then restore
+   the guard line.
+3. Raise the constraint in `packages/plinth_components/pubspec.yaml`
+   (e.g. `plinth_core: ^0.1.0`).
+4. Bump `plinth_components` too — a consumer pinning the old version
+   won't otherwise pick up the dependency change.
+5. `melos bootstrap && melos run analyze && melos run test`, then
+   publish `plinth_components`.
+
+`melos version` can bump packages in lockstep and generate CHANGELOG
+entries from commit history, which is worth using once more than one
+package moves at a time.
 
 ## Version strategy
 
-All three packages are `0.0.1` right now. Consider whether the first
-real release should also be `0.0.1` (signals "very early, expect
-changes") or `0.1.0` (signals "usable, but not API-stable yet") —
-`0.1.0` is the more common choice for a library with this much
-functionality already built. Whichever you pick, `melos version` (now
-usable since `repository:` is set in `melos.yaml`) can bump all three
-in lockstep and update each `CHANGELOG.md` automatically from commit
-history, once you're ready.
+`plinth_core` and `plinth_hooks` are still at 0.0.1 and have been
+stable since the initial publish. `plinth_components` is the package
+that actually moves; it's on a 0.x line where minor bumps carry new
+components and may include breaking changes without a major bump, as
+its CHANGELOG header states.
 
-## After the first publish: optional automation
+Worth deciding before 1.0: whether the two leaf packages should be
+brought up to a matching version line, or left to drift at their own
+pace. Lockstep versioning is simpler to reason about for consumers;
+independent versioning is more honest about what actually changed.
+
+## Optional automation
 
 Dart supports [automated publishing via GitHub Actions](https://dart.dev/tools/pub/automated-publishing) —
-publish triggers off pushing a git tag matching a pattern you configure
-on pub.dev, rather than running `dart pub publish` by hand each time.
-Worth setting up once the manual process above has been done
-successfully at least once, so you understand what it's automating.
+publishing triggers off a git tag matching a pattern you configure on
+pub.dev, instead of running `flutter pub publish` by hand. The manual
+process has now been done successfully more than once, so the
+prerequisite ("understand what you're automating") is satisfied.
