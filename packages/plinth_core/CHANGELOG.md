@@ -7,6 +7,40 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.2.0
+
+### Added
+- **Contrast-aware color resolution.** Measured against WCAG, the
+  palette was failing badly in three separate ways, and each needed a
+  different fix:
+
+  - `contrastingOn(background)` picks a foreground by the *fill's*
+    lightness. White on `yellow` measured 2.12:1 and on `teal` 1.82:1,
+    against the 4.5:1 AA asks for — a filled button whose label you
+    could see but not read. Which way it should fall depends on the
+    fill, not the theme.
+  - `shaded(name, shade)` and `shadeFor(shade)` mirror a shade for the
+    theme's brightness. A shade-0 wash is nearly white behind a dark
+    alert, and a shade-6 accent measured 1.97:1 as text on the dark
+    surface. Mirroring keeps each shade's role while flipping its
+    lightness.
+  - `readableOn(name, background)` walks the ramp for a shade that
+    clears a contrast threshold. Mirroring can't fix this half: the
+    ramps differ in intrinsic lightness, so no single index serves
+    every hue — `violet` at shade 6 reads comfortably on white where
+    `cyan` at shade 6 lands at 2.19:1.
+
+  Use `shaded` for fills, `contrastingOn` for what sits on them, and
+  `readableOn` for a palette colour used as text or an icon.
+- `onFilledInverse`, the dark counterpart to `onFilled`, for fills too
+  light to carry white text.
+
+### Changed
+- Components resolving a palette colour now go through these rather
+  than a fixed shade 6. Colours that already met contrast — `blue`,
+  `red`, `violet`, `indigo`, `grape`, `pink` — are unaffected; the
+  lighter half of the palette changes appearance, which is the point.
+
 ## 0.1.0
 
 ### Added

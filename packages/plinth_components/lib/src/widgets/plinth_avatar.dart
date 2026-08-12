@@ -53,8 +53,8 @@ class PlinthAvatar extends StatelessWidget {
     final theme = context.plinth;
     final diameter = _diameters[size]!;
     final colorKey = color ?? theme.primaryColor;
-    final backgroundColor = theme.color(colorKey, 1);
-    final foregroundColor = theme.color(colorKey, 7);
+    final backgroundColor = theme.shaded(colorKey, 1);
+    final foregroundColor = theme.shaded(colorKey, 7);
     final borderRadius = radius != null
         ? BorderRadius.circular(theme.radius[radius]!)
         : BorderRadius.circular(diameter / 2);

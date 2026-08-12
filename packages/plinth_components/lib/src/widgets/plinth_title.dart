@@ -77,7 +77,7 @@ class PlinthTitle extends StatelessWidget {
         style: TextStyle(
           fontSize: size,
           fontWeight: weight,
-          color: color != null ? theme.color(color!, 6) : null,
+          color: color != null ? theme.readableOn(color!, theme.surface) : null,
           height: 1.3,
         ),
       ),

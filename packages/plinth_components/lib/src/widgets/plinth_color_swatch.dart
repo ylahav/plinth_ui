@@ -47,7 +47,7 @@ class PlinthColorSwatch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final fillColor = theme.color(color, 6);
+    final fillColor = theme.shaded(color, 6);
     final dimension = _dimensions[size]!;
 
     return Semantics(
@@ -66,7 +66,8 @@ class PlinthColorSwatch extends StatelessWidget {
             border: selected ? Border.all(color: theme.text, width: 2) : null,
           ),
           child: selected
-              ? Icon(Icons.check, size: dimension * 0.5, color: theme.onFilled)
+              ? Icon(Icons.check,
+                  size: dimension * 0.5, color: theme.contrastingOn(fillColor))
               : null,
         ),
       ),

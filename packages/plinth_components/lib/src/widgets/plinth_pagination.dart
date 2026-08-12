@@ -63,7 +63,7 @@ class PlinthPagination extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
-    final activeColor = theme.color(colorKey, 6);
+    final activeColor = theme.shaded(colorKey, 6);
     final dimension = switch (size) {
       PlinthSize.xs => 24.0,
       PlinthSize.sm => 28.0,
@@ -102,7 +102,9 @@ class PlinthPagination extends StatelessWidget {
               child: Text(
                 '$entry',
                 style: TextStyle(
-                  color: entry == page ? theme.onFilled : theme.text,
+                  color: entry == page
+                      ? theme.contrastingOn(activeColor)
+                      : theme.text,
                   fontWeight: entry == page ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),

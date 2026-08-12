@@ -48,7 +48,7 @@ class _PlinthSpoilerState extends State<PlinthSpoiler> {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = widget.color ?? theme.primaryColor;
-    final linkColor = theme.color(colorKey, 6);
+    final linkColor = theme.shaded(colorKey, 6);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

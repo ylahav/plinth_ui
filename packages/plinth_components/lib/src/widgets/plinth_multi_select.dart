@@ -170,7 +170,7 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
     final hasError = widget.error != null && widget.error!.isNotEmpty;
     final colorKey = widget.color ?? theme.primaryColor;
     final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
-    final borderColor = hasError ? theme.color('red', 6) : theme.border;
+    final borderColor = hasError ? theme.shaded('red', 6) : theme.border;
 
     final selectedLabels = {
       for (final o in widget.options) o.value: o.label,
@@ -229,7 +229,7 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
                                   fontSize:
                                       (theme.fontSizes[widget.size] ?? 14) - 2),
                             ),
-                            backgroundColor: theme.color(colorKey, 1),
+                            backgroundColor: theme.shaded(colorKey, 1),
                             deleteIcon: const Icon(Icons.close, size: 14),
                             onDeleted:
                                 widget.enabled ? () => _removeValue(v) : null,

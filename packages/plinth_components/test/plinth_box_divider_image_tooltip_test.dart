@@ -253,27 +253,45 @@ void main() {
       expect(borderOf(tester), PlinthTheme.darkTheme.border);
     });
 
-    testWidgets('a filled button keeps its light label in the dark theme',
+    testWidgets('a filled button labels itself against its own fill',
         (tester) async {
+      Color labelColor(WidgetTester tester) {
+        return tester
+            .widget<DefaultTextStyle>(
+              find
+                  .descendant(
+                    of: find.byType(PlinthButton),
+                    matching: find.byType(DefaultTextStyle),
+                  )
+                  .last,
+            )
+            .style
+            .color!;
+      }
+
+      // The foreground follows the *fill's* lightness, not the theme's.
+      // A dark theme mirrors the accent to a lighter shade, so the same
+      // button that carries a white label in light mode needs a dark
+      // one here — tying the label to brightness instead would get this
+      // backwards in exactly the case it is meant to handle.
       await tester.pumpWidget(
-        wrapDark(
-          PlinthButton(onPressed: () {}, child: const Text('Save')),
-        ),
+        _wrap(PlinthButton(onPressed: () {}, child: const Text('Save'))),
+      );
+      expect(
+        labelColor(tester),
+        PlinthTheme.defaultTheme
+            .contrastingOn(PlinthTheme.defaultTheme.shaded('blue', 6)),
       );
 
-      // onFilled deliberately doesn't follow brightness — the button's
-      // fill is saturated in either theme.
-      final style = tester
-          .widget<DefaultTextStyle>(
-            find
-                .descendant(
-                  of: find.byType(PlinthButton),
-                  matching: find.byType(DefaultTextStyle),
-                )
-                .last,
-          )
-          .style;
-      expect(style.color, PlinthTheme.darkTheme.onFilled);
+      await tester.pumpWidget(
+        wrapDark(PlinthButton(onPressed: () {}, child: const Text('Save'))),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        labelColor(tester),
+        PlinthTheme.darkTheme
+            .contrastingOn(PlinthTheme.darkTheme.shaded('blue', 6)),
+      );
     });
   });
 

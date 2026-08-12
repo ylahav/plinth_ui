@@ -48,7 +48,7 @@ class PlinthBreadcrumbs extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
-    final linkColor = theme.color(colorKey, 6);
+    final linkColor = theme.shaded(colorKey, 6);
 
     return Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,

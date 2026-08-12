@@ -58,7 +58,7 @@ class PlinthImage extends StatelessWidget {
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: theme.color(theme.primaryColor, 6),
+                  color: theme.shaded(theme.primaryColor, 6),
                   value: progress.expectedTotalBytes != null
                       ? progress.cumulativeBytesLoaded /
                           progress.expectedTotalBytes!
@@ -73,9 +73,9 @@ class PlinthImage extends StatelessWidget {
             width: width,
             height: height,
             child: ColoredBox(
-              color: theme.color('gray', 1),
+              color: theme.shaded('gray', 1),
               child: Icon(Icons.broken_image_outlined,
-                  color: theme.color('gray', 5)),
+                  color: theme.shaded('gray', 5)),
             ),
           );
         },

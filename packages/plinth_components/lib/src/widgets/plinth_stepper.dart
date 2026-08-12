@@ -55,7 +55,7 @@ class PlinthStepper extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
-    final activeColor = theme.color(colorKey, 6);
+    final activeColor = theme.shaded(colorKey, 6);
 
     return Row(
       children: [
@@ -129,11 +129,14 @@ class _StepCircleAndLabel extends StatelessWidget {
               ),
             ),
             child: state == _StepState.completed
-                ? Icon(Icons.check, size: 16, color: theme.onFilled)
+                ? Icon(Icons.check,
+                    size: 16, color: theme.contrastingOn(activeColor))
                 : Text(
                     '${index + 1}',
                     style: TextStyle(
-                      color: isFilled ? theme.onFilled : theme.textMuted,
+                      color: isFilled
+                          ? theme.contrastingOn(activeColor)
+                          : theme.textMuted,
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
                     ),

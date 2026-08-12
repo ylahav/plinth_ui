@@ -98,7 +98,7 @@ class _PlinthLoaderState extends State<PlinthLoader>
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final color = theme.color(widget.color ?? theme.primaryColor, 6);
+    final color = theme.shaded(widget.color ?? theme.primaryColor, 6);
     final extent = _loaderSizes[widget.size]!;
 
     return switch (widget.type) {

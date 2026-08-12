@@ -41,7 +41,7 @@ class PlinthButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
-    final baseColor = theme.color(colorKey, 6);
+    final baseColor = theme.shaded(colorKey, 6);
 
     final resolvedRadius = theme.radius[radius ?? theme.defaultRadius]!;
     final verticalPadding = theme.spacing[size]! * 0.5;
@@ -50,8 +50,9 @@ class PlinthButton extends StatelessWidget {
 
     final (background, foreground, border) = _resolveColors(
       variant: variant,
+      colorKey: colorKey,
       baseColor: baseColor,
-      lightColor: theme.color(colorKey, 1),
+      lightColor: theme.shaded(colorKey, 1),
       theme: theme,
     );
 
@@ -109,21 +110,30 @@ class PlinthButton extends StatelessWidget {
 
   (Color background, Color foreground, Color? border) _resolveColors({
     required PlinthVariant variant,
+    required String colorKey,
     required Color baseColor,
     required Color lightColor,
     required PlinthTheme theme,
   }) {
+    // Foregrounds resolve against whatever they actually sit on: a
+    // filled button against its own fill, a light one against its tint,
+    // and the transparent variants against the surface behind them.
+    // Using baseColor throughout put a cyan `subtle` button at 2.2:1.
     switch (variant) {
       case PlinthVariant.filled:
-        return (baseColor, theme.onFilled, null);
+        return (baseColor, theme.contrastingOn(baseColor), null);
       case PlinthVariant.light:
-        return (lightColor, baseColor, null);
+        return (lightColor, theme.readableOn(colorKey, lightColor), null);
       case PlinthVariant.outline:
-        return (Colors.transparent, baseColor, baseColor);
+        final onSurface = theme.readableOn(colorKey, theme.surface);
+        return (Colors.transparent, onSurface, onSurface);
       case PlinthVariant.subtle:
-        return (Colors.transparent, baseColor, null);
       case PlinthVariant.transparent:
-        return (Colors.transparent, baseColor, null);
+        return (
+          Colors.transparent,
+          theme.readableOn(colorKey, theme.surface),
+          null,
+        );
       case PlinthVariant.defaultVariant:
         return (theme.surface, theme.text, theme.border);
     }

@@ -45,10 +45,27 @@ a dark theme a value swap rather than a rewrite:
 | `onFilled` | Foreground *on* a saturated fill — a filled button's label, a checked box's tick |
 | `shadow` / `scrim` | Elevation shadows, and the barrier behind a modal |
 
-`onFilled` deliberately doesn't follow `brightness`: a filled button is
-saturated in either theme, so its label stays light in both. Flipping
-it with the theme is how you end up with dark text on a dark-blue
-button.
+### Resolving a palette colour
+
+Three methods, for three different jobs. Reaching for `color(name, 6)`
+directly is almost always wrong — that fixed shade is what made the
+palette fail contrast in the first place.
+
+| Method | Use for | Why |
+|---|---|---|
+| `shaded(name, shade)` | **Fills** — button backgrounds, badge tints | Mirrors the shade in dark themes, so a shade-0 wash stays a wash rather than becoming near-white on a dark surface |
+| `contrastingOn(fill)` | **Foreground on a fill** — a filled button's label, a checked tick | Picks light or dark by the *fill's* lightness. White on `yellow` measures 2.12:1; on `violet`, 8.75:1 |
+| `readableOn(name, bg)` | **Palette colour as text or an icon** | Walks the ramp for a shade that clears contrast. No single index works for every hue — `cyan` at shade 6 measures 2.19:1 on white where `violet` measures 8.75:1 |
+
+`onFilled` and `onFilledInverse` are the two candidates `contrastingOn`
+chooses between. Neither follows `brightness`: a filled button is
+saturated in either theme, so which foreground it needs depends on the
+fill, not the theme. Tying that to brightness is how you end up with
+dark text on a dark-blue button.
+
+Contrast is asserted in `plinth_core`'s test suite against WCAG AA, so
+a palette or token change that breaks legibility fails there rather
+than shipping.
 
 `brightness` is on the theme for the rare component that must branch
 directly. `PlinthTooltip` is the only one that does — it's deliberately

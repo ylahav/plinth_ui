@@ -122,7 +122,7 @@ class _MenuContent extends StatelessWidget {
                         data: IconThemeData(
                           size: 16,
                           color: item.color != null
-                              ? theme.color(item.color!, 6)
+                              ? theme.shaded(item.color!, 6)
                               : theme.text,
                         ),
                         child: item.icon!,

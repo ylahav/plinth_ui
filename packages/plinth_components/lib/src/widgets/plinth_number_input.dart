@@ -126,9 +126,9 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
 
     final Color borderColor;
     if (hasError) {
-      borderColor = theme.color('red', 6);
+      borderColor = theme.shaded('red', 6);
     } else if (_isFocused) {
-      borderColor = theme.color(colorKey, 6);
+      borderColor = theme.shaded(colorKey, 6);
     } else {
       borderColor = theme.border;
     }

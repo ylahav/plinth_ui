@@ -62,7 +62,7 @@ class PlinthTabs<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
-    final activeColor = theme.color(colorKey, 6);
+    final activeColor = theme.shaded(colorKey, 6);
     final verticalPadding = theme.spacing[size]! * 0.5;
     final horizontalPadding = theme.spacing[size]!;
 

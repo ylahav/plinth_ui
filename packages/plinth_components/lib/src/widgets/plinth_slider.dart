@@ -67,12 +67,12 @@ class PlinthSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
-    final activeColor = theme.color(colorKey, 6);
+    final activeColor = theme.shaded(colorKey, 6);
 
     return SliderTheme(
       data: SliderTheme.of(context).copyWith(
         activeTrackColor: activeColor,
-        inactiveTrackColor: theme.color(colorKey, 1),
+        inactiveTrackColor: theme.shaded(colorKey, 1),
         thumbColor: activeColor,
         overlayColor: activeColor.withValues(alpha: 0.15),
         trackHeight: _trackHeights[size],

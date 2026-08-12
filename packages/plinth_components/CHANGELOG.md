@@ -7,6 +7,33 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.7.0
+
+### Fixed
+- **Palette colours are now legible.** Requires `plinth_core` ^0.2.0.
+
+  A filled button, badge, chip, indicator, or theme icon picks its
+  label colour from its own fill instead of always using white: white
+  on `yellow` measured 2.12:1 and on `teal` 1.82:1, well under the
+  4.5:1 WCAG AA asks for. Those labels are now dark.
+
+  A palette colour used as *text* — `PlinthText`, `PlinthTitle`, and
+  the `light`/`outline`/`subtle`/`transparent` button variants —
+  resolves to a shade that actually contrasts with what's behind it,
+  rather than a fixed shade 6. `cyan` measured 2.19:1 as text on white.
+
+  In dark mode, shades mirror across the ramp, so accents lighten
+  instead of staying dark against a dark surface — `violet` measured
+  1.97:1 there.
+
+  `blue`, `red`, `violet`, `indigo`, `grape`, and `pink` already
+  cleared the threshold and are unchanged; the `PlinthButton` golden is
+  byte-identical. The lighter half of the palette looks different,
+  which is the fix.
+
+  Contrast assertions now run as tests in `plinth_core`, so a future
+  palette or token change fails rather than quietly regressing.
+
 ## 0.6.1
 
 ### Fixed

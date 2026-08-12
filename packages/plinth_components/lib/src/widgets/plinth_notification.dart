@@ -84,7 +84,7 @@ class PlinthNotification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final accentColor = theme.color(color, 6);
+    final accentColor = theme.shaded(color, 6);
     final resolvedRadius = theme.radius[radius ?? PlinthSize.sm]!;
 
     return Material(

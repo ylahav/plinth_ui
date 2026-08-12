@@ -48,7 +48,7 @@ class PlinthRadio<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
-    final baseColor = theme.color(colorKey, 6);
+    final baseColor = theme.shaded(colorKey, 6);
     final selected = value == groupValue;
     final dotSize = _dotSizes[size]!;
     final enabled = onChanged != null;

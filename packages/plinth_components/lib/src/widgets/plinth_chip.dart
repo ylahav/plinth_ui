@@ -71,7 +71,7 @@ class PlinthChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
-    final baseColor = theme.color(colorKey, 6);
+    final baseColor = theme.shaded(colorKey, 6);
     final enabled = onSelected != null;
 
     return Semantics(
@@ -99,14 +99,15 @@ class PlinthChip extends StatelessWidget {
             children: [
               if (selected) ...[
                 Icon(Icons.check,
-                    size: _fontSizes[size]! + 2, color: theme.onFilled),
+                    size: _fontSizes[size]! + 2,
+                    color: theme.contrastingOn(baseColor)),
                 const SizedBox(width: 4),
               ],
               Text(
                 label,
                 style: TextStyle(
                   fontSize: _fontSizes[size],
-                  color: selected ? theme.onFilled : theme.text,
+                  color: selected ? theme.contrastingOn(baseColor) : theme.text,
                   fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),

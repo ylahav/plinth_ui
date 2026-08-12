@@ -32,8 +32,8 @@ class PlinthCode extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? 'gray';
-    final background = theme.color(colorKey, 1);
-    final foreground = theme.color(colorKey, 8);
+    final background = theme.shaded(colorKey, 1);
+    final foreground = theme.shaded(colorKey, 8);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),

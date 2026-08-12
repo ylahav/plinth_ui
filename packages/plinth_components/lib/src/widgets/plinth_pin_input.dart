@@ -186,13 +186,13 @@ class _PlinthPinInputState extends State<PlinthPinInput> {
                     borderRadius: BorderRadius.circular(resolvedRadius),
                     borderSide: BorderSide(
                       color:
-                          widget.error ? theme.color('red', 6) : theme.border,
+                          widget.error ? theme.shaded('red', 6) : theme.border,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(resolvedRadius),
                     borderSide:
-                        BorderSide(color: theme.color(colorKey, 6), width: 2),
+                        BorderSide(color: theme.shaded(colorKey, 6), width: 2),
                   ),
                 ),
                 onChanged: (v) => _onChanged(i, v),

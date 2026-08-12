@@ -54,7 +54,7 @@ class PlinthTimeline extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
-    final activeColor = theme.color(colorKey, 6);
+    final activeColor = theme.shaded(colorKey, 6);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,7 +102,9 @@ class _TimelineRow extends StatelessWidget {
                     ? IconTheme(
                         data: IconThemeData(
                           size: 12,
-                          color: item.active ? theme.onFilled : theme.textMuted,
+                          color: item.active
+                              ? theme.contrastingOn(activeColor)
+                              : theme.textMuted,
                         ),
                         child: item.icon!,
                       )

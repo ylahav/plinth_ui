@@ -66,7 +66,7 @@ class PlinthIndicator extends StatelessWidget {
 
     final theme = context.plinth;
     final colorKey = color ?? 'red';
-    final fillColor = theme.color(colorKey, 6);
+    final fillColor = theme.shaded(colorKey, 6);
     final hasLabel = label != null && label!.isNotEmpty;
 
     final indicator = Container(
@@ -83,7 +83,7 @@ class PlinthIndicator extends StatelessWidget {
               style: TextStyle(
                 // Sits on the coloured dot, so it follows onFilled
                 // rather than the surface behind the badge.
-                color: theme.onFilled,
+                color: theme.contrastingOn(fillColor),
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
               ),

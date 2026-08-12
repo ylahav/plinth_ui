@@ -32,7 +32,7 @@ class PlinthBlockquote extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
-    final accentColor = theme.color(colorKey, 6);
+    final accentColor = theme.shaded(colorKey, 6);
 
     return Container(
       padding: EdgeInsets.symmetric(

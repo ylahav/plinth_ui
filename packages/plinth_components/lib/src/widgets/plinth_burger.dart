@@ -42,7 +42,7 @@ class PlinthBurger extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
-    final barColor = theme.color(colorKey, 7);
+    final barColor = theme.shaded(colorKey, 7);
     final dimension = _dimensions[size]!;
     final barWidth = dimension * 0.5;
     // Fixed-height box the three bars are absolutely positioned

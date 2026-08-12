@@ -66,7 +66,7 @@ class PlinthSelect<T> extends StatelessWidget {
     final verticalPadding = theme.spacing[size]! * 0.5;
     final horizontalPadding = theme.spacing[size]!;
 
-    final borderColor = hasError ? theme.color('red', 6) : theme.border;
+    final borderColor = hasError ? theme.shaded('red', 6) : theme.border;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,7 +83,7 @@ class PlinthSelect<T> extends StatelessWidget {
           // Strip Material's default dropdown underline/theming so
           // PlinthSelect can own its own border like PlinthTextInput.
           data: Theme.of(context).copyWith(
-            highlightColor: theme.color(colorKey, 1),
+            highlightColor: theme.shaded(colorKey, 1),
           ),
           child: Container(
             decoration: BoxDecoration(

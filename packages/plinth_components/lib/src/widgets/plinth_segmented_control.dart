@@ -67,7 +67,7 @@ class PlinthSegmentedControl<T> extends StatelessWidget {
           item: item,
           selected: item.value == value,
           onTap: () => onChanged(item.value),
-          fillColor: theme.color(colorKey, 6),
+          fillColor: theme.shaded(colorKey, 6),
           radius: resolvedRadius,
           verticalPadding: verticalPadding,
           horizontalPadding: horizontalPadding,

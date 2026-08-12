@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import 'tokens.dart';
@@ -90,6 +92,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     this.textMuted = kLightTextMuted,
     this.textDisabled = kLightTextDisabled,
     this.onFilled = const Color(0xFFFFFFFF),
+    this.onFilledInverse = const Color(0xFF1A1B1E),
     this.shadow = const Color(0xFF000000),
     this.scrim = const Color(0xFF000000),
   });
@@ -143,14 +146,19 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// Text and icons in a disabled control.
   final Color textDisabled;
 
-  /// Foreground for content sitting *on* a saturated fill — the label
-  /// of a filled button, the tick in a checked checkbox.
+  /// The light foreground for content sitting *on* a saturated fill —
+  /// the label of a filled button, the tick in a checked checkbox.
   ///
   /// Deliberately not tied to [brightness]: a filled button is
-  /// saturated in either theme, so its label stays white in both.
-  /// Flipping this with the theme is the classic way to end up with
-  /// dark text on a dark-blue button.
+  /// saturated in either theme. Which foreground a *given* fill needs
+  /// depends on that fill's own lightness, not the theme's — use
+  /// [contrastingOn] rather than reaching for this directly.
   final Color onFilled;
+
+  /// The dark counterpart to [onFilled], for fills too light to carry
+  /// white text — `yellow`, `lime`, `teal`, and the rest of the light
+  /// half of the palette.
+  final Color onFilledInverse;
 
   /// Base color for elevation shadows, applied at low opacity.
   final Color shadow;
@@ -163,6 +171,91 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   Color color(String name, int shade) {
     final ramp = colors[name] ?? colors[primaryColor]!;
     return ramp[shade.clamp(0, ramp.length - 1)];
+  }
+
+  /// Mirrors [shade] for the active brightness.
+  ///
+  /// A ramp runs light (0) to dark (9), and components pick shades on
+  /// the assumption that low ones are gentle backgrounds and high ones
+  /// carry contrast. That assumption inverts on a dark surface: a
+  /// shade-0 wash behind an alert is nearly white, and a shade-6 accent
+  /// as text is too dark to read. Mirroring keeps each shade's *role*
+  /// while flipping its lightness.
+  ///
+  /// Use [shaded] rather than calling this directly.
+  int shadeFor(int shade) => brightness == Brightness.light ? shade : 9 - shade;
+
+  /// Resolves a palette key and a role-shade to a concrete colour,
+  /// mirroring the shade when the theme is dark.
+  ///
+  /// This is what components should use. [color] stays available for
+  /// an exact shade regardless of brightness.
+  Color shaded(String name, int shade) => color(name, shadeFor(shade));
+
+  /// A palette colour dark or light enough to read as text on
+  /// [background].
+  ///
+  /// [shaded] mirrors a shade for the theme's brightness, which fixes
+  /// the *theme* half of the problem. It cannot fix the *palette* half:
+  /// the ramps differ in intrinsic lightness, so one shade index can't
+  /// serve every hue. Shade 6 of `violet` reads comfortably on white
+  /// while shade 6 of `cyan` lands near 2.2:1 — a colour you can see
+  /// but not read.
+  ///
+  /// This walks the ramp from the role shade toward whichever end
+  /// contrasts with [background] and returns the first shade clearing
+  /// [minRatio], falling back to the ramp's extreme if none does. Use
+  /// it wherever a palette colour is *text or an icon*; [shaded] is
+  /// right for fills, which carry their own foreground via
+  /// [contrastingOn].
+  Color readableOn(
+    String name,
+    Color background, {
+    int from = 6,
+    double minRatio = 3.0,
+  }) {
+    final start = shadeFor(from);
+    // Darken against a light background, lighten against a dark one.
+    final step = _luminance(background) > 0.5 ? 1 : -1;
+
+    for (var shade = start; shade >= 0 && shade <= 9; shade += step) {
+      final candidate = color(name, shade);
+      if (_contrastRatio(candidate, background) >= minRatio) return candidate;
+    }
+    return color(name, step > 0 ? 9 : 0);
+  }
+
+  /// A foreground that stays legible on [background].
+  ///
+  /// Returns whichever of [onFilled] and [onFilledInverse] contrasts
+  /// better. A fixed light foreground fails badly on the lighter half
+  /// of the palette — white on `yellow` or `teal` lands near a 2:1
+  /// ratio, well under the 4.5:1 WCAG AA asks for — and which way it
+  /// falls depends on the fill, not on the theme's brightness.
+  Color contrastingOn(Color background) {
+    return _contrastRatio(onFilledInverse, background) >
+            _contrastRatio(onFilled, background)
+        ? onFilledInverse
+        : onFilled;
+  }
+
+  /// Relative luminance per WCAG 2.x.
+  static double _luminance(Color c) {
+    double channel(double v) => v <= 0.03928
+        ? v / 12.92
+        : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
+    return 0.2126 * channel(c.r) +
+        0.7152 * channel(c.g) +
+        0.0722 * channel(c.b);
+  }
+
+  /// WCAG contrast ratio between two opaque colours, 1.0 to 21.0.
+  static double _contrastRatio(Color a, Color b) {
+    final la = _luminance(a);
+    final lb = _luminance(b);
+    final lighter = la > lb ? la : lb;
+    final darker = la > lb ? lb : la;
+    return (lighter + 0.05) / (darker + 0.05);
   }
 
   /// Whether [colors] defines a ramp under [name].
@@ -303,6 +396,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     Color? textMuted,
     Color? textDisabled,
     Color? onFilled,
+    Color? onFilledInverse,
     Color? shadow,
     Color? scrim,
   }) {
@@ -323,6 +417,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
       textMuted: textMuted ?? this.textMuted,
       textDisabled: textDisabled ?? this.textDisabled,
       onFilled: onFilled ?? this.onFilled,
+      onFilledInverse: onFilledInverse ?? this.onFilledInverse,
       shadow: shadow ?? this.shadow,
       scrim: scrim ?? this.scrim,
     );

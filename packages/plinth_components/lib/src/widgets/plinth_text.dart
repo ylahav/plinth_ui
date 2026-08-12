@@ -33,7 +33,11 @@ class PlinthText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final resolvedColor = color != null ? theme.color(color!, 6) : null;
+    // A colour prop on text is always a foreground, so it resolves
+    // against the surface rather than at a fixed shade — cyan and lime
+    // at shade 6 are visible on white but not readable on it.
+    final resolvedColor =
+        color != null ? theme.readableOn(color!, theme.surface) : null;
 
     return Text(
       data,

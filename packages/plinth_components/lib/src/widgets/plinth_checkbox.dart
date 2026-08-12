@@ -46,7 +46,7 @@ class PlinthCheckbox extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
-    final baseColor = theme.color(colorKey, 6);
+    final baseColor = theme.shaded(colorKey, 6);
     final boxSize = _boxSizes[size]!;
     final resolvedRadius = theme.radius[radius ?? PlinthSize.xs]!;
     final enabled = onChanged != null;
@@ -66,7 +66,8 @@ class PlinthCheckbox extends StatelessWidget {
         ),
       ),
       child: value
-          ? Icon(Icons.check, size: boxSize * 0.7, color: theme.onFilled)
+          ? Icon(Icons.check,
+              size: boxSize * 0.7, color: theme.contrastingOn(baseColor))
           : null,
     );
 

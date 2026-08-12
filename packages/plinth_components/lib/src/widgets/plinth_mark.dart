@@ -27,7 +27,7 @@ class PlinthMark extends StatelessWidget {
     final theme = context.plinth;
     final colorKey = color ?? 'yellow';
     final background = theme.colors.containsKey(colorKey)
-        ? theme.color(colorKey, 2)
+        ? theme.shaded(colorKey, 2)
         : const Color(0xFFFFF3BF);
 
     return Container(

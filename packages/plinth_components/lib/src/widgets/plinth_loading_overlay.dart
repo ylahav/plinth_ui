@@ -33,7 +33,7 @@ class PlinthLoadingOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
-    final spinnerColor = theme.color(colorKey, 6);
+    final spinnerColor = theme.shaded(colorKey, 6);
 
     return Stack(
       children: [

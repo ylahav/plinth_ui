@@ -44,7 +44,7 @@ class PlinthSwitch extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
-    final baseColor = theme.color(colorKey, 6);
+    final baseColor = theme.shaded(colorKey, 6);
     final trackSize = _trackSizes[size]!;
     final enabled = onChanged != null;
     final thumbDiameter = trackSize.height - 4;

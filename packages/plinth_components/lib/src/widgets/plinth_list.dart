@@ -79,7 +79,7 @@ class PlinthList extends StatelessWidget {
           width: 6,
           height: 6,
           decoration: BoxDecoration(
-            color: theme.color(theme.primaryColor, 6),
+            color: theme.shaded(theme.primaryColor, 6),
             shape: BoxShape.circle,
           ),
         );

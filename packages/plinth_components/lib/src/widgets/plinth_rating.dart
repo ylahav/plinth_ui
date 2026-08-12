@@ -54,7 +54,7 @@ class PlinthRating extends StatelessWidget {
     // primaryColor fallback, since a rating in the primary brand
     // color reads oddly compared to the conventional gold-star look.
     final starColor = theme.colors.containsKey(colorKey)
-        ? theme.color(colorKey, 6)
+        ? theme.shaded(colorKey, 6)
         : const Color(0xFFFFC107);
     final starSize = _starSizes[size]!;
     final enabled = onChanged != null;

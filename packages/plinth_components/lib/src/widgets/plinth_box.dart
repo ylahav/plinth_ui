@@ -74,7 +74,7 @@ class PlinthBox extends StatelessWidget {
     final padding = resolveInsets(p, px, py);
     final margin = resolveInsets(m, mx, my);
     final resolvedRadius = radius != null ? theme.radius[radius]! : 0.0;
-    final resolvedBg = bg != null ? theme.color(bg!, 6) : null;
+    final resolvedBg = bg != null ? theme.shaded(bg!, 6) : null;
 
     return Container(
       width: w,

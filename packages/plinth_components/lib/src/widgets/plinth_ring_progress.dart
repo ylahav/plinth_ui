@@ -40,7 +40,7 @@ class PlinthRingProgress extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
-    final fillColor = theme.color(colorKey, 6);
+    final fillColor = theme.shaded(colorKey, 6);
 
     return SizedBox(
       width: size,
