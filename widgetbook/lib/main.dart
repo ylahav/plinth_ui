@@ -248,7 +248,7 @@ PlinthSize? _radiusKnob(BuildContext context) {
 ///   `subtle` against `transparent`, or `xs` against `sm`, needs them
 ///   on screen together, which a single knob-driven instance can't do.
 ///
-/// Every category now has playgrounds, covering 66 of the 71
+/// Every category now has playgrounds, covering 70 of the 75
 /// components. The handful without one have nothing to vary —
 /// `PlinthPortal`, `PlinthCenter`, `PlinthVisuallyHidden`,
 /// `PlinthUnstyledButton` take a child and little else, so a
@@ -1930,6 +1930,49 @@ final List<WidgetbookNode> plinthDirectories = [
     name: 'Feedback',
     children: [
       WidgetbookComponent(
+        name: 'PlinthLoader',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              PlinthLoader(
+                type: context.knobs.object.dropdown(
+                  label: 'type',
+                  options: PlinthLoaderType.values,
+                  initialOption: PlinthLoaderType.oval,
+                  labelBuilder: (type) => type.name,
+                ),
+                size: _sizeKnob(context),
+                color: _colorKnob(context),
+              ),
+            ),
+          ),
+          WidgetbookUseCase(
+            name: 'All types and sizes',
+            builder: (context) => _themed(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (final type in PlinthLoaderType.values) ...[
+                    PlinthText(type.name, size: PlinthSize.xs, color: 'gray'),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        for (final size in PlinthSize.values) ...[
+                          PlinthLoader(type: type, size: size),
+                          const SizedBox(width: 16),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
         name: 'PlinthAlert',
         useCases: [
           WidgetbookUseCase(
@@ -3230,6 +3273,215 @@ final List<WidgetbookNode> plinthDirectories = [
   WidgetbookCategory(
     name: 'Layout & Typography',
     children: [
+      WidgetbookComponent(
+        name: 'PlinthAppShell',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final navbarCollapsed = context.knobs.boolean(
+                label: 'navbarCollapsed',
+                description: 'Controlled by the caller — pair with a '
+                    'Burger and a Drawer for narrow screens',
+              );
+              final withAside = context.knobs.boolean(label: 'aside');
+              final withFooter = context.knobs.boolean(
+                label: 'footer',
+                initialValue: true,
+              );
+              final withHeader = context.knobs.boolean(
+                label: 'header',
+                initialValue: true,
+              );
+              return _themed(
+                // The shell fills the height it is given, so the
+                // gallery hands it a fixed box to read as a page.
+                SizedBox(
+                  width: 520,
+                  height: 340,
+                  child: PlinthAppShell(
+                    navbarCollapsed: navbarCollapsed,
+                    navbarWidth: context.knobs.double.slider(
+                      label: 'navbarWidth',
+                      initialValue: 160,
+                      min: 100,
+                      max: 260,
+                    ),
+                    withBorder: context.knobs.boolean(
+                      label: 'withBorder',
+                      initialValue: true,
+                    ),
+                    bg: _colorKnob(context),
+                    header: withHeader
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: PlinthTitle('Dashboard', order: 4),
+                            ),
+                          )
+                        : null,
+                    navbar: const Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Column(
+                        children: [
+                          PlinthNavLink(label: 'Overview', active: true),
+                          PlinthNavLink(label: 'Reports'),
+                          PlinthNavLink(label: 'Settings'),
+                        ],
+                      ),
+                    ),
+                    aside: withAside
+                        ? const Padding(
+                            padding: EdgeInsets.all(12),
+                            child: PlinthText('Aside', size: PlinthSize.sm),
+                          )
+                        : null,
+                    footer: withFooter
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: PlinthText(
+                                'Footer',
+                                size: PlinthSize.xs,
+                                color: 'gray',
+                              ),
+                            ),
+                          )
+                        : null,
+                    child: const PlinthText('Main content region.'),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthGrid',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final span = context.knobs.int.slider(
+                label: 'span (per column)',
+                initialValue: 4,
+                min: 1,
+                max: 12,
+              );
+              final count = context.knobs.int.slider(
+                label: 'columns rendered',
+                initialValue: 3,
+                min: 1,
+                max: 8,
+              );
+              return _themed(
+                SizedBox(
+                  width: 480,
+                  child: PlinthGrid(
+                    gutter: _gapKnob(context, label: 'gutter'),
+                    children: [
+                      for (var i = 0; i < count; i++)
+                        PlinthGridCol(
+                          span: span,
+                          child: Container(
+                            height: 56,
+                            color: const Color(0xFFE7F5FF),
+                            alignment: Alignment.center,
+                            child: PlinthText('span $span'),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'Responsive spans (resize the window)',
+            builder: (context) => _themed(
+              // spanMd applies from 992px up, so this is one column on
+              // a phone-width workbench and two on a desktop one —
+              // resize to see it, since a knob can't change the
+              // viewport.
+              PlinthGrid(
+                children: [
+                  PlinthGridCol(
+                    span: 12,
+                    spanMd: 8,
+                    child: Container(
+                      height: 80,
+                      color: const Color(0xFFE7F5FF),
+                      alignment: Alignment.center,
+                      child: const PlinthText('span 12 / md 8'),
+                    ),
+                  ),
+                  PlinthGridCol(
+                    span: 12,
+                    spanMd: 4,
+                    child: Container(
+                      height: 80,
+                      color: const Color(0xFFFFF3BF),
+                      alignment: Alignment.center,
+                      child: const PlinthText('span 12 / md 4'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthTitle',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              PlinthTitle(
+                context.knobs.string(
+                  label: 'data',
+                  initialValue: 'Getting started',
+                ),
+                order: context.knobs.int.slider(
+                  label: 'order',
+                  initialValue: 1,
+                  min: 1,
+                  max: 6,
+                  description: 'h1-h6 — drives the visual scale and the '
+                      'heading level exposed to screen readers',
+                ),
+                color: _colorKnob(context),
+                textAlign: context.knobs.objectOrNull.dropdown(
+                  label: 'textAlign',
+                  options: const [
+                    TextAlign.left,
+                    TextAlign.center,
+                    TextAlign.right,
+                  ],
+                  labelBuilder: (align) => align.name,
+                  defaultToNull: true,
+                ),
+              ),
+            ),
+          ),
+          WidgetbookUseCase(
+            name: 'All orders',
+            builder: (context) => _themed(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (var order = 1; order <= 6; order++) ...[
+                    PlinthTitle('Heading level $order', order: order),
+                    const SizedBox(height: 8),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
       WidgetbookComponent(
         name: 'PlinthBox',
         useCases: [

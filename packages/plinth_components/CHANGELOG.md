@@ -7,6 +7,28 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.5.0
+
+### Added
+- `PlinthAppShell` — the page scaffold: header, footer, navbar, aside,
+  and a main region, each optional and taking no space when omitted.
+  Collapsing is controlled by the caller rather than by an internal
+  breakpoint, since the surrounding page needs that same state to
+  drive a `PlinthBurger` or a `PlinthDrawer`.
+- `PlinthGrid` + `PlinthGridCol` — a responsive 12-column grid where
+  each column declares its span, optionally per breakpoint. Spans
+  apply from their breakpoint upward, so the unqualified `span` is the
+  smallest case, matching CSS media queries. Complements
+  `PlinthSimpleGrid`, which is for uniform equal-width items.
+- `PlinthLoader` — a standalone loading indicator in `oval`, `dots`,
+  and `bars` types. `PlinthLoadingOverlay` already showed a spinner,
+  but only while covering existing content.
+- `PlinthTitle` — semantic `h1`–`h6` headings. Unlike a large
+  `PlinthText`, this exposes heading semantics and level to assistive
+  technology, so a page becomes navigable by its headings.
+
+75 components total.
+
 ## 0.4.1
 
 ### Fixed

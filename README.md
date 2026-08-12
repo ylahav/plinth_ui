@@ -130,7 +130,7 @@ the sidebar.
   ramps (curve-based 10-shade generator with non-linear lightness
   stops + shade-dependent saturation), spacing, radius, and font-size
   scales.
-- **71 components** across Primitives, Forms, Feedback, Data Display,
+- **75 components** across Primitives, Forms, Feedback, Data Display,
   Navigation, Surfaces, and Overlays — full list with props in
   **[docs/COMPONENTS.md](docs/COMPONENTS.md)**, kept current every round
   rather than duplicated here. A few architectural patterns worth
@@ -151,7 +151,7 @@ the sidebar.
     caller rather than managing it internally.
 - **Widgetbook gallery** (`widgetbook/`) — manual (non-codegen)
   registration of every component's key states as browsable use cases,
-  with a knob-driven **Playground** for 66 of the 71 components
+  with a knob-driven **Playground** for 70 of the 75 components
   alongside the static variant grids (the two answer different
   questions: a playground explores combinations, a grid compares
   options side by side). A smoke test builds all 164 use cases in CI,
@@ -161,9 +161,11 @@ the sidebar.
 - **Tests** — pure-logic tests for `PlinthTheme`'s shade generator and
   `PlinthDisclosureController`, a golden (visual regression) test suite
   for `PlinthButton` (variants, a color override, disabled state, all
-  sizes), and widget behavior tests for most other components — 29 test
-  files covering the majority of the 71 public components as of this
-  writing.
+  sizes), and widget behavior tests for most other components — 30 test
+  files as of this writing. Coverage is uneven and worth knowing about
+  before trusting it: 18 public components still have no test at all,
+  including `PlinthTextInput`, `PlinthAlert`, and the Modal/Drawer/
+  Popover trio.
   Notable coverage: `PlinthPagination`'s ellipsis-collapse logic at large
   page counts, `PlinthAccordion`'s single/multiple-open modes,
   `PlinthCopyButton`'s clipboard write + timer-based revert,

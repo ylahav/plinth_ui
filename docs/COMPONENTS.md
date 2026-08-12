@@ -99,6 +99,45 @@ variant/color/size resolution would fight the custom look. Still
 provides proper semantics (announced as a button) and a disabled
 state when `onPressed` is null.
 
+### `PlinthAppShell`
+`child` (the main region), `header`/`headerHeight`, `navbar`/`navbarWidth`/
+`navbarCollapsed`, `aside`/`asideWidth`/`asideCollapsed`, `footer`/
+`footerHeight`, `padding`, `withBorder`, `bg`. The page scaffold: header
+and footer span the full width, navbar and aside run down either side,
+and `child` fills what's left. Any region left `null` takes no space
+rather than rendering empty (same convention as `PlinthCard`'s
+header/footer). Collapsing is **controlled by the caller** — the shell
+doesn't watch a breakpoint itself, since the surrounding page needs that
+same state to drive a `PlinthBurger` or decide whether to offer the links
+in a `PlinthDrawer` instead. `padding` applies to `child` only; the other
+regions get their full extent so they can paint edge to edge. `withBorder`
+draws hairlines *inside* each region, so a 200px navbar stays 200px wide
+and its content gets 199.
+
+Expects a bounded height — put it directly in a `Scaffold` body rather
+than inside a scrolling column; `child` is what should scroll.
+
+### `PlinthGrid` + `PlinthGridCol`
+`PlinthGrid`: `children` (`List<PlinthGridCol>`), `gutter` (default
+`PlinthSize.md`), `columns` (default `12`).
+`PlinthGridCol`: `child`, `span` (default `12`), plus `spanXs`/`spanSm`/
+`spanMd`/`spanLg`/`spanXl`.
+
+A responsive column grid. Per-breakpoint spans apply from that width
+**upward**, so `span: 12, spanMd: 6` is full width on a phone and half on
+a desktop — mobile-first, matching CSS media queries, meaning the
+unqualified `span` is the *smallest* case rather than a default that
+larger screens fall back to. Breakpoints are Mantine's defaults in
+logical pixels (`xs` 576, `sm` 768, `md` 992, `lg` 1200, `xl` 1408),
+exported as `kDefaultBreakpoints`.
+
+Distinct from `PlinthSimpleGrid`, which puts a fixed number of
+equal-width items per row: reach for SimpleGrid for a uniform gallery of
+cards, and this for a page layout where a sidebar and a main column have
+genuinely different widths. A span wider than `columns` is clamped rather
+than overflowing its row. Like SimpleGrid it is neither scrollable nor
+virtualized and needs a bounded width.
+
 ### `PlinthSimpleGrid`
 `children`, `columns`, `spacing` (default `PlinthSize.md`). A grid with
 a fixed number of columns per row and consistent spacing. Unlike
@@ -127,6 +166,19 @@ both gaps with a themed spinner and a broken-image icon.
 ### `PlinthText`
 `data`, `size`, `color`, `weight`, `textAlign`, `italic`, `maxLines`, `overflow`.
 `size` resolves through `theme.fontSizes` instead of a raw `fontSize` double.
+
+### `PlinthTitle`
+`data` (positional), `order` (1–6, default `1`, asserted in range),
+`color`, `textAlign`, `maxLines`, `overflow`. A semantic heading. The
+difference from a `PlinthText` at a larger `size` isn't only visual: this
+marks the text as a heading for assistive technology and carries the
+level through, so screen-reader users can navigate a page by its headings
+and tell a sibling from a subsection. A visually large paragraph gives
+them nothing to navigate by.
+
+Uses its own size scale (34/26/22/18/16/14 px) rather than
+`theme.fontSizes`, which tops out at 20px because it sizes body text,
+badges, and input labels — an `h1` needs to be larger than any of them.
 
 ### `PlinthDivider`
 `label` (optional, centers a label with rules on either side, e.g. "OR"),
@@ -319,6 +371,18 @@ static `PlinthNotification.show(context, ...)` to push it as a `SnackBar`
 via `ScaffoldMessenger` — inherits Flutter's own stacking, auto-dismiss
 timing, and swipe-to-dismiss rather than reimplementing a toast stack.
 `onClose` is wired up automatically when shown via `show()`.
+
+### `PlinthLoader`
+`type` (`PlinthLoaderType`: `oval, dots, bars` — default `oval`), `size`,
+`color`. The loading indicator on its own, for a button mid-submit or an
+empty panel awaiting its first fetch. `PlinthLoadingOverlay` already
+shows a spinner, but only as part of covering existing content.
+
+`oval` wraps Flutter's `CircularProgressIndicator` (same
+wrap-don't-reimplement rationale as `PlinthSlider`); `dots` and `bars`
+are three elements pulsing a third of a cycle out of phase. Uses its own
+size scale (16/20/28/36/44 px) — none of spacing, radius, or font size
+means "how big is this circle".
 
 ### `PlinthSkeleton`
 `width` (omit to fill parent), `height` (default `16`), `radius`, `circle`
