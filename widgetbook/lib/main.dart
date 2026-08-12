@@ -25,16 +25,99 @@ Widget _themed(Widget child, {Color background = Colors.white}) {
   );
 }
 
+/// Owns one piece of mutable state for a use case, so controlled
+/// components (checkbox, switch, slider, ...) actually respond to
+/// interaction in the gallery rather than being pinned in place by a
+/// no-op `onChanged`. Knobs drive the presentational props; this
+/// drives the value the user is directly manipulating.
+///
+/// Deliberately generic rather than one `_FooDemo` widget per
+/// component — the older `_SliderDemo`/`_RatingDemo`/... widgets below
+/// each exist only to hold a single value, which is this class.
+class _Local<T> extends StatefulWidget {
+  const _Local({required this.initial, required this.builder});
+
+  final T initial;
+  final Widget Function(T value, ValueChanged<T> onChanged) builder;
+
+  @override
+  State<_Local<T>> createState() => _LocalState<T>();
+}
+
+class _LocalState<T> extends State<_Local<T>> {
+  late T _value = widget.initial;
+
+  @override
+  Widget build(BuildContext context) =>
+      widget.builder(_value, (v) => setState(() => _value = v));
+}
+
+/// The palette keys `PlinthTheme.defaultTheme` actually defines.
+///
+/// Keep this in step with that map: an unrecognized color name falls
+/// back to the primary color silently, so offering a name the default
+/// theme doesn't define (say 'grape') would make the knob look broken
+/// rather than informative — you'd pick it and nothing would change.
+const _paletteColors = ['blue', 'red', 'green', 'gray'];
+
+/// Shared knob definitions for the props nearly every Plinth component
+/// accepts, so the playground use cases offer one consistent
+/// vocabulary instead of re-declaring these fifteen times.
+PlinthSize _sizeKnob(
+  BuildContext context, {
+  PlinthSize initial = PlinthSize.md,
+}) {
+  return context.knobs.object.dropdown(
+    label: 'size',
+    options: PlinthSize.values,
+    initialOption: initial,
+    labelBuilder: (size) => size.name,
+  );
+}
+
+String? _colorKnob(BuildContext context) {
+  return context.knobs.objectOrNull.dropdown(
+    label: 'color',
+    options: _paletteColors,
+    description: 'null falls back to the theme primary color',
+    defaultToNull: true,
+  );
+}
+
+PlinthSize? _radiusKnob(BuildContext context) {
+  return context.knobs.objectOrNull.dropdown(
+    label: 'radius',
+    options: PlinthSize.values,
+    labelBuilder: (size) => size.name,
+    description: 'null uses the component default',
+    defaultToNull: true,
+  );
+}
+
 /// Isolated gallery for every Plinth UI component.
 ///
 /// This uses Widgetbook's *manual* (non-codegen) API — directories
 /// and use cases are registered directly in Dart rather than
 /// generated via build_runner/@UseCase annotations. That keeps this
-/// app runnable with zero codegen step, at the cost of not having
-/// interactive knobs wired up yet (each variant/size/color is its
-/// own static use case instead). Knobs can be layered in later via
-/// `context.knobs.*` once the installed `widgetbook` version's knob
-/// API is confirmed against its changelog.
+/// app runnable with zero codegen step.
+///
+/// Two kinds of use case live here, deliberately:
+///
+/// - **"Playground"** — one instance whose props are driven by
+///   `context.knobs.*`, for exploring combinations nobody enumerated
+///   in advance. Knob values are encoded into the URL, so a specific
+///   configuration is shareable as a link.
+/// - **Static variants** ("All variants", "All sizes", "Error state",
+///   ...) — fixed compositions, often rendering every option side by
+///   side. These are *not* redundant with a playground: comparing
+///   `subtle` against `transparent`, or `xs` against `sm`, needs them
+///   on screen together, which a single knob-driven instance can't do.
+///
+/// Playgrounds currently exist for the Forms category; the remaining
+/// categories still have static use cases only. Follow the same shape
+/// when adding more: knobs for presentational props, `_Local` for any
+/// value the user should be able to change by interacting with the
+/// component itself.
 class PlinthWidgetbookApp extends StatelessWidget {
   const PlinthWidgetbookApp({super.key});
 
@@ -220,6 +303,39 @@ class PlinthWidgetbookApp extends StatelessWidget {
               name: 'PlinthTextInput',
               useCases: [
                 WidgetbookUseCase(
+                  name: 'Playground',
+                  builder: (context) => _themed(
+                    PlinthTextInput(
+                      label: context.knobs.string(
+                        label: 'label',
+                        initialValue: 'Email',
+                      ),
+                      placeholder: context.knobs.string(
+                        label: 'placeholder',
+                        initialValue: 'you@example.com',
+                      ),
+                      description: context.knobs.stringOrNull(
+                        label: 'description',
+                        initialValue: "We'll never share it.",
+                        defaultToNull: true,
+                      ),
+                      error: context.knobs.stringOrNull(
+                        label: 'error',
+                        initialValue: 'Enter a valid email',
+                        description: 'Takes precedence over the focus border',
+                        defaultToNull: true,
+                      ),
+                      enabled: context.knobs
+                          .boolean(label: 'enabled', initialValue: true),
+                      obscureText: context.knobs.boolean(label: 'obscureText'),
+                      size: _sizeKnob(context),
+                      color: _colorKnob(context),
+                      radius: _radiusKnob(context),
+                      onChanged: (_) {},
+                    ),
+                  ),
+                ),
+                WidgetbookUseCase(
                   name: 'Default',
                   builder: (context) => _themed(
                     const PlinthTextInput(
@@ -264,6 +380,50 @@ class PlinthWidgetbookApp extends StatelessWidget {
               name: 'PlinthTextarea',
               useCases: [
                 WidgetbookUseCase(
+                  name: 'Playground',
+                  builder: (context) {
+                    final minLines = context.knobs.int.slider(
+                      label: 'minLines',
+                      initialValue: 3,
+                      min: 1,
+                      max: 10,
+                    );
+                    final maxLines = context.knobs.int.slider(
+                      label: 'maxLines',
+                      initialValue: 6,
+                      min: 1,
+                      max: 20,
+                    );
+                    return _themed(
+                      PlinthTextarea(
+                        label: context.knobs.string(
+                          label: 'label',
+                          initialValue: 'Bio',
+                        ),
+                        placeholder: context.knobs.string(
+                          label: 'placeholder',
+                          initialValue: 'Tell us about yourself',
+                        ),
+                        error: context.knobs.stringOrNull(
+                          label: 'error',
+                          initialValue: 'Keep it under 200 characters',
+                          defaultToNull: true,
+                        ),
+                        minLines: minLines,
+                        // Flutter's own TextField asserts minLines <=
+                        // maxLines, so an unclamped pair of knobs would
+                        // crash the use case rather than just look odd.
+                        maxLines: maxLines < minLines ? minLines : maxLines,
+                        enabled: context.knobs
+                            .boolean(label: 'enabled', initialValue: true),
+                        size: _sizeKnob(context),
+                        color: _colorKnob(context),
+                        onChanged: (_) {},
+                      ),
+                    );
+                  },
+                ),
+                WidgetbookUseCase(
                   name: 'Default',
                   builder: (context) => _themed(
                     PlinthTextarea(
@@ -279,6 +439,37 @@ class PlinthWidgetbookApp extends StatelessWidget {
               name: 'PlinthPasswordInput',
               useCases: [
                 WidgetbookUseCase(
+                  name: 'Playground',
+                  builder: (context) => _themed(
+                    PlinthPasswordInput(
+                      label: context.knobs.string(
+                        label: 'label',
+                        initialValue: 'Password',
+                      ),
+                      placeholder: context.knobs.string(
+                        label: 'placeholder',
+                        initialValue: 'Enter your password',
+                      ),
+                      description: context.knobs.stringOrNull(
+                        label: 'description',
+                        initialValue: 'At least 12 characters.',
+                        defaultToNull: true,
+                      ),
+                      error: context.knobs.stringOrNull(
+                        label: 'error',
+                        initialValue: 'Too short',
+                        defaultToNull: true,
+                      ),
+                      enabled: context.knobs
+                          .boolean(label: 'enabled', initialValue: true),
+                      size: _sizeKnob(context),
+                      color: _colorKnob(context),
+                      radius: _radiusKnob(context),
+                      onChanged: (_) {},
+                    ),
+                  ),
+                ),
+                WidgetbookUseCase(
                   name: 'Interactive (toggle visibility)',
                   builder: (context) => _themed(
                     PlinthPasswordInput(
@@ -293,6 +484,36 @@ class PlinthWidgetbookApp extends StatelessWidget {
             WidgetbookComponent(
               name: 'PlinthCheckbox',
               useCases: [
+                WidgetbookUseCase(
+                  name: 'Playground',
+                  builder: (context) {
+                    final enabled = context.knobs
+                        .boolean(label: 'enabled', initialValue: true);
+                    final label = context.knobs.string(
+                      label: 'label',
+                      initialValue: 'I agree to the terms',
+                    );
+                    final size = _sizeKnob(context);
+                    final color = _colorKnob(context);
+                    final radius = _radiusKnob(context);
+                    return _themed(
+                      _Local<bool>(
+                        initial: false,
+                        builder: (value, onChanged) => PlinthCheckbox(
+                          label: label,
+                          value: value,
+                          // A null onChanged is how this library
+                          // expresses disabled, so the knob toggles the
+                          // callback itself rather than a flag.
+                          onChanged: enabled ? onChanged : null,
+                          size: size,
+                          color: color,
+                          radius: radius,
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 WidgetbookUseCase(
                   name: 'Unchecked',
                   builder: (context) => _themed(
@@ -329,6 +550,42 @@ class PlinthWidgetbookApp extends StatelessWidget {
               name: 'PlinthRadioGroup',
               useCases: [
                 WidgetbookUseCase(
+                  name: 'Playground',
+                  builder: (context) {
+                    final enabled = context.knobs
+                        .boolean(label: 'enabled', initialValue: true);
+                    final label = context.knobs.string(
+                      label: 'label',
+                      initialValue: 'Plan',
+                    );
+                    final description = context.knobs.stringOrNull(
+                      label: 'description',
+                      initialValue: 'You can change this later.',
+                      defaultToNull: true,
+                    );
+                    final size = _sizeKnob(context);
+                    final color = _colorKnob(context);
+                    return _themed(
+                      _Local<String>(
+                        initial: 'free',
+                        builder: (value, onChanged) => PlinthRadioGroup<String>(
+                          label: label,
+                          description: description,
+                          value: value,
+                          onChanged: enabled ? onChanged : null,
+                          size: size,
+                          color: color,
+                          options: const [
+                            PlinthRadioOption('free', 'Free'),
+                            PlinthRadioOption('pro', 'Pro'),
+                            PlinthRadioOption('team', 'Team'),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                WidgetbookUseCase(
                   name: 'Default',
                   builder: (context) => _themed(
                     PlinthRadioGroup<String>(
@@ -348,6 +605,50 @@ class PlinthWidgetbookApp extends StatelessWidget {
             WidgetbookComponent(
               name: 'PlinthSelect',
               useCases: [
+                WidgetbookUseCase(
+                  name: 'Playground',
+                  builder: (context) {
+                    final enabled = context.knobs
+                        .boolean(label: 'enabled', initialValue: true);
+                    final label = context.knobs.string(
+                      label: 'label',
+                      initialValue: 'Country',
+                    );
+                    final placeholder = context.knobs.string(
+                      label: 'placeholder',
+                      initialValue: 'Choose a country',
+                    );
+                    final error = context.knobs.stringOrNull(
+                      label: 'error',
+                      initialValue: 'Please select a country',
+                      defaultToNull: true,
+                    );
+                    final size = _sizeKnob(context);
+                    final color = _colorKnob(context);
+                    final radius = _radiusKnob(context);
+                    return _themed(
+                      _Local<String?>(
+                        initial: null,
+                        builder: (value, onChanged) => PlinthSelect<String>(
+                          label: label,
+                          placeholder: placeholder,
+                          error: error,
+                          value: value,
+                          enabled: enabled,
+                          onChanged: onChanged,
+                          size: size,
+                          color: color,
+                          radius: radius,
+                          options: const [
+                            PlinthSelectOption('us', 'United States'),
+                            PlinthSelectOption('il', 'Israel'),
+                            PlinthSelectOption('jp', 'Japan'),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 WidgetbookUseCase(
                   name: 'Placeholder (no selection)',
                   builder: (context) => _themed(
@@ -399,6 +700,31 @@ class PlinthWidgetbookApp extends StatelessWidget {
               name: 'PlinthSwitch',
               useCases: [
                 WidgetbookUseCase(
+                  name: 'Playground',
+                  builder: (context) {
+                    final enabled = context.knobs
+                        .boolean(label: 'enabled', initialValue: true);
+                    final label = context.knobs.string(
+                      label: 'label',
+                      initialValue: 'Enable notifications',
+                    );
+                    final size = _sizeKnob(context);
+                    final color = _colorKnob(context);
+                    return _themed(
+                      _Local<bool>(
+                        initial: false,
+                        builder: (value, onChanged) => PlinthSwitch(
+                          label: label,
+                          value: value,
+                          onChanged: enabled ? onChanged : null,
+                          size: size,
+                          color: color,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                WidgetbookUseCase(
                   name: 'Off',
                   builder: (context) => _themed(
                     PlinthSwitch(
@@ -434,6 +760,45 @@ class PlinthWidgetbookApp extends StatelessWidget {
               name: 'PlinthSlider',
               useCases: [
                 WidgetbookUseCase(
+                  name: 'Playground',
+                  builder: (context) {
+                    final enabled = context.knobs
+                        .boolean(label: 'enabled', initialValue: true);
+                    final min = context.knobs.double
+                        .input(label: 'min', initialValue: 0);
+                    final max = context.knobs.double
+                        .input(label: 'max', initialValue: 100);
+                    final divisions = context.knobs.intOrNull.slider(
+                      label: 'divisions',
+                      initialValue: 5,
+                      min: 2,
+                      max: 20,
+                      description: 'null is a continuous slider',
+                      defaultToNull: true,
+                    );
+                    final size = _sizeKnob(context);
+                    final color = _colorKnob(context);
+                    return _themed(
+                      _Local<double>(
+                        initial: 30,
+                        builder: (value, onChanged) => PlinthSlider(
+                          // The knobs can be dragged into min > max, and
+                          // a value outside [min, max] asserts inside
+                          // Flutter's own Slider — clamp both rather
+                          // than let the use case throw.
+                          min: min,
+                          max: max <= min ? min + 1 : max,
+                          value: value.clamp(min, max <= min ? min + 1 : max),
+                          divisions: divisions,
+                          onChanged: enabled ? onChanged : null,
+                          size: size,
+                          color: color,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                WidgetbookUseCase(
                   name: 'Interactive',
                   builder: (context) => _themed(_SliderDemo()),
                 ),
@@ -448,6 +813,35 @@ class PlinthWidgetbookApp extends StatelessWidget {
             WidgetbookComponent(
               name: 'PlinthRangeSlider',
               useCases: [
+                WidgetbookUseCase(
+                  name: 'Playground',
+                  builder: (context) {
+                    final enabled = context.knobs
+                        .boolean(label: 'enabled', initialValue: true);
+                    final divisions = context.knobs.intOrNull.slider(
+                      label: 'divisions',
+                      initialValue: 10,
+                      min: 2,
+                      max: 20,
+                      description: 'null is a continuous range',
+                      defaultToNull: true,
+                    );
+                    final size = _sizeKnob(context);
+                    final color = _colorKnob(context);
+                    return _themed(
+                      _Local<RangeValues>(
+                        initial: const RangeValues(20, 80),
+                        builder: (values, onChanged) => PlinthRangeSlider(
+                          values: values,
+                          divisions: divisions,
+                          onChanged: enabled ? onChanged : null,
+                          size: size,
+                          color: color,
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 WidgetbookUseCase(
                   name: 'Interactive',
                   builder: (context) => _themed(_RangeSliderDemo()),
@@ -465,6 +859,52 @@ class PlinthWidgetbookApp extends StatelessWidget {
               name: 'PlinthMultiSelect',
               useCases: [
                 WidgetbookUseCase(
+                  name: 'Playground',
+                  builder: (context) {
+                    final label = context.knobs.string(
+                      label: 'label',
+                      initialValue: 'Languages',
+                    );
+                    final placeholder = context.knobs.string(
+                      label: 'placeholder',
+                      initialValue: 'Pick a few',
+                    );
+                    final error = context.knobs.stringOrNull(
+                      label: 'error',
+                      initialValue: 'Choose at least one',
+                      defaultToNull: true,
+                    );
+                    final enabled = context.knobs
+                        .boolean(label: 'enabled', initialValue: true);
+                    final size = _sizeKnob(context);
+                    final color = _colorKnob(context);
+                    final radius = _radiusKnob(context);
+                    return _themed(
+                      _Local<List<String>>(
+                        initial: const ['dart'],
+                        builder: (value, onChanged) =>
+                            PlinthMultiSelect<String>(
+                          label: label,
+                          placeholder: placeholder,
+                          error: error,
+                          enabled: enabled,
+                          value: value,
+                          onChanged: onChanged,
+                          size: size,
+                          color: color,
+                          radius: radius,
+                          options: const [
+                            PlinthMultiSelectOption('dart', 'Dart'),
+                            PlinthMultiSelectOption('swift', 'Swift'),
+                            PlinthMultiSelectOption('kotlin', 'Kotlin'),
+                            PlinthMultiSelectOption('rust', 'Rust'),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                WidgetbookUseCase(
                   name: 'Interactive',
                   builder: (context) => _themed(_MultiSelectDemo()),
                 ),
@@ -473,6 +913,44 @@ class PlinthWidgetbookApp extends StatelessWidget {
             WidgetbookComponent(
               name: 'PlinthPinInput',
               useCases: [
+                WidgetbookUseCase(
+                  name: 'Playground',
+                  builder: (context) {
+                    final length = context.knobs.int.slider(
+                      label: 'length',
+                      initialValue: 4,
+                      min: 3,
+                      max: 8,
+                    );
+                    final obscureText =
+                        context.knobs.boolean(label: 'obscureText');
+                    final numbersOnly = context.knobs
+                        .boolean(label: 'numbersOnly', initialValue: true);
+                    final error = context.knobs.boolean(label: 'error');
+                    final size = _sizeKnob(context);
+                    final color = _colorKnob(context);
+                    return _themed(
+                      _Local<String>(
+                        initial: '',
+                        builder: (value, onChanged) => PlinthPinInput(
+                          // Shortening the knob mid-entry would leave a
+                          // value longer than the field, so trim it to
+                          // whatever the current length allows.
+                          value: value.length > length
+                              ? value.substring(0, length)
+                              : value,
+                          length: length,
+                          obscureText: obscureText,
+                          numbersOnly: numbersOnly,
+                          error: error,
+                          onChanged: onChanged,
+                          size: size,
+                          color: color,
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 WidgetbookUseCase(
                   name: 'Interactive',
                   builder: (context) => _themed(_PinInputDemo()),
@@ -483,6 +961,32 @@ class PlinthWidgetbookApp extends StatelessWidget {
               name: 'PlinthSegmentedControl',
               useCases: [
                 WidgetbookUseCase(
+                  name: 'Playground',
+                  builder: (context) {
+                    final fullWidth = context.knobs.boolean(label: 'fullWidth');
+                    final size = _sizeKnob(context);
+                    final color = _colorKnob(context);
+                    return _themed(
+                      _Local<String>(
+                        initial: 'list',
+                        builder: (value, onChanged) =>
+                            PlinthSegmentedControl<String>(
+                          value: value,
+                          onChanged: onChanged,
+                          fullWidth: fullWidth,
+                          size: size,
+                          color: color,
+                          items: const [
+                            PlinthSegmentedControlItem('list', 'List'),
+                            PlinthSegmentedControlItem('grid', 'Grid'),
+                            PlinthSegmentedControlItem('board', 'Board'),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                WidgetbookUseCase(
                   name: 'Interactive',
                   builder: (context) => _themed(_SegmentedControlDemo()),
                 ),
@@ -491,6 +995,49 @@ class PlinthWidgetbookApp extends StatelessWidget {
             WidgetbookComponent(
               name: 'PlinthNumberInput',
               useCases: [
+                WidgetbookUseCase(
+                  name: 'Playground',
+                  builder: (context) {
+                    final label = context.knobs.string(
+                      label: 'label',
+                      initialValue: 'Quantity',
+                    );
+                    final min = context.knobs.doubleOrNull.input(
+                      label: 'min',
+                      initialValue: 0,
+                      defaultToNull: true,
+                    );
+                    final max = context.knobs.doubleOrNull.input(
+                      label: 'max',
+                      initialValue: 10,
+                      defaultToNull: true,
+                    );
+                    final step = context.knobs.double
+                        .input(label: 'step', initialValue: 1);
+                    final enabled = context.knobs
+                        .boolean(label: 'enabled', initialValue: true);
+                    final size = _sizeKnob(context);
+                    final color = _colorKnob(context);
+                    final radius = _radiusKnob(context);
+                    return _themed(
+                      _Local<num>(
+                        initial: 5,
+                        builder: (value, onChanged) => PlinthNumberInput(
+                          label: label,
+                          value: value,
+                          min: min,
+                          max: max,
+                          step: step,
+                          enabled: enabled,
+                          onChanged: onChanged,
+                          size: size,
+                          color: color,
+                          radius: radius,
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 WidgetbookUseCase(
                   name: 'Interactive',
                   builder: (context) => _themed(_NumberInputDemo()),
@@ -512,6 +1059,31 @@ class PlinthWidgetbookApp extends StatelessWidget {
             WidgetbookComponent(
               name: 'PlinthChip',
               useCases: [
+                WidgetbookUseCase(
+                  name: 'Playground',
+                  builder: (context) {
+                    final label = context.knobs.string(
+                      label: 'label',
+                      initialValue: 'Flutter',
+                    );
+                    final enabled = context.knobs
+                        .boolean(label: 'enabled', initialValue: true);
+                    final size = _sizeKnob(context);
+                    final color = _colorKnob(context);
+                    return _themed(
+                      _Local<bool>(
+                        initial: false,
+                        builder: (selected, onSelected) => PlinthChip(
+                          label: label,
+                          selected: selected,
+                          onSelected: enabled ? onSelected : null,
+                          size: size,
+                          color: color,
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 WidgetbookUseCase(
                   name: 'Selected and unselected',
                   builder: (context) => _themed(
@@ -535,6 +1107,38 @@ class PlinthWidgetbookApp extends StatelessWidget {
             WidgetbookComponent(
               name: 'PlinthRating',
               useCases: [
+                WidgetbookUseCase(
+                  name: 'Playground',
+                  builder: (context) {
+                    final count = context.knobs.int.slider(
+                      label: 'count',
+                      initialValue: 5,
+                      min: 3,
+                      max: 10,
+                    );
+                    final readOnly = context.knobs.boolean(
+                      label: 'read-only',
+                      description: 'Omitting onChanged is how a rating '
+                          'becomes display-only',
+                    );
+                    final size = _sizeKnob(context);
+                    final color = _colorKnob(context);
+                    return _themed(
+                      _Local<double>(
+                        initial: 3,
+                        builder: (value, onChanged) => PlinthRating(
+                          // Lowering count below the current value would
+                          // otherwise leave more stars filled than exist.
+                          value: value > count ? count.toDouble() : value,
+                          count: count,
+                          onChanged: readOnly ? null : onChanged,
+                          size: size,
+                          color: color,
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 WidgetbookUseCase(
                   name: 'Interactive',
                   builder: (context) => _themed(_RatingDemo()),
