@@ -46,6 +46,54 @@ void main() {
 
       expect(find.text('Read more'), findsOneWidget);
     });
+
+    testWidgets('clips a child taller than maxHeight without overflowing',
+        (tester) async {
+      // Every other usage passes a Text, which soft-wraps and clips
+      // quietly. A Column manages its own overflow, so laying it out
+      // *within* maxHeight made it report a RenderFlex overflow and
+      // paint overflow stripes — while clipping tall content is the
+      // whole point of a spoiler.
+      await tester.pumpWidget(
+        _wrap(
+          const SizedBox(
+            width: 300,
+            child: PlinthSpoiler(
+              maxHeight: 50,
+              child: Column(
+                children: [
+                  SizedBox(height: 80, child: Text('First')),
+                  SizedBox(height: 80, child: Text('Second')),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('shrink-wraps a child shorter than maxHeight', (tester) async {
+      // The clipping fix must not pad short content out to maxHeight.
+      await tester.pumpWidget(
+        _wrap(
+          const SizedBox(
+            width: 300,
+            child: PlinthSpoiler(
+              maxHeight: 400,
+              child: SizedBox(height: 40, child: Text('Short')),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.getSize(find.text('Short')).height, lessThan(400));
+      expect(
+        tester.getSize(find.byType(SingleChildScrollView)).height,
+        40,
+      );
+    });
   });
 
   group('PlinthIndicator', () {

@@ -151,6 +151,23 @@ IconData? _iconKnob(BuildContext context, {String label = 'leadingIcon'}) {
       ?.icon;
 }
 
+/// The colour knob for Alert and Notification, which take a
+/// *non-nullable* `color` defaulting to `'blue'` — unlike every other
+/// component, whose nullable `color` falls back to the theme's primary.
+///
+/// That difference is deliberate and worth exercising: a feedback
+/// banner rendering in your brand colour regardless of intent (info vs.
+/// error vs. success) would be a worse default than a conventional
+/// blue. So this knob offers no null option.
+String _feedbackColorKnob(BuildContext context) {
+  return context.knobs.object.dropdown(
+    label: 'color',
+    options: _paletteColors,
+    initialOption: 'blue',
+    description: 'Non-nullable here — no theme-primary fallback',
+  );
+}
+
 /// Shared by Popover, HoverCard, and Menu — Menu is built directly on
 /// Popover, and HoverCard reuses its position enum, so all three offer
 /// the same four anchor points.
@@ -192,9 +209,9 @@ PlinthSize? _radiusKnob(BuildContext context) {
 ///   `subtle` against `transparent`, or `xs` against `sm`, needs them
 ///   on screen together, which a single knob-driven instance can't do.
 ///
-/// Playgrounds currently exist for the Buttons & Actions, Forms,
-/// Navigation, and Overlays categories; the remaining four still have
-/// static use cases only. Not every component needs one — a thin wrapper with a
+/// Playgrounds currently exist for the Buttons & Actions, Feedback,
+/// Forms, Navigation, and Overlays categories; Data Display, Surfaces,
+/// and Layout & Typography still have static use cases only. Not every component needs one — a thin wrapper with a
 /// single `child` prop (`PlinthPortal`, most of Layout & Typography)
 /// has nothing to vary, and a playground there would be ceremony.
 /// Follow the same shape when adding more: knobs for presentational
@@ -1869,6 +1886,41 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthAlert',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final icon = _iconKnob(context, label: 'icon');
+              final dismissible = context.knobs.boolean(
+                label: 'dismissible',
+                initialValue: true,
+                description: 'A non-null onClose is what shows the '
+                    'close button',
+              );
+              return _themed(
+                SizedBox(
+                  width: 420,
+                  child: PlinthAlert(
+                    title: context.knobs.stringOrNull(
+                      label: 'title',
+                      initialValue: 'Heads up',
+                      defaultToNull: true,
+                    ),
+                    color: _feedbackColorKnob(context),
+                    icon: icon == null ? null : Icon(icon),
+                    radius: _radiusKnob(context),
+                    onClose: dismissible ? () {} : null,
+                    child: PlinthText(
+                      context.knobs.string(
+                        label: 'body',
+                        initialValue: 'Your changes have been saved.',
+                      ),
+                      size: PlinthSize.sm,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'Info',
             builder: (context) => _themed(
               PlinthAlert(
@@ -1908,6 +1960,33 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthProgress',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 360,
+                child: PlinthProgress(
+                  // Asserted to 0..1, so the slider is bounded there
+                  // rather than clamped after the fact.
+                  value: context.knobs.double.slider(
+                    label: 'value',
+                    initialValue: 0.6,
+                    min: 0,
+                    max: 1,
+                    divisions: 20,
+                  ),
+                  size: _sizeKnob(context),
+                  color: _colorKnob(context),
+                  radius: _radiusKnob(context),
+                  trackColor: context.knobs.colorOrNull(
+                    label: 'trackColor',
+                    description: 'null uses the theme gray',
+                    defaultToNull: true,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          WidgetbookUseCase(
             name: 'Various fill levels',
             builder: (context) => _themed(
               Column(
@@ -1927,6 +2006,43 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthNotification',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final icon = _iconKnob(context, label: 'icon');
+              final dismissible = context.knobs.boolean(
+                label: 'dismissible',
+                initialValue: true,
+              );
+              return _themed(
+                SizedBox(
+                  width: 420,
+                  // Rendered inline here so the knobs are visible
+                  // against it. In real use this floats — push it with
+                  // PlinthNotification.show(context, ...), which wires
+                  // onClose up for you via ScaffoldMessenger.
+                  child: PlinthNotification(
+                    title: context.knobs.stringOrNull(
+                      label: 'title',
+                      initialValue: 'Upload complete',
+                      defaultToNull: true,
+                    ),
+                    color: _feedbackColorKnob(context),
+                    icon: icon == null ? null : Icon(icon),
+                    radius: _radiusKnob(context),
+                    onClose: dismissible ? () {} : null,
+                    child: PlinthText(
+                      context.knobs.string(
+                        label: 'body',
+                        initialValue: '3 files were uploaded.',
+                      ),
+                      size: PlinthSize.sm,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'Static preview',
             // Like Modal, the interesting entry point (show())
@@ -1948,6 +2064,37 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthSkeleton',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final circle = context.knobs.boolean(label: 'circle');
+              final width = context.knobs.doubleOrNull.input(
+                label: 'width',
+                initialValue: 200,
+                description: 'null fills the parent',
+                defaultToNull: true,
+              );
+              final height = context.knobs.double.slider(
+                label: 'height',
+                initialValue: 16,
+                min: 8,
+                max: 80,
+              );
+              return _themed(
+                SizedBox(
+                  width: 320,
+                  child: PlinthSkeleton(
+                    width: circle ? height : width,
+                    height: height,
+                    circle: circle,
+                    // radius is what rounds the rectangle, so it has
+                    // no effect once circle is on.
+                    radius: circle ? null : _radiusKnob(context),
+                  ),
+                ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'Text lines + avatar',
             builder: (context) => _themed(
@@ -1976,6 +2123,58 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthSpoiler',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final maxHeight = context.knobs.double.slider(
+                label: 'maxHeight',
+                initialValue: 100,
+                min: 40,
+                max: 240,
+                description: 'Collapsed height — above this the '
+                    'toggle appears',
+              );
+              final paragraphs = context.knobs.int.slider(
+                label: 'paragraphs',
+                initialValue: 3,
+                min: 1,
+                max: 6,
+              );
+              return _themed(
+                SizedBox(
+                  width: 420,
+                  child: PlinthSpoiler(
+                    maxHeight: maxHeight,
+                    showLabel: context.knobs.string(
+                      label: 'showLabel',
+                      initialValue: 'Show more',
+                    ),
+                    hideLabel: context.knobs.string(
+                      label: 'hideLabel',
+                      initialValue: 'Show less',
+                    ),
+                    color: _colorKnob(context),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (var i = 0; i < paragraphs; i++)
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 8),
+                            child: PlinthText(
+                              'One block of content that is either fully '
+                              'shown or height-clipped — unlike an '
+                              'accordion, which is a list of independently '
+                              'toggleable sections.',
+                              size: PlinthSize.sm,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'Interactive',
             builder: (context) => _themed(
               const PlinthSpoiler(
@@ -1994,6 +2193,36 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthLoadingOverlay',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 360,
+                child: PlinthLoadingOverlay(
+                  visible: context.knobs.boolean(
+                    label: 'visible',
+                    initialValue: true,
+                    description: 'The child stays in the tree either '
+                        'way, so layout does not shift on toggle',
+                  ),
+                  color: _colorKnob(context),
+                  child: PlinthPaper(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const PlinthText('Account settings'),
+                        const SizedBox(height: 12),
+                        PlinthButton(
+                          onPressed: () {},
+                          child: const Text('Save'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
           WidgetbookUseCase(
             name: 'Loading',
             builder: (context) => _themed(
@@ -2023,6 +2252,66 @@ final List<WidgetbookNode> plinthDirectories = [
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+      // PlinthRingProgress had no use cases at all before this — one
+      // of three exported components missing from the gallery
+      // entirely, alongside PlinthCode and PlinthMark below.
+      WidgetbookComponent(
+        name: 'PlinthRingProgress',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final value = context.knobs.double.slider(
+                label: 'value',
+                initialValue: 0.72,
+                min: 0,
+                max: 1,
+                divisions: 20,
+              );
+              final diameter = context.knobs.double.slider(
+                label: 'size (diameter)',
+                initialValue: 80,
+                min: 40,
+                max: 160,
+                description: 'A raw pixel diameter, not a PlinthSize — '
+                    'this is the one component whose size is a double',
+              );
+              final thickness = context.knobs.double.slider(
+                label: 'thickness',
+                initialValue: 8,
+                min: 2,
+                max: 24,
+              );
+              final withLabel = context.knobs.boolean(
+                label: 'centre label',
+                initialValue: true,
+              );
+              return _themed(
+                PlinthRingProgress(
+                  value: value,
+                  // A thickness past the radius would paint the ring
+                  // back over itself.
+                  thickness:
+                      thickness > diameter / 2 ? diameter / 2 : thickness,
+                  size: diameter,
+                  color: _colorKnob(context),
+                  trackColor: context.knobs.colorOrNull(
+                    label: 'trackColor',
+                    defaultToNull: true,
+                  ),
+                  label: withLabel
+                      ? PlinthText(
+                          '${(value * 100).round()}%',
+                          size: PlinthSize.xs,
+                          weight: FontWeight.w700,
+                        )
+                      : null,
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -2983,6 +3272,61 @@ final List<WidgetbookNode> plinthDirectories = [
               const SizedBox(
                 height: 60,
                 child: PlinthDivider(vertical: true, height: 60),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthCode',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              PlinthCode(
+                context.knobs.string(
+                  label: 'label',
+                  initialValue: 'melos run test',
+                ),
+                // Defaults to gray rather than the theme primary — an
+                // inline code span in brand blue reads as a link.
+                color: context.knobs.object.dropdown(
+                  label: 'color',
+                  options: _paletteColors,
+                  initialOption: 'gray',
+                ),
+                size: _sizeKnob(context),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthMark',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              Text.rich(
+                TextSpan(
+                  children: [
+                    const TextSpan(text: 'Results for '),
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: PlinthMark(
+                        context.knobs.string(
+                          label: 'label',
+                          initialValue: 'disclosure controller',
+                        ),
+                        // Defaults to 'yellow' when the theme defines
+                        // it — the default theme doesn't, so it falls
+                        // back to a literal amber.
+                        color: _colorKnob(context),
+                      ),
+                    ),
+                    const TextSpan(text: ' in this page.'),
+                  ],
+                ),
               ),
             ),
           ),

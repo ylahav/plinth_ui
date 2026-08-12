@@ -57,12 +57,25 @@ class _PlinthSpoilerState extends State<PlinthSpoiler> {
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOut,
           alignment: Alignment.topCenter,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: _expanded ? double.infinity : widget.maxHeight,
-            ),
-            child: ClipRect(child: widget.child),
-          ),
+          child: _expanded
+              ? widget.child
+              : ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: widget.maxHeight),
+                  // A bare ConstrainedBox lays the child out *within*
+                  // maxHeight, so a child that manages its own overflow
+                  // — any Column/Row — reports a RenderFlex overflow and
+                  // paints overflow stripes instead of being quietly
+                  // clipped, which is the entire point of a spoiler. A
+                  // ClipRect only hides the painting; the error still
+                  // fires. A non-scrolling SingleChildScrollView gives
+                  // the child its natural unbounded height and clips the
+                  // viewport to maxHeight, and still shrink-wraps when
+                  // the content is shorter than that.
+                  child: SingleChildScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    child: widget.child,
+                  ),
+                ),
         ),
         SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.5),
         InkWell(

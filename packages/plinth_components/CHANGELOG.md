@@ -7,6 +7,18 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## Unreleased
+
+### Fixed
+- `PlinthSpoiler` reported a `RenderFlex` overflow (and painted
+  overflow stripes) whenever its collapsed content was a `Column` or
+  `Row` taller than `maxHeight` — the exact case it exists to handle.
+  The child was laid out *within* `maxHeight`, so a widget that
+  manages its own overflow reported one; the surrounding `ClipRect`
+  hid the painting but not the error. It is now laid out at its
+  natural height and clipped to the viewport. A `Text` child was
+  unaffected, which is why every existing usage looked correct.
+
 ## 0.4.0
 
 ### Added
