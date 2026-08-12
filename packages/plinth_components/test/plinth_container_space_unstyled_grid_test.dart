@@ -88,7 +88,7 @@ void main() {
       );
 
       final semantics = tester.getSemantics(find.text('Custom'));
-      expect(semantics.hasFlag(SemanticsFlag.isButton), isTrue);
+      expect(semantics.flagsCollection.isButton, isTrue);
     });
   });
 
