@@ -73,10 +73,13 @@ complete reference without running anything. It has a persistent
 sidebar (wide screens) or drawer menu (narrow screens) that jumps to
 any section, a small branded hero at the top, and a **"Show code"**
 toggle on every section that reveals the exact source used for that
-demo (with a copy button) — the snippets in
-`example/lib/src/demo_code.dart` are extracted directly from
-`main.dart`'s own demo widgets rather than hand-duplicated, so they
-can't silently drift out of sync with what's actually rendered.
+demo (with a copy button). Those snippets live as hand-maintained
+string literals in `example/lib/src/demo_code.dart` (and
+`src/showcase/examples_code.dart` for the composed examples) — they
+are *not* extracted at build time, so nothing enforces that they
+match the widgets they mirror. Update the snippet alongside any demo
+you edit; a stale one still compiles and still renders a working code
+panel, which is what makes the drift easy to miss.
 
 ## Running the example app on Web and Desktop
 

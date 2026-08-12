@@ -1,10 +1,14 @@
-/// Source snippets for each example's "Show code" panel,
-/// extracted from this directory's own example widget classes —
-/// kept next to the UI they describe rather than hand-duplicated,
-/// so they can't silently drift out of sync with what's rendered.
+/// Source snippets for each example's "Show code" panel, transcribed
+/// from the matching widget classes in `examples.dart`.
 ///
 /// Keyed by class name (e.g. 'SimpleNavbarExample'), referenced
 /// from showcase_data.dart's ExampleEntry.code.
+///
+/// These are hand-maintained string literals, not extracted at build
+/// time — nothing enforces that they match, so **edit the snippet
+/// here whenever you change the example it mirrors**. A stale snippet
+/// still compiles and still renders a working code panel, which is
+/// exactly why the drift is easy to miss.
 const Map<String, String> exampleCode = {
   'SimpleNavbarExample': r'''
 PlinthPaper(
@@ -189,19 +193,19 @@ PlinthSimpleGrid(
     );
 ''',
   'FeatureListExample': r'''
-PlinthList(
+const PlinthList(
       items: [
         PlinthListItem(
-          const PlinthText('67+ themeable components, zero design-system lock-in'),
-          icon: const Icon(Icons.check_circle, color: Color(0xFF40C057), size: 16),
+          PlinthText('67+ themeable components, zero design-system lock-in'),
+          icon: Icon(Icons.check_circle, color: Color(0xFF40C057), size: 16),
         ),
         PlinthListItem(
-          const PlinthText('Widgetbook gallery for isolated visual development'),
-          icon: const Icon(Icons.check_circle, color: Color(0xFF40C057), size: 16),
+          PlinthText('Widgetbook gallery for isolated visual development'),
+          icon: Icon(Icons.check_circle, color: Color(0xFF40C057), size: 16),
         ),
         PlinthListItem(
-          const PlinthText('Published on pub.dev, versioned semantically'),
-          icon: const Icon(Icons.check_circle, color: Color(0xFF40C057), size: 16),
+          PlinthText('Published on pub.dev, versioned semantically'),
+          icon: Icon(Icons.check_circle, color: Color(0xFF40C057), size: 16),
         ),
       ],
     );
@@ -239,19 +243,19 @@ SizedBox(
     );
 ''',
   'ArticleCardWithAuthorExample': r'''
-SizedBox(
+const SizedBox(
       width: 280,
       child: PlinthCard(
         withBorder: true,
         footer: PlinthGroup(
           gap: PlinthSize.xs,
-          children: const [
+          children: [
             PlinthAvatar(initials: 'YL', size: PlinthSize.sm),
             PlinthText('Yair Lahav', size: PlinthSize.xs, weight: FontWeight.w600),
             PlinthText('· Jan 12', size: PlinthSize.xs, color: 'gray'),
           ],
         ),
-        child: const Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PlinthText('Publishing your first Flutter package', weight: FontWeight.w600),
@@ -267,9 +271,9 @@ SizedBox(
     );
 ''',
   'AuthorInlineExample': r'''
-PlinthGroup(
+const PlinthGroup(
       gap: PlinthSize.sm,
-      children: const [
+      children: [
         PlinthAvatar(initials: 'YL', size: PlinthSize.md),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
