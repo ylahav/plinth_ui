@@ -51,6 +51,34 @@ or your own bool state.
 `PlinthSize` and resolved through `theme.spacing`. Also `w`, `h`, `bg`,
 `radius`, `border`, `alignment`.
 
+### `PlinthCenter`
+`child`, `widthFactor`, `heightFactor`. A thin themed wrapper around
+Flutter's own `Center` — exists for API consistency (`Plinth*` layout
+primitives throughout) rather than adding new behavior.
+
+### `PlinthAspectRatio`
+`ratio`, `child`. A thin themed wrapper around Flutter's own
+`AspectRatio` — constrains `child` to a width/height ratio, the common
+case being reserving space for an image or embed before it loads so
+layout doesn't jump.
+
+### `PlinthGroup`
+`children`, `gap` (default `PlinthSize.md`), `mainAxisAlignment`,
+`crossAxisAlignment`, `wrap` (default `true`). Horizontal layout with a
+consistent gap between children. Unlike a plain `Row`, wraps onto a new
+line by default when children overflow the available width (via
+`Wrap` under the hood) — the common "row of chips/buttons/tags" need
+that a bare `Row` would just overflow on. Set `wrap: false` to opt back
+into `Row`'s clip-and-overflow behavior.
+
+### `PlinthList` + `PlinthListItem`
+`items` (`List<PlinthListItem>`), `type` (`PlinthListType`: `bullet,
+ordered` — default `bullet`), `spacing`, `size`. Each `PlinthListItem`
+takes `content` (its text or arbitrary widget) and an optional `icon`
+that overrides that item's marker — e.g. a checklist mixing checkmarks
+and crosses while other items fall back to the list's default
+bullet/numbering.
+
 ### `PlinthText`
 `data`, `size`, `color`, `weight`, `textAlign`, `italic`, `maxLines`, `overflow`.
 `size` resolves through `theme.fontSizes` instead of a raw `fontSize` double.

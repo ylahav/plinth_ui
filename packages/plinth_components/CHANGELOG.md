@@ -7,6 +7,23 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.3.0
+
+### Added
+- `PlinthCenter` — thin themed wrapper around `Center`, for API
+  consistency with the rest of the library.
+- `PlinthAspectRatio` — thin themed wrapper around `AspectRatio`,
+  commonly paired with images or embeds.
+- `PlinthGroup` — horizontal layout with a consistent gap, wraps
+  onto a new line by default when children overflow (unlike a plain
+  `Row`, which just overflows) — the common "row of chips/tags"
+  need.
+- `PlinthList` + `PlinthListItem` — bulleted or numbered list, with
+  each item able to override its own marker (e.g. a checklist mixing
+  checkmarks and crosses).
+
+63 components total.
+
 ## 0.2.0
 
 ### Added

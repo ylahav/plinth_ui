@@ -1212,6 +1212,75 @@ class PlinthWidgetbookApp extends StatelessWidget {
               ],
             ),
             WidgetbookComponent(
+              name: 'PlinthCenter',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Default',
+                  builder: (context) => _themed(
+                    Container(
+                      width: 200,
+                      height: 80,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300)),
+                      child: const PlinthCenter(child: Text('Centered')),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthAspectRatio',
+              useCases: [
+                WidgetbookUseCase(
+                  name: '16:9',
+                  builder: (context) => _themed(
+                    SizedBox(
+                      width: 240,
+                      child: PlinthAspectRatio(
+                        ratio: 16 / 9,
+                        child: Container(color: Colors.blue.shade100),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthGroup',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Wrapping row',
+                  builder: (context) => _themed(
+                    PlinthGroup(
+                      gap: PlinthSize.sm,
+                      children: const [
+                        PlinthBadge('New'),
+                        PlinthBadge('Updated'),
+                        PlinthBadge('Popular'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
+              name: 'PlinthList',
+              useCases: [
+                WidgetbookUseCase(
+                  name: 'Ordered',
+                  builder: (context) => _themed(
+                    PlinthList(
+                      type: PlinthListType.ordered,
+                      items: const [
+                        PlinthListItem(Text('First step')),
+                        PlinthListItem(Text('Second step')),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            WidgetbookComponent(
               name: 'PlinthText',
               useCases: [
                 WidgetbookUseCase(

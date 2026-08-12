@@ -123,6 +123,10 @@ class _ShowcasePageState extends State<ShowcasePage> {
     'Button Group',
     'Overlay',
     'Visually Hidden',
+    'Center',
+    'Aspect Ratio',
+    'Group',
+    'List',
     'Box + Text + Disclosure',
     'Button Variants',
     'Button Sizes',
@@ -1313,6 +1317,63 @@ class _ShowcasePageState extends State<ShowcasePage> {
                               color: 'gray',
                             ),
                           ),
+                        ],
+                      ),
+                      _gap(),
+                      _sectionTitle('Center'),
+                      _gap(12),
+                      Container(
+                        width: double.infinity,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: const Color(0xFFCED4DA)),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const PlinthCenter(
+                          child: PlinthText('Centered content',
+                              size: PlinthSize.sm),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Aspect Ratio'),
+                      _gap(12),
+                      SizedBox(
+                        width: 240,
+                        child: PlinthAspectRatio(
+                          ratio: 16 / 9,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF228BE6),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Center(
+                              child: Text('16:9',
+                                  style: TextStyle(color: Colors.white)),
+                            ),
+                          ),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Group'),
+                      _gap(12),
+                      PlinthGroup(
+                        gap: PlinthSize.sm,
+                        children: const [
+                          PlinthBadge('New'),
+                          PlinthBadge('Updated'),
+                          PlinthBadge('Popular', color: 'grape'),
+                        ],
+                      ),
+                      _gap(),
+                      _sectionTitle('List'),
+                      _gap(12),
+                      PlinthList(
+                        type: PlinthListType.ordered,
+                        items: const [
+                          PlinthListItem(PlinthText('Install the package')),
+                          PlinthListItem(
+                              PlinthText('Wrap your app in a PlinthTheme')),
+                          PlinthListItem(PlinthText('Start using components')),
                         ],
                       ),
                       _gap(),

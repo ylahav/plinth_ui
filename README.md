@@ -13,17 +13,17 @@ plinth_ui/
   packages/
     plinth_core/            # PlinthTheme, design tokens (colors, spacing, radius)
     plinth_components/       # Widgets (Button, ActionIcon, CopyButton, Burger,
-    │                          ButtonGroup, Box, Text, Divider, Kbd, Anchor,
-    │                          VisuallyHidden, Blockquote, Modal, Drawer,
-    │                          TextInput, Textarea, PasswordInput, PinInput,
-    │                          Checkbox, Radio/RadioGroup, Select, MultiSelect,
-    │                          Badge, Alert, Switch, Slider, RangeSlider, Progress,
-    │                          Spoiler, LoadingOverlay, Overlay, Avatar, ThemeIcon,
-    │                          Indicator, ColorSwatch, Table, Accordion, Stepper,
-    │                          Breadcrumbs, Pagination, Timeline, NavLink,
-    │                          Notification, Skeleton, Paper, Card, SegmentedControl,
-    │                          NumberInput, Chip, Rating, Tooltip, Popover,
-    │                          HoverCard, Tabs/TabView, Menu)
+    │                          ButtonGroup, Box, Center, AspectRatio, Group,
+    │                          Text, Divider, Kbd, Anchor, VisuallyHidden,
+    │                          Blockquote, Modal, Drawer, TextInput, Textarea,
+    │                          PasswordInput, PinInput, Checkbox, Radio/RadioGroup,
+    │                          Select, MultiSelect, Badge, Alert, Switch, Slider,
+    │                          RangeSlider, Progress, Spoiler, LoadingOverlay,
+    │                          Overlay, Avatar, ThemeIcon, Indicator, ColorSwatch,
+    │                          Table, Accordion, Stepper, Breadcrumbs, Pagination,
+    │                          Timeline, NavLink, Notification, Skeleton, Paper,
+    │                          Card, SegmentedControl, NumberInput, Chip, Rating,
+    │                          List, Tooltip, Popover, HoverCard, Tabs/TabView, Menu)
     plinth_hooks/             # PlinthDisclosureController (useDisclosure equivalent)
   example/                  # Showcase app — run this to see every component live
   widgetbook/               # Isolated component gallery (manual/non-codegen setup)
@@ -137,7 +137,7 @@ the sidebar.
   ramps (curve-based 10-shade generator with non-linear lightness
   stops + shade-dependent saturation), spacing, radius, and font-size
   scales.
-- **59 components** across Primitives, Forms, Feedback, Data Display,
+- **63 components** across Primitives, Forms, Feedback, Data Display,
   Navigation, Surfaces, and Overlays — full list with props in
   **[docs/COMPONENTS.md](docs/COMPONENTS.md)**, kept current every round
   rather than duplicated here. A few architectural patterns worth
@@ -161,8 +161,8 @@ the sidebar.
 - **Tests** — pure-logic tests for `PlinthTheme`'s shade generator and
   `PlinthDisclosureController`, a golden (visual regression) test suite
   for `PlinthButton` (variants, a color override, disabled state, all
-  sizes), and widget behavior tests for most other components — 24 test
-  files covering the majority of the 59 public components as of this
+  sizes), and widget behavior tests for most other components — 25 test
+  files covering the majority of the 63 public components as of this
   writing.
   Notable coverage: `PlinthPagination`'s ellipsis-collapse logic at large
   page counts, `PlinthAccordion`'s single/multiple-open modes,
