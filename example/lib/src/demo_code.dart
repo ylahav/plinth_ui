@@ -152,7 +152,7 @@ const PlinthAccordion(
 ),
 ''',
   'Table': r'''
-const PlinthTable(
+const PlinthTable.text(
   striped: true,
   columns: ['Name', 'Role', 'Status'],
   rows: [

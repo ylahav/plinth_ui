@@ -1082,4 +1082,99 @@ return SizedBox(
   ),
 );
 ''',
+  'MemberTableExample': r'''
+return SizedBox(
+  width: 560,
+  child: PlinthPaper(
+    withBorder: true,
+    p: PlinthSize.xs,
+    // Widget cells are what makes this a table rather than a grid
+    // of strings: the member column pairs an avatar with two lines,
+    // and the status column carries a badge.
+    child: PlinthTable(
+      columns: const ['Member', 'Role', 'Status', ''],
+      rows: [
+        for (final member in _members)
+          [
+            Row(
+              children: [
+                PlinthAvatar(
+                    initials: member.initials, size: PlinthSize.sm),
+                const SizedBox(width: 8),
+                // Expanded because a table cell has a bounded
+                // width: an unflexed Row of an avatar plus two
+                // lines overflows as soon as a name is long.
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      PlinthText(
+                        member.name,
+                        size: PlinthSize.sm,
+                        weight: FontWeight.w600,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      PlinthText(
+                        member.email,
+                        size: PlinthSize.xs,
+                        color: 'gray',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            PlinthText(member.role, size: PlinthSize.sm),
+            PlinthBadge(member.status, color: member.tone),
+            PlinthActionIcon(
+              icon: const Icon(Icons.more_horiz, size: 16),
+              variant: PlinthVariant.subtle,
+              onPressed: () {},
+            ),
+          ],
+      ],
+    ),
+  ),
+);
+''',
+  'InvoiceTableExample': r'''
+return SizedBox(
+  width: 480,
+  child: PlinthPaper(
+    withBorder: true,
+    p: PlinthSize.xs,
+    child: PlinthTable(
+      striped: true,
+      columns: const ['Invoice', 'Amount', 'Status'],
+      rows: [
+        for (final invoice in _invoices)
+          [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PlinthText(invoice.id,
+                    size: PlinthSize.sm, weight: FontWeight.w600),
+                PlinthText(invoice.due,
+                    size: PlinthSize.xs, color: 'gray'),
+              ],
+            ),
+            PlinthText(invoice.amount, size: PlinthSize.sm),
+            invoice.paid
+                ? const PlinthBadge('Paid', color: 'green')
+                : PlinthButton(
+                    size: PlinthSize.xs,
+                    onPressed: () {},
+                    child: const Text('Pay now'),
+                  ),
+          ],
+      ],
+    ),
+  ),
+);
+''',
 };

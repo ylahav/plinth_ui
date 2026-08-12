@@ -29,7 +29,7 @@ code panel will quietly show something the demo no longer does.
 
 ## What exists
 
-30 examples across 3 categories, borrowing Mantine UI's own category
+32 examples across 3 categories, borrowing Mantine UI's own category
 names so the two are directly comparable.
 
 | Category | Subcategory | Examples |
@@ -37,6 +37,7 @@ names so the two are directly comparable.
 | Application UI | Navbars | Simple navbar, Navbar with avatar |
 | Application UI | Headers | Centered header, Header with breadcrumbs |
 | Application UI | Stats | Stat tiles, Stat with progress |
+| Application UI | Tables | Member table, Invoice table |
 | Application UI | User Info & Controls | User button, Profile card |
 | Application UI | Application Cards | Project card, Task card |
 | Application UI | Footers | Simple footer, Footer with link columns |
@@ -52,7 +53,7 @@ names so the two are directly comparable.
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 30. The gap is mostly whole
+Mantine UI has ~123 blocks against these 32. The gap is mostly whole
 subcategories with nothing in them, and — this is the point — **almost
 none of it is blocked on missing components.** The Authentication,
 Stats, Error Pages, and Footers subcategories were all built from
@@ -72,7 +73,7 @@ components that already shipped.
 | Sliders | 6 | **0** | |
 | Application cards | 7 | 2 | |
 | Stats | 9 | 2 | |
-| Tables | 4 | **0** | `PlinthTable` takes plain strings only, so richer cells would need it extended first |
+| Tables | 4 | 2 | Unblocked in 0.10.0 — `PlinthTable` cells are widgets now |
 | Dropzones | 1 | **0** | Unblocked — `PlinthFileInput` shipped in 0.9.0 |
 | Drag'n'Drop | 3 | **0** | Flutter's own `Draggable`/`DragTarget` |
 | Carousels | 2 | **0** | Mantine's is a separate package; same call applies here |
@@ -112,9 +113,8 @@ Ordered by value against effort, given what already ships:
 **Dropzones** is no longer blocked: `PlinthFileInput` shipped in 0.9.0,
 and a dropzone is that plus a drag target.
 
-Two remain blocked on component work rather than composition:
-**Tables** needs `PlinthTable` to accept widget cells rather than plain
-strings, and **Table of contents** wants a `PlinthTableOfContents`. See
+One remains blocked on component work rather than composition:
+**Table of contents** wants a `PlinthTableOfContents`. See
 [COMPONENTS.md § Coming soon](COMPONENTS.md#coming-soon).
 
 ## Adding an example

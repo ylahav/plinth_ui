@@ -763,7 +763,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
                       _gap(),
                       _sectionTitle('Table'),
                       _gap(12),
-                      const PlinthTable(
+                      const PlinthTable.text(
                         striped: true,
                         columns: ['Name', 'Role', 'Status'],
                         rows: [

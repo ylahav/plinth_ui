@@ -617,12 +617,27 @@ your own selected-color state, same controlled-component pattern as
 `PlinthChip`.
 
 ### `PlinthTable`
-`columns` (`List<String>`), `rows` (`List<List<String>>` — each inner
-list must match `columns.length`), `striped`, `size`. Built on Flutter's
-low-level `Table` widget rather than `DataTable`, since `DataTable`'s
-built-in Material styling (fixed row heights, sort/selection chrome)
-fights against a themeable design system more than it helps. No custom
-per-cell widget support yet — cells are plain text.
+`columns` (`List<String>`), `rows`, `striped`, `size`. Built on
+Flutter's low-level `Table` widget rather than `DataTable`, since
+`DataTable`'s built-in Material styling (fixed row heights,
+sort/selection chrome) fights against a themeable design system more
+than it helps.
+
+Two constructors, because most tables are only text but the interesting
+ones aren't:
+
+- `PlinthTable(rows: List<List<Widget>>)` — cells are widgets, so a
+  status column can hold a `PlinthBadge`, a person column a
+  `PlinthAvatar`, an actions column a `PlinthActionIcon`. A bare `Text`
+  cell inherits the table's size and text colour, so it lines up with
+  the styled cells beside it.
+- `PlinthTable.text(rows: List<List<String>>)` — plain strings, styled
+  for you. Stays `const`, and avoids wrapping every value.
+
+Each inner list must match `columns.length`. Columns share the
+available width, so a cell is width-bounded: a `Row` inside one needs a
+`Flexible` or `Expanded` around anything that can grow, or it overflows
+rather than ellipsizing.
 
 ---
 

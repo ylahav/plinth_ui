@@ -7,6 +7,30 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.10.0
+
+### Changed
+- **`PlinthTable` cells are now widgets.** Its own doc comment had said
+  "cells are plain strings; there's no per-cell custom-widget escape
+  hatch yet — flag if you need that", and building a members table for
+  the showcase is what flagged it: a status column wants a badge, an
+  actions column a button, a person column an avatar.
+
+  The default constructor takes `List<List<Widget>>`. Existing
+  string tables become `PlinthTable.text(...)`, which keeps them `const`
+  and avoids wrapping every value — a one-word change at each call site,
+  rather than the churn of a single `Object`-typed cell.
+
+  A bare `Text` in a widget cell inherits the table's size and text
+  colour, so it lines up with the styled cells beside it. Rows now align
+  vertically centred, since mixed-height cells are the reason widget
+  cells exist.
+
+  Note that columns share the available width, so a cell is
+  width-bounded: a `Row` inside one needs a `Flexible` or `Expanded`
+  around anything that can grow. The showcase smoke test caught exactly
+  that while the first version of the members table was being written.
+
 ## 0.9.0
 
 ### Added

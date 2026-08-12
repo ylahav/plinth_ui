@@ -3358,6 +3358,76 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthTable',
         useCases: [
           WidgetbookUseCase(
+            name: 'Widget cells',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 480,
+                // The default constructor takes widgets, so a status
+                // column can hold a badge and an actions column a
+                // button — PlinthTable.text is the shorthand for a
+                // table that is only strings.
+                child: PlinthTable(
+                  striped: context.knobs.boolean(label: 'striped'),
+                  size: _sizeKnob(context),
+                  columns: const ['Member', 'Role', 'Status', ''],
+                  rows: [
+                    for (final row in const [
+                      (
+                        initials: 'AB',
+                        name: 'Ada Byron',
+                        role: 'Maintainer',
+                        status: 'Active',
+                        tone: 'green',
+                      ),
+                      (
+                        initials: 'GH',
+                        name: 'Grace Hopper',
+                        role: 'Reviewer',
+                        status: 'Invited',
+                        tone: 'gray',
+                      ),
+                      (
+                        initials: 'AT',
+                        name: 'Alan Turing',
+                        role: 'Contributor',
+                        status: 'Blocked',
+                        tone: 'red',
+                      ),
+                    ])
+                      [
+                        Row(
+                          children: [
+                            PlinthAvatar(
+                              initials: row.initials,
+                              size: PlinthSize.sm,
+                            ),
+                            const SizedBox(width: 8),
+                            // A table cell is width-bounded, so the
+                            // text has to flex or the row overflows.
+                            Expanded(
+                              child: PlinthText(
+                                row.name,
+                                size: PlinthSize.sm,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        PlinthText(row.role, size: PlinthSize.sm),
+                        PlinthBadge(row.status, color: row.tone),
+                        PlinthActionIcon(
+                          icon: const Icon(Icons.more_horiz, size: 16),
+                          variant: PlinthVariant.subtle,
+                          onPressed: () {},
+                        ),
+                      ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+          WidgetbookUseCase(
             name: 'Playground',
             builder: (context) {
               final rowCount = context.knobs.int.slider(
@@ -3379,7 +3449,7 @@ final List<WidgetbookNode> plinthDirectories = [
               return _themed(
                 SizedBox(
                   width: 420,
-                  child: PlinthTable(
+                  child: PlinthTable.text(
                     striped: context.knobs.boolean(label: 'striped'),
                     size: _sizeKnob(context),
                     columns: const ['Name', 'Role', 'Commits'],
@@ -3401,7 +3471,7 @@ final List<WidgetbookNode> plinthDirectories = [
           WidgetbookUseCase(
             name: 'Default',
             builder: (context) => _themed(
-              const PlinthTable(
+              const PlinthTable.text(
                 columns: ['Name', 'Role', 'Status'],
                 rows: [
                   ['Alice', 'Engineer', 'Active'],
@@ -3413,7 +3483,7 @@ final List<WidgetbookNode> plinthDirectories = [
           WidgetbookUseCase(
             name: 'Striped',
             builder: (context) => _themed(
-              const PlinthTable(
+              const PlinthTable.text(
                 striped: true,
                 columns: ['Name', 'Role', 'Status'],
                 rows: [

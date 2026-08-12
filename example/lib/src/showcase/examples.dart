@@ -1372,3 +1372,144 @@ class ConsentBannerExample extends StatelessWidget {
     );
   }
 }
+
+// ─────────────────────────── Application UI: Tables ───────────────────────────
+
+class MemberTableExample extends StatelessWidget {
+  const MemberTableExample({super.key});
+
+  static const _members = [
+    (
+      initials: 'AB',
+      name: 'Ada Byron',
+      email: 'ada@example.com',
+      role: 'Maintainer',
+      status: 'Active',
+      tone: 'green',
+    ),
+    (
+      initials: 'GH',
+      name: 'Grace Hopper',
+      email: 'grace@example.com',
+      role: 'Reviewer',
+      status: 'Invited',
+      tone: 'gray',
+    ),
+    (
+      initials: 'AT',
+      name: 'Alan Turing',
+      email: 'alan@example.com',
+      role: 'Contributor',
+      status: 'Blocked',
+      tone: 'red',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 560,
+      child: PlinthPaper(
+        withBorder: true,
+        p: PlinthSize.xs,
+        // Widget cells are what makes this a table rather than a grid
+        // of strings: the member column pairs an avatar with two lines,
+        // and the status column carries a badge.
+        child: PlinthTable(
+          columns: const ['Member', 'Role', 'Status', ''],
+          rows: [
+            for (final member in _members)
+              [
+                Row(
+                  children: [
+                    PlinthAvatar(
+                        initials: member.initials, size: PlinthSize.sm),
+                    const SizedBox(width: 8),
+                    // Expanded because a table cell has a bounded
+                    // width: an unflexed Row of an avatar plus two
+                    // lines overflows as soon as a name is long.
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          PlinthText(
+                            member.name,
+                            size: PlinthSize.sm,
+                            weight: FontWeight.w600,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          PlinthText(
+                            member.email,
+                            size: PlinthSize.xs,
+                            color: 'gray',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                PlinthText(member.role, size: PlinthSize.sm),
+                PlinthBadge(member.status, color: member.tone),
+                PlinthActionIcon(
+                  icon: const Icon(Icons.more_horiz, size: 16),
+                  variant: PlinthVariant.subtle,
+                  onPressed: () {},
+                ),
+              ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class InvoiceTableExample extends StatelessWidget {
+  const InvoiceTableExample({super.key});
+
+  static const _invoices = [
+    (id: 'INV-014', due: 'Due in 6 days', amount: r'$1,240.00', paid: false),
+    (id: 'INV-013', due: 'Paid 2 Aug', amount: r'$980.00', paid: true),
+    (id: 'INV-012', due: 'Paid 2 Jul', amount: r'$980.00', paid: true),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 480,
+      child: PlinthPaper(
+        withBorder: true,
+        p: PlinthSize.xs,
+        child: PlinthTable(
+          striped: true,
+          columns: const ['Invoice', 'Amount', 'Status'],
+          rows: [
+            for (final invoice in _invoices)
+              [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    PlinthText(invoice.id,
+                        size: PlinthSize.sm, weight: FontWeight.w600),
+                    PlinthText(invoice.due, size: PlinthSize.xs, color: 'gray'),
+                  ],
+                ),
+                PlinthText(invoice.amount, size: PlinthSize.sm),
+                invoice.paid
+                    ? const PlinthBadge('Paid', color: 'green')
+                    : PlinthButton(
+                        size: PlinthSize.xs,
+                        onPressed: () {},
+                        child: const Text('Pay now'),
+                      ),
+              ],
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -74,6 +74,12 @@ final List<CategoryData> showcaseCategories = [
             'Project card', _projectCard, exampleCode['ProjectCardExample']!),
         ExampleEntry('Task card', _taskCard, exampleCode['TaskCardExample']!),
       ]),
+      SubcategoryData('Tables', Icons.table_rows_outlined, [
+        ExampleEntry(
+            'Member table', _memberTable, exampleCode['MemberTableExample']!),
+        ExampleEntry('Invoice table', _invoiceTable,
+            exampleCode['InvoiceTableExample']!),
+      ]),
       SubcategoryData('Footers', Icons.horizontal_rule, [
         ExampleEntry('Simple footer', _simpleFooter,
             exampleCode['SimpleFooterExample']!),
@@ -198,3 +204,5 @@ Widget _commentThread(BuildContext context) => const CommentThreadExample();
 Widget _announcementBanner(BuildContext context) =>
     const AnnouncementBannerExample();
 Widget _consentBanner(BuildContext context) => const ConsentBannerExample();
+Widget _memberTable(BuildContext context) => const MemberTableExample();
+Widget _invoiceTable(BuildContext context) => const InvoiceTableExample();
