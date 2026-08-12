@@ -90,31 +90,21 @@ void main() {
 
     testWidgets('removing the portal from the tree removes its overlay entry',
         (tester) async {
-      var showPortal = true;
+      // Unmount by pumping a tree without the portal rather than by
+      // tapping an in-tree button: the portal's overlay entry covers
+      // the whole screen, so it sits on top of any such button and
+      // swallows the tap before it lands.
       await tester.pumpWidget(
-        _wrap(
-          StatefulBuilder(
-            builder: (context, setState) => Column(
-              children: [
-                if (showPortal)
-                  const PlinthPortal(child: Text('Portaled content')),
-                TextButton(
-                  onPressed: () => setState(() => showPortal = false),
-                  child: const Text('Remove'),
-                ),
-              ],
-            ),
-          ),
-        ),
+        _wrap(const Column(children: [PlinthPortal(child: Text('Portaled'))])),
       );
       await tester.pump();
 
-      expect(find.text('Portaled content'), findsOneWidget);
+      expect(find.text('Portaled'), findsOneWidget);
 
-      await tester.tap(find.text('Remove'));
+      await tester.pumpWidget(_wrap(const Column(children: [])));
       await tester.pump();
 
-      expect(find.text('Portaled content'), findsNothing);
+      expect(find.text('Portaled'), findsNothing);
     });
   });
 }
