@@ -7,6 +7,28 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.1.0
+
+### Added
+- Nine more color ramps in `PlinthTheme.defaultTheme`, bringing it to
+  Mantine's standard set: `pink`, `grape`, `violet`, `indigo`, `cyan`,
+  `teal`, `lime`, `yellow`, and `orange` join `gray`, `red`, `blue`,
+  and `green`.
+
+  This fixes colors that silently rendered as the primary blue.
+  `color()` falls back to `primaryColor` for an unrecognized name, so a
+  palette missing a color callers reasonably expect doesn't fail — it
+  quietly renders the wrong thing, which is harder to spot than an
+  error. `PlinthBadge(color: 'grape')` was blue; it is now grape.
+- `PlinthTheme.hasColor(name)`, for telling a real ramp from one that
+  would fall back — useful when offering swatches rather than
+  rendering one.
+
+### Changed
+- `PlinthMark` now picks up the real `yellow` ramp instead of its
+  literal amber fallback, since the theme defines `yellow` at last.
+  Its highlight shifts slightly as a result.
+
 ## 0.0.1 — Initial development release
 
 - `PlinthTheme`: a `ThemeExtension<PlinthTheme>` holding the design-token

@@ -7,6 +7,23 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.6.0
+
+### Changed
+- Requires `plinth_core` ^0.1.0, which widens the default palette from
+  four colors to Mantine's standard thirteen. Colors that previously
+  fell back to the primary blue — `grape`, `orange`, and the rest — now
+  render as themselves. `PlinthMark`'s highlight shifts slightly, since
+  it picks up the real `yellow` ramp instead of its literal amber
+  fallback.
+
+### Added
+- Behavior tests for every previously untested component, including
+  `PlinthTextInput`'s border precedence, the Modal/Drawer/Popover
+  lifecycle, and the controlled-component contract shared by
+  Checkbox/Switch/Slider/Radio/Select. Every public component now has
+  at least one test.
+
 ## 0.5.0
 
 ### Added

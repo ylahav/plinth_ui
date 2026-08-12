@@ -238,13 +238,14 @@ intentional rather than bugs:
   visual logic. See `docs/TESTING.md`.
 - Consider hue-drift at the extremes of the color-shade ramp for
   richer darks/lights (currently hue is held fixed).
-- Add the palette colors the demos already reference. The default
-  theme defines only `blue`, `red`, `green`, and `gray`, and an
-  unrecognized key falls back to the primary color silently — so a
-  `color: 'grape'` in the example app renders blue rather than grape.
-  Either add those ramps to `PlinthTheme.defaultTheme` or correct the
-  call sites; the Widgetbook color knobs deliberately offer only the
-  four that exist.
+- **Dark mode.** `PlinthTheme` has no notion of light/dark — no
+  brightness, and no surface, text, or border tokens — so 40 of the
+  widget files hardcode their non-palette colors (`Colors.white`
+  surfaces, `Color(0xFFCED4DA)` borders, `Colors.black87` text). A
+  `PlinthTextInput` paints a white box and black text whatever theme
+  you register. Extracting those into tokens is the prerequisite; done
+  so the light theme's values match today's literals, it changes
+  nothing visually and leaves the goldens valid.
 
 ## Naming note
 

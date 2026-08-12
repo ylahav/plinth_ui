@@ -77,13 +77,37 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     return ramp[shade.clamp(0, ramp.length - 1)];
   }
 
+  /// Whether [colors] defines a ramp under [name].
+  ///
+  /// [color] deliberately falls back rather than throwing, which means
+  /// a typo or an unavailable palette key renders as the primary color
+  /// with no complaint. Use this when you need to know the difference —
+  /// picking a swatch to offer in a UI, say, rather than rendering one.
+  bool hasColor(String name) => colors.containsKey(name);
+
+  /// The default palette: Mantine's standard color set, each generated
+  /// from its base (shade 6) value.
+  ///
+  /// Keep this broad. An unrecognized key falls back to the primary
+  /// color silently, so a palette missing a color that callers
+  /// reasonably expect doesn't fail — it just quietly renders the wrong
+  /// thing, which is harder to notice than an error would be.
   static final PlinthTheme defaultTheme = PlinthTheme(
     primaryColor: 'blue',
     colors: {
-      'blue': _generateShades(const Color(0xFF228BE6)),
-      'red': _generateShades(const Color(0xFFFA5252)),
-      'green': _generateShades(const Color(0xFF40C057)),
       'gray': _generateShades(const Color(0xFF868E96)),
+      'red': _generateShades(const Color(0xFFFA5252)),
+      'pink': _generateShades(const Color(0xFFE64980)),
+      'grape': _generateShades(const Color(0xFFBE4BDB)),
+      'violet': _generateShades(const Color(0xFF7950F2)),
+      'indigo': _generateShades(const Color(0xFF4C6EF5)),
+      'blue': _generateShades(const Color(0xFF228BE6)),
+      'cyan': _generateShades(const Color(0xFF15AABF)),
+      'teal': _generateShades(const Color(0xFF12B886)),
+      'green': _generateShades(const Color(0xFF40C057)),
+      'lime': _generateShades(const Color(0xFF82C91E)),
+      'yellow': _generateShades(const Color(0xFFFAB005)),
+      'orange': _generateShades(const Color(0xFFFD7E14)),
     },
   );
 

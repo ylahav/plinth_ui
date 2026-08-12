@@ -87,9 +87,23 @@ class _DisclosedState extends State<_Disclosed> {
 ///
 /// Keep this in step with that map: an unrecognized color name falls
 /// back to the primary color silently, so offering a name the default
-/// theme doesn't define (say 'grape') would make the knob look broken
-/// rather than informative — you'd pick it and nothing would change.
-const _paletteColors = ['blue', 'red', 'green', 'gray'];
+/// theme doesn't define would make the knob look broken rather than
+/// informative — you'd pick it and nothing would change.
+const _paletteColors = [
+  'gray',
+  'red',
+  'pink',
+  'grape',
+  'violet',
+  'indigo',
+  'blue',
+  'cyan',
+  'teal',
+  'green',
+  'lime',
+  'yellow',
+  'orange',
+];
 
 /// Shared knob definitions for the props nearly every Plinth component
 /// accepts, so the playground use cases offer one consistent
