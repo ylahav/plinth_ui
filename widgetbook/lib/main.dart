@@ -168,6 +168,45 @@ String _feedbackColorKnob(BuildContext context) {
   );
 }
 
+/// Spacing between children, shared by Group, Flex, and SimpleGrid.
+/// Separate from [_sizeKnob] so the panel labels it as a gap rather
+/// than the component's own size.
+PlinthSize _gapKnob(
+  BuildContext context, {
+  String label = 'gap',
+  PlinthSize initial = PlinthSize.md,
+}) {
+  return context.knobs.object.dropdown(
+    label: label,
+    options: PlinthSize.values,
+    initialOption: initial,
+    labelBuilder: (size) => size.name,
+  );
+}
+
+MainAxisAlignment _mainAxisAlignmentKnob(BuildContext context) {
+  return context.knobs.object.dropdown(
+    label: 'mainAxisAlignment',
+    options: MainAxisAlignment.values,
+    initialOption: MainAxisAlignment.start,
+    labelBuilder: (alignment) => alignment.name,
+  );
+}
+
+/// Shared by Paper and Card, which differ in default: Paper is flat
+/// (`none`) and Card is raised (`sm`), so each passes its own initial.
+PlinthShadow _shadowKnob(
+  BuildContext context, {
+  PlinthShadow initial = PlinthShadow.none,
+}) {
+  return context.knobs.object.dropdown(
+    label: 'shadow',
+    options: PlinthShadow.values,
+    initialOption: initial,
+    labelBuilder: (shadow) => shadow.name,
+  );
+}
+
 /// Shared by Popover, HoverCard, and Menu — Menu is built directly on
 /// Popover, and HoverCard reuses its position enum, so all three offer
 /// the same four anchor points.
@@ -209,18 +248,26 @@ PlinthSize? _radiusKnob(BuildContext context) {
 ///   `subtle` against `transparent`, or `xs` against `sm`, needs them
 ///   on screen together, which a single knob-driven instance can't do.
 ///
-/// Playgrounds currently exist for the Buttons & Actions, Feedback,
-/// Forms, Navigation, and Overlays categories; Data Display, Surfaces,
-/// and Layout & Typography still have static use cases only. Not every component needs one — a thin wrapper with a
-/// single `child` prop (`PlinthPortal`, most of Layout & Typography)
-/// has nothing to vary, and a playground there would be ceremony.
+/// Every category now has playgrounds, covering 66 of the 71
+/// components. The handful without one have nothing to vary —
+/// `PlinthPortal`, `PlinthCenter`, `PlinthVisuallyHidden`,
+/// `PlinthUnstyledButton` take a child and little else, so a
+/// playground there would be ceremony rather than a control surface.
+///
 /// Follow the same shape when adding more: knobs for presentational
 /// props, `_Local` for any value the user should be able to change by
-/// interacting with the component itself, and a knob per prop the
+/// interacting with the component itself, `_Disclosed` for anything
+/// driven by a `PlinthDisclosureController`, and a knob per prop the
 /// component actually accepts rather than a fixed set — several
-/// components deliberately default differently (badges to
-/// light/`sm`, action icons to `light`), and the playground should
-/// start where the widget does.
+/// components deliberately default differently (badges to light/`sm`,
+/// action icons to `light`, tooltips to `sm`), and a playground should
+/// start where its widget does.
+///
+/// Check the *type* behind a prop name rather than assuming it from
+/// the other components: `color` is a theme palette key on most of
+/// them but a literal `Color` on `PlinthDivider`, `PlinthBox.bg` is a
+/// key while its `border` is a `Color`, and `PlinthRingProgress.size`
+/// is a pixel diameter rather than a `PlinthSize`.
 class PlinthWidgetbookApp extends StatelessWidget {
   const PlinthWidgetbookApp({super.key});
 
@@ -2899,6 +2946,36 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthAvatar',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              // The fallback chain is imageUrl -> initials -> a generic
+              // person icon, so the knobs are ordered to walk down it.
+              final source = context.knobs.object.dropdown(
+                label: 'source',
+                options: const ['initials', 'broken imageUrl', 'neither'],
+                initialOption: 'initials',
+                description: 'A failed image falls through to initials, '
+                    'and no initials falls through to an icon',
+              );
+              return _themed(
+                PlinthAvatar(
+                  imageUrl: source == 'broken imageUrl'
+                      ? 'https://example.invalid/missing.png'
+                      : null,
+                  initials: source == 'neither'
+                      ? null
+                      : context.knobs.string(
+                          label: 'initials',
+                          initialValue: 'YL',
+                        ),
+                  size: _sizeKnob(context),
+                  color: _colorKnob(context),
+                  radius: _radiusKnob(context),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'Initials, all sizes',
             builder: (context) => _themed(
               Row(
@@ -2933,6 +3010,47 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthTable',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final rowCount = context.knobs.int.slider(
+                label: 'rows',
+                initialValue: 4,
+                min: 1,
+                max: 8,
+              );
+              const names = [
+                'Ada',
+                'Grace',
+                'Alan',
+                'Edsger',
+                'Barbara',
+                'Donald',
+                'Ken',
+                'Dennis'
+              ];
+              return _themed(
+                SizedBox(
+                  width: 420,
+                  child: PlinthTable(
+                    striped: context.knobs.boolean(label: 'striped'),
+                    size: _sizeKnob(context),
+                    columns: const ['Name', 'Role', 'Commits'],
+                    // Each row must match columns.length — the widget
+                    // takes plain strings, with no per-cell widgets.
+                    rows: [
+                      for (var i = 0; i < rowCount; i++)
+                        [
+                          names[i],
+                          i.isEven ? 'Maintainer' : 'Contributor',
+                          '${(i + 1) * 37}'
+                        ],
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'Default',
             builder: (context) => _themed(
@@ -2984,6 +3102,25 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthThemeIcon',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final icon = _iconKnob(context, label: 'icon');
+              final circle = context.knobs.boolean(label: 'circle');
+              return _themed(
+                // Same shape as PlinthActionIcon but decorative — no
+                // onPressed, so nothing here toggles enabled state.
+                PlinthThemeIcon(
+                  icon: Icon(icon ?? Icons.check),
+                  variant: _variantKnob(context),
+                  size: _sizeKnob(context),
+                  color: _colorKnob(context),
+                  circle: circle,
+                  radius: circle ? null : _radiusKnob(context),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'All variants',
             builder: (context) => _themed(
               Wrap(
@@ -3001,6 +3138,34 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthIndicator',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              PlinthIndicator(
+                label: context.knobs.stringOrNull(
+                  label: 'label',
+                  initialValue: '3',
+                  description: 'null renders a plain dot',
+                  defaultToNull: true,
+                ),
+                position: context.knobs.object.dropdown(
+                  label: 'position',
+                  options: PlinthIndicatorPosition.values,
+                  initialOption: PlinthIndicatorPosition.topEnd,
+                  labelBuilder: (position) => position.name,
+                ),
+                // Defaults to red rather than the theme primary — a
+                // notification dot reads as attention, not brand.
+                color: _colorKnob(context),
+                disabled: context.knobs.boolean(
+                  label: 'disabled',
+                  description: 'Hides the indicator without removing '
+                      'the child from the tree',
+                ),
+                child: const Icon(Icons.notifications_outlined, size: 28),
+              ),
+            ),
+          ),
           WidgetbookUseCase(
             name: 'With label',
             builder: (context) => _themed(
@@ -3025,6 +3190,36 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthColorSwatch',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final size = _sizeKnob(context);
+              final enabled = context.knobs.boolean(
+                label: 'enabled',
+                initialValue: true,
+              );
+              return _themed(
+                // Standalone and controlled — selection lives in the
+                // caller, so a picker is several of these plus your
+                // own state, which is what this use case builds.
+                _Local<String>(
+                  initial: 'blue',
+                  builder: (selected, onChanged) => PlinthGroup(
+                    gap: PlinthSize.sm,
+                    children: [
+                      for (final key in _paletteColors)
+                        PlinthColorSwatch(
+                          color: key,
+                          selected: key == selected,
+                          size: size,
+                          onTap: enabled ? () => onChanged(key) : null,
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'Palette selector',
             builder: (context) => _themed(_ColorSwatchDemo()),
           ),
@@ -3038,6 +3233,59 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthBox',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              PlinthBox(
+                p: context.knobs.objectOrNull.dropdown(
+                  label: 'p (padding)',
+                  options: PlinthSize.values,
+                  initialOption: PlinthSize.md,
+                  labelBuilder: (size) => size.name,
+                ),
+                m: context.knobs.objectOrNull.dropdown(
+                  label: 'm (margin)',
+                  options: PlinthSize.values,
+                  labelBuilder: (size) => size.name,
+                  defaultToNull: true,
+                ),
+                w: context.knobs.doubleOrNull.input(
+                  label: 'w',
+                  initialValue: 240,
+                  defaultToNull: true,
+                ),
+                h: context.knobs.doubleOrNull.input(
+                  label: 'h',
+                  initialValue: 100,
+                  defaultToNull: true,
+                ),
+                // bg is a theme palette key, not a Color — it resolves
+                // through the ramp like every other `color` prop.
+                bg: _colorKnob(context),
+                radius: _radiusKnob(context),
+                // border, by contrast, is a literal Color.
+                border: context.knobs.colorOrNull(
+                  label: 'border',
+                  initialValue: const Color(0xFFDEE2E6),
+                ),
+                alignment: context.knobs.objectOrNull.dropdown(
+                  label: 'alignment',
+                  options: const [
+                    Alignment.topLeft,
+                    Alignment.center,
+                    Alignment.bottomRight,
+                  ],
+                  labelBuilder: (alignment) => alignment == Alignment.topLeft
+                      ? 'topLeft'
+                      : alignment == Alignment.center
+                          ? 'center'
+                          : 'bottomRight',
+                  defaultToNull: true,
+                ),
+                child: const PlinthText('Box content', size: PlinthSize.sm),
+              ),
+            ),
+          ),
           WidgetbookUseCase(
             name: 'Padding + border + radius',
             builder: (context) => _themed(
@@ -3072,6 +3320,37 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthAspectRatio',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final ratio = context.knobs.object.dropdown(
+                label: 'ratio',
+                options: const [16 / 9, 4 / 3, 1.0, 3 / 4],
+                initialOption: 16 / 9,
+                labelBuilder: (value) => switch (value) {
+                  1.0 => '1:1',
+                  final v when v > 1.7 => '16:9',
+                  final v when v > 1.0 => '4:3',
+                  _ => '3:4',
+                },
+              );
+              return _themed(
+                SizedBox(
+                  width: 260,
+                  // The common case is reserving space for an image or
+                  // embed before it loads, so layout doesn't jump.
+                  child: PlinthAspectRatio(
+                    ratio: ratio,
+                    child: Container(
+                      color: const Color(0xFFE7F5FF),
+                      alignment: Alignment.center,
+                      child: const PlinthText('Reserved space'),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: '16:9',
             builder: (context) => _themed(
               SizedBox(
@@ -3088,6 +3367,39 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthGroup',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final count = context.knobs.int.slider(
+                label: 'children',
+                initialValue: 6,
+                min: 1,
+                max: 14,
+                description: 'Enough to overflow the width shows the '
+                    'wrap behaviour',
+              );
+              final wrap = context.knobs.boolean(
+                label: 'wrap',
+                initialValue: true,
+                description: 'On (the default) uses Wrap; off falls '
+                    'back to a Row that clips and overflows',
+              );
+              return _themed(
+                SizedBox(
+                  width: 360,
+                  child: PlinthGroup(
+                    gap: _gapKnob(context),
+                    wrap: wrap,
+                    mainAxisAlignment: _mainAxisAlignmentKnob(context),
+                    children: [
+                      for (var i = 0; i < count; i++)
+                        PlinthBadge('Tag ${i + 1}'),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'Wrapping row',
             builder: (context) => _themed(
@@ -3107,6 +3419,54 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthList',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final type = context.knobs.object.dropdown(
+                label: 'type',
+                options: PlinthListType.values,
+                initialOption: PlinthListType.bullet,
+                labelBuilder: (value) => value.name,
+              );
+              final withIcon = context.knobs.boolean(
+                label: 'per-item icon on the 2nd item',
+                description: 'An item icon overrides that item\'s '
+                    'marker while the others keep the default',
+              );
+              return _themed(
+                SizedBox(
+                  width: 360,
+                  child: PlinthList(
+                    type: type,
+                    spacing: _gapKnob(
+                      context,
+                      label: 'spacing',
+                      initial: PlinthSize.xs,
+                    ),
+                    size: _sizeKnob(context),
+                    items: [
+                      const PlinthListItem(
+                        PlinthText('Install the package'),
+                      ),
+                      PlinthListItem(
+                        const PlinthText('Wrap your app in a PlinthTheme'),
+                        icon: withIcon
+                            ? const Icon(
+                                Icons.check_circle,
+                                size: 16,
+                                color: Color(0xFF40C057),
+                              )
+                            : null,
+                      ),
+                      const PlinthListItem(
+                        PlinthText('Start using components'),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'Ordered',
             builder: (context) => _themed(
               PlinthList(
@@ -3123,6 +3483,30 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthContainer',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              PlinthContainer(
+                size: context.knobs.object.dropdown(
+                  label: 'size (max width)',
+                  options: PlinthContainerSize.values,
+                  initialOption: PlinthContainerSize.md,
+                  labelBuilder: (value) => value.name,
+                ),
+                padding: _gapKnob(context, label: 'padding'),
+                child: Container(
+                  color: const Color(0xFFE7F5FF),
+                  padding: const EdgeInsets.all(12),
+                  child: const PlinthText(
+                    'Capped at the chosen container width and centred — '
+                    'the standard "page content should not get absurdly '
+                    'wide on a big monitor" wrapper.',
+                    size: PlinthSize.sm,
+                  ),
+                ),
+              ),
+            ),
+          ),
           WidgetbookUseCase(
             name: 'xs width',
             builder: (context) => _themed(
@@ -3141,6 +3525,42 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthSpace',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              // Invisible on its own, so it's shown between two labels
+              // — the gap is the thing the knobs change.
+              final horizontal = context.knobs.boolean(
+                label: 'horizontal',
+                initialValue: true,
+              );
+              final amount = _gapKnob(
+                context,
+                label: 'w / h',
+                initial: PlinthSize.xl,
+              );
+              return _themed(
+                horizontal
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const PlinthText('Left', size: PlinthSize.sm),
+                          PlinthSpace(w: amount),
+                          const PlinthText('Right', size: PlinthSize.sm),
+                        ],
+                      )
+                    : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const PlinthText('Above', size: PlinthSize.sm),
+                          PlinthSpace(h: amount),
+                          const PlinthText('Below', size: PlinthSize.sm),
+                        ],
+                      ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'Horizontal',
             builder: (context) => _themed(
@@ -3180,6 +3600,44 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthSimpleGrid',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final columns = context.knobs.int.slider(
+                label: 'columns',
+                initialValue: 3,
+                min: 1,
+                max: 6,
+              );
+              final count = context.knobs.int.slider(
+                label: 'children',
+                initialValue: 6,
+                min: 1,
+                max: 12,
+              );
+              return _themed(
+                // Not scrollable or virtualized — it sizes to content
+                // and needs a bounded-width ancestor, so this supplies
+                // one rather than relying on the use-case layout.
+                SizedBox(
+                  width: 380,
+                  child: PlinthSimpleGrid(
+                    columns: columns,
+                    spacing: _gapKnob(context, label: 'spacing'),
+                    children: [
+                      for (var i = 0; i < count; i++)
+                        Container(
+                          height: 48,
+                          color: const Color(0xFFE7F5FF),
+                          alignment: Alignment.center,
+                          child: PlinthText('${i + 1}'),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: '3 columns',
             builder: (context) => _themed(
               SizedBox(
@@ -3206,6 +3664,38 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthFlex',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 360,
+                // PlinthGroup is this specialized to horizontal with
+                // wrap-by-default; reach for Flex when the direction
+                // itself needs to vary, which is what this knob shows.
+                child: PlinthFlex(
+                  direction: context.knobs.object.dropdown(
+                    label: 'direction',
+                    options: Axis.values,
+                    initialOption: Axis.horizontal,
+                    labelBuilder: (axis) => axis.name,
+                  ),
+                  gap: _gapKnob(context),
+                  mainAxisAlignment: _mainAxisAlignmentKnob(context),
+                  mainAxisSize: context.knobs.object.dropdown(
+                    label: 'mainAxisSize',
+                    options: MainAxisSize.values,
+                    initialOption: MainAxisSize.min,
+                    labelBuilder: (value) => value.name,
+                  ),
+                  children: const [
+                    PlinthBadge('Dart'),
+                    PlinthBadge('Flutter'),
+                    PlinthBadge('Widgets'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          WidgetbookUseCase(
             name: 'Horizontal',
             builder: (context) => _themed(
               PlinthFlex(
@@ -3222,6 +3712,50 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthImage',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              // The reason this exists over Image.network is the
+              // loading placeholder and error fallback, so the knob
+              // makes both reachable.
+              final broken = context.knobs.boolean(
+                label: 'broken src',
+                description: 'A failed URL shows a themed broken-image '
+                    'icon instead of surfacing a render error',
+              );
+              return _themed(
+                PlinthImage(
+                  src: broken
+                      ? 'https://example.invalid/missing.png'
+                      : 'https://picsum.photos/400/300',
+                  width: context.knobs.double.slider(
+                    label: 'width',
+                    initialValue: 240,
+                    min: 80,
+                    max: 360,
+                  ),
+                  height: context.knobs.double.slider(
+                    label: 'height',
+                    initialValue: 160,
+                    min: 80,
+                    max: 300,
+                  ),
+                  fit: context.knobs.object.dropdown(
+                    label: 'fit',
+                    options: const [
+                      BoxFit.cover,
+                      BoxFit.contain,
+                      BoxFit.fill,
+                      BoxFit.fitWidth,
+                    ],
+                    initialOption: BoxFit.cover,
+                    labelBuilder: (fit) => fit.name,
+                  ),
+                  radius: _radiusKnob(context),
+                ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'Network image',
             builder: (context) => _themed(
@@ -3241,6 +3775,55 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthText',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 360,
+                child: PlinthText(
+                  context.knobs.string(
+                    label: 'data',
+                    initialValue: 'The quick brown fox jumps over the lazy '
+                        'dog and keeps going well past one line.',
+                    maxLines: 3,
+                  ),
+                  // size resolves through theme.fontSizes rather than
+                  // a raw fontSize double.
+                  size: _sizeKnob(context),
+                  color: _colorKnob(context),
+                  italic: context.knobs.boolean(label: 'italic'),
+                  weight: context.knobs.objectOrNull.dropdown(
+                    label: 'weight',
+                    options: const [
+                      FontWeight.w400,
+                      FontWeight.w600,
+                      FontWeight.w700,
+                    ],
+                    labelBuilder: (weight) => 'w${weight.value}',
+                    defaultToNull: true,
+                  ),
+                  textAlign: context.knobs.objectOrNull.dropdown(
+                    label: 'textAlign',
+                    options: const [
+                      TextAlign.left,
+                      TextAlign.center,
+                      TextAlign.right,
+                    ],
+                    labelBuilder: (align) => align.name,
+                    defaultToNull: true,
+                  ),
+                  maxLines: context.knobs.intOrNull.slider(
+                    label: 'maxLines',
+                    initialValue: 2,
+                    min: 1,
+                    max: 5,
+                    defaultToNull: true,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ),
+          WidgetbookUseCase(
             name: 'All sizes',
             builder: (context) => _themed(
               Column(
@@ -3258,6 +3841,38 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthDivider',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final vertical = context.knobs.boolean(label: 'vertical');
+              final label = context.knobs.stringOrNull(
+                label: 'label',
+                initialValue: 'OR',
+                description: 'Centres a label with rules either side',
+                defaultToNull: true,
+              );
+              return _themed(
+                SizedBox(
+                  width: 300,
+                  child: PlinthDivider(
+                    label: label,
+                    vertical: vertical,
+                    // A VerticalDivider needs an explicit extent from
+                    // its parent to render visibly, so height is only
+                    // meaningful in the vertical case.
+                    height: vertical ? 80 : null,
+                    // A literal Color here, not a palette key — one of
+                    // the few components whose `color` is not a theme
+                    // ramp lookup.
+                    color: context.knobs.colorOrNull(
+                      label: 'color',
+                      defaultToNull: true,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'Plain',
             builder: (context) => _themed(const PlinthDivider()),
@@ -3336,6 +3951,28 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthAnchor',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              PlinthAnchor(
+                context.knobs.string(
+                  label: 'label',
+                  initialValue: 'Read the documentation',
+                ),
+                // Defaults to hover, matching conventional link
+                // affordance rather than always-underlined.
+                underline: context.knobs.object.dropdown(
+                  label: 'underline',
+                  options: PlinthAnchorUnderline.values,
+                  initialOption: PlinthAnchorUnderline.hover,
+                  labelBuilder: (value) => value.name,
+                ),
+                size: _sizeKnob(context),
+                color: _colorKnob(context),
+                onTap: () {},
+              ),
+            ),
+          ),
+          WidgetbookUseCase(
             name: 'Default',
             builder: (context) => _themed(
               PlinthAnchor('Forgot password?', onTap: () {}),
@@ -3366,6 +4003,32 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthBlockquote',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final icon = _iconKnob(context, label: 'icon');
+              return _themed(
+                SizedBox(
+                  width: 420,
+                  child: PlinthBlockquote(
+                    quote: context.knobs.string(
+                      label: 'quote',
+                      initialValue: 'The best way to predict the future is '
+                          'to invent it.',
+                      maxLines: 3,
+                    ),
+                    citation: context.knobs.stringOrNull(
+                      label: 'citation',
+                      initialValue: 'Alan Kay',
+                      defaultToNull: true,
+                    ),
+                    color: _colorKnob(context),
+                    icon: icon == null ? null : Icon(icon),
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'With citation',
             builder: (context) => _themed(
               const PlinthBlockquote(
@@ -3384,6 +4047,30 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthPaper',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 320,
+                child: PlinthPaper(
+                  p: _sizeKnob(context),
+                  shadow: _shadowKnob(context),
+                  withBorder: context.knobs.boolean(label: 'withBorder'),
+                  radius: _radiusKnob(context),
+                  bg: context.knobs.colorOrNull(
+                    label: 'bg',
+                    defaultToNull: true,
+                  ),
+                  child: const PlinthText(
+                    'The base surface PlinthCard builds on — reach for '
+                    'this when you want a raised container without card '
+                    'section conventions.',
+                    size: PlinthSize.sm,
+                  ),
+                ),
+              ),
+            ),
+          ),
           WidgetbookUseCase(
             name: 'All shadow levels',
             builder: (context) => _themed(
@@ -3406,6 +4093,54 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthCard',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              // Sections left null are omitted entirely rather than
+              // rendered empty, and a divider appears only between
+              // sections that are actually present — so toggling
+              // these is the thing worth seeing.
+              final withHeader = context.knobs.boolean(
+                label: 'header',
+                initialValue: true,
+              );
+              final withFooter = context.knobs.boolean(
+                label: 'footer',
+                initialValue: true,
+              );
+              return _themed(
+                SizedBox(
+                  width: 320,
+                  child: PlinthCard(
+                    p: _sizeKnob(context),
+                    shadow: _shadowKnob(context, initial: PlinthShadow.sm),
+                    withBorder: context.knobs.boolean(
+                      label: 'withBorder',
+                      initialValue: true,
+                    ),
+                    radius: _radiusKnob(context),
+                    header: withHeader
+                        ? const PlinthText(
+                            'Card header',
+                            weight: FontWeight.w600,
+                          )
+                        : null,
+                    footer: withFooter
+                        ? const PlinthText(
+                            'Card footer',
+                            size: PlinthSize.xs,
+                            color: 'gray',
+                          )
+                        : null,
+                    child: const PlinthText(
+                      'Card body content.',
+                      size: PlinthSize.sm,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'Body only',
             builder: (context) => _themed(
