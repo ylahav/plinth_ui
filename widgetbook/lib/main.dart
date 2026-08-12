@@ -84,6 +84,42 @@ String? _colorKnob(BuildContext context) {
   );
 }
 
+PlinthVariant _variantKnob(
+  BuildContext context, {
+  PlinthVariant initial = PlinthVariant.filled,
+}) {
+  return context.knobs.object.dropdown(
+    label: 'variant',
+    options: PlinthVariant.values,
+    initialOption: initial,
+    labelBuilder: (variant) => variant.name,
+  );
+}
+
+/// A short list of recognizable icons for the slots that take one.
+///
+/// A knob can only offer values it's given, and an icon has no useful
+/// text representation to type — so this trades completeness for a
+/// picker that reads as names rather than code points.
+const _iconOptions = <({String name, IconData icon})>[
+  (name: 'download', icon: Icons.download),
+  (name: 'check', icon: Icons.check),
+  (name: 'star', icon: Icons.star),
+  (name: 'settings', icon: Icons.settings),
+  (name: 'delete', icon: Icons.delete_outline),
+];
+
+IconData? _iconKnob(BuildContext context, {String label = 'leadingIcon'}) {
+  return context.knobs.objectOrNull
+      .dropdown(
+        label: label,
+        options: _iconOptions,
+        labelBuilder: (option) => option.name,
+        defaultToNull: true,
+      )
+      ?.icon;
+}
+
 PlinthSize? _radiusKnob(BuildContext context) {
   return context.knobs.objectOrNull.dropdown(
     label: 'radius',
@@ -113,11 +149,15 @@ PlinthSize? _radiusKnob(BuildContext context) {
 ///   `subtle` against `transparent`, or `xs` against `sm`, needs them
 ///   on screen together, which a single knob-driven instance can't do.
 ///
-/// Playgrounds currently exist for the Forms category; the remaining
-/// categories still have static use cases only. Follow the same shape
-/// when adding more: knobs for presentational props, `_Local` for any
-/// value the user should be able to change by interacting with the
-/// component itself.
+/// Playgrounds currently exist for the Buttons & Actions and Forms
+/// categories; the remaining six still have static use cases only.
+/// Follow the same shape when adding more: knobs for presentational
+/// props, `_Local` for any value the user should be able to change by
+/// interacting with the component itself, and a knob per prop the
+/// component actually accepts rather than a fixed set — several
+/// components deliberately default differently (badges to
+/// light/`sm`, action icons to `light`), and the playground should
+/// start where the widget does.
 class PlinthWidgetbookApp extends StatelessWidget {
   const PlinthWidgetbookApp({super.key});
 
@@ -140,6 +180,31 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthButton',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final leadingIcon = _iconKnob(context);
+              return _themed(
+                PlinthButton(
+                  variant: _variantKnob(context),
+                  size: _sizeKnob(context),
+                  color: _colorKnob(context),
+                  radius: _radiusKnob(context),
+                  fullWidth: context.knobs.boolean(label: 'fullWidth'),
+                  leadingIcon: leadingIcon == null ? null : Icon(leadingIcon),
+                  // Disabled is expressed by a null callback rather
+                  // than a flag, so the knob toggles the callback.
+                  onPressed: context.knobs
+                          .boolean(label: 'enabled', initialValue: true)
+                      ? () {}
+                      : null,
+                  child: Text(
+                    context.knobs.string(label: 'label', initialValue: 'Save'),
+                  ),
+                ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'Filled (default)',
             builder: (context) => _themed(
@@ -193,6 +258,26 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthBadge',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final leadingIcon = _iconKnob(context);
+              return _themed(
+                PlinthBadge(
+                  context.knobs.string(label: 'label', initialValue: 'New'),
+                  // Badges default to light/sm rather than the
+                  // filled/md every other component uses — matching
+                  // that here keeps the playground's starting point
+                  // the same as the widget's own default.
+                  variant: _variantKnob(context, initial: PlinthVariant.light),
+                  size: _sizeKnob(context, initial: PlinthSize.sm),
+                  color: _colorKnob(context),
+                  leadingIcon:
+                      leadingIcon == null ? null : Icon(leadingIcon, size: 12),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'All colors, light variant',
             builder: (context) => _themed(
               Wrap(
@@ -223,6 +308,30 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthActionIcon',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final icon = _iconKnob(context, label: 'icon');
+              final circle = context.knobs.boolean(label: 'circle');
+              return _themed(
+                PlinthActionIcon(
+                  icon: Icon(icon ?? Icons.settings),
+                  variant: _variantKnob(context, initial: PlinthVariant.light),
+                  size: _sizeKnob(context),
+                  color: _colorKnob(context),
+                  circle: circle,
+                  // radius is what rounds the square form, so it has
+                  // no effect once circle is on — hide it rather than
+                  // offer a control that silently does nothing.
+                  radius: circle ? null : _radiusKnob(context),
+                  onPressed: context.knobs
+                          .boolean(label: 'enabled', initialValue: true)
+                      ? () {}
+                      : null,
+                ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'All variants',
             builder: (context) => _themed(
@@ -257,6 +366,30 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthCopyButton',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              PlinthCopyButton(
+                value: context.knobs.string(
+                  label: 'value',
+                  initialValue: 'sk_live_51H8xExampleKey',
+                  description: 'The text written to the clipboard',
+                ),
+                size: _sizeKnob(context),
+                color: _colorKnob(context),
+                confirmDuration: Duration(
+                  milliseconds: context.knobs.int.slider(
+                    label: 'confirmDuration (ms)',
+                    initialValue: 2000,
+                    min: 250,
+                    max: 5000,
+                    description: 'How long the checkmark shows before '
+                        'reverting to the copy icon',
+                  ),
+                ),
+              ),
+            ),
+          ),
+          WidgetbookUseCase(
             name: 'Interactive',
             builder: (context) => _themed(
               const PlinthCopyButton(value: 'sk_live_51H8xExampleKey'),
@@ -268,6 +401,28 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthBurger',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final size = _sizeKnob(context);
+              final color = _colorKnob(context);
+              final enabled = context.knobs.boolean(
+                label: 'enabled',
+                initialValue: true,
+              );
+              return _themed(
+                _Local<bool>(
+                  initial: false,
+                  builder: (opened, onChanged) => PlinthBurger(
+                    opened: opened,
+                    onPressed: enabled ? () => onChanged(!opened) : null,
+                    size: size,
+                    color: color,
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'Interactive',
             builder: (context) => _themed(_BurgerDemo()),
           ),
@@ -276,6 +431,39 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthButtonGroup',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final count = context.knobs.int.slider(
+                label: 'children',
+                initialValue: 3,
+                min: 2,
+                max: 5,
+                description: 'The group only squares off *inner* '
+                    'corners, so the count is what makes that visible',
+              );
+              final variant = _variantKnob(
+                context,
+                initial: PlinthVariant.defaultVariant,
+              );
+              final size = _sizeKnob(context);
+              final color = _colorKnob(context);
+              return _themed(
+                PlinthButtonGroup(
+                  children: [
+                    for (var i = 0; i < count; i++)
+                      PlinthButton(
+                        variant: variant,
+                        size: size,
+                        color: color,
+                        onPressed: () {},
+                        child: Text('Item ${i + 1}'),
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'Default',
             builder: (context) => _themed(
