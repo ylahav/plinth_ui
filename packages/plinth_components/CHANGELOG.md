@@ -7,6 +7,24 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.6.1
+
+### Fixed
+- Long labels overflowed instead of wrapping. `PlinthCheckbox`,
+  `PlinthSwitch`, and `PlinthRadio` laid their label out at its full
+  intrinsic width, so a checkbox reading "I agree to the terms of
+  service" inside a narrow form painted overflow stripes rather than
+  wrapping to a second line — the consent checkbox being the case where
+  long labels are most common.
+- `PlinthButton` had the same problem with `fullWidth: true` and a
+  `leadingIcon`: the label could not shrink to the width the button was
+  given. Reachable whenever the width is constrained rather than
+  derived from the content, including at a large text scale.
+
+  Both were found by building a realistic sign-in form for the example
+  app's showcase, not by a component test — the components look correct
+  in isolation and only overflow once something else constrains them.
+
 ## 0.6.0
 
 ### Added

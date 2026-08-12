@@ -427,3 +427,420 @@ class AuthorCardExample extends StatelessWidget {
     );
   }
 }
+
+// ─────────────────────── Page Sections: Authentication ───────────────────────
+
+class SignInFormExample extends StatelessWidget {
+  const SignInFormExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 360,
+      child: PlinthCard(
+        withBorder: true,
+        p: PlinthSize.lg,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const PlinthTitle('Welcome back', order: 3),
+            const SizedBox(height: 4),
+            const PlinthText(
+              'Sign in to continue to your dashboard.',
+              size: PlinthSize.sm,
+              color: 'gray',
+            ),
+            const SizedBox(height: 20),
+            PlinthTextInput(
+              label: 'Email',
+              placeholder: 'you@example.com',
+              onChanged: (_) {},
+            ),
+            const SizedBox(height: 12),
+            PlinthPasswordInput(
+              label: 'Password',
+              placeholder: 'Your password',
+              onChanged: (_) {},
+            ),
+            const SizedBox(height: 12),
+            // Wrap rather than Row: at a large text scale these two
+            // no longer fit side by side in a 360-wide card, and a
+            // sign-in form is exactly where that must degrade rather
+            // than clip.
+            PlinthGroup(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              gap: PlinthSize.xs,
+              children: [
+                PlinthCheckbox(
+                  label: 'Remember me',
+                  value: true,
+                  size: PlinthSize.sm,
+                  onChanged: (_) {},
+                ),
+                PlinthAnchor('Forgot password?',
+                    size: PlinthSize.sm, onTap: () {}),
+              ],
+            ),
+            const SizedBox(height: 20),
+            PlinthButton(
+              fullWidth: true,
+              onPressed: () {},
+              child: const Text('Sign in'),
+            ),
+            const SizedBox(height: 16),
+            const PlinthDivider(label: 'OR'),
+            const SizedBox(height: 16),
+            PlinthButton(
+              variant: PlinthVariant.defaultVariant,
+              fullWidth: true,
+              leadingIcon: const Icon(Icons.g_mobiledata, size: 20),
+              onPressed: () {},
+              child: const Text('Continue with Google'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SignUpFormExample extends StatelessWidget {
+  const SignUpFormExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 360,
+      child: PlinthCard(
+        withBorder: true,
+        p: PlinthSize.lg,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const PlinthTitle('Create an account', order: 3),
+            const SizedBox(height: 20),
+            PlinthTextInput(label: 'Name', onChanged: (_) {}),
+            const SizedBox(height: 12),
+            PlinthTextInput(
+              label: 'Email',
+              placeholder: 'you@example.com',
+              onChanged: (_) {},
+            ),
+            const SizedBox(height: 12),
+            PlinthPasswordInput(
+              label: 'Password',
+              description: 'At least 12 characters.',
+              onChanged: (_) {},
+            ),
+            const SizedBox(height: 16),
+            PlinthCheckbox(
+              label: 'I agree to the terms of service',
+              value: false,
+              size: PlinthSize.sm,
+              onChanged: (_) {},
+            ),
+            const SizedBox(height: 20),
+            PlinthButton(
+              fullWidth: true,
+              onPressed: () {},
+              child: const Text('Create account'),
+            ),
+            const SizedBox(height: 12),
+            PlinthGroup(
+              mainAxisAlignment: MainAxisAlignment.center,
+              gap: PlinthSize.xs,
+              children: [
+                const PlinthText('Already have an account?',
+                    size: PlinthSize.sm, color: 'gray'),
+                PlinthAnchor('Sign in', size: PlinthSize.sm, onTap: () {}),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────── Application UI: Stats ───────────────────────────
+
+class StatTileRowExample extends StatelessWidget {
+  const StatTileRowExample({super.key});
+
+  static const _stats = [
+    (label: 'Revenue', value: r'$13,456', delta: '+12.4%', up: true),
+    (label: 'Active users', value: '2,340', delta: '+3.1%', up: true),
+    (label: 'Churn', value: '1.8%', delta: '-0.4%', up: false),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 560,
+      child: PlinthSimpleGrid(
+        columns: 3,
+        children: [
+          for (final stat in _stats)
+            PlinthPaper(
+              withBorder: true,
+              p: PlinthSize.md,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  PlinthText(
+                    stat.label.toUpperCase(),
+                    size: PlinthSize.xs,
+                    color: 'gray',
+                    weight: FontWeight.w700,
+                  ),
+                  const SizedBox(height: 8),
+                  PlinthTitle(stat.value, order: 3),
+                  const SizedBox(height: 8),
+                  PlinthGroup(
+                    gap: PlinthSize.xs,
+                    children: [
+                      Icon(
+                        stat.up ? Icons.trending_up : Icons.trending_down,
+                        size: 14,
+                        color:
+                            context.plinth.color(stat.up ? 'green' : 'red', 6),
+                      ),
+                      PlinthText(
+                        stat.delta,
+                        size: PlinthSize.xs,
+                        color: stat.up ? 'green' : 'red',
+                        weight: FontWeight.w600,
+                      ),
+                      const PlinthText('vs last month',
+                          size: PlinthSize.xs, color: 'gray'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class StatWithProgressExample extends StatelessWidget {
+  const StatWithProgressExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 320,
+      child: PlinthPaper(
+        withBorder: true,
+        p: PlinthSize.md,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                PlinthText('Storage used', weight: FontWeight.w600),
+                PlinthBadge('Pro', color: 'grape'),
+              ],
+            ),
+            const SizedBox(height: 4),
+            const PlinthText('68 GB of 100 GB',
+                size: PlinthSize.sm, color: 'gray'),
+            const SizedBox(height: 16),
+            const PlinthProgress(value: 0.68),
+            const SizedBox(height: 12),
+            PlinthAnchor('Manage plan', size: PlinthSize.sm, onTap: () {}),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────── Page Sections: Error pages ───────────────────────
+
+class NotFoundPageExample extends StatelessWidget {
+  const NotFoundPageExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 460,
+      child: PlinthCenter(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const PlinthTitle('404', color: 'gray'),
+            const SizedBox(height: 8),
+            const PlinthTitle('Nothing to see here', order: 3),
+            const SizedBox(height: 8),
+            const PlinthText(
+              'The page you are looking for was moved, removed, or never '
+              'existed in the first place.',
+              size: PlinthSize.sm,
+              color: 'gray',
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            PlinthGroup(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                PlinthButton(
+                  variant: PlinthVariant.defaultVariant,
+                  onPressed: () {},
+                  child: const Text('Go back'),
+                ),
+                PlinthButton(
+                  onPressed: () {},
+                  child: const Text('Take me home'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ServerErrorPageExample extends StatelessWidget {
+  const ServerErrorPageExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 460,
+      child: PlinthCenter(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const PlinthThemeIcon(
+              icon: Icon(Icons.cloud_off),
+              variant: PlinthVariant.light,
+              color: 'red',
+              size: PlinthSize.xl,
+            ),
+            const SizedBox(height: 16),
+            const PlinthTitle('Something went wrong', order: 3),
+            const SizedBox(height: 8),
+            const PlinthText(
+              'Our servers could not handle that request. We have been '
+              'notified and are looking into it.',
+              size: PlinthSize.sm,
+              color: 'gray',
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            const PlinthCode('request_id: 7f3c9a21'),
+            const SizedBox(height: 20),
+            PlinthButton(onPressed: () {}, child: const Text('Try again')),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ────────────────────────── Application UI: Footers ──────────────────────────
+
+class SimpleFooterExample extends StatelessWidget {
+  const SimpleFooterExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 560,
+      child: PlinthPaper(
+        withBorder: true,
+        p: PlinthSize.md,
+        child: Row(
+          children: [
+            const PlinthText('Acme', weight: FontWeight.w700),
+            const SizedBox(width: 12),
+            const PlinthText('© 2026', size: PlinthSize.xs, color: 'gray'),
+            const Spacer(),
+            PlinthGroup(
+              gap: PlinthSize.md,
+              children: [
+                PlinthAnchor('Privacy', size: PlinthSize.sm, onTap: () {}),
+                PlinthAnchor('Terms', size: PlinthSize.sm, onTap: () {}),
+                PlinthAnchor('Contact', size: PlinthSize.sm, onTap: () {}),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class FooterWithLinkColumnsExample extends StatelessWidget {
+  const FooterWithLinkColumnsExample({super.key});
+
+  static const _columns = [
+    (title: 'Product', links: ['Features', 'Pricing', 'Changelog']),
+    (title: 'Company', links: ['About', 'Careers', 'Blog']),
+    (title: 'Support', links: ['Docs', 'Status', 'Contact']),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 560,
+      child: PlinthPaper(
+        withBorder: true,
+        p: PlinthSize.lg,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            PlinthSimpleGrid(
+              columns: 3,
+              children: [
+                for (final column in _columns)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PlinthText(column.title, weight: FontWeight.w600),
+                      const SizedBox(height: 8),
+                      for (final link in column.links)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: PlinthAnchor(link,
+                              size: PlinthSize.sm, onTap: () {}),
+                        ),
+                    ],
+                  ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            const PlinthDivider(),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const PlinthText('© 2026 Acme, Inc.',
+                    size: PlinthSize.xs, color: 'gray'),
+                PlinthGroup(
+                  gap: PlinthSize.xs,
+                  children: [
+                    PlinthActionIcon(
+                      icon: const Icon(Icons.code, size: 16),
+                      onPressed: () {},
+                      variant: PlinthVariant.subtle,
+                    ),
+                    PlinthActionIcon(
+                      icon: const Icon(Icons.rss_feed, size: 16),
+                      onPressed: () {},
+                      variant: PlinthVariant.subtle,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -82,7 +82,11 @@ class PlinthRadio<T> extends StatelessWidget {
               ring,
               if (label != null) ...[
                 SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.8),
-                PlinthText(label!, size: size),
+                // Flexible so a long label wraps instead of
+                // overflowing when the row is width-constrained by its
+                // parent — a consent checkbox in a narrow form is the
+                // usual case.
+                Flexible(child: PlinthText(label!, size: size)),
               ],
             ],
           ),

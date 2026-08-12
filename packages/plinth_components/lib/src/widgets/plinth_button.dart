@@ -77,18 +77,26 @@ class PlinthButton extends StatelessWidget {
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (leadingIcon != null) ...[
                     leadingIcon!,
                     SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
                   ],
-                  DefaultTextStyle(
-                    style: TextStyle(
-                      color: foreground,
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.w600,
+                  // Flexible so a label too long for the available
+                  // width shrinks instead of overflowing the button.
+                  // Reachable whenever the width is constrained rather
+                  // than derived from the content: fullWidth, a narrow
+                  // parent, or a large text scale.
+                  Flexible(
+                    child: DefaultTextStyle(
+                      style: TextStyle(
+                        color: foreground,
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      child: child,
                     ),
-                    child: child,
                   ),
                 ],
               ),

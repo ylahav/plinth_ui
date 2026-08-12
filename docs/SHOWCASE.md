@@ -29,25 +29,29 @@ code panel will quietly show something the demo no longer does.
 
 ## What exists
 
-12 examples across 3 categories, borrowing Mantine UI's own category
+20 examples across 3 categories, borrowing Mantine UI's own category
 names so the two are directly comparable.
 
 | Category | Subcategory | Examples |
 |---|---|---|
 | Application UI | Navbars | Simple navbar, Navbar with avatar |
 | Application UI | Headers | Centered header, Header with breadcrumbs |
+| Application UI | Stats | Stat tiles, Stat with progress |
+| Application UI | Footers | Simple footer, Footer with link columns |
 | Page Sections | Hero Sections | Centered hero, Split hero |
 | Page Sections | Feature Sections | Feature grid, Feature list |
+| Page Sections | Authentication | Sign in, Sign up |
+| Page Sections | Error Pages | 404 not found, 500 server error |
 | Blog UI | Article Cards | Simple article card, Article card with author |
 | Blog UI | Author Info | Inline author, Author card |
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 12. The gap is mostly whole
+Mantine UI has ~123 blocks against these 20. The gap is mostly whole
 subcategories with nothing in them, and — this is the point — **almost
-none of it is blocked on missing components.** An auth form is
-`PlinthTextInput` + `PlinthPasswordInput` + `PlinthButton` +
-`PlinthCard`, all of which ship today.
+none of it is blocked on missing components.** The Authentication,
+Stats, Error Pages, and Footers subcategories were all built from
+components that already shipped.
 
 ### Application UI
 
@@ -55,14 +59,14 @@ none of it is blocked on missing components.** An auth form is
 |---|---|---|---|
 | Navbars | 9 | 2 | Collapsible and sectioned variants are the obvious next ones, now that `PlinthAppShell` exists |
 | Headers | 6 | 2 | |
-| Footers | 4 | **0** | Nothing blocking — `PlinthGroup` + `PlinthAnchor` |
+| Footers | 4 | 2 | |
 | Grids | 3 | **0** | `PlinthGrid` landed in 0.5.0, so these are now buildable |
 | User info and controls | 8 | **0** | `PlinthAvatar` + `PlinthMenu` cover it |
 | Inputs | 14 | **0** | Composed field arrangements, not new inputs |
 | Buttons | 6 | **0** | |
 | Sliders | 6 | **0** | |
 | Application cards | 7 | **0** | `PlinthCard` + `PlinthGroup` |
-| Stats | 9 | **0** | Stat tiles with a label, value, and trend — high value, nothing blocking |
+| Stats | 9 | 2 | |
 | Tables | 4 | **0** | `PlinthTable` takes plain strings only, so richer cells would need it extended first |
 | Dropzones | 1 | **0** | Needs `PlinthFileInput`, which doesn't exist yet |
 | Drag'n'Drop | 3 | **0** | Flutter's own `Draggable`/`DragTarget` |
@@ -74,10 +78,10 @@ none of it is blocked on missing components.** An auth form is
 |---|---|---|---|
 | Hero headers | 6 | 2 | |
 | Features section | 5 | 2 | |
-| Authentication | 4 | **0** | Sign-in and sign-up forms. Highest value here — every app needs one and every part exists |
+| Authentication | 4 | 2 | Sign-in and sign-up; password reset and a split-screen variant are the obvious next ones |
 | Frequently asked questions | 4 | **0** | `PlinthAccordion` already does the work |
 | Contact us section | 3 | **0** | |
-| Error pages | 5 | **0** | 404 and 500 layouts. Cheap and widely reused |
+| Error pages | 5 | 2 | 404 and 500; maintenance and permission-denied remain |
 | Banners | 3 | **0** | |
 
 ### Blog UI
@@ -92,13 +96,13 @@ none of it is blocked on missing components.** An auth form is
 
 Ordered by value against effort, given what already ships:
 
-1. **Authentication** — sign-in, sign-up, password reset. Every app
-   needs them, and every component exists.
-2. **Stats** — label/value/trend tiles. Small, reusable, and the most
-   copied kind of block in practice.
-3. **Error pages** — 404 and 500. Nearly free to build.
-4. **Footers** — the counterpart to the navbars already here.
-5. **FAQ** — `PlinthAccordion` with content wrapped around it.
+1. **FAQ** — `PlinthAccordion` with content wrapped around it. The
+   cheapest remaining block.
+2. **User info and controls** — an avatar with a menu, the account
+   corner every app has. `PlinthAvatar` + `PlinthMenu`.
+3. **Application cards** — `PlinthCard` + `PlinthGroup` arrangements.
+4. **Comments** — `PlinthAvatar` + `PlinthPaper`.
+5. **Banners** — `PlinthAlert` in page-width form.
 
 Three are blocked on component work rather than composition:
 **Dropzones** needs `PlinthFileInput`, **Tables** needs `PlinthTable` to
@@ -113,6 +117,13 @@ a `PlinthTableOfContents`. See
 3. Register an `ExampleEntry` in `showcase_data.dart` under the right
    subcategory, or add a new `SubcategoryData` if none fits.
 
-The gallery's smoke test doesn't cover these — it walks the Widgetbook
-tree, which is components only. `example/test/` is where a showcase
-test would go.
+`example/test/showcase_smoke_test.dart` builds every block and asserts
+none throws, so a new entry is covered the moment it is registered. It
+also checks each block has a non-empty code snippet — easy to forget,
+and a missing one renders an empty panel rather than failing.
+
+That test widens the viewport to 1400x2000 before pumping. Blocks are
+laid out for a page rather than a phone, and several would overflow the
+default 800x600. Widening is the right fix rather than wrapping in a
+horizontal scroller, which would hand them *unbounded* width and break
+every `Row` with an `Expanded` or `Spacer` in it.
