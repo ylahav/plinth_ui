@@ -9,24 +9,62 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | 0.0.1 | 0.0.1 — `publish_to: none` guard in place |
+| `plinth_core` | 0.1.0 | 0.1.0 |
 | `plinth_hooks` | 0.0.1 | 0.0.1 — `publish_to: none` guard in place |
-| `plinth_components` | 0.3.0 | **0.4.0 — unreleased** |
+| `plinth_components` | 0.6.0 | 0.6.0 |
 
 `plinth_components` depends on the other two by hosted version
-(`plinth_core: ^0.0.1`, `plinth_hooks: ^0.0.1`), not by path. Melos
+(`plinth_core: ^0.1.0`, `plinth_hooks: ^0.0.1`), not by path. Melos
 still writes a `pubspec_overrides.yaml` pointing at the local copies so
 the workspace builds against your working tree — see the caveat below.
 
-`plinth_core` and `plinth_hooks` carry `publish_to: none` as a guard
-against an accidental publish. Neither needs a release right now;
-remove the line only when you actually intend to push a new version,
-and restore it afterward.
+`plinth_hooks` still carries `publish_to: none` as a guard against an
+accidental publish; remove the line when you actually intend to push a
+new version. `plinth_core` and `plinth_components` don't: the guard
+blocks a publish outright rather than prompting, and `dart pub publish`
+confirms interactively anyway.
 
-## Releasing `plinth_components` 0.4.0
+## ⚠️ Publish in dependency order, or you ship a broken version
 
-The version is already bumped and the CHANGELOG entry is written
-(`PlinthFlex`, `PlinthImage`, `PlinthScrollArea`, `PlinthPortal`).
+**This has already gone wrong once.** `plinth_components` 0.6.0 was
+published while it depended on a `plinth_core` ^0.1.0 that hadn't been
+pushed yet. The result: `flutter pub add plinth_components` failed with
+*"plinth_core ^0.1.0 which doesn't match any versions"* for everyone,
+until core went out.
+
+Nothing in the repo catches this. Melos writes a
+`pubspec_overrides.yaml` pointing every package at its local sibling,
+so `melos run test`, `melos run analyze`, and CI all pass happily while
+a constraint points at a version pub.dev has never seen. The workspace
+is the one place the mistake is invisible.
+
+**If you raised a constraint on `plinth_core` or `plinth_hooks`,
+publish that package first.** Then components. See
+"Releasing a change to plinth_core or plinth_hooks" below for the full
+order.
+
+To check a constraint is satisfiable before publishing, resolve it
+somewhere the overrides don't reach:
+
+```bash
+# in a scratch directory, not the workspace
+flutter create resolve_check && cd resolve_check
+flutter pub add plinth_components   # fails loudly if a dep is unpublished
+```
+
+Note that pub caches its version listings on disk, so a package
+published moments ago can still look absent. If a resolve fails and you
+believe it shouldn't, clear the stale listing and retry:
+
+```bash
+# Windows: %LOCALAPPDATA%\Pub\Cache\hosted\pub.dev\.cache\
+# macOS/Linux: ~/.pub-cache/hosted/pub.dev/.cache/
+rm <PUB_CACHE>/hosted/pub.dev/.cache/plinth_core-versions.json
+```
+
+## Releasing `plinth_components`
+
+Bump the version, write the CHANGELOG entry, then:
 
 ```bash
 melos bootstrap
@@ -54,10 +92,11 @@ The dry run reports two hints, both of this form:
 > of its dependencies that users will have when they use it.
 
 This is real and worth taking seriously: your tests run against the
-**local** `plinth_core`/`plinth_hooks`, but consumers get the published
-0.0.1. If the local copies have drifted without a version bump, you'd
-be shipping something you never actually tested in the configuration
-users will get.
+**local** `plinth_core`/`plinth_hooks`, but consumers get whatever is
+published. If the local copies have drifted without a version bump,
+you'd be shipping something you never actually tested in the
+configuration users will get — and it's the same blind spot that let a
+constraint on an unpublished version reach pub.dev.
 
 To check rather than assume, diff the published archive against your
 working tree:
@@ -68,10 +107,8 @@ curl -s https://pub.dev/api/packages/plinth_core \
 # download that URL, extract, and diff its lib/ against packages/plinth_core/lib
 ```
 
-As of the 0.4.0 prep this came back clean — `plinth_hooks` is
-byte-identical to its published 0.0.1, and `plinth_core` differs only
-in `dart format` line reflow (identical once whitespace is stripped),
-so the override is not masking a behavioral difference.
+Last checked during the 0.4.0 prep, when both were clean. Re-run it
+whenever a leaf package has changed without a release.
 
 If a future check *does* find a real difference, the fix is to bump and
 publish that package first, then raise the constraint in
@@ -82,8 +119,8 @@ publish that package first, then raise the constraint in
 Order matters, because pub.dev resolves the hosted constraint:
 
 1. Bump the version and add a CHANGELOG entry in that package.
-2. Remove its `publish_to: none`, `flutter pub publish`, then restore
-   the guard line.
+2. `flutter pub publish` it. (`plinth_hooks` still has a
+   `publish_to: none` guard to remove first; `plinth_core` doesn't.)
 3. Raise the constraint in `packages/plinth_components/pubspec.yaml`
    (e.g. `plinth_core: ^0.1.0`).
 4. Bump `plinth_components` too — a consumer pinning the old version
@@ -91,17 +128,23 @@ Order matters, because pub.dev resolves the hosted constraint:
 5. `melos bootstrap && melos run analyze && melos run test`, then
    publish `plinth_components`.
 
+**Step 2 must actually happen before step 5.** Raising the constraint
+and publishing components without pushing the leaf package first is the
+exact mistake described at the top of this file — and the workspace
+will not warn you, because melos resolves the sibling from disk.
+
 `melos version` can bump packages in lockstep and generate CHANGELOG
 entries from commit history, which is worth using once more than one
 package moves at a time.
 
 ## Version strategy
 
-`plinth_core` and `plinth_hooks` are still at 0.0.1 and have been
-stable since the initial publish. `plinth_components` is the package
-that actually moves; it's on a 0.x line where minor bumps carry new
-components and may include breaking changes without a major bump, as
-its CHANGELOG header states.
+`plinth_hooks` is still at 0.0.1 and has been stable since the initial
+publish. `plinth_core` moves only when the token layer does — it went
+to 0.1.0 for the widened palette and the dark-theme tokens.
+`plinth_components` is the package that actually moves; it's on a 0.x
+line where minor bumps carry new components and may include breaking
+changes without a major bump, as its CHANGELOG header states.
 
 Worth deciding before 1.0: whether the two leaf packages should be
 brought up to a matching version line, or left to drift at their own
