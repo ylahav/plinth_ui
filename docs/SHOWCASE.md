@@ -29,7 +29,7 @@ code panel will quietly show something the demo no longer does.
 
 ## What exists
 
-32 examples across 3 categories, borrowing Mantine UI's own category
+42 examples across 3 categories, borrowing Mantine UI's own category
 names so the two are directly comparable.
 
 | Category | Subcategory | Examples |
@@ -37,6 +37,10 @@ names so the two are directly comparable.
 | Application UI | Navbars | Simple navbar, Navbar with avatar |
 | Application UI | Headers | Centered header, Header with breadcrumbs |
 | Application UI | Stats | Stat tiles, Stat with progress |
+| Application UI | Inputs | Search bar, Filter fields |
+| Application UI | Buttons | Toolbar actions, Destructive actions |
+| Application UI | Sliders | Price range filter, Setting sliders |
+| Application UI | Grids | Dashboard grid, Card gallery |
 | Application UI | Tables | Member table, Invoice table |
 | Application UI | User Info & Controls | User button, Profile card |
 | Application UI | Application Cards | Project card, Task card |
@@ -46,6 +50,7 @@ names so the two are directly comparable.
 | Page Sections | Authentication | Sign in, Sign up |
 | Page Sections | FAQ | FAQ accordion, FAQ with contact |
 | Page Sections | Banners | Announcement, Consent banner |
+| Page Sections | Contact Us | Contact form, Contact with details |
 | Page Sections | Error Pages | 404 not found, 500 server error |
 | Blog UI | Article Cards | Simple article card, Article card with author |
 | Blog UI | Comments | Single comment, Comment thread |
@@ -53,7 +58,7 @@ names so the two are directly comparable.
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 32. The gap is mostly whole
+Mantine UI has ~123 blocks against these 42. The gap is mostly whole
 subcategories with nothing in them, and — this is the point — **almost
 none of it is blocked on missing components.** The Authentication,
 Stats, Error Pages, and Footers subcategories were all built from
@@ -66,11 +71,11 @@ components that already shipped.
 | Navbars | 9 | 2 | Collapsible and sectioned variants are the obvious next ones, now that `PlinthAppShell` exists |
 | Headers | 6 | 2 | |
 | Footers | 4 | 2 | |
-| Grids | 3 | **0** | `PlinthGrid` landed in 0.5.0, so these are now buildable |
+| Grids | 3 | 2 | |
 | User info and controls | 8 | 2 | |
-| Inputs | 14 | **0** | Composed field arrangements, not new inputs |
-| Buttons | 6 | **0** | |
-| Sliders | 6 | **0** | |
+| Inputs | 14 | 2 | Composed field arrangements, not new inputs |
+| Buttons | 6 | 2 | |
+| Sliders | 6 | 2 | |
 | Application cards | 7 | 2 | |
 | Stats | 9 | 2 | |
 | Tables | 4 | 2 | Unblocked in 0.10.0 — `PlinthTable` cells are widgets now |
@@ -86,7 +91,7 @@ components that already shipped.
 | Features section | 5 | 2 | |
 | Authentication | 4 | 2 | Sign-in and sign-up; password reset and a split-screen variant are the obvious next ones |
 | Frequently asked questions | 4 | 2 | |
-| Contact us section | 3 | **0** | |
+| Contact us section | 3 | 2 | |
 | Error pages | 5 | 2 | 404 and 500; maintenance and permission-denied remain |
 | Banners | 3 | 2 | |
 
@@ -102,16 +107,19 @@ components that already shipped.
 
 Ordered by value against effort, given what already ships:
 
-1. **Inputs** — composed field arrangements (a search bar with a
-   button, an inline edit, a field with a unit suffix), not new inputs.
-2. **Buttons** and **Sliders** — the same idea for those.
-3. **Grids** — now that `PlinthGrid` exists.
-4. **Contact us** — a form section; every part already ships.
-5. **Navbars** and **Headers** beyond the two each already here —
-   collapsible and sectioned variants, now that `PlinthAppShell` exists.
+Every subcategory now has at least two examples, so what remains is
+depth rather than coverage — Mantine offers 6–9 variants where this has
+2. Worth adding where a variant differs in *kind* rather than in
+styling:
 
-**Dropzones** is no longer blocked: `PlinthFileInput` shipped in 0.9.0,
-and a dropzone is that plus a drag target.
+1. **Navbars** and **Headers** — collapsible and sectioned variants,
+   now that `PlinthAppShell` exists.
+2. **Dropzones** — unblocked by `PlinthFileInput` in 0.9.0; a dropzone
+   is that plus a drag target.
+3. **Application cards** and **Stats** — the kinds most often copied
+   into real apps, so more variants pay off fastest.
+4. **Drag'n'Drop** — Flutter's own `Draggable`/`DragTarget`, composed
+   with Plinth surfaces.
 
 One remains blocked on component work rather than composition:
 **Table of contents** wants a `PlinthTableOfContents`. See

@@ -1177,4 +1177,433 @@ return SizedBox(
   ),
 );
 ''',
+  'SearchBarExample': r'''
+return SizedBox(
+  width: 460,
+  child: Row(
+    crossAxisAlignment: CrossAxisAlignment.end,
+    children: [
+      Expanded(
+        child: PlinthAutocomplete(
+          placeholder: 'Search components…',
+          value: _query,
+          onChanged: (v) => setState(() => _query = v),
+          options: const [
+            'PlinthButton',
+            'PlinthTextInput',
+            'PlinthTable',
+            'PlinthAutocomplete',
+            'PlinthTagsInput',
+          ],
+        ),
+      ),
+      const SizedBox(width: 8),
+      PlinthButton(
+        leadingIcon: const Icon(Icons.search, size: 16),
+        onPressed: () {},
+        child: const Text('Search'),
+      ),
+    ],
+  ),
+);
+''',
+  'FilterFieldsExample': r'''
+return SizedBox(
+  width: 520,
+  child: PlinthPaper(
+    withBorder: true,
+    p: PlinthSize.md,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const PlinthText('Filters', weight: FontWeight.w600),
+        const SizedBox(height: 12),
+        PlinthGrid(
+          gutter: PlinthSize.sm,
+          children: [
+            PlinthGridCol(
+              span: 12,
+              spanMd: 6,
+              child: PlinthSelect<String>(
+                label: 'Status',
+                value: _status,
+                onChanged: (v) => setState(() => _status = v),
+                options: const [
+                  PlinthSelectOption('open', 'Open'),
+                  PlinthSelectOption('closed', 'Closed'),
+                ],
+              ),
+            ),
+            PlinthGridCol(
+              span: 12,
+              spanMd: 6,
+              child: PlinthTagsInput(
+                label: 'Labels',
+                placeholder: 'Add a label',
+                value: _tags,
+                onChanged: (t) => setState(() => _tags = t),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        PlinthGroup(
+          mainAxisAlignment: MainAxisAlignment.end,
+          gap: PlinthSize.xs,
+          children: [
+            PlinthButton(
+              variant: PlinthVariant.subtle,
+              onPressed: () {},
+              child: const Text('Reset'),
+            ),
+            PlinthButton(onPressed: () {}, child: const Text('Apply')),
+          ],
+        ),
+      ],
+    ),
+  ),
+);
+''',
+  'ToolbarActionsExample': r'''
+return SizedBox(
+  width: 520,
+  child: PlinthPaper(
+    withBorder: true,
+    p: PlinthSize.sm,
+    child: Row(
+      children: [
+        PlinthButtonGroup(
+          children: [
+            PlinthButton(
+              variant: PlinthVariant.defaultVariant,
+              size: PlinthSize.sm,
+              leadingIcon: const Icon(Icons.format_bold, size: 14),
+              onPressed: () {},
+              child: const Text('Bold'),
+            ),
+            PlinthButton(
+              variant: PlinthVariant.defaultVariant,
+              size: PlinthSize.sm,
+              leadingIcon: const Icon(Icons.format_italic, size: 14),
+              onPressed: () {},
+              child: const Text('Italic'),
+            ),
+          ],
+        ),
+        const Spacer(),
+        PlinthGroup(
+          gap: PlinthSize.xs,
+          wrap: false,
+          children: [
+            PlinthActionIcon(
+              icon: const Icon(Icons.undo, size: 16),
+              variant: PlinthVariant.subtle,
+              onPressed: () {},
+            ),
+            const PlinthActionIcon(
+              icon: Icon(Icons.redo, size: 16),
+              variant: PlinthVariant.subtle,
+              onPressed: null,
+            ),
+            PlinthButton(
+              size: PlinthSize.sm,
+              onPressed: () {},
+              child: const Text('Publish'),
+            ),
+          ],
+        ),
+      ],
+    ),
+  ),
+);
+''',
+  'DestructiveActionsExample': r'''
+return SizedBox(
+  width: 420,
+  child: PlinthCard(
+    withBorder: true,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const PlinthTitle('Delete workspace', order: 5),
+        const SizedBox(height: 6),
+        const PlinthText(
+          'Every project, member, and invoice goes with it. This '
+          'cannot be undone.',
+          size: PlinthSize.sm,
+          color: 'gray',
+        ),
+        const SizedBox(height: 16),
+        PlinthGroup(
+          mainAxisAlignment: MainAxisAlignment.end,
+          gap: PlinthSize.xs,
+          children: [
+            PlinthButton(
+              variant: PlinthVariant.defaultVariant,
+              onPressed: () {},
+              child: const Text('Cancel'),
+            ),
+            PlinthButton(
+              color: 'red',
+              leadingIcon: const Icon(Icons.delete_outline, size: 16),
+              onPressed: () {},
+              child: const Text('Delete'),
+            ),
+          ],
+        ),
+      ],
+    ),
+  ),
+);
+''',
+  'PriceRangeFilterExample': r'''
+return SizedBox(
+  width: 360,
+  child: PlinthPaper(
+    withBorder: true,
+    p: PlinthSize.md,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Expanded(
+              child: PlinthText('Price range', weight: FontWeight.w600),
+            ),
+            PlinthText(
+              '\$${_range.start.round()} – \$${_range.end.round()}',
+              size: PlinthSize.sm,
+              color: 'gray',
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        PlinthRangeSlider(
+          values: _range,
+          divisions: 20,
+          onChanged: (v) => setState(() => _range = v),
+        ),
+      ],
+    ),
+  ),
+);
+''',
+  'SettingSlidersExample': r'''
+return SizedBox(
+  width: 360,
+  child: Column(
+    children: [
+      _SliderRow(
+        icon: Icons.volume_up_outlined,
+        label: 'Volume',
+        value: _volume,
+        onChanged: (v) => setState(() => _volume = v),
+      ),
+      const SizedBox(height: 8),
+      _SliderRow(
+        icon: Icons.brightness_6_outlined,
+        label: 'Brightness',
+        value: _brightness,
+        onChanged: (v) => setState(() => _brightness = v),
+      ),
+    ],
+  ),
+);
+''',
+  'DashboardGridExample': r'''
+return const SizedBox(
+  width: 560,
+  child: PlinthGrid(
+    children: [
+      PlinthGridCol(
+        span: 12,
+        spanMd: 8,
+        child: _GridPanel(title: 'Traffic', height: 120),
+      ),
+      PlinthGridCol(
+        span: 12,
+        spanMd: 4,
+        child: _GridPanel(title: 'Conversion', height: 120),
+      ),
+      PlinthGridCol(
+        span: 12,
+        spanMd: 4,
+        child: _GridPanel(title: 'Signups', height: 90),
+      ),
+      PlinthGridCol(
+        span: 12,
+        spanMd: 4,
+        child: _GridPanel(title: 'Churn', height: 90),
+      ),
+      PlinthGridCol(
+        span: 12,
+        spanMd: 4,
+        child: _GridPanel(title: 'Revenue', height: 90),
+      ),
+    ],
+  ),
+);
+''',
+  'CardGalleryGridExample': r'''
+return SizedBox(
+  width: 560,
+  child: PlinthGrid(
+    children: [
+      for (final item in const [
+        (title: 'Starter', price: r'$0', tone: 'gray'),
+        (title: 'Pro', price: r'$29', tone: 'blue'),
+        (title: 'Team', price: r'$99', tone: 'grape'),
+      ])
+        PlinthGridCol(
+          span: 12,
+          spanSm: 4,
+          child: PlinthCard(
+            withBorder: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PlinthBadge(item.title, color: item.tone),
+                const SizedBox(height: 8),
+                PlinthTitle(item.price, order: 3),
+                const SizedBox(height: 4),
+                const PlinthText('per month',
+                    size: PlinthSize.xs, color: 'gray'),
+                const SizedBox(height: 12),
+                PlinthButton(
+                  fullWidth: true,
+                  variant: PlinthVariant.light,
+                  color: item.tone,
+                  onPressed: () {},
+                  child: const Text('Choose'),
+                ),
+              ],
+            ),
+          ),
+        ),
+    ],
+  ),
+);
+''',
+  'ContactFormExample': r'''
+return SizedBox(
+  width: 420,
+  child: PlinthCard(
+    withBorder: true,
+    p: PlinthSize.lg,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const PlinthTitle('Get in touch', order: 3),
+        const SizedBox(height: 4),
+        const PlinthText(
+          'We usually reply within a working day.',
+          size: PlinthSize.sm,
+          color: 'gray',
+        ),
+        const SizedBox(height: 20),
+        PlinthTextInput(label: 'Name', onChanged: (_) {}),
+        const SizedBox(height: 12),
+        PlinthTextInput(
+          label: 'Email',
+          placeholder: 'you@example.com',
+          onChanged: (_) {},
+        ),
+        const SizedBox(height: 12),
+        PlinthTextarea(
+          label: 'Message',
+          placeholder: 'How can we help?',
+          onChanged: (_) {},
+        ),
+        const SizedBox(height: 20),
+        PlinthButton(
+          fullWidth: true,
+          onPressed: () {},
+          child: const Text('Send message'),
+        ),
+      ],
+    ),
+  ),
+);
+''',
+  'ContactWithDetailsExample': r'''
+return SizedBox(
+  width: 560,
+  child: PlinthGrid(
+    children: [
+      PlinthGridCol(
+        span: 12,
+        spanMd: 5,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const PlinthTitle('Contact us', order: 4),
+            const SizedBox(height: 16),
+            for (final (icon, label, value) in _details)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Row(
+                  children: [
+                    PlinthThemeIcon(
+                      icon: Icon(icon),
+                      variant: PlinthVariant.light,
+                      size: PlinthSize.sm,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          PlinthText(label,
+                              size: PlinthSize.xs, color: 'gray'),
+                          PlinthText(
+                            value,
+                            size: PlinthSize.sm,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+      PlinthGridCol(
+        span: 12,
+        spanMd: 7,
+        child: PlinthPaper(
+          withBorder: true,
+          p: PlinthSize.md,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              PlinthTextInput(
+                label: 'Email',
+                placeholder: 'you@example.com',
+                onChanged: (_) {},
+              ),
+              const SizedBox(height: 12),
+              PlinthTextarea(
+                label: 'Message',
+                minLines: 2,
+                maxLines: 4,
+                onChanged: (_) {},
+              ),
+              const SizedBox(height: 16),
+              PlinthButton(
+                fullWidth: true,
+                onPressed: () {},
+                child: const Text('Send'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ],
+  ),
+);
+''',
 };

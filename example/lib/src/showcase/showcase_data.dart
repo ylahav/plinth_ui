@@ -74,6 +74,30 @@ final List<CategoryData> showcaseCategories = [
             'Project card', _projectCard, exampleCode['ProjectCardExample']!),
         ExampleEntry('Task card', _taskCard, exampleCode['TaskCardExample']!),
       ]),
+      SubcategoryData('Inputs', Icons.input, [
+        ExampleEntry(
+            'Search bar', _searchBar, exampleCode['SearchBarExample']!),
+        ExampleEntry('Filter fields', _filterFields,
+            exampleCode['FilterFieldsExample']!),
+      ]),
+      SubcategoryData('Buttons', Icons.smart_button_outlined, [
+        ExampleEntry('Toolbar actions', _toolbarActions,
+            exampleCode['ToolbarActionsExample']!),
+        ExampleEntry('Destructive actions', _destructiveActions,
+            exampleCode['DestructiveActionsExample']!),
+      ]),
+      SubcategoryData('Sliders', Icons.tune, [
+        ExampleEntry('Price range filter', _priceRangeFilter,
+            exampleCode['PriceRangeFilterExample']!),
+        ExampleEntry('Setting sliders', _settingSliders,
+            exampleCode['SettingSlidersExample']!),
+      ]),
+      SubcategoryData('Grids', Icons.grid_view, [
+        ExampleEntry('Dashboard grid', _dashboardGrid,
+            exampleCode['DashboardGridExample']!),
+        ExampleEntry('Card gallery', _cardGalleryGrid,
+            exampleCode['CardGalleryGridExample']!),
+      ]),
       SubcategoryData('Tables', Icons.table_rows_outlined, [
         ExampleEntry(
             'Member table', _memberTable, exampleCode['MemberTableExample']!),
@@ -122,6 +146,12 @@ final List<CategoryData> showcaseCategories = [
             exampleCode['AnnouncementBannerExample']!),
         ExampleEntry('Consent banner', _consentBanner,
             exampleCode['ConsentBannerExample']!),
+      ]),
+      SubcategoryData('Contact Us', Icons.alternate_email, [
+        ExampleEntry(
+            'Contact form', _contactForm, exampleCode['ContactFormExample']!),
+        ExampleEntry('Contact with details', _contactWithDetails,
+            exampleCode['ContactWithDetailsExample']!),
       ]),
       SubcategoryData('Error Pages', Icons.error_outline, [
         ExampleEntry('404 not found', _notFoundPage,
@@ -206,3 +236,16 @@ Widget _announcementBanner(BuildContext context) =>
 Widget _consentBanner(BuildContext context) => const ConsentBannerExample();
 Widget _memberTable(BuildContext context) => const MemberTableExample();
 Widget _invoiceTable(BuildContext context) => const InvoiceTableExample();
+Widget _searchBar(BuildContext context) => const SearchBarExample();
+Widget _filterFields(BuildContext context) => const FilterFieldsExample();
+Widget _toolbarActions(BuildContext context) => const ToolbarActionsExample();
+Widget _destructiveActions(BuildContext context) =>
+    const DestructiveActionsExample();
+Widget _priceRangeFilter(BuildContext context) =>
+    const PriceRangeFilterExample();
+Widget _settingSliders(BuildContext context) => const SettingSlidersExample();
+Widget _dashboardGrid(BuildContext context) => const DashboardGridExample();
+Widget _cardGalleryGrid(BuildContext context) => const CardGalleryGridExample();
+Widget _contactForm(BuildContext context) => const ContactFormExample();
+Widget _contactWithDetails(BuildContext context) =>
+    const ContactWithDetailsExample();
