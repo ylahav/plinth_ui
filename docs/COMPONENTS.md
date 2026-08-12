@@ -633,6 +633,16 @@ in the order they're worth building. Nothing here is scheduled — it's a
 map of the gaps, so you can tell "not built yet" from "deliberately
 absent" without reading the source.
 
+**Scope:** this covers the *core component* layer — mantine.dev's
+catalog, the level this document describes. Mantine's other layer,
+[Mantine UI](https://ui.mantine.dev), is ~123 prebuilt *composed
+blocks* (navbars, hero sections, auth forms, stat cards) assembled from
+core components. Plinth's equivalent is the example app's showcase,
+which borrows the same three categories — Application UI, Page
+Sections, Blog UI — and currently has 12 examples against Mantine UI's
+123. Those gaps are a separate list from this one; nothing below is
+about them.
+
 ### Likely next
 
 - **`PlinthFileInput`** — a file picker. The form set has no way to
