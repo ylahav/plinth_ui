@@ -181,13 +181,12 @@ class _PlinthPinInputState extends State<PlinthPinInput> {
                   counterText: '',
                   contentPadding: EdgeInsets.zero,
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: theme.surface,
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(resolvedRadius),
                     borderSide: BorderSide(
-                      color: widget.error
-                          ? theme.color('red', 6)
-                          : const Color(0xFFCED4DA),
+                      color:
+                          widget.error ? theme.color('red', 6) : theme.border,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(

@@ -44,7 +44,7 @@ class PlinthLoadingOverlay extends StatelessWidget {
         if (visible)
           Positioned.fill(
             child: Container(
-              color: Colors.white.withValues(alpha: 0.75),
+              color: theme.surface.withValues(alpha: 0.75),
               child: Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 3,

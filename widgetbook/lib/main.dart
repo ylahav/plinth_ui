@@ -9,19 +9,36 @@ void main() => runApp(const PlinthWidgetbookApp());
 /// depend on Widgetbook's outer `MaterialApp` carrying the theme
 /// extension (avoids needing a Widgetbook theme addon just to get
 /// PlinthTheme registered).
-Widget _themed(Widget child, {Color background = Colors.white}) {
-  return Theme(
-    data: ThemeData(
-      useMaterial3: true,
-      extensions: [PlinthTheme.defaultTheme],
-    ),
-    child: Material(
-      color: background,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Align(alignment: Alignment.topLeft, child: child),
-      ),
-    ),
+Widget _themed(Widget child, {Color? background}) {
+  return Builder(
+    builder: (context) {
+      // Read the addon's brightness rather than pinning the light
+      // theme, so the Theme toolbar switches every use case at once.
+      // Falls back to light when no addon is configured.
+      final dark = Theme.of(context).brightness == Brightness.dark;
+      final plinth = dark ? PlinthTheme.darkTheme : PlinthTheme.defaultTheme;
+
+      return Theme(
+        data: ThemeData(
+          useMaterial3: true,
+          brightness: plinth.brightness,
+          extensions: [plinth],
+        ),
+        child: Material(
+          color: background ?? plinth.surface,
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: DefaultTextStyle(
+              // Without this, unstyled Text inside a use case keeps
+              // Material's default near-black and vanishes on a dark
+              // surface.
+              style: TextStyle(color: plinth.text, fontSize: 14),
+              child: Align(alignment: Alignment.topLeft, child: child),
+            ),
+          ),
+        ),
+      );
+    },
   );
 }
 
@@ -287,7 +304,37 @@ class PlinthWidgetbookApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Widgetbook.material(directories: plinthDirectories);
+    return Widgetbook.material(
+      directories: plinthDirectories,
+      addons: [
+        // Switches every use case at once. `_themed` reads the
+        // resulting brightness rather than the ThemeData itself, so a
+        // use case gets the matching PlinthTheme registered as an
+        // extension without the addon needing to know about Plinth.
+        MaterialThemeAddon(
+          themes: [
+            WidgetbookTheme(
+              name: 'Light',
+              data: ThemeData(
+                useMaterial3: true,
+                brightness: Brightness.light,
+                scaffoldBackgroundColor: PlinthTheme.defaultTheme.surface,
+                extensions: [PlinthTheme.defaultTheme],
+              ),
+            ),
+            WidgetbookTheme(
+              name: 'Dark',
+              data: ThemeData(
+                useMaterial3: true,
+                brightness: Brightness.dark,
+                scaffoldBackgroundColor: PlinthTheme.darkTheme.surface,
+                extensions: [PlinthTheme.darkTheme],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }
 

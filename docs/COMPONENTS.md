@@ -9,8 +9,51 @@ MaterialApp(
 )
 ```
 
+For dark mode, register `PlinthTheme.darkTheme` as well:
+
+```dart
+MaterialApp(
+  theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
+  darkTheme: ThemeData(extensions: [PlinthTheme.darkTheme]),
+)
+```
+
 Shared enums used throughout: `PlinthSize` (`xs, sm, md, lg, xl`) and
 `PlinthVariant` (`filled, light, outline, subtle, transparent, defaultVariant`).
+
+## Theme tokens
+
+Two kinds of color live on `PlinthTheme`, and components use them for
+different jobs.
+
+**Palette ramps** — `theme.color('blue', 6)`. Thirteen named ramps of
+ten shades each, the same in light and dark themes. Every `color:` prop
+on a component is a key into these. Shade 6 is the base a component
+fills with; 0–1 are tints for backgrounds, 7–9 are for contrast.
+
+**Chrome tokens** — the neutrals the ramps don't cover, and what makes
+a dark theme a value swap rather than a rewrite:
+
+| Token | What it paints |
+|---|---|
+| `surface` | Panels and field backgrounds: cards, modals, drawers, inputs |
+| `surfaceMuted` | Recessed fills: disabled inputs, `PlinthKbd`, segmented-control tracks |
+| `surfaceSunken` | Structure: dividers, progress tracks, skeletons |
+| `border` | Default hairlines around inputs and bordered containers |
+| `borderMuted` | Softer, decorative borders |
+| `text` / `textMuted` / `textDisabled` | Body, secondary, and disabled text |
+| `onFilled` | Foreground *on* a saturated fill — a filled button's label, a checked box's tick |
+| `shadow` / `scrim` | Elevation shadows, and the barrier behind a modal |
+
+`onFilled` deliberately doesn't follow `brightness`: a filled button is
+saturated in either theme, so its label stays light in both. Flipping
+it with the theme is how you end up with dark text on a dark-blue
+button.
+
+`brightness` is on the theme for the rare component that must branch
+directly. `PlinthTooltip` is the only one that does — it's deliberately
+inverted against the surface it floats over, so following `surface`
+would make it vanish into the background in dark mode.
 
 Looking for something that isn't here? **[Coming soon](#coming-soon)** at
 the end lists the components Plinth doesn't have yet and why, so a gap

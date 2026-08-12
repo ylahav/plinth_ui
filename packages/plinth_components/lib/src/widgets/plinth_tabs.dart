@@ -67,8 +67,8 @@ class PlinthTabs<T> extends StatelessWidget {
     final horizontalPadding = theme.spacing[size]!;
 
     return DecoratedBox(
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xFFE9ECEF))),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: theme.surfaceSunken)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

@@ -64,7 +64,7 @@ class _PlinthSkeletonState extends State<PlinthSkeleton> {
             width: widget.width,
             height: widget.height,
             decoration: BoxDecoration(
-              color: const Color(0xFFE9ECEF),
+              color: theme.surfaceSunken,
               borderRadius:
                   widget.circle ? null : BorderRadius.circular(resolvedRadius),
               shape: widget.circle ? BoxShape.circle : BoxShape.rectangle,

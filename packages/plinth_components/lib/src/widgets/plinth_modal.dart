@@ -94,7 +94,7 @@ class PlinthModal extends StatelessWidget {
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: _widths[size]!),
         child: Material(
-          color: Colors.white,
+          color: theme.surface,
           borderRadius: BorderRadius.circular(resolvedRadius),
           clipBehavior: Clip.antiAlias,
           child: PlinthBox(

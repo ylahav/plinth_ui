@@ -88,10 +88,10 @@ class PlinthChip extends StatelessWidget {
             vertical: _verticalPadding[size]!,
           ),
           decoration: BoxDecoration(
-            color: selected ? baseColor : Colors.white,
+            color: selected ? baseColor : theme.surface,
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: selected ? baseColor : const Color(0xFFCED4DA),
+              color: selected ? baseColor : theme.border,
             ),
           ),
           child: Row(
@@ -99,14 +99,14 @@ class PlinthChip extends StatelessWidget {
             children: [
               if (selected) ...[
                 Icon(Icons.check,
-                    size: _fontSizes[size]! + 2, color: Colors.white),
+                    size: _fontSizes[size]! + 2, color: theme.onFilled),
                 const SizedBox(width: 4),
               ],
               Text(
                 label,
                 style: TextStyle(
                   fontSize: _fontSizes[size],
-                  color: selected ? Colors.white : Colors.black87,
+                  color: selected ? theme.onFilled : theme.text,
                   fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),

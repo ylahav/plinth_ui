@@ -122,7 +122,7 @@ class PlinthDrawer extends StatelessWidget {
     final extent = _extents[size]!;
 
     final panel = Material(
-      color: Colors.white,
+      color: theme.surface,
       elevation: 8,
       child: SafeArea(
         child: PlinthBox(

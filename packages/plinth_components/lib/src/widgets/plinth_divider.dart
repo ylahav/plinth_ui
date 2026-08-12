@@ -35,7 +35,7 @@ class PlinthDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final resolvedColor = color ?? const Color(0xFFE9ECEF);
+    final resolvedColor = color ?? context.plinth.surfaceSunken;
 
     if (vertical) {
       return SizedBox(

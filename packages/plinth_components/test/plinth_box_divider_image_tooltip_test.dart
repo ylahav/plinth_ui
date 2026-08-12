@@ -191,6 +191,92 @@ void main() {
     });
   });
 
+  group('theme tokens reach the widgets', () {
+    Widget wrapDark(Widget child) {
+      return MaterialApp(
+        theme: ThemeData(extensions: [PlinthTheme.darkTheme]),
+        home: Scaffold(body: child),
+      );
+    }
+
+    Color paperColor(WidgetTester tester) {
+      final container = tester.widget<Container>(
+        find
+            .descendant(
+              of: find.byType(PlinthPaper),
+              matching: find.byType(Container),
+            )
+            .first,
+      );
+      return (container.decoration! as BoxDecoration).color!;
+    }
+
+    testWidgets('a surface follows the registered theme', (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthPaper(child: Text('Body'))),
+      );
+      expect(paperColor(tester), PlinthTheme.defaultTheme.surface);
+
+      await tester.pumpWidget(
+        wrapDark(const PlinthPaper(child: Text('Body'))),
+      );
+      // MaterialApp animates a theme change, and PlinthTheme.lerp
+      // snaps at the midpoint rather than interpolating each token —
+      // so the swap only lands once the transition is past halfway.
+      await tester.pumpAndSettle();
+
+      // The whole point of the token extraction: swapping the theme
+      // repaints the surface, where a hardcoded Colors.white would not
+      // have moved.
+      expect(paperColor(tester), PlinthTheme.darkTheme.surface);
+    });
+
+    testWidgets('an input border follows the registered theme', (tester) async {
+      Color borderOf(WidgetTester tester) {
+        final container = tester.widget<Container>(
+          find
+              .descendant(
+                of: find.byType(PlinthTextInput),
+                matching: find.byType(Container),
+              )
+              .first,
+        );
+        final decoration = container.decoration! as BoxDecoration;
+        return (decoration.border! as Border).top.color;
+      }
+
+      await tester.pumpWidget(_wrap(const PlinthTextInput()));
+      expect(borderOf(tester), PlinthTheme.defaultTheme.border);
+
+      await tester.pumpWidget(wrapDark(const PlinthTextInput()));
+      await tester.pumpAndSettle();
+      expect(borderOf(tester), PlinthTheme.darkTheme.border);
+    });
+
+    testWidgets('a filled button keeps its light label in the dark theme',
+        (tester) async {
+      await tester.pumpWidget(
+        wrapDark(
+          PlinthButton(onPressed: () {}, child: const Text('Save')),
+        ),
+      );
+
+      // onFilled deliberately doesn't follow brightness — the button's
+      // fill is saturated in either theme.
+      final style = tester
+          .widget<DefaultTextStyle>(
+            find
+                .descendant(
+                  of: find.byType(PlinthButton),
+                  matching: find.byType(DefaultTextStyle),
+                )
+                .last,
+          )
+          .style;
+      expect(style.color, PlinthTheme.darkTheme.onFilled);
+    });
+  });
+
   group('PlinthTooltip', () {
     testWidgets('renders its child', (tester) async {
       await tester.pumpWidget(

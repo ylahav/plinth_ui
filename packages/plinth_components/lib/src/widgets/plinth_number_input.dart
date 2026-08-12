@@ -130,7 +130,7 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
     } else if (_isFocused) {
       borderColor = theme.color(colorKey, 6);
     } else {
-      borderColor = const Color(0xFFCED4DA);
+      borderColor = theme.border;
     }
 
     final atMin = widget.min != null && widget.value <= widget.min!;
@@ -152,7 +152,7 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
             borderRadius: BorderRadius.circular(resolvedRadius),
             border: Border.all(
                 color: borderColor, width: _isFocused || hasError ? 2 : 1),
-            color: widget.enabled ? Colors.white : const Color(0xFFF1F3F5),
+            color: widget.enabled ? theme.surface : theme.surfaceMuted,
           ),
           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
           child: Row(
@@ -209,6 +209,8 @@ class _StepButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.plinth;
+
     return InkWell(
       onTap: enabled ? onTap : null,
       borderRadius: BorderRadius.circular(4),
@@ -217,7 +219,7 @@ class _StepButton extends StatelessWidget {
         child: Icon(
           icon,
           size: 16,
-          color: enabled ? Colors.black54 : Colors.black26,
+          color: enabled ? theme.textMuted : theme.textDisabled,
         ),
       ),
     );

@@ -63,18 +63,18 @@ class PlinthTable extends StatelessWidget {
     }
 
     return Table(
-      border: const TableBorder(
-        horizontalInside: BorderSide(color: Color(0xFFE9ECEF)),
-        bottom: BorderSide(color: Color(0xFFE9ECEF)),
+      border: TableBorder(
+        horizontalInside: BorderSide(color: theme.surfaceSunken),
+        bottom: BorderSide(color: theme.surfaceSunken),
       ),
       columnWidths: {
         for (var i = 0; i < columns.length; i++) i: const FlexColumnWidth(),
       },
       children: [
         TableRow(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             border:
-                Border(bottom: BorderSide(color: Color(0xFFDEE2E6), width: 2)),
+                Border(bottom: BorderSide(color: theme.borderMuted, width: 2)),
           ),
           children: [for (final column in columns) cell(column, header: true)],
         ),

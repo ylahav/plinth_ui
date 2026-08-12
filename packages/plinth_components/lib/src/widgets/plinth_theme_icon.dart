@@ -59,12 +59,12 @@ class PlinthThemeIcon extends StatelessWidget {
         circle ? dimension / 2 : theme.radius[radius ?? theme.defaultRadius]!;
 
     final (background, foreground) = switch (variant) {
-      PlinthVariant.filled => (baseColor, Colors.white),
+      PlinthVariant.filled => (baseColor, theme.onFilled),
       PlinthVariant.light => (lightColor, baseColor),
       PlinthVariant.outline => (Colors.transparent, baseColor),
       PlinthVariant.subtle => (Colors.transparent, baseColor),
       PlinthVariant.transparent => (Colors.transparent, baseColor),
-      PlinthVariant.defaultVariant => (const Color(0xFFF1F3F5), Colors.black87),
+      PlinthVariant.defaultVariant => (theme.surfaceMuted, theme.text),
     };
 
     return Container(

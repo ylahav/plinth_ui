@@ -80,8 +80,10 @@ class PlinthIndicator extends StatelessWidget {
       child: hasLabel
           ? Text(
               label!,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                // Sits on the coloured dot, so it follows onFilled
+                // rather than the surface behind the badge.
+                color: theme.onFilled,
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
               ),

@@ -126,8 +126,8 @@ class _AccordionTile extends StatelessWidget {
     final theme = context.plinth;
 
     return DecoratedBox(
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xFFE9ECEF))),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: theme.surfaceSunken)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

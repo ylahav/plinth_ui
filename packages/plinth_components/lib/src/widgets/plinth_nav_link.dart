@@ -62,7 +62,7 @@ class PlinthNavLink extends StatelessWidget {
                 IconTheme(
                   data: IconThemeData(
                     size: 18,
-                    color: active ? activeColor : Colors.black54,
+                    color: active ? activeColor : theme.textMuted,
                   ),
                   child: icon!,
                 ),

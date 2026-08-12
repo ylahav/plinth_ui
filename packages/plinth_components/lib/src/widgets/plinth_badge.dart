@@ -57,14 +57,14 @@ class PlinthBadge extends StatelessWidget {
     final lightColor = theme.color(colorKey, 1);
 
     final (background, foreground, border) = switch (variant) {
-      PlinthVariant.filled => (baseColor, Colors.white, null),
+      PlinthVariant.filled => (baseColor, theme.onFilled, null),
       PlinthVariant.light => (lightColor, baseColor, null),
       PlinthVariant.outline => (Colors.transparent, baseColor, baseColor),
       PlinthVariant.subtle => (Colors.transparent, baseColor, null),
       PlinthVariant.transparent => (Colors.transparent, baseColor, null),
       PlinthVariant.defaultVariant => (
-          const Color(0xFFF1F3F5),
-          Colors.black87,
+          theme.surfaceMuted,
+          theme.text,
           null,
         ),
     };

@@ -58,15 +58,15 @@ class PlinthCheckbox extends StatelessWidget {
       decoration: BoxDecoration(
         color: value
             ? (enabled ? baseColor : baseColor.withValues(alpha: 0.5))
-            : Colors.white,
+            : theme.surface,
         borderRadius: BorderRadius.circular(resolvedRadius),
         border: Border.all(
-          color: value ? Colors.transparent : const Color(0xFFCED4DA),
+          color: value ? Colors.transparent : theme.border,
           width: 1.5,
         ),
       ),
       child: value
-          ? Icon(Icons.check, size: boxSize * 0.7, color: Colors.white)
+          ? Icon(Icons.check, size: boxSize * 0.7, color: theme.onFilled)
           : null,
     );
 

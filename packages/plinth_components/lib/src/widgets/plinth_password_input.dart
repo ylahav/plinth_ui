@@ -80,7 +80,7 @@ class _PlinthPasswordInputState extends State<PlinthPasswordInput> {
     } else if (_isFocused) {
       borderColor = theme.color(colorKey, 6);
     } else {
-      borderColor = const Color(0xFFCED4DA);
+      borderColor = theme.border;
     }
 
     return Column(
@@ -101,7 +101,7 @@ class _PlinthPasswordInputState extends State<PlinthPasswordInput> {
               color: borderColor,
               width: _isFocused || hasError ? 2 : 1,
             ),
-            color: widget.enabled ? Colors.white : const Color(0xFFF1F3F5),
+            color: widget.enabled ? theme.surface : theme.surfaceMuted,
           ),
           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
           child: Row(
@@ -135,7 +135,7 @@ class _PlinthPasswordInputState extends State<PlinthPasswordInput> {
                         ? Icons.visibility_off_outlined
                         : Icons.visibility_outlined,
                     size: 18,
-                    color: Colors.black54,
+                    color: theme.textMuted,
                   ),
                 ),
               ),

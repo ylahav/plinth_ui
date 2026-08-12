@@ -37,9 +37,9 @@ class PlinthKbd extends StatelessWidget {
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3F5),
+        color: theme.surfaceMuted,
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: const Color(0xFFDEE2E6)),
+        border: Border.all(color: theme.borderMuted),
         boxShadow: const [
           BoxShadow(
               color: Color(0x1A000000), blurRadius: 0, offset: Offset(0, 1)),
@@ -51,7 +51,7 @@ class PlinthKbd extends StatelessWidget {
           fontSize: _fontSizes[size],
           fontFamily: 'monospace',
           fontWeight: FontWeight.w600,
-          color: Colors.black87,
+          color: theme.text,
         ),
       ),
     );

@@ -170,8 +170,7 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
     final hasError = widget.error != null && widget.error!.isNotEmpty;
     final colorKey = widget.color ?? theme.primaryColor;
     final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
-    final borderColor =
-        hasError ? theme.color('red', 6) : const Color(0xFFCED4DA);
+    final borderColor = hasError ? theme.color('red', 6) : theme.border;
 
     final selectedLabels = {
       for (final o in widget.options) o.value: o.label,
@@ -205,7 +204,7 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(resolvedRadius),
                 border: Border.all(color: borderColor, width: hasError ? 2 : 1),
-                color: widget.enabled ? Colors.white : const Color(0xFFF1F3F5),
+                color: widget.enabled ? theme.surface : theme.surfaceMuted,
               ),
               child: widget.value.isEmpty
                   ? Padding(

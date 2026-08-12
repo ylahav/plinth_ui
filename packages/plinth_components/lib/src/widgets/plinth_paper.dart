@@ -55,9 +55,9 @@ class PlinthPaper extends StatelessWidget {
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: bg ?? Colors.white,
+        color: bg ?? theme.surface,
         borderRadius: BorderRadius.circular(resolvedRadius),
-        border: withBorder ? Border.all(color: const Color(0xFFE9ECEF)) : null,
+        border: withBorder ? Border.all(color: theme.surfaceSunken) : null,
         boxShadow: _shadowFor(shadow),
       ),
       child: child,

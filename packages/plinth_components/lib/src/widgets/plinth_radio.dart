@@ -59,9 +59,9 @@ class PlinthRadio<T> extends StatelessWidget {
       height: dotSize,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.white,
+        color: theme.surface,
         border: Border.all(
-          color: selected ? baseColor : const Color(0xFFCED4DA),
+          color: selected ? baseColor : theme.border,
           width: selected ? dotSize * 0.28 : 1.5,
         ),
       ),

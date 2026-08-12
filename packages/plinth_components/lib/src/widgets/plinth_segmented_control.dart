@@ -78,7 +78,7 @@ class PlinthSegmentedControl<T> extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3F5),
+        color: theme.surfaceMuted,
         borderRadius: BorderRadius.circular(resolvedRadius + 3),
       ),
       child: fullWidth
@@ -111,6 +111,8 @@ class _Segment<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.plinth;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(radius),
@@ -121,7 +123,9 @@ class _Segment<T> extends StatelessWidget {
           vertical: verticalPadding,
         ),
         decoration: BoxDecoration(
-          color: selected ? Colors.white : Colors.transparent,
+          // The selected segment reads as a raised chip on the muted
+          // track behind it, so it takes the surface colour.
+          color: selected ? theme.surface : Colors.transparent,
           borderRadius: BorderRadius.circular(radius),
           boxShadow: selected
               ? [
@@ -137,7 +141,7 @@ class _Segment<T> extends StatelessWidget {
           style: TextStyle(
             fontSize: fontSize,
             fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-            color: selected ? fillColor : Colors.black54,
+            color: selected ? fillColor : theme.textMuted,
           ),
         ),
       ),

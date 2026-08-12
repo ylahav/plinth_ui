@@ -29,6 +29,34 @@ const Map<PlinthSize, double> kDefaultFontSizes = {
   PlinthSize.xl: 20,
 };
 
+/// Surface, text, and border colors for the light theme.
+///
+/// These are *not* drawn from the color ramps. A ramp answers "what
+/// does blue look like at shade 6"; these answer "what colour is a
+/// panel, a body paragraph, a hairline" — the neutral chrome every
+/// component paints regardless of which palette colour it was given.
+/// Keeping them here rather than as literals inside widgets is what
+/// makes a dark theme a matter of swapping values instead of editing
+/// forty files.
+const Color kLightSurface = Color(0xFFFFFFFF);
+const Color kLightSurfaceMuted = Color(0xFFF1F3F5);
+const Color kLightSurfaceSunken = Color(0xFFE9ECEF);
+const Color kLightBorder = Color(0xFFCED4DA);
+const Color kLightBorderMuted = Color(0xFFDEE2E6);
+const Color kLightText = Color(0xDD000000);
+const Color kLightTextMuted = Color(0x8A000000);
+const Color kLightTextDisabled = Color(0x42000000);
+
+/// The same set for the dark theme, using Mantine's `dark` ramp.
+const Color kDarkSurface = Color(0xFF1A1B1E);
+const Color kDarkSurfaceMuted = Color(0xFF25262B);
+const Color kDarkSurfaceSunken = Color(0xFF2C2E33);
+const Color kDarkBorder = Color(0xFF373A40);
+const Color kDarkBorderMuted = Color(0xFF2C2E33);
+const Color kDarkText = Color(0xFFC1C2C5);
+const Color kDarkTextMuted = Color(0xFF909296);
+const Color kDarkTextDisabled = Color(0xFF5C5F66);
+
 /// The design-token layer for Plinth. Every Plinth widget reads its
 /// colors, spacing, radius, and font sizes from an instance of this
 /// class rather than hardcoding values, so a single theme swap
@@ -52,6 +80,18 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     this.radius = kDefaultRadius,
     this.fontSizes = kDefaultFontSizes,
     this.defaultRadius = PlinthSize.sm,
+    this.brightness = Brightness.light,
+    this.surface = kLightSurface,
+    this.surfaceMuted = kLightSurfaceMuted,
+    this.surfaceSunken = kLightSurfaceSunken,
+    this.border = kLightBorder,
+    this.borderMuted = kLightBorderMuted,
+    this.text = kLightText,
+    this.textMuted = kLightTextMuted,
+    this.textDisabled = kLightTextDisabled,
+    this.onFilled = const Color(0xFFFFFFFF),
+    this.shadow = const Color(0xFF000000),
+    this.scrim = const Color(0xFF000000),
   });
 
   /// Named color palettes (e.g. 'blue', 'red', 'gray'), each with a
@@ -69,6 +109,54 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// The radius used when a component doesn't specify a [PlinthSize]
   /// for its `radius` prop.
   final PlinthSize defaultRadius;
+
+  /// Whether this theme reads as light or dark. Components rarely need
+  /// to branch on it — the tokens below already carry the difference —
+  /// but it's here for the cases that genuinely do, and for callers
+  /// deciding which theme to register.
+  final Brightness brightness;
+
+  /// Panel and field backgrounds: cards, modals, drawers, inputs.
+  final Color surface;
+
+  /// A step back from [surface], for fills that should read as
+  /// recessed rather than raised: disabled inputs, keyboard keys, the
+  /// track behind a segmented control.
+  final Color surfaceMuted;
+
+  /// A further step back, for dividers, progress tracks, and skeleton
+  /// placeholders — things that are structure rather than content.
+  final Color surfaceSunken;
+
+  /// The default hairline around inputs and bordered containers.
+  final Color border;
+
+  /// A softer border, for decoration rather than delineation.
+  final Color borderMuted;
+
+  /// Body text.
+  final Color text;
+
+  /// Secondary text: descriptions, captions, inactive labels.
+  final Color textMuted;
+
+  /// Text and icons in a disabled control.
+  final Color textDisabled;
+
+  /// Foreground for content sitting *on* a saturated fill — the label
+  /// of a filled button, the tick in a checked checkbox.
+  ///
+  /// Deliberately not tied to [brightness]: a filled button is
+  /// saturated in either theme, so its label stays white in both.
+  /// Flipping this with the theme is the classic way to end up with
+  /// dark text on a dark-blue button.
+  final Color onFilled;
+
+  /// Base color for elevation shadows, applied at low opacity.
+  final Color shadow;
+
+  /// Base color for the barrier behind a modal or drawer.
+  final Color scrim;
 
   /// Resolves a color name + shade index to a concrete [Color].
   /// Falls back to [primaryColor] if the name isn't found.
@@ -109,6 +197,34 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
       'yellow': _generateShades(const Color(0xFFFAB005)),
       'orange': _generateShades(const Color(0xFFFD7E14)),
     },
+  );
+
+  /// The same palette as [defaultTheme], with the neutral chrome
+  /// inverted.
+  ///
+  /// The color ramps are shared rather than darkened: a blue button
+  /// should be the same blue in either theme, and Mantine takes the
+  /// same approach. What changes is everything the ramps don't cover —
+  /// surfaces, text, and borders.
+  ///
+  /// ```dart
+  /// MaterialApp(
+  ///   theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
+  ///   darkTheme: ThemeData(extensions: [PlinthTheme.darkTheme]),
+  /// )
+  /// ```
+  static final PlinthTheme darkTheme = PlinthTheme(
+    primaryColor: defaultTheme.primaryColor,
+    colors: defaultTheme.colors,
+    brightness: Brightness.dark,
+    surface: kDarkSurface,
+    surfaceMuted: kDarkSurfaceMuted,
+    surfaceSunken: kDarkSurfaceSunken,
+    border: kDarkBorder,
+    borderMuted: kDarkBorderMuted,
+    text: kDarkText,
+    textMuted: kDarkTextMuted,
+    textDisabled: kDarkTextDisabled,
   );
 
   /// Generates a 10-shade ramp from a single base color, following
@@ -177,6 +293,18 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     Map<PlinthSize, double>? radius,
     Map<PlinthSize, double>? fontSizes,
     PlinthSize? defaultRadius,
+    Brightness? brightness,
+    Color? surface,
+    Color? surfaceMuted,
+    Color? surfaceSunken,
+    Color? border,
+    Color? borderMuted,
+    Color? text,
+    Color? textMuted,
+    Color? textDisabled,
+    Color? onFilled,
+    Color? shadow,
+    Color? scrim,
   }) {
     return PlinthTheme(
       colors: colors ?? this.colors,
@@ -185,6 +313,18 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
       radius: radius ?? this.radius,
       fontSizes: fontSizes ?? this.fontSizes,
       defaultRadius: defaultRadius ?? this.defaultRadius,
+      brightness: brightness ?? this.brightness,
+      surface: surface ?? this.surface,
+      surfaceMuted: surfaceMuted ?? this.surfaceMuted,
+      surfaceSunken: surfaceSunken ?? this.surfaceSunken,
+      border: border ?? this.border,
+      borderMuted: borderMuted ?? this.borderMuted,
+      text: text ?? this.text,
+      textMuted: textMuted ?? this.textMuted,
+      textDisabled: textDisabled ?? this.textDisabled,
+      onFilled: onFilled ?? this.onFilled,
+      shadow: shadow ?? this.shadow,
+      scrim: scrim ?? this.scrim,
     );
   }
 

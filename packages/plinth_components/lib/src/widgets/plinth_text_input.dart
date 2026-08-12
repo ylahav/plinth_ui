@@ -98,7 +98,7 @@ class _PlinthTextInputState extends State<PlinthTextInput> {
     } else if (_isFocused) {
       borderColor = theme.color(colorKey, 6);
     } else {
-      borderColor = const Color(0xFFCED4DA);
+      borderColor = theme.border;
     }
 
     return Column(
@@ -127,7 +127,7 @@ class _PlinthTextInputState extends State<PlinthTextInput> {
               color: borderColor,
               width: _isFocused || hasError ? 2 : 1,
             ),
-            color: widget.enabled ? Colors.white : const Color(0xFFF1F3F5),
+            color: widget.enabled ? theme.surface : theme.surfaceMuted,
           ),
           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
           child: Row(

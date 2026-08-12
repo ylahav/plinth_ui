@@ -46,7 +46,7 @@ class PlinthProgress extends StatelessWidget {
       borderRadius: BorderRadius.circular(resolvedRadius),
       child: Container(
         height: height,
-        color: trackColor ?? const Color(0xFFE9ECEF),
+        color: trackColor ?? theme.surfaceSunken,
         child: Align(
           alignment: Alignment.centerLeft,
           child: AnimatedFractionallySizedBox(

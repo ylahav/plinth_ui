@@ -9,6 +9,23 @@ breaking changes without a major version bump.
 
 ## 0.6.0
 
+### Added
+- **Dark mode support.** Every component now reads its surfaces, text,
+  and borders from `PlinthTheme` tokens instead of hardcoding them, so
+  registering `PlinthTheme.darkTheme` actually restyles the library.
+  Previously a `PlinthTextInput` painted a white box with black text
+  whatever theme you gave it — 40 of the widget files carried literal
+  colors.
+
+  The light theme's token values are the exact literals they replaced,
+  so this changes nothing visually in light mode; the golden test
+  confirms it.
+
+  `PlinthTooltip` is the one component that consults `brightness`
+  directly: it is deliberately inverted against the surface it floats
+  over, and following the surface token would make it disappear into
+  the background in dark mode.
+
 ### Changed
 - Requires `plinth_core` ^0.1.0, which widens the default palette from
   four colors to Mantine's standard thirteen. Colors that previously

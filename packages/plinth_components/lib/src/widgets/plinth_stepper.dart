@@ -78,7 +78,7 @@ class PlinthStepper extends StatelessWidget {
               child: Container(
                 height: 2,
                 margin: EdgeInsets.only(bottom: theme.spacing[PlinthSize.lg]!),
-                color: i < currentStep ? activeColor : const Color(0xFFE9ECEF),
+                color: i < currentStep ? activeColor : theme.surfaceSunken,
               ),
             ),
         ],
@@ -122,18 +122,18 @@ class _StepCircleAndLabel extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isFilled ? activeColor : Colors.white,
+              color: isFilled ? activeColor : theme.surface,
               border: Border.all(
-                color: isFilled ? activeColor : const Color(0xFFCED4DA),
+                color: isFilled ? activeColor : theme.border,
                 width: 2,
               ),
             ),
             child: state == _StepState.completed
-                ? const Icon(Icons.check, size: 16, color: Colors.white)
+                ? Icon(Icons.check, size: 16, color: theme.onFilled)
                 : Text(
                     '${index + 1}',
                     style: TextStyle(
-                      color: isFilled ? Colors.white : Colors.black54,
+                      color: isFilled ? theme.onFilled : theme.textMuted,
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
                     ),

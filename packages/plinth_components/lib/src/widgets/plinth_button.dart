@@ -52,6 +52,7 @@ class PlinthButton extends StatelessWidget {
       variant: variant,
       baseColor: baseColor,
       lightColor: theme.color(colorKey, 1),
+      theme: theme,
     );
 
     return SizedBox(
@@ -102,10 +103,11 @@ class PlinthButton extends StatelessWidget {
     required PlinthVariant variant,
     required Color baseColor,
     required Color lightColor,
+    required PlinthTheme theme,
   }) {
     switch (variant) {
       case PlinthVariant.filled:
-        return (baseColor, Colors.white, null);
+        return (baseColor, theme.onFilled, null);
       case PlinthVariant.light:
         return (lightColor, baseColor, null);
       case PlinthVariant.outline:
@@ -115,7 +117,7 @@ class PlinthButton extends StatelessWidget {
       case PlinthVariant.transparent:
         return (Colors.transparent, baseColor, null);
       case PlinthVariant.defaultVariant:
-        return (Colors.white, Colors.black87, const Color(0xFFCED4DA));
+        return (theme.surface, theme.text, theme.border);
     }
   }
 }

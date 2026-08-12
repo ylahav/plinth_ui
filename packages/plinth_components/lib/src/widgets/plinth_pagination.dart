@@ -78,7 +78,7 @@ class PlinthPagination extends StatelessWidget {
         onTap: enabled ? onTap : null,
         child: Icon(icon,
             size: dimension * 0.5,
-            color: enabled ? Colors.black87 : Colors.black26),
+            color: enabled ? theme.text : theme.textDisabled),
       );
     }
 
@@ -102,7 +102,7 @@ class PlinthPagination extends StatelessWidget {
               child: Text(
                 '$entry',
                 style: TextStyle(
-                  color: entry == page ? Colors.white : Colors.black87,
+                  color: entry == page ? theme.onFilled : theme.text,
                   fontWeight: entry == page ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),

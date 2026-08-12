@@ -44,7 +44,7 @@ class PlinthButtonGroup extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (i > 0) Container(width: 1, color: const Color(0xFFCED4DA)),
+                if (i > 0) Container(width: 1, color: theme.border),
                 ClipRRect(
                   borderRadius: BorderRadius.horizontal(
                     left:

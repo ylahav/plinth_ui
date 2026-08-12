@@ -66,8 +66,7 @@ class PlinthSelect<T> extends StatelessWidget {
     final verticalPadding = theme.spacing[size]! * 0.5;
     final horizontalPadding = theme.spacing[size]!;
 
-    final borderColor =
-        hasError ? theme.color('red', 6) : const Color(0xFFCED4DA);
+    final borderColor = hasError ? theme.color('red', 6) : theme.border;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,7 +89,7 @@ class PlinthSelect<T> extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(resolvedRadius),
               border: Border.all(color: borderColor, width: hasError ? 2 : 1),
-              color: enabled ? Colors.white : const Color(0xFFF1F3F5),
+              color: enabled ? theme.surface : theme.surfaceMuted,
             ),
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             child: DropdownButtonHideUnderline(

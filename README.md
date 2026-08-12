@@ -130,7 +130,13 @@ the sidebar.
 - **`PlinthTheme`** (`plinth_core`) — a `ThemeExtension` holding color
   ramps (curve-based 10-shade generator with non-linear lightness
   stops + shade-dependent saturation), spacing, radius, and font-size
-  scales.
+  scales, plus surface/text/border tokens for the neutral chrome the
+  ramps don't cover.
+- **Light and dark themes** — register `PlinthTheme.darkTheme`
+  alongside `defaultTheme` and the whole library follows. The ramps are
+  shared between them (a blue button is the same blue either way); only
+  the chrome inverts. See
+  **[docs/COMPONENTS.md § Theme tokens](docs/COMPONENTS.md#theme-tokens)**.
 - **75 components** across Primitives, Forms, Feedback, Data Display,
   Navigation, Surfaces, and Overlays — full list with props in
   **[docs/COMPONENTS.md](docs/COMPONENTS.md)**, kept current every round
@@ -239,14 +245,10 @@ intentional rather than bugs:
   visual logic. See `docs/TESTING.md`.
 - Consider hue-drift at the extremes of the color-shade ramp for
   richer darks/lights (currently hue is held fixed).
-- **Dark mode.** `PlinthTheme` has no notion of light/dark — no
-  brightness, and no surface, text, or border tokens — so 40 of the
-  widget files hardcode their non-palette colors (`Colors.white`
-  surfaces, `Color(0xFFCED4DA)` borders, `Colors.black87` text). A
-  `PlinthTextInput` paints a white box and black text whatever theme
-  you register. Extracting those into tokens is the prerequisite; done
-  so the light theme's values match today's literals, it changes
-  nothing visually and leaves the goldens valid.
+- Extend the composed-blocks showcase — 12 examples against Mantine
+  UI's 123, with Authentication, Stats, Error pages, and Footers
+  entirely empty. Most need no new components. See
+  **[docs/SHOWCASE.md](docs/SHOWCASE.md)**.
 
 ## Naming note
 

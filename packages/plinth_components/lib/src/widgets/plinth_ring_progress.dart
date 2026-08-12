@@ -54,7 +54,7 @@ class PlinthRingProgress extends StatelessWidget {
               value: value,
               thickness: thickness,
               fillColor: fillColor,
-              trackColor: trackColor ?? const Color(0xFFE9ECEF),
+              trackColor: trackColor ?? theme.surfaceSunken,
             ),
           ),
           if (label != null) label!,

@@ -57,7 +57,7 @@ class PlinthSwitch extends StatelessWidget {
       decoration: BoxDecoration(
         color: value
             ? (enabled ? baseColor : baseColor.withValues(alpha: 0.5))
-            : const Color(0xFFCED4DA),
+            : theme.border,
         borderRadius: BorderRadius.circular(trackSize.height / 2),
       ),
       child: AnimatedAlign(
@@ -67,12 +67,16 @@ class PlinthSwitch extends StatelessWidget {
         child: Container(
           width: thumbDiameter,
           height: thumbDiameter,
-          decoration: const BoxDecoration(
-            color: Colors.white,
+          decoration: BoxDecoration(
+            // The thumb stays light in both themes — it reads as a
+            // physical knob on the track, not as a surface.
+            color: theme.onFilled,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                  color: Colors.black26, blurRadius: 2, offset: Offset(0, 1)),
+                  color: theme.shadow.withValues(alpha: 0.15),
+                  blurRadius: 2,
+                  offset: const Offset(0, 1)),
             ],
           ),
         ),

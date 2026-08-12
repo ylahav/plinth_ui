@@ -83,7 +83,7 @@ class _Crumb extends StatelessWidget {
     if (isLast) {
       return Text(
         item.label,
-        style: const TextStyle(fontSize: 14, color: Colors.black54),
+        style: TextStyle(fontSize: 14, color: context.plinth.textMuted),
       );
     }
 

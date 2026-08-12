@@ -81,7 +81,7 @@ class _TimelineRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final dotColor = item.active ? activeColor : const Color(0xFFCED4DA);
+    final dotColor = item.active ? activeColor : theme.border;
 
     return IntrinsicHeight(
       child: Row(
@@ -95,14 +95,14 @@ class _TimelineRow extends StatelessWidget {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: item.active ? activeColor : Colors.white,
+                  color: item.active ? activeColor : theme.surface,
                   border: Border.all(color: dotColor, width: 2),
                 ),
                 child: item.icon != null
                     ? IconTheme(
                         data: IconThemeData(
                           size: 12,
-                          color: item.active ? Colors.white : Colors.black54,
+                          color: item.active ? theme.onFilled : theme.textMuted,
                         ),
                         child: item.icon!,
                       )
@@ -110,7 +110,7 @@ class _TimelineRow extends StatelessWidget {
               ),
               if (!isLast)
                 Expanded(
-                    child: Container(width: 2, color: const Color(0xFFE9ECEF))),
+                    child: Container(width: 2, color: theme.surfaceSunken)),
             ],
           ),
           SizedBox(width: theme.spacing[PlinthSize.sm]),

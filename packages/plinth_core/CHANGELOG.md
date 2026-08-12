@@ -10,6 +10,31 @@ breaking changes without a major version bump.
 ## 0.1.0
 
 ### Added
+- **Dark mode.** `PlinthTheme.darkTheme` sits alongside `defaultTheme`,
+  and a `brightness` field says which is which:
+
+  ```dart
+  MaterialApp(
+    theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
+    darkTheme: ThemeData(extensions: [PlinthTheme.darkTheme]),
+  )
+  ```
+
+  The color ramps are shared rather than darkened — a blue button is
+  the same blue in either theme, as in Mantine. What changes is the
+  neutral chrome the ramps never covered.
+- Surface, text, and border tokens for that chrome: `surface`,
+  `surfaceMuted`, `surfaceSunken`, `border`, `borderMuted`, `text`,
+  `textMuted`, `textDisabled`, plus `onFilled`, `shadow`, and `scrim`.
+
+  `onFilled` deliberately does not follow `brightness`: a filled
+  button is saturated in either theme, so its label stays light in
+  both. Flipping it with the theme is how you get dark text on a
+  dark-blue button.
+
+  The light values are exactly the literals components hardcoded
+  before, so registering `defaultTheme` renders identically to 0.0.1.
+
 - Nine more color ramps in `PlinthTheme.defaultTheme`, bringing it to
   Mantine's standard set: `pink`, `grape`, `violet`, `indigo`, `cyan`,
   `teal`, `lime`, `yellow`, and `orange` join `gray`, `red`, `blue`,

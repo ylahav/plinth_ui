@@ -88,7 +88,7 @@ class PlinthNotification extends StatelessWidget {
     final resolvedRadius = theme.radius[radius ?? PlinthSize.sm]!;
 
     return Material(
-      color: Colors.white,
+      color: theme.surface,
       elevation: 4,
       borderRadius: BorderRadius.circular(resolvedRadius),
       child: Container(
@@ -116,7 +116,7 @@ class PlinthNotification extends StatelessWidget {
                   if (title != null)
                     SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.5),
                   DefaultTextStyle(
-                    style: const TextStyle(color: Colors.black87, fontSize: 14),
+                    style: TextStyle(color: theme.text, fontSize: 14),
                     child: child,
                   ),
                 ],
@@ -127,7 +127,7 @@ class PlinthNotification extends StatelessWidget {
               InkWell(
                 onTap: onClose,
                 borderRadius: BorderRadius.circular(4),
-                child: const Icon(Icons.close, size: 16, color: Colors.black54),
+                child: Icon(Icons.close, size: 16, color: theme.textMuted),
               ),
             ],
           ],

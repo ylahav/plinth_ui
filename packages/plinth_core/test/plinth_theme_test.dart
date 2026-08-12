@@ -78,6 +78,22 @@ void main() {
       expect(bases, hasLength(theme.colors.length));
     });
 
+    test('light tokens keep the values components used to hardcode', () {
+      // These were literals scattered across forty widget files before
+      // they became tokens. Pinning them here is what makes that
+      // extraction provably appearance-neutral — if one drifts, the
+      // light theme changed and the goldens are stale.
+      final theme = PlinthTheme.defaultTheme;
+      expect(theme.surface, const Color(0xFFFFFFFF));
+      expect(theme.surfaceMuted, const Color(0xFFF1F3F5));
+      expect(theme.surfaceSunken, const Color(0xFFE9ECEF));
+      expect(theme.border, const Color(0xFFCED4DA));
+      expect(theme.borderMuted, const Color(0xFFDEE2E6));
+      expect(theme.text, const Color(0xDD000000)); // was Colors.black87
+      expect(theme.textMuted, const Color(0x8A000000)); // was black54
+      expect(theme.textDisabled, const Color(0x42000000)); // was black26
+    });
+
     test('spacing/radius/fontSizes cover every PlinthSize', () {
       final theme = PlinthTheme.defaultTheme;
       for (final size in PlinthSize.values) {
@@ -88,6 +104,56 @@ void main() {
         expect(theme.fontSizes[size], isNotNull,
             reason: 'missing fontSize for $size');
       }
+    });
+  });
+
+  group('PlinthTheme.darkTheme', () {
+    final light = PlinthTheme.defaultTheme;
+    final dark = PlinthTheme.darkTheme;
+
+    test('reports itself as dark', () {
+      expect(dark.brightness, Brightness.dark);
+      expect(light.brightness, Brightness.light);
+    });
+
+    test('inverts surfaces, text, and borders', () {
+      expect(dark.surface, isNot(light.surface));
+      expect(dark.surfaceMuted, isNot(light.surfaceMuted));
+      expect(dark.surfaceSunken, isNot(light.surfaceSunken));
+      expect(dark.border, isNot(light.border));
+      expect(dark.text, isNot(light.text));
+      expect(dark.textMuted, isNot(light.textMuted));
+    });
+
+    test('its surface is actually darker than its text', () {
+      // The direction matters, not just the difference: swapping two
+      // values would satisfy "they differ" while rendering dark text
+      // on a dark panel.
+      final surface = HSLColor.fromColor(dark.surface).lightness;
+      final text = HSLColor.fromColor(dark.text).lightness;
+      expect(surface, lessThan(text));
+    });
+
+    test('shares the color ramps rather than darkening them', () {
+      // A blue button should be the same blue in either theme; what
+      // changes is the neutral chrome around it.
+      expect(dark.colors, same(light.colors));
+      expect(dark.color('blue', 6), light.color('blue', 6));
+    });
+
+    test('keeps onFilled light in both themes', () {
+      // A filled button is saturated either way, so its label stays
+      // white. Flipping this with the theme is how you end up with
+      // dark text on a dark-blue button.
+      expect(dark.onFilled, light.onFilled);
+    });
+
+    test('copyWith carries the new tokens through', () {
+      final custom = light.copyWith(surface: const Color(0xFF123456));
+      expect(custom.surface, const Color(0xFF123456));
+      // Untouched tokens must survive the copy.
+      expect(custom.text, light.text);
+      expect(custom.border, light.border);
     });
   });
 }
