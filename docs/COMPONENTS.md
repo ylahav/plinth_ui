@@ -628,72 +628,130 @@ Tapping an item closes the controller *then* calls its `onTap`.
 
 ## Coming soon
 
-Components from Mantine's catalog that Plinth doesn't have yet, roughly
-in the order they're worth building. Nothing here is scheduled — it's a
-map of the gaps, so you can tell "not built yet" from "deliberately
-absent" without reading the source.
+Components in [Mantine's core catalog](https://mantine.dev/core/app-shell/)
+that Plinth doesn't have yet, grouped by Mantine's own sections and
+checked against its live component index. Nothing here is scheduled —
+it's a map of the gaps, so you can tell "not built yet" from
+"deliberately absent" without reading the source.
 
-**Scope:** this covers the *core component* layer — mantine.dev's
-catalog, the level this document describes. Mantine's other layer,
+**Scope:** this covers the *core component* layer, the level this
+document describes. Mantine's other layer,
 [Mantine UI](https://ui.mantine.dev), is ~123 prebuilt *composed
 blocks* (navbars, hero sections, auth forms, stat cards) assembled from
-core components. Plinth's equivalent is the example app's showcase,
-which borrows the same three categories — Application UI, Page
-Sections, Blog UI — and currently has 12 examples against Mantine UI's
-123. Those gaps are a separate list from this one; nothing below is
-about them.
+core components. Plinth's equivalent is the example app's showcase —
+see **[SHOWCASE.md](SHOWCASE.md)** for that gap list, which is separate
+from this one.
 
-### Likely next
+### Highest value
 
-- **`PlinthFileInput`** — a file picker. The form set has no way to
-  take a file at all, which is the largest hole in it.
-- **`PlinthAutocomplete`** — a text field with suggestions. `PlinthSelect`
-  covers choosing from a fixed list, but nothing here accepts free text
-  with completion.
+The gaps worth closing first, either because nothing here covers the
+need at all or because the work is mostly extraction:
+
+- **`PlinthFileInput`** + **`PlinthFileButton`** — the form set cannot
+  take a file at all. The largest single hole in it.
+- **`PlinthAutocomplete`** — a text field with suggestions.
+  `PlinthSelect` covers picking from a fixed list; nothing accepts free
+  text with completion.
 - **`PlinthTagsInput`** — free-text entry producing removable chips.
   `PlinthMultiSelect` is the fixed-options equivalent; this is the one
   where the user invents the values.
 - **`PlinthCollapse`** — animated height reveal. Already implemented
   privately inside `PlinthAccordion` and `PlinthSpoiler`, so this is
-  mostly extracting what exists into a public widget.
-- **`PlinthHighlight`** — text with matching substrings marked. Builds
-  on `PlinthMark`, which highlights a span you've already split out;
-  this would do the splitting for you.
+  mostly extracting what exists.
 - **`PlinthCloseButton`** — the dismiss affordance `PlinthAlert`,
-  `PlinthNotification`, and `PlinthModal` each currently build inline.
+  `PlinthNotification`, `PlinthModal`, and `PlinthDrawer` each build
+  inline today.
+- **`PlinthHighlight`** — text with matching substrings marked. Builds
+  on `PlinthMark`, which highlights a span you have already split out;
+  this does the splitting.
+- **`PlinthEmptyState`** — the "no results" placeholder. Common enough
+  in real apps that most teams write their own.
 
-### Lower priority
+### Inputs
 
-- **`PlinthStack`** — a vertical `PlinthGroup`. `PlinthFlex(direction:
-  Axis.vertical)` already does this, so it would be a convenience alias
-  rather than new capability.
-- **`PlinthDialog`** — a small floating panel that doesn't take over the
-  screen the way `PlinthModal` does.
+- **`PlinthColorInput`** — a text field with a color preview and
+  picker. `PlinthColorSwatch` covers choosing from a preset palette.
+- **`PlinthColorPicker`** — the full picker, plus its
+  **`AlphaSlider`** / **`HueSlider`** / **`AngleSlider`** parts, which
+  exist in Mantine mainly as its building blocks.
 - **`PlinthFieldset`** — a bordered group with a legend, for related
-  form fields.
-- **`PlinthColorPicker`** — a full picker. `PlinthColorSwatch` covers
-  choosing from a preset palette, which is the common case.
+  fields.
+- **`PlinthInput`** — Mantine's unstyled base that its other fields are
+  built from. Plinth's fields each own their chrome instead; adopting
+  this would be an architectural change, not just a new widget.
+- **`PlinthJsonInput`** / **`PlinthMaskInput`** — a validating JSON
+  textarea and a format-masked field.
+- **`PlinthNativeSelect`** — near-duplicate here: `PlinthSelect`
+  already wraps Flutter's `DropdownButton`, which is the native
+  control.
+
+### Combobox
+
+- **`PlinthPill`** / **`PlinthPillsInput`** — Mantine's removable-chip
+  primitives. `PlinthMultiSelect` already renders chips internally, so
+  this would be extracting them.
+- **`PlinthCombobox`** / **`PlinthComboboxPopover`** — the low-level
+  primitives Mantine's Select/Autocomplete/TagsInput are built on. Only
+  worth it if several of the above land and start duplicating logic.
+- **`PlinthCascader`** / **`PlinthTreeSelect`** — multi-level and
+  hierarchical selection.
+
+### Navigation & overlays
+
+- **`PlinthTableOfContents`** — headings extracted into a jump list.
+  Now that `PlinthTitle` carries heading levels, this has real
+  structure to read from.
 - **`PlinthTree`** — hierarchical navigation. Substantial work
-  (expansion state, keyboard traversal, selection) for a narrower need
-  than the rest of this list.
+  (expansion state, keyboard traversal, selection).
+- **`PlinthDialog`** — a small floating panel that doesn't take the
+  screen the way `PlinthModal` does.
+- **`PlinthMenubar`** — a horizontal bar of menus, desktop-style.
+- **`PlinthFloatingIndicator`** — the sliding indicator Mantine's tabs
+  and segmented controls use. Plinth's equivalents deliberately use a
+  static per-item fill instead, so this would be a change of approach
+  rather than an addition (see `PlinthTabs`).
+- **`PlinthFloatingWindow`** — a draggable, resizable panel.
+
+### Data display & typography
+
+- **`PlinthDataList`** — key/value pairs in a definition-list layout.
+- **`PlinthNumberFormatter`** — locale-aware number display. Dart's
+  `intl` already does the formatting; this would be the themed text
+  around it.
+- **`PlinthRollingNumber`** — digits that animate on change.
+- **`PlinthOverflowList`** — shows as many items as fit, collapsing the
+  rest into a "+N" marker.
 - **`PlinthBackgroundImage`** — an image behind arbitrary content. A
   `Container` with a `DecorationImage` is close enough that the wrapper
   earns little.
 - **`PlinthSemiCircleProgress`** — a gauge variant of
   `PlinthRingProgress`.
-- **`PlinthNumberFormatter`** — locale-aware number display. Dart's
-  `intl` package already does the formatting; this would only be the
-  themed text around it.
+
+### Layout & miscellaneous
+
+- **`PlinthStack`** — a vertical `PlinthGroup`.
+  `PlinthFlex(direction: Axis.vertical)` already does this, so it would
+  be a convenience alias rather than new capability.
+- **`PlinthSplitter`** — resizable panes with a draggable divider.
+- **`PlinthMarquee`** — continuously scrolling content.
+- **`PlinthScroller`** — scroll-position helpers around `ScrollArea`.
 
 ### Deliberately not planned
 
-- **`PlinthTransition`** — Flutter's `AnimatedSwitcher` and the implicit
-  animation widgets already cover this, and better than a wrapper would.
-- **`PlinthFocusTrap`** — `FocusScope` is the Flutter-native answer, and
-  the overlay components already use it where it matters.
+These have a Flutter-native answer that a wrapper would only get in the
+way of:
+
+- **`Transition`** — `AnimatedSwitcher` and the implicit animation
+  widgets already cover this, and better.
+- **`FocusTrap`** — `FocusScope` is the native equivalent, and the
+  overlay components already use it where it matters.
+- **`Typography`** — Mantine's version styles raw HTML via the CSS
+  cascade. Flutter has no cascading markup to style, so the idea
+  doesn't carry over; `PlinthText` and `PlinthTitle` cover the need
+  directly.
 
 Mantine's separate packages — Carousel, Dropzone, Spotlight, Dates,
-Charts, RichTextEditor — are a different scope question, not simply
-missing components. Each is a substantial library in its own right and
-would belong in its own package here too, rather than in
+Charts, RichTextEditor, Notifications — are a different scope question,
+not simply missing components. Each is a substantial library in its own
+right and would belong in its own package here too, rather than in
 `plinth_components`.

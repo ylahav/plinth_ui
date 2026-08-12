@@ -19,12 +19,13 @@ plinth_ui/
   widgetbook/               # Isolated component gallery (manual/non-codegen setup)
   docs/
     COMPONENTS.md            # Per-component prop reference
+    SHOWCASE.md               # The example app's composed blocks, and what's missing
     TESTING.md                # How to verify this locally — SDK setup through golden tests
 ```
 
 [![CI](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml/badge.svg)](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml)
 
-📖 **[Component reference](docs/COMPONENTS.md)** · 🧪 **[Testing guide](docs/TESTING.md)**
+📖 **[Component reference](docs/COMPONENTS.md)** · 🧱 **[Showcase blocks](docs/SHOWCASE.md)** · 🧪 **[Testing guide](docs/TESTING.md)**
 
 ## First push to GitHub
 
