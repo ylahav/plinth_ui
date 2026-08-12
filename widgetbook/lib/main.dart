@@ -192,9 +192,9 @@ PlinthSize? _radiusKnob(BuildContext context) {
 ///   `subtle` against `transparent`, or `xs` against `sm`, needs them
 ///   on screen together, which a single knob-driven instance can't do.
 ///
-/// Playgrounds currently exist for the Buttons & Actions, Forms, and
-/// Overlays categories; the remaining five still have static use
-/// cases only. Not every component needs one — a thin wrapper with a
+/// Playgrounds currently exist for the Buttons & Actions, Forms,
+/// Navigation, and Overlays categories; the remaining four still have
+/// static use cases only. Not every component needs one — a thin wrapper with a
 /// single `child` prop (`PlinthPortal`, most of Layout & Typography)
 /// has nothing to vary, and a playground there would be ceremony.
 /// Follow the same shape when adding more: knobs for presentational
@@ -1393,6 +1393,52 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthTabs',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final size = _sizeKnob(context);
+              final color = _colorKnob(context);
+              final showContent = context.knobs.boolean(
+                label: 'with PlinthTabView',
+                initialValue: true,
+                description: 'Tabs is only the bar — TabView is the '
+                    'separate widget that swaps content',
+              );
+              return _themed(
+                _Local<String>(
+                  initial: 'account',
+                  builder: (value, onChanged) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      PlinthTabs<String>(
+                        value: value,
+                        onChanged: onChanged,
+                        size: size,
+                        color: color,
+                        tabs: const [
+                          PlinthTabItem('account', 'Account'),
+                          PlinthTabItem('security', 'Security'),
+                          PlinthTabItem('billing', 'Billing'),
+                        ],
+                      ),
+                      if (showContent) ...[
+                        const SizedBox(height: 16),
+                        PlinthTabView<String>(
+                          value: value,
+                          children: const {
+                            'account': PlinthText('Account settings'),
+                            'security': PlinthText('Security settings'),
+                            'billing': PlinthText('Billing settings'),
+                          },
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'With content (interactive)',
             builder: (context) => _themed(_TabsDemo()),
           ),
@@ -1401,6 +1447,58 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthAccordion',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final multiple = context.knobs.boolean(
+                label: 'multiple',
+                description: 'Off means opening one closes the others',
+              );
+              final withIcons = context.knobs.boolean(label: 'item icons');
+              final openFirst = context.knobs.boolean(
+                label: 'first item initially open',
+                initialValue: true,
+              );
+              return _themed(
+                SizedBox(
+                  width: 380,
+                  child: PlinthAccordion(
+                    // Unlike the overlay components, open state is
+                    // internal here — initiallyOpen only seeds it, so
+                    // a Key is needed for the knob to take effect on
+                    // an already-built accordion.
+                    key: ValueKey('$multiple-$openFirst'),
+                    multiple: multiple,
+                    initiallyOpen: openFirst ? const {'what'} : const {},
+                    color: _colorKnob(context),
+                    items: [
+                      PlinthAccordionItem(
+                        value: 'what',
+                        title: 'What is Plinth UI?',
+                        icon: withIcons ? const Icon(Icons.help_outline) : null,
+                        content: const PlinthText(
+                          'A Mantine-inspired component library for Flutter.',
+                          size: PlinthSize.sm,
+                        ),
+                      ),
+                      PlinthAccordionItem(
+                        value: 'theme',
+                        title: 'How does theming work?',
+                        icon: withIcons
+                            ? const Icon(Icons.palette_outlined)
+                            : null,
+                        content: const PlinthText(
+                          'A PlinthTheme ThemeExtension registered at the '
+                          'app root.',
+                          size: PlinthSize.sm,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'Single open (default)',
             builder: (context) => _themed(
@@ -1447,6 +1545,54 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthStepper',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final withDescriptions = context.knobs.boolean(
+                label: 'step descriptions',
+                initialValue: true,
+              );
+              final tappable = context.knobs.boolean(
+                label: 'onStepTapped',
+                initialValue: true,
+                description: 'Stepper is visual only — tapping calls '
+                    'back but never moves currentStep itself',
+              );
+              final color = _colorKnob(context);
+              return _themed(
+                SizedBox(
+                  width: 420,
+                  child: _Local<int>(
+                    initial: 1,
+                    builder: (currentStep, onChanged) => PlinthStepper(
+                      currentStep: currentStep,
+                      // The caller owns currentStep, so advancing it
+                      // is this use case's job, not the widget's.
+                      onStepTapped: tappable ? onChanged : null,
+                      color: color,
+                      steps: [
+                        PlinthStep(
+                          label: 'Account',
+                          description:
+                              withDescriptions ? 'Email and password' : null,
+                        ),
+                        PlinthStep(
+                          label: 'Shipping',
+                          description:
+                              withDescriptions ? 'Where it goes' : null,
+                        ),
+                        PlinthStep(
+                          label: 'Confirm',
+                          description:
+                              withDescriptions ? 'Review the order' : null,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'Interactive',
             builder: (context) => _themed(_StepperDemo()),
           ),
@@ -1468,6 +1614,46 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthBreadcrumbs',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final separator = context.knobs.string(
+                label: 'separator',
+                initialValue: '/',
+              );
+              final depth = context.knobs.int.slider(
+                label: 'crumbs',
+                initialValue: 3,
+                min: 2,
+                max: 5,
+              );
+              final color = _colorKnob(context);
+              const labels = [
+                'Home',
+                'Settings',
+                'Profile',
+                'Privacy',
+                'Advanced'
+              ];
+              return _themed(
+                PlinthBreadcrumbs(
+                  separator: separator,
+                  color: color,
+                  items: [
+                    for (var i = 0; i < depth; i++)
+                      PlinthBreadcrumbItem(
+                        label: labels[i],
+                        // Every crumb gets an onTap, including the
+                        // last — the widget renders the final one as
+                        // plain text regardless, which is the point
+                        // worth seeing here.
+                        onTap: () {},
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'Default',
             builder: (context) => _themed(
@@ -1498,6 +1684,43 @@ final List<WidgetbookNode> plinthDirectories = [
         name: 'PlinthPagination',
         useCases: [
           WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final total = context.knobs.int.slider(
+                label: 'total',
+                initialValue: 20,
+                min: 1,
+                max: 100,
+              );
+              final siblingCount = context.knobs.int.slider(
+                label: 'siblingCount',
+                initialValue: 1,
+                min: 0,
+                max: 4,
+                description: 'Pages shown either side of the current '
+                    'one before collapsing into an ellipsis',
+              );
+              final size = _sizeKnob(context);
+              final color = _colorKnob(context);
+              return _themed(
+                _Local<int>(
+                  initial: 1,
+                  builder: (page, onChanged) => PlinthPagination(
+                    // page is 1-based, and shrinking total below the
+                    // current page would leave it pointing past the
+                    // end.
+                    page: page > total ? total : page,
+                    total: total,
+                    siblingCount: siblingCount,
+                    onChanged: onChanged,
+                    size: size,
+                    color: color,
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
             name: 'Small total (no ellipsis)',
             builder: (context) => _themed(_PaginationDemo(total: 5)),
           ),
@@ -1511,6 +1734,47 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthTimeline',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final activeIndex = context.knobs.int.slider(
+                label: 'active item',
+                initialValue: 1,
+                min: 0,
+                max: 2,
+                description: 'active highlights the dot — use it for '
+                    'the current or most recent event',
+              );
+              final withIcons = context.knobs.boolean(label: 'item icons');
+              final withDescriptions = context.knobs.boolean(
+                label: 'descriptions',
+                initialValue: true,
+              );
+              final color = _colorKnob(context);
+              const events = [
+                ('Order placed', 'We received your order', Icons.receipt_long),
+                ('Shipped', 'On its way to you', Icons.local_shipping_outlined),
+                ('Delivered', 'Left at the front door', Icons.home_outlined),
+              ];
+              return _themed(
+                SizedBox(
+                  width: 360,
+                  child: PlinthTimeline(
+                    color: color,
+                    items: [
+                      for (var i = 0; i < events.length; i++)
+                        PlinthTimelineItem(
+                          title: events[i].$1,
+                          description: withDescriptions ? events[i].$2 : null,
+                          icon: withIcons ? Icon(events[i].$3) : null,
+                          active: i == activeIndex,
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'Default',
             builder: (context) => _themed(
@@ -1538,6 +1802,42 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthNavLink',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final icon = _iconKnob(context, label: 'icon');
+              final withBadge = context.knobs.boolean(
+                label: 'trailing badge',
+                description: 'trailing takes any widget — an unread '
+                    'count is the common case',
+              );
+              final enabled = context.knobs.boolean(
+                label: 'enabled',
+                initialValue: true,
+              );
+              final label = context.knobs.string(
+                label: 'label',
+                initialValue: 'Inbox',
+              );
+              final color = _colorKnob(context);
+              return _themed(
+                SizedBox(
+                  width: 260,
+                  child: _Local<bool>(
+                    initial: true,
+                    builder: (active, onChanged) => PlinthNavLink(
+                      label: label,
+                      active: active,
+                      icon: icon == null ? null : Icon(icon),
+                      trailing: withBadge ? const PlinthBadge('3') : null,
+                      color: color,
+                      onTap: enabled ? () => onChanged(!active) : null,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'Active and inactive',
             builder: (context) => _themed(
