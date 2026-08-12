@@ -7,7 +7,7 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
-## Unreleased
+## 0.4.1
 
 ### Fixed
 - `PlinthSpoiler` reported a `RenderFlex` overflow (and painted

@@ -150,7 +150,14 @@ the sidebar.
     only), `PlinthSegmentedControl` all leave state ownership to the
     caller rather than managing it internally.
 - **Widgetbook gallery** (`widgetbook/`) — manual (non-codegen)
-  registration of every component's key states as browsable use cases.
+  registration of every component's key states as browsable use cases,
+  with a knob-driven **Playground** for 66 of the 71 components
+  alongside the static variant grids (the two answer different
+  questions: a playground explores combinations, a grid compares
+  options side by side). A smoke test builds all 164 use cases in CI,
+  so a page that compiles but throws on render is caught before anyone
+  opens it. `web/` is checked in — `cd widgetbook && flutter run -d
+  chrome`.
 - **Tests** — pure-logic tests for `PlinthTheme`'s shade generator and
   `PlinthDisclosureController`, a golden (visual regression) test suite
   for `PlinthButton` (variants, a color override, disabled state, all
@@ -215,23 +222,19 @@ intentional rather than bugs:
 
 ## Next steps (not yet built)
 
-- Add knobs to the Widgetbook use cases (`context.knobs.*`) once the
-  installed `widgetbook` version's knob API is confirmed — the current
-  gallery uses static use cases per variant instead, to avoid guessing
-  at an API surface that couldn't be verified in this sandbox.
 - Extend golden test coverage beyond `PlinthButton` — `PlinthTextInput`
   (focus/error border states) and `PlinthAlert` (color tinting) are the
   next highest-value targets, since they have the most conditional
   visual logic. See `docs/TESTING.md`.
 - Consider hue-drift at the extremes of the color-shade ramp for
   richer darks/lights (currently hue is held fixed).
-- Release `plinth_components` 0.4.0. All three packages are live on
-  pub.dev, but pub.dev still serves 0.3.0 — the version bump and
-  CHANGELOG entry for `PlinthFlex`/`PlinthImage`/`PlinthScrollArea`/
-  `PlinthPortal` are committed and `flutter pub publish --dry-run`
-  comes back with 0 warnings, so the remaining step is the publish
-  itself (interactive, needs a pub.dev account). See
-  **[docs/PUBLISHING.md](docs/PUBLISHING.md)**.
+- Add the palette colors the demos already reference. The default
+  theme defines only `blue`, `red`, `green`, and `gray`, and an
+  unrecognized key falls back to the primary color silently — so a
+  `color: 'grape'` in the example app renders blue rather than grape.
+  Either add those ramps to `PlinthTheme.defaultTheme` or correct the
+  call sites; the Widgetbook color knobs deliberately offer only the
+  four that exist.
 
 ## Naming note
 

@@ -1786,12 +1786,12 @@ final List<WidgetbookNode> plinthDirectories = [
           ),
           WidgetbookUseCase(
             name: 'Small total (no ellipsis)',
-            builder: (context) => _themed(_PaginationDemo(total: 5)),
+            builder: (context) => _themed(const _PaginationDemo(total: 5)),
           ),
           WidgetbookUseCase(
             name: 'Large total (ellipsis)',
             builder: (context) =>
-                _themed(_PaginationDemo(total: 20, initialPage: 10)),
+                _themed(const _PaginationDemo(total: 20, initialPage: 10)),
           ),
         ],
       ),
@@ -1970,22 +1970,22 @@ final List<WidgetbookNode> plinthDirectories = [
           WidgetbookUseCase(
             name: 'Info',
             builder: (context) => _themed(
-              PlinthAlert(
+              const PlinthAlert(
                 title: 'Heads up',
                 color: 'blue',
-                icon: const Icon(Icons.info_outline),
-                child: const Text('This is an informational message.'),
+                icon: Icon(Icons.info_outline),
+                child: Text('This is an informational message.'),
               ),
             ),
           ),
           WidgetbookUseCase(
             name: 'Error',
             builder: (context) => _themed(
-              PlinthAlert(
+              const PlinthAlert(
                 title: 'Something went wrong',
                 color: 'red',
-                icon: const Icon(Icons.error_outline),
-                child: const Text('Please try again in a few minutes.'),
+                icon: Icon(Icons.error_outline),
+                child: Text('Please try again in a few minutes.'),
               ),
             ),
           ),
@@ -2036,9 +2036,9 @@ final List<WidgetbookNode> plinthDirectories = [
           WidgetbookUseCase(
             name: 'Various fill levels',
             builder: (context) => _themed(
-              Column(
+              const Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   PlinthProgress(value: 0.25, color: 'blue'),
                   SizedBox(height: 8),
                   PlinthProgress(value: 0.6, color: 'green'),
@@ -2807,7 +2807,7 @@ final List<WidgetbookNode> plinthDirectories = [
                         icon: const Icon(Icons.copy_outlined),
                         onTap: () {},
                       ),
-                      if (showDivider) PlinthMenuItem.divider(),
+                      if (showDivider) const PlinthMenuItem.divider(),
                       PlinthMenuItem(
                         label: 'Delete',
                         icon: const Icon(Icons.delete_outline),
@@ -3403,9 +3403,9 @@ final List<WidgetbookNode> plinthDirectories = [
           WidgetbookUseCase(
             name: 'Wrapping row',
             builder: (context) => _themed(
-              PlinthGroup(
+              const PlinthGroup(
                 gap: PlinthSize.sm,
-                children: const [
+                children: [
                   PlinthBadge('New'),
                   PlinthBadge('Updated'),
                   PlinthBadge('Popular'),
@@ -3469,9 +3469,9 @@ final List<WidgetbookNode> plinthDirectories = [
           WidgetbookUseCase(
             name: 'Ordered',
             builder: (context) => _themed(
-              PlinthList(
+              const PlinthList(
                 type: PlinthListType.ordered,
-                items: const [
+                items: [
                   PlinthListItem(Text('First step')),
                   PlinthListItem(Text('Second step')),
                 ],
@@ -3698,9 +3698,9 @@ final List<WidgetbookNode> plinthDirectories = [
           WidgetbookUseCase(
             name: 'Horizontal',
             builder: (context) => _themed(
-              PlinthFlex(
+              const PlinthFlex(
                 gap: PlinthSize.sm,
-                children: const [
+                children: [
                   PlinthBadge('Dart'),
                   PlinthBadge('Flutter'),
                 ],
@@ -3987,10 +3987,10 @@ final List<WidgetbookNode> plinthDirectories = [
             name: 'Icon button with a hidden label',
             builder: (context) => _themed(
               PlinthActionIcon(
-                icon: Stack(
+                icon: const Stack(
                   children: [
-                    const Icon(Icons.close),
-                    const PlinthVisuallyHidden(child: Text('Close dialog')),
+                    Icon(Icons.close),
+                    PlinthVisuallyHidden(child: Text('Close dialog')),
                   ],
                 ),
                 onPressed: () {},
