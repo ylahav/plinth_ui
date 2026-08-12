@@ -39,7 +39,14 @@ void main() {
       await tester.pumpWidget(const PlinthExampleApp());
 
       await tester.tap(find.text('Component gallery'));
-      await tester.pumpAndSettle();
+      // Not pumpAndSettle: ShowcasePage contains indeterminate
+      // animations (PlinthSkeleton's pulse, PlinthImage's network
+      // load — which fails immediately in the test environment per
+      // Flutter's HttpClient test warning) that never let it
+      // converge. A bounded pump is the established pattern for this
+      // elsewhere in the test suite (see plinth_skeleton_test.dart).
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Plinth UI — Component Showcase'), findsOneWidget);
     });

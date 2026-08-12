@@ -78,6 +78,12 @@ void main() {
       await tester.pumpWidget(
         _wrap(const PlinthPortal(child: Text('Portaled content'))),
       );
+      // The insert is deferred to a post-frame callback (inserting
+      // synchronously during this widget's own first build would hit
+      // Flutter's "setState during build" assertion, since the
+      // ancestor Overlay would also still be mid-build) — one more
+      // pump lets that callback fire.
+      await tester.pump();
 
       expect(find.text('Portaled content'), findsOneWidget);
     });
@@ -101,6 +107,7 @@ void main() {
           ),
         ),
       );
+      await tester.pump();
 
       expect(find.text('Portaled content'), findsOneWidget);
 

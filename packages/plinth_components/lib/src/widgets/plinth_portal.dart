@@ -30,22 +30,22 @@ class _PlinthPortalState extends State<PlinthPortal> {
   OverlayEntry? _entry;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Insert once, on the first call after mounting (this is the
-    // earliest point Overlay.of(context) is safely available — not
-    // yet in initState). Every subsequent didChangeDependencies call
-    // (e.g. from a theme or MediaQuery change) just needs a rebuild
-    // of the SAME entry, not a fresh remove-and-reinsert — that
-    // would needlessly tear down and recreate the overlay slot on
-    // every ambient rebuild, not just when widget.child itself
-    // changes.
-    if (_entry == null) {
+  void initState() {
+    super.initState();
+    // Overlay.of(context).insert() calls setState() on the ancestor
+    // Overlay internally — calling it synchronously here (or in
+    // didChangeDependencies) happens while this widget's own first
+    // build is still in progress, which means the ancestor Overlay
+    // is *also* still mid-build, and Flutter forbids setState()
+    // during a build. Deferring to a post-frame callback runs it
+    // once the current frame's build phase has fully finished, which
+    // is the standard fix for "insert something into the Overlay as
+    // soon as a widget mounts."
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       _entry = OverlayEntry(builder: (context) => widget.child);
       Overlay.of(context).insert(_entry!);
-    } else {
-      _entry!.markNeedsBuild();
-    }
+    });
   }
 
   @override
