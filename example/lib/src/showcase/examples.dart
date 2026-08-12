@@ -259,24 +259,19 @@ class FeatureListExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PlinthList(
+    return const PlinthList(
       items: [
         PlinthListItem(
-          const PlinthText(
-              '67+ themeable components, zero design-system lock-in'),
-          icon: const Icon(Icons.check_circle,
-              color: Color(0xFF40C057), size: 16),
+          PlinthText('67+ themeable components, zero design-system lock-in'),
+          icon: Icon(Icons.check_circle, color: Color(0xFF40C057), size: 16),
         ),
         PlinthListItem(
-          const PlinthText(
-              'Widgetbook gallery for isolated visual development'),
-          icon: const Icon(Icons.check_circle,
-              color: Color(0xFF40C057), size: 16),
+          PlinthText('Widgetbook gallery for isolated visual development'),
+          icon: Icon(Icons.check_circle, color: Color(0xFF40C057), size: 16),
         ),
         PlinthListItem(
-          const PlinthText('Published on pub.dev, versioned semantically'),
-          icon: const Icon(Icons.check_circle,
-              color: Color(0xFF40C057), size: 16),
+          PlinthText('Published on pub.dev, versioned semantically'),
+          icon: Icon(Icons.check_circle, color: Color(0xFF40C057), size: 16),
         ),
       ],
     );
@@ -329,20 +324,20 @@ class ArticleCardWithAuthorExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return const SizedBox(
       width: 280,
       child: PlinthCard(
         withBorder: true,
         footer: PlinthGroup(
           gap: PlinthSize.xs,
-          children: const [
+          children: [
             PlinthAvatar(initials: 'YL', size: PlinthSize.sm),
             PlinthText('Yair Lahav',
                 size: PlinthSize.xs, weight: FontWeight.w600),
             PlinthText('· Jan 12', size: PlinthSize.xs, color: 'gray'),
           ],
         ),
-        child: const Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PlinthText('Publishing your first Flutter package',
@@ -367,9 +362,9 @@ class AuthorInlineExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PlinthGroup(
+    return const PlinthGroup(
       gap: PlinthSize.sm,
-      children: const [
+      children: [
         PlinthAvatar(initials: 'YL', size: PlinthSize.md),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,

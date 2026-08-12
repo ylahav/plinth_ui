@@ -527,18 +527,18 @@ class _ShowcasePageState extends State<ShowcasePage> {
                       ],
                       _sectionTitle('Avatars'),
                       _gap(12),
-                      Row(
+                      const Row(
                         children: [
-                          const PlinthAvatar(initials: 'YR', color: 'blue'),
-                          const SizedBox(width: 12),
-                          const PlinthAvatar(
+                          PlinthAvatar(initials: 'YR', color: 'blue'),
+                          SizedBox(width: 12),
+                          PlinthAvatar(
                               initials: 'AB',
                               color: 'green',
                               size: PlinthSize.lg),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12),
                           PlinthAvatar(color: 'gray', size: PlinthSize.sm),
-                          const SizedBox(width: 12),
-                          const PlinthAvatar(
+                          SizedBox(width: 12),
+                          PlinthAvatar(
                             initials: 'SQ',
                             color: 'red',
                             radius: PlinthSize.sm,
@@ -642,8 +642,8 @@ class _ShowcasePageState extends State<ShowcasePage> {
                       _gap(),
                       _sectionTitle('Ring Progress'),
                       _gap(12),
-                      Row(
-                        children: const [
+                      const Row(
+                        children: [
                           PlinthRingProgress(value: 0.72, color: 'green'),
                           SizedBox(width: 16),
                           PlinthRingProgress(
@@ -746,16 +746,15 @@ class _ShowcasePageState extends State<ShowcasePage> {
                       _gap(),
                       _sectionTitle('Skeleton'),
                       _gap(12),
-                      Row(
+                      const Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const PlinthSkeleton(
-                              width: 40, height: 40, circle: true),
-                          const SizedBox(width: 12),
+                          PlinthSkeleton(width: 40, height: 40, circle: true),
+                          SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
+                              children: [
                                 PlinthSkeleton(height: 14),
                                 SizedBox(height: 8),
                                 PlinthSkeleton(height: 14, width: 160),
@@ -767,10 +766,10 @@ class _ShowcasePageState extends State<ShowcasePage> {
                       _gap(),
                       _sectionTitle('Badges'),
                       _gap(12),
-                      Wrap(
+                      const Wrap(
                         spacing: 8,
                         runSpacing: 8,
-                        children: const [
+                        children: [
                           PlinthBadge('New', color: 'green'),
                           PlinthBadge('Beta',
                               variant: PlinthVariant.outline, color: 'blue'),
@@ -1042,18 +1041,18 @@ class _ShowcasePageState extends State<ShowcasePage> {
                       _gap(),
                       _sectionTitle('Theme Icon'),
                       _gap(12),
-                      Row(
+                      const Row(
                         children: [
                           PlinthThemeIcon(
-                              icon: const Icon(Icons.check), color: 'green'),
-                          const SizedBox(width: 8),
+                              icon: Icon(Icons.check), color: 'green'),
+                          SizedBox(width: 8),
                           PlinthThemeIcon(
-                            icon: const Icon(Icons.info_outline),
+                            icon: Icon(Icons.info_outline),
                             variant: PlinthVariant.light,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           PlinthThemeIcon(
-                            icon: const Icon(Icons.star),
+                            icon: Icon(Icons.star),
                             color: 'red',
                             circle: true,
                           ),
@@ -1062,14 +1061,14 @@ class _ShowcasePageState extends State<ShowcasePage> {
                       _gap(),
                       _sectionTitle('Indicator'),
                       _gap(12),
-                      Row(
+                      const Row(
                         children: [
-                          const PlinthIndicator(
+                          PlinthIndicator(
                             label: '3',
                             child: Icon(Icons.notifications_outlined, size: 28),
                           ),
-                          const SizedBox(width: 24),
-                          const PlinthIndicator(
+                          SizedBox(width: 24),
+                          PlinthIndicator(
                             color: 'green',
                             child: PlinthAvatar(initials: 'AB'),
                           ),
@@ -1160,12 +1159,11 @@ class _ShowcasePageState extends State<ShowcasePage> {
                       _gap(),
                       _sectionTitle('Copy Button'),
                       _gap(12),
-                      Row(
+                      const Row(
                         children: [
-                          const Text('sk_live_51H8x...'),
-                          const SizedBox(width: 4),
-                          const PlinthCopyButton(
-                              value: 'sk_live_51H8xExampleKey'),
+                          Text('sk_live_51H8x...'),
+                          SizedBox(width: 4),
+                          PlinthCopyButton(value: 'sk_live_51H8xExampleKey'),
                         ],
                       ),
                       _gap(),
@@ -1308,17 +1306,17 @@ class _ShowcasePageState extends State<ShowcasePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           PlinthActionIcon(
-                            icon: Stack(
+                            icon: const Stack(
                               children: [
-                                const Icon(Icons.close),
-                                const PlinthVisuallyHidden(
+                                Icon(Icons.close),
+                                PlinthVisuallyHidden(
                                     child: Text('Close dialog')),
                               ],
                             ),
                             onPressed: () {},
                           ),
                           const SizedBox(width: 12),
-                          Expanded(
+                          const Expanded(
                             child: PlinthText(
                               'The icon button to the left has a screen-reader-only '
                               '"Close dialog" label alongside its visible icon.',
@@ -1365,9 +1363,9 @@ class _ShowcasePageState extends State<ShowcasePage> {
                       _gap(),
                       _sectionTitle('Group'),
                       _gap(12),
-                      PlinthGroup(
+                      const PlinthGroup(
                         gap: PlinthSize.sm,
-                        children: const [
+                        children: [
                           PlinthBadge('New'),
                           PlinthBadge('Updated'),
                           PlinthBadge('Popular', color: 'grape'),
@@ -1376,9 +1374,9 @@ class _ShowcasePageState extends State<ShowcasePage> {
                       _gap(),
                       _sectionTitle('List'),
                       _gap(12),
-                      PlinthList(
+                      const PlinthList(
                         type: PlinthListType.ordered,
-                        items: const [
+                        items: [
                           PlinthListItem(PlinthText('Install the package')),
                           PlinthListItem(
                               PlinthText('Wrap your app in a PlinthTheme')),
@@ -1402,11 +1400,11 @@ class _ShowcasePageState extends State<ShowcasePage> {
                       _gap(),
                       _sectionTitle('Space'),
                       _gap(12),
-                      Row(
+                      const Row(
                         children: [
-                          const PlinthText('Left', size: PlinthSize.sm),
-                          const PlinthSpace(w: PlinthSize.xl),
-                          const PlinthText('Right (spaced apart)',
+                          PlinthText('Left', size: PlinthSize.sm),
+                          PlinthSpace(w: PlinthSize.xl),
+                          PlinthText('Right (spaced apart)',
                               size: PlinthSize.sm),
                         ],
                       ),
@@ -1454,7 +1452,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
                       _gap(),
                       _sectionTitle('Flex'),
                       _gap(12),
-                      PlinthFlex(
+                      const PlinthFlex(
                         direction: Axis.horizontal,
                         gap: PlinthSize.sm,
                         children: [
