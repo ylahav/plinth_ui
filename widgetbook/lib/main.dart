@@ -3960,11 +3960,245 @@ final List<WidgetbookNode> plinthDirectories = [
           ),
         ],
       ),
+      WidgetbookComponent(
+        name: 'PlinthDataList',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 360,
+                child: PlinthDataList(
+                  orientation: context.knobs.object.dropdown(
+                    label: 'orientation',
+                    options: PlinthDataListOrientation.values,
+                    initialOption: PlinthDataListOrientation.horizontal,
+                    labelBuilder: (o) => o.name,
+                    description: 'Horizontal aligns labels in one '
+                        'intrinsic column; vertical stacks each pair',
+                  ),
+                  gap: _sizeKnob(context, initial: PlinthSize.sm),
+                  labelGap: _sizeKnob(context, initial: PlinthSize.md),
+                  size: _sizeKnob(context),
+                  labelColor: _colorKnob(context),
+                  items: const [
+                    PlinthDataListItem.text('Order', '#4021'),
+                    PlinthDataListItem.text('Placed', '12 Aug 2026'),
+                    PlinthDataListItem.text('Total', r'$149.00'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          WidgetbookUseCase(
+            name: 'Widget values',
+            builder: (context) => _themed(
+              const SizedBox(
+                width: 360,
+                child: PlinthDataList(
+                  items: [
+                    PlinthDataListItem.text('Customer', 'Alice Nguyen'),
+                    PlinthDataListItem(
+                      label: 'Status',
+                      value: PlinthBadge('Active', color: 'green'),
+                    ),
+                    PlinthDataListItem(
+                      label: 'Plan',
+                      value: PlinthBadge('Pro', color: 'violet'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthOverflowList',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final count = context.knobs.int
+                  .slider(label: 'items', initialValue: 8, min: 1, max: 16)
+                  .toInt();
+              return _themed(
+                SizedBox(
+                  // Narrow the width and watch the marker count climb —
+                  // the fit is computed during layout, so it tracks the
+                  // width exactly rather than a frame behind it.
+                  width: context.knobs.double
+                      .slider(
+                        label: 'available width',
+                        initialValue: 260,
+                        min: 40,
+                        max: 600,
+                      )
+                      .toDouble(),
+                  child: PlinthOverflowList(
+                    gap: _sizeKnob(context, initial: PlinthSize.sm),
+                    size: _sizeKnob(context, initial: PlinthSize.sm),
+                    color: _colorKnob(context),
+                    children: [
+                      for (var i = 0; i < count; i++)
+                        PlinthBadge('Tag ${i + 1}'),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'Avatar stack',
+            builder: (context) => _themed(
+              const SizedBox(
+                width: 200,
+                child: PlinthOverflowList(
+                  children: [
+                    PlinthAvatar(initials: 'AN'),
+                    PlinthAvatar(initials: 'BK'),
+                    PlinthAvatar(initials: 'CD'),
+                    PlinthAvatar(initials: 'EF'),
+                    PlinthAvatar(initials: 'GH'),
+                    PlinthAvatar(initials: 'IJ'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthRollingNumber',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final prefix = context.knobs.stringOrNull(
+                label: 'prefix',
+                initialValue: r'$',
+                defaultToNull: true,
+              );
+              final scale = context.knobs.int
+                  .slider(
+                      label: 'decimalScale', initialValue: 2, min: 0, max: 3)
+                  .toInt();
+              final size = _sizeKnob(context, initial: PlinthSize.xl);
+              final color = _colorKnob(context);
+
+              // A rolling number is only itself in motion, so the use
+              // case owns a value and a button to change it.
+              return _themed(
+                _Local<num>(
+                  initial: 1250,
+                  builder: (value, onChanged) => PlinthGroup(
+                    children: [
+                      PlinthRollingNumber(
+                        value: value,
+                        prefix: prefix,
+                        decimalScale: scale,
+                        size: size,
+                        color: color,
+                        weight: FontWeight.w700,
+                      ),
+                      PlinthButton(
+                        onPressed: () => onChanged(value + 137),
+                        child: const Text('+137'),
+                      ),
+                      PlinthButton(
+                        variant: PlinthVariant.outline,
+                        onPressed: () => onChanged(value - 48),
+                        child: const Text('-48'),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'Crossing a power of ten',
+            builder: (context) => _themed(
+              _Local<num>(
+                initial: 999,
+                builder: (value, onChanged) => PlinthGroup(
+                  children: [
+                    PlinthRollingNumber(
+                      value: value,
+                      size: PlinthSize.xl,
+                      weight: FontWeight.w700,
+                    ),
+                    PlinthButton(
+                      onPressed: () => onChanged(value == 999 ? 1000 : 999),
+                      child: const Text('Toggle 999 / 1000'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     ],
   ),
   WidgetbookCategory(
     name: 'Layout & Typography',
     children: [
+      WidgetbookComponent(
+        name: 'PlinthMarquee',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 420,
+                child: PlinthMarquee(
+                  speed: context.knobs.double
+                      .slider(
+                        label: 'speed (px/sec)',
+                        initialValue: 40,
+                        min: 5,
+                        max: 200,
+                      )
+                      .toDouble(),
+                  gap: _sizeKnob(context, initial: PlinthSize.xl),
+                  reverse: context.knobs.boolean(label: 'reverse'),
+                  pauseOnHover: context.knobs.boolean(
+                    label: 'pauseOnHover',
+                    initialValue: true,
+                    description: 'Hover the strip to stop it. Desktop '
+                        'and web only — there is no hover on touch',
+                  ),
+                  child: const PlinthGroup(
+                    wrap: false,
+                    children: [
+                      PlinthBadge('Flutter'),
+                      PlinthBadge('Dart'),
+                      PlinthBadge('Mantine'),
+                      PlinthBadge('Widgetbook'),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          WidgetbookUseCase(
+            name: 'Headline ticker',
+            builder: (context) => _themed(
+              const SizedBox(
+                width: 420,
+                child: PlinthMarquee(
+                  speed: 25,
+                  child: PlinthText(
+                    'Plinth 0.12.0 is out  ·  Four new components  ·  '
+                    'Reduce-motion aware',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       WidgetbookComponent(
         name: 'PlinthAppShell',
         useCases: [

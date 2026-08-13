@@ -148,6 +148,26 @@ line and never overlaps them.
 exists because stacking vertically is common enough that saying so
 directly reads better than configuring a flex.
 
+### `PlinthMarquee`
+`child`, `speed` (logical pixels per second, default `40`), `gap`
+(default `xl`), `pauseOnHover` (default `true`), `reverse`. Content
+that scrolls past continuously — a logo strip, a headline ticker. The
+child is repeated as many times as the width needs, so the loop has no
+visible seam.
+
+**Motion here is an accessibility question, not just a style one.**
+WCAG asks that movement lasting more than five seconds can be paused,
+and a marquee by definition never stops on its own. So this honours the
+platform's reduce-motion setting by rendering the content once and
+stationary, and pauses under the pointer by default. `pauseOnHover` is
+desktop and web only, which is why it can't be the whole story on its
+own and the reduce-motion behaviour isn't optional.
+
+One copy is measured on the first frame to find the loop's period, so
+the scroll starts a frame after mount; re-measured on later frames too,
+so a child that changes size (a font loading, an image arriving) can't
+leave the loop wrapping at a stale width.
+
 ### `PlinthList` + `PlinthListItem`
 `items` (`List<PlinthListItem>`), `type` (`PlinthListType`: `bullet,
 ordered` — default `bullet`), `spacing`, `size`. Each `PlinthListItem`
@@ -701,6 +721,71 @@ The `formatted` getter exposes the string, so the same formatting can
 be reused where the widget doesn't fit — a chart axis, an exported
 CSV, a semantics label.
 
+### `PlinthRollingNumber`
+`value`, the same formatting props as `PlinthNumberFormatter`
+(`prefix`, `suffix`, `thousandSeparator`, `decimalSeparator`,
+`decimalScale`, `trimTrailingZeros`), plus `duration` (default 600ms),
+`curve`, `size`, `color`, `weight`. Digits that roll to their new
+value — a live counter, a total that updates as a form is filled in, a
+stat tile.
+
+Formatting is delegated to `PlinthNumberFormatter` rather than
+reimplemented, so the two can't drift and the same non-localised
+caveat applies. The roll is a real odometer: the *value* animates and
+each digit's position is derived from it, which is what makes 999 →
+1000 turn every digit forward together. Tweening each digit separately
+would send the 9 backwards through 8, 7, 6 while its neighbours went
+the other way.
+
+Honours reduce-motion (settling immediately), and announces the whole
+formatted number once rather than letting a screen reader read a
+stream of changing digits. Digits inside a `prefix` or `suffix` are
+labels, not place values, and stay still.
+
+### `PlinthDataList` + `PlinthDataListItem`
+`items`, `orientation` (`PlinthDataListOrientation`: `horizontal,
+vertical` — default `horizontal`), `gap`, `labelGap`, `size`,
+`labelColor`. Key/value pairs in a definition-list layout — an order
+summary, a resource's metadata, the "about" block on a profile.
+
+Distinct from `PlinthTable`, which is for many records sharing
+columns; this is for one record's fields, where the label belongs to
+the value rather than to a column. Labels default to the theme's muted
+text, because the label is chrome and the value is the content.
+
+`PlinthDataListItem(label:, value:)` takes a widget value — a badge
+for a status, an anchor for an email — and `PlinthDataListItem.text`
+takes a plain string, the same split `PlinthTable` settled on and for
+the same reason. Horizontal aligns every label into one
+`IntrinsicColumnWidth` column via `Table`, so values line up without
+the caller measuring anything; vertical stacks each pair and merges it
+into a single semantics run.
+
+### `PlinthOverflowList`
+`children`, `gap` (default `sm`), `labelBuilder` (default `+N`),
+`size`, `color`. Shows as many children as fit on one line and
+collapses the rest into a marker — the avatar stack ending in "+4",
+the tag row that mustn't wrap. Distinct from `PlinthGroup`, which
+wraps onto a second line, and from clipping, which hides the overflow
+without admitting it exists.
+
+How many children fit is only knowable once they have been laid out,
+so this is a render object rather than a composition: measuring in a
+`LayoutBuilder` and rebuilding would cost a frame of the wrong answer
+every time the width changed. The marker is painted directly for the
+same reason — its text depends on the count layout produces. The
+marker is measured per candidate count rather than reserved at a worst
+case, so no item is dropped to make room for a label a shorter one
+wouldn't have needed.
+
+Children past the cut are still built (they have to be, to be
+measured) but are not painted, not hit-testable, and not visible to
+assistive technology — announcing items nobody can see gives a screen
+reader user no way to act on them, so the count is the honest summary.
+`RenderOverflowList` exposes `visibleCount` and `overflowCount`, since
+the hidden children are still in the widget tree and `find.text` can't
+tell what was actually shown.
+
 ### `PlinthTable`
 `columns` (`List<String>`), `rows`, `striped`, `size`. Built on
 Flutter's low-level `Table` widget rather than `DataTable`, since
@@ -951,21 +1036,9 @@ from this one.
   rather than an addition (see `PlinthTabs`).
 - **`PlinthFloatingWindow`** — a draggable, resizable panel.
 
-### Data display & typography
-
-- **`PlinthDataList`** — key/value pairs in a definition-list layout.
-- **`PlinthRollingNumber`** — digits that animate on change.
-- **`PlinthOverflowList`** — shows as many items as fit, collapsing the
-  rest into a "+N" marker.
-
-Note that `PlinthNumberFormatter` covers the fixed-format case only —
-a locale-aware version is `package:intl`'s job, deliberately left out
-of this package's dependency graph.
-
 ### Layout & miscellaneous
 
 - **`PlinthSplitter`** — resizable panes with a draggable divider.
-- **`PlinthMarquee`** — continuously scrolling content.
 - **`PlinthScroller`** — scroll-position helpers around `ScrollArea`.
 
 ### Deliberately not planned
@@ -981,6 +1054,11 @@ way of:
   cascade. Flutter has no cascading markup to style, so the idea
   doesn't carry over; `PlinthText` and `PlinthTitle` cover the need
   directly.
+- **A locale-aware number formatter** — `PlinthNumberFormatter` and
+  `PlinthRollingNumber` cover the fixed-format case. Locale awareness
+  is `package:intl`'s `NumberFormat`, and pulling `intl` into the
+  dependency graph of every app using this library isn't worth a
+  thousands separator. Format with it and render the result.
 
 Mantine's separate packages — Carousel, Dropzone, Spotlight, Dates,
 Charts, RichTextEditor, Notifications — are a different scope question,

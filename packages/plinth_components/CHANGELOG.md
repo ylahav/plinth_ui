@@ -7,6 +7,67 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.12.0
+
+### Added
+
+The data-display set — four components that each needed a mechanism
+rather than a composition of existing ones.
+
+- **`PlinthOverflowList`** — as many children as fit on one line, the
+  rest collapsed into a `+N` marker. A render object, not a
+  composition: how many fit is only knowable once they have been laid
+  out, and measuring in a `LayoutBuilder` and rebuilding would cost a
+  frame of the wrong answer every time the width changed. The marker
+  is painted directly because its text depends on the count that
+  layout produces, and it's measured per candidate count rather than
+  reserved at a worst case, so no item is dropped to make room for a
+  label a shorter one wouldn't have needed.
+
+  Children past the cut are still built — they have to be, to be
+  measured — but are not painted, not hit-testable, and not in the
+  semantics tree. That last one is the point: announcing items nobody
+  can see gives a screen-reader user no way to act on them, so the
+  count is the honest summary. `RenderOverflowList` exposes
+  `visibleCount`/`overflowCount` because the hidden children are still
+  in the widget tree, so `find.text` can't tell what was drawn.
+
+- **`PlinthRollingNumber`** — digits that roll on change, formatted by
+  `PlinthNumberFormatter` rather than by a second copy of the same
+  logic. The roll is a real odometer: the *value* animates and each
+  digit's position is derived from it, so 999 → 1000 turns every digit
+  forward together. Tweening each digit separately — the obvious
+  implementation — sends the 9 backwards through 8, 7, 6 while its
+  neighbours go the other way.
+
+  Digits inside a `prefix` or `suffix` are labels, not place values,
+  so the numeric body is bounded by their lengths rather than found by
+  scanning for digit characters; `' m2'` doesn't spin.
+
+- **`PlinthDataList`** — key/value pairs in a definition-list layout,
+  for one record's fields where `PlinthTable` is for many records
+  sharing columns. Horizontal alignment goes through `Table`'s
+  `IntrinsicColumnWidth`, the same "don't reimplement column
+  alignment" reasoning that put `PlinthTable` on `Table`. Items take
+  a widget value or, via `.text`, a plain string — the split
+  `PlinthTable` arrived at in 0.10.0, adopted here from the start
+  rather than after the string-only version proved limiting.
+
+- **`PlinthMarquee`** — continuously scrolling content, repeated to
+  fill the width so the loop has no seam. **Its motion is an
+  accessibility question, not a style one.** WCAG asks that movement
+  lasting over five seconds can be paused and a marquee never stops on
+  its own, so this renders stationary under reduce-motion and pauses
+  on hover by default. Hover is desktop and web only, which is exactly
+  why the reduce-motion path isn't optional.
+
+  The scrolling track is deliberately wider than its viewport — which
+  is what a `Row` calls an overflow — so it runs inside an
+  `OverflowBox` with a measured height, rather than reporting the
+  intended layout as a mistake on every frame.
+
+92 components, 87 playgrounds, 197 Widgetbook use cases.
+
 ## 0.11.0
 
 ### Added
