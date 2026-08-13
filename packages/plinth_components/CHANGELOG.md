@@ -7,6 +7,33 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.16.1
+
+### Fixed
+
+- **`PlinthHoverCard` never rebuilt its overlay panel when its content
+  changed.** An open card was frozen at whatever it was built with, so
+  content arriving after the pointer did — the loaded profile, the
+  fetched preview — never appeared. That is close to the whole point of
+  a hover card, which is what makes this worth a patch release rather
+  than waiting.
+
+  Same fix and same wrinkle as `PlinthPopover` in 0.14.0:
+  `didUpdateWidget` runs *during* the build phase, and marking an
+  `OverlayEntry` dirty then is illegal because the entry isn't a
+  descendant, so the rebuild is deferred to a post-frame callback.
+
+  The regression test was checked against the unfixed widget rather
+  than assumed: without the change it fails.
+
+### Not a bug after all
+
+`PlinthMenu` was flagged alongside the hover card as sharing this
+problem, on the evidence that it too had no `didUpdateWidget`. It
+doesn't need one — it's a `StatelessWidget` built on `PlinthPopover`,
+so it inherited that fix in 0.14.0. A test now pins that, so the
+delegation can't quietly stop covering it.
+
 ## 0.16.0
 
 ### Added — the last batch of the Mantine gap

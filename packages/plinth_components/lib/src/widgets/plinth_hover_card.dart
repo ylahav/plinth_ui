@@ -57,6 +57,26 @@ class _PlinthHoverCardState extends State<PlinthHoverCard> {
 
   static const double _gap = 8;
 
+  @override
+  void didUpdateWidget(covariant PlinthHoverCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // The card lives in an OverlayEntry, which doesn't rebuild just
+    // because this widget did. Without this, an open hover card is
+    // frozen at whatever it was built with — content that loads after
+    // the pointer arrives would never appear, which is exactly what a
+    // hover card is usually for.
+    //
+    // Deferred because didUpdateWidget runs *during* the build phase,
+    // and marking an overlay entry dirty then is illegal: the entry is
+    // not a descendant of this widget, so the framework may already
+    // have walked past it.
+    if (_entry != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _entry?.markNeedsBuild();
+      });
+    }
+  }
+
   Alignment get _targetAnchor {
     switch (widget.position) {
       case PlinthPopoverPosition.top:
