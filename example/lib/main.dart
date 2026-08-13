@@ -6,6 +6,60 @@ import 'src/showcase/home_page.dart';
 
 void main() => runApp(const PlinthExampleApp());
 
+/// Shared by the Tree and TreeSelect sections, so the two show the
+/// same data arranged for their two different questions.
+const List<PlinthTreeNode> _demoTree = [
+  PlinthTreeNode(
+    value: 'src',
+    label: 'src',
+    icon: Icon(Icons.folder_outlined),
+    children: [
+      PlinthTreeNode(
+        value: 'widgets',
+        label: 'widgets',
+        icon: Icon(Icons.folder_outlined),
+        children: [
+          PlinthTreeNode(
+            value: 'button',
+            label: 'plinth_button.dart',
+            icon: Icon(Icons.description_outlined),
+          ),
+        ],
+      ),
+      PlinthTreeNode(
+        value: 'main',
+        label: 'main.dart',
+        icon: Icon(Icons.description_outlined),
+      ),
+    ],
+  ),
+  PlinthTreeNode(
+    value: 'test',
+    label: 'test',
+    icon: Icon(Icons.folder_outlined),
+  ),
+];
+
+/// Country → region → city, the shape a cascader is for.
+const List<PlinthCascaderOption> _demoPlaces = [
+  PlinthCascaderOption(
+    value: 'eu',
+    label: 'Europe',
+    children: [
+      PlinthCascaderOption(
+        value: 'fr',
+        label: 'France',
+        children: [
+          PlinthCascaderOption(value: 'paris', label: 'Paris'),
+          PlinthCascaderOption(value: 'lyon', label: 'Lyon'),
+        ],
+      ),
+      PlinthCascaderOption(value: 'de', label: 'Germany'),
+    ],
+  ),
+  PlinthCascaderOption(value: 'as', label: 'Asia'),
+];
+
 /// Lets any page below flip the app between light and dark.
 ///
 /// An `InheritedWidget` rather than passing a callback down: the toggle
@@ -140,6 +194,14 @@ class _ShowcasePageState extends State<ShowcasePage> {
   final List<String> _pills = ['ana@example.com', 'sam@example.com'];
   String? _framework;
   final PlinthDisclosureController _combobox = PlinthDisclosureController();
+  final PlinthDisclosureController _dialog = PlinthDisclosureController();
+  Set<String> _treeOpen = {'src'};
+  String? _treeSelected;
+  String? _treeSelectValue;
+  List<String> _place = ['eu', 'fr'];
+  int _tocActive = 1;
+  bool _showWindow = true;
+  final ScrollController _scroller = ScrollController();
 
   // Keyed per section title so the sidebar nav can scroll to each one
   // via Scrollable.ensureVisible — populated lazily inside
@@ -150,108 +212,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   /// Section names whose "Show code" panel is currently expanded.
   final Set<String> _codeVisible = {};
 
-  // Mirrors the order sections actually appear in the page below —
-  // used to build the sidebar list. Keep this in sync when adding a
-  // new _sectionTitle(...) call.
-  static const List<String> _sectionOrder = [
-    'Avatars',
-    'Tooltip',
-    'Popover',
-    'Menu',
-    'Tabs',
-    'Switch',
-    'Progress',
-    'Ring Progress',
-    'Slider',
-    'Accordion',
-    'Table',
-    'Notification',
-    'Stepper',
-    'Skeleton',
-    'Badges',
-    'Checkbox',
-    'Radio Group',
-    'Select',
-    'Text Input',
-    'Drawer',
-    'Modal',
-    'Breadcrumbs',
-    'Divider',
-    'Card',
-    'Segmented Control',
-    'Number Input',
-    'Chip',
-    'Rating',
-    'Action Icon',
-    'Textarea',
-    'Password Input',
-    'Pagination',
-    'Timeline',
-    'Kbd',
-    'Code',
-    'Mark',
-    'Theme Icon',
-    'Indicator',
-    'Affix',
-    'Spoiler',
-    'Loading Overlay',
-    'Anchor',
-    'Blockquote',
-    'Copy Button',
-    'Nav Link',
-    'Color Swatch',
-    'Burger',
-    'Hover Card',
-    'Range Slider',
-    'Multi Select',
-    'Pin Input',
-    'Button Group',
-    'Overlay',
-    'Visually Hidden',
-    'Center',
-    'Aspect Ratio',
-    'Group',
-    'List',
-    'Container',
-    'Space',
-    'Unstyled Button',
-    'Simple Grid',
-    'Flex',
-    'Scroll Area',
-    'Portal',
-    'Image',
-    'Box + Text + Disclosure',
-    'Title',
-    'Paper',
-    'Stack',
-    'Grid',
-    'Fieldset',
-    'Collapse',
-    'Splitter',
-    'App Shell',
-    'Marquee',
-    'Highlight',
-    'Data List',
-    'Overflow List',
-    'Empty State',
-    'Color Input',
-    'Color Picker',
-    'Hue Slider',
-    'Alpha Slider',
-    'Angle Slider',
-    'Mask Input',
-    'JSON Input',
-    'File Input',
-    'File Button',
-    'Tags Input',
-    'Autocomplete',
-    'Pill',
-    'Pills Input',
-    'Combobox',
-    'Button Variants',
-    'Button Sizes',
-    'Button Colors',
-  ];
+  static const List<String> _sectionOrder = componentSectionOrder;
 
   @override
   void initState() {
@@ -270,6 +231,8 @@ class _ShowcasePageState extends State<ShowcasePage> {
     _popover.dispose();
     _menu.dispose();
     _combobox.dispose();
+    _dialog.dispose();
+    _scroller.dispose();
     super.dispose();
   }
 
@@ -1762,7 +1725,8 @@ class _ShowcasePageState extends State<ShowcasePage> {
                         height: 120,
                         child: PlinthSplitter(
                           first: PlinthPaper(
-                              p: PlinthSize.sm, child: Text('Drag the divider')),
+                              p: PlinthSize.sm,
+                              child: Text('Drag the divider')),
                           second:
                               PlinthPaper(p: PlinthSize.sm, child: Text('→')),
                         ),
@@ -2003,7 +1967,8 @@ class _ShowcasePageState extends State<ShowcasePage> {
                         children: [
                           const PlinthPill('read only'),
                           PlinthPill('removable', onRemove: () {}),
-                          PlinthPill('coloured', color: 'grape', onRemove: () {}),
+                          PlinthPill('coloured',
+                              color: 'grape', onRemove: () {}),
                         ],
                       ),
                       _gap(),
@@ -2046,6 +2011,239 @@ class _ShowcasePageState extends State<ShowcasePage> {
                             PlinthComboboxOption('svelte', 'Svelte'),
                           ],
                           onSelected: (v) => setState(() => _framework = v),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Tree'),
+                      _gap(12),
+                      SizedBox(
+                        width: 280,
+                        child: PlinthTree(
+                          nodes: _demoTree,
+                          expanded: _treeOpen,
+                          onExpandedChanged: (e) =>
+                              setState(() => _treeOpen = e),
+                          selected: _treeSelected,
+                          onSelected: (v) => setState(() => _treeSelected = v),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Tree Select'),
+                      _gap(12),
+                      SizedBox(
+                        width: 320,
+                        child: PlinthTreeSelect(
+                          label: 'File',
+                          nodes: _demoTree,
+                          value: _treeSelectValue,
+                          onChanged: (v) =>
+                              setState(() => _treeSelectValue = v),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Cascader'),
+                      _gap(12),
+                      PlinthCascader(
+                        options: _demoPlaces,
+                        value: _place,
+                        columnWidth: 130,
+                        height: 150,
+                        onChanged: (p) => setState(() => _place = p),
+                      ),
+                      _gap(),
+                      _sectionTitle('Table of Contents'),
+                      _gap(12),
+                      SizedBox(
+                        width: 240,
+                        child: PlinthTableOfContents(
+                          activeIndex: _tocActive,
+                          onSelected: (i) => setState(() => _tocActive = i),
+                          items: const [
+                            PlinthTocItem(label: 'Introduction'),
+                            PlinthTocItem(label: 'Installing', order: 2),
+                            PlinthTocItem(label: 'From pub.dev', order: 3),
+                            PlinthTocItem(label: 'Theming', order: 2),
+                          ],
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Menubar'),
+                      _gap(12),
+                      PlinthMenubar(
+                        menus: [
+                          PlinthMenubarMenu(
+                            label: 'File',
+                            items: [
+                              PlinthMenuItem(label: 'New', onTap: () {}),
+                              PlinthMenuItem(label: 'Open…', onTap: () {}),
+                            ],
+                          ),
+                          PlinthMenubarMenu(
+                            label: 'Edit',
+                            items: [
+                              PlinthMenuItem(label: 'Undo', onTap: () {}),
+                              PlinthMenuItem(label: 'Redo', onTap: () {}),
+                            ],
+                          ),
+                        ],
+                      ),
+                      _gap(),
+                      _sectionTitle('Dialog'),
+                      _gap(12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          PlinthButton(
+                            variant: PlinthVariant.outline,
+                            onPressed: _dialog.toggle,
+                            child: const Text('Toggle dialog'),
+                          ),
+                          // Renders nothing inline — the panel is in
+                          // the overlay, anchored to a screen corner.
+                          PlinthDialog(
+                            controller: _dialog,
+                            title: 'Subscribe',
+                            child: const PlinthText(
+                              'Not a modal: the rest of the page still works.',
+                              size: PlinthSize.sm,
+                            ),
+                          ),
+                        ],
+                      ),
+                      _gap(),
+                      _sectionTitle('Floating Window'),
+                      _gap(12),
+                      SizedBox(
+                        height: 240,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            border:
+                                Border.all(color: context.plinth.surfaceSunken),
+                          ),
+                          child: Stack(
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.all(12),
+                                child: PlinthText(
+                                  'Drag the header; the corner resizes.',
+                                  size: PlinthSize.sm,
+                                ),
+                              ),
+                              if (_showWindow)
+                                PlinthFloatingWindow(
+                                  title: 'Inspector',
+                                  onClose: () =>
+                                      setState(() => _showWindow = false),
+                                  child: const PlinthText(
+                                    'Several can be open at once.',
+                                    size: PlinthSize.sm,
+                                  ),
+                                ),
+                              if (!_showWindow)
+                                Center(
+                                  child: PlinthButton(
+                                    size: PlinthSize.sm,
+                                    onPressed: () =>
+                                        setState(() => _showWindow = true),
+                                    child: const Text('Reopen'),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Scroller'),
+                      _gap(12),
+                      SizedBox(
+                        height: 200,
+                        width: 320,
+                        child: PlinthScroller(
+                          controller: _scroller,
+                          threshold: 80,
+                          child: ListView.builder(
+                            controller: _scroller,
+                            itemCount: 30,
+                            itemBuilder: (context, i) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: PlinthText('Row $i'),
+                            ),
+                          ),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Background Image'),
+                      _gap(12),
+                      const PlinthBackgroundImage(
+                        src: 'https://picsum.photos/seed/plinth/600/200',
+                        height: 140,
+                        child: PlinthTitle('Ships tomorrow', order: 3),
+                      ),
+                      _gap(),
+                      _sectionTitle('Loader'),
+                      _gap(12),
+                      const PlinthGroup(
+                        children: [
+                          PlinthLoader(),
+                          PlinthLoader(type: PlinthLoaderType.dots),
+                          PlinthLoader(type: PlinthLoaderType.bars),
+                        ],
+                      ),
+                      _gap(),
+                      _sectionTitle('Close Button'),
+                      _gap(12),
+                      PlinthGroup(
+                        children: [
+                          PlinthCloseButton(onPressed: () {}),
+                          PlinthCloseButton(
+                              size: PlinthSize.lg, onPressed: () {}),
+                        ],
+                      ),
+                      _gap(),
+                      _sectionTitle('Number Formatter'),
+                      _gap(12),
+                      const PlinthStack(
+                        gap: PlinthSize.xs,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          PlinthNumberFormatter(
+                              value: 1234567.5, prefix: r'$', decimalScale: 2),
+                          PlinthNumberFormatter(value: 42, suffix: ' km'),
+                          PlinthNumberFormatter(
+                            value: 1234.56,
+                            thousandSeparator: '.',
+                            decimalSeparator: ',',
+                            decimalScale: 2,
+                          ),
+                        ],
+                      ),
+                      _gap(),
+                      _sectionTitle('Rolling Number'),
+                      _gap(12),
+                      PlinthGroup(
+                        children: [
+                          PlinthRollingNumber(
+                            value: _quantity * 1250,
+                            prefix: r'$',
+                            size: PlinthSize.xl,
+                            weight: FontWeight.w700,
+                          ),
+                          PlinthButton(
+                            size: PlinthSize.sm,
+                            variant: PlinthVariant.subtle,
+                            onPressed: () => setState(() => _quantity += 1),
+                            child: const Text('Add'),
+                          ),
+                        ],
+                      ),
+                      _gap(),
+                      _sectionTitle('Semi Circle Progress'),
+                      _gap(12),
+                      PlinthSemiCircleProgress(
+                        value: _rating / 5,
+                        label: PlinthText(
+                          '${(_rating / 5 * 100).round()}%',
+                          weight: FontWeight.w700,
                         ),
                       ),
                       _gap(),
@@ -2118,3 +2316,124 @@ class _ShowcasePageState extends State<ShowcasePage> {
     );
   }
 }
+
+/// Mirrors the order sections actually appear in the page — used to
+/// build the sidebar list. Keep this in sync when adding a new
+/// `_sectionTitle(...)` call.
+///
+/// Top-level rather than private to the State so a test can hold it
+/// against `demoCode`: both are hand-maintained, and a section with no
+/// snippet renders an empty code panel instead of failing.
+const List<String> componentSectionOrder = [
+  'Avatars',
+  'Tooltip',
+  'Popover',
+  'Menu',
+  'Tabs',
+  'Switch',
+  'Progress',
+  'Ring Progress',
+  'Slider',
+  'Accordion',
+  'Table',
+  'Notification',
+  'Stepper',
+  'Skeleton',
+  'Badges',
+  'Checkbox',
+  'Radio Group',
+  'Select',
+  'Text Input',
+  'Drawer',
+  'Modal',
+  'Breadcrumbs',
+  'Divider',
+  'Card',
+  'Segmented Control',
+  'Number Input',
+  'Chip',
+  'Rating',
+  'Action Icon',
+  'Textarea',
+  'Password Input',
+  'Pagination',
+  'Timeline',
+  'Kbd',
+  'Code',
+  'Mark',
+  'Theme Icon',
+  'Indicator',
+  'Affix',
+  'Spoiler',
+  'Loading Overlay',
+  'Anchor',
+  'Blockquote',
+  'Copy Button',
+  'Nav Link',
+  'Color Swatch',
+  'Burger',
+  'Hover Card',
+  'Range Slider',
+  'Multi Select',
+  'Pin Input',
+  'Button Group',
+  'Overlay',
+  'Visually Hidden',
+  'Center',
+  'Aspect Ratio',
+  'Group',
+  'List',
+  'Container',
+  'Space',
+  'Unstyled Button',
+  'Simple Grid',
+  'Flex',
+  'Scroll Area',
+  'Portal',
+  'Image',
+  'Box + Text + Disclosure',
+  'Title',
+  'Paper',
+  'Stack',
+  'Grid',
+  'Fieldset',
+  'Collapse',
+  'Splitter',
+  'App Shell',
+  'Marquee',
+  'Highlight',
+  'Data List',
+  'Overflow List',
+  'Empty State',
+  'Color Input',
+  'Color Picker',
+  'Hue Slider',
+  'Alpha Slider',
+  'Angle Slider',
+  'Mask Input',
+  'JSON Input',
+  'File Input',
+  'File Button',
+  'Tags Input',
+  'Autocomplete',
+  'Pill',
+  'Pills Input',
+  'Combobox',
+  'Tree',
+  'Tree Select',
+  'Cascader',
+  'Table of Contents',
+  'Menubar',
+  'Dialog',
+  'Floating Window',
+  'Scroller',
+  'Background Image',
+  'Loader',
+  'Close Button',
+  'Number Formatter',
+  'Rolling Number',
+  'Semi Circle Progress',
+  'Button Variants',
+  'Button Sizes',
+  'Button Colors',
+];

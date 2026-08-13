@@ -1256,4 +1256,161 @@ PlinthCombobox<String>(
   onSelected: (v) => setState(() => _framework = v),
 )
 ''',
+  'Tree': r'''
+PlinthTree(
+  nodes: _demoTree,
+  expanded: _treeOpen,
+  onExpandedChanged: (e) => setState(() => _treeOpen = e),
+  selected: _treeSelected,
+  onSelected: (v) => setState(() => _treeSelected = v),
+)
+''',
+  'Tree Select': r'''
+PlinthTreeSelect(
+  label: 'File',
+  nodes: _demoTree,
+  value: _treeSelectValue,
+  onChanged: (v) => setState(() => _treeSelectValue = v),
+)
+''',
+  'Cascader': r'''
+PlinthCascader(
+  options: _demoPlaces,
+  // The value is the path, not a leaf — a partial selection is a
+  // normal state rather than an error.
+  value: _place,
+  columnWidth: 130,
+  height: 150,
+  onChanged: (p) => setState(() => _place = p),
+)
+''',
+  'Table of Contents': r'''
+PlinthTableOfContents(
+  activeIndex: _tocActive,
+  onSelected: (i) => setState(() => _tocActive = i),
+  items: const [
+    PlinthTocItem(label: 'Introduction'),
+    PlinthTocItem(label: 'Installing', order: 2),
+    PlinthTocItem(label: 'From pub.dev', order: 3),
+    PlinthTocItem(label: 'Theming', order: 2),
+  ],
+)
+''',
+  'Menubar': r'''
+PlinthMenubar(
+  menus: [
+    PlinthMenubarMenu(
+      label: 'File',
+      items: [
+        PlinthMenuItem(label: 'New', onTap: () {}),
+        PlinthMenuItem(label: 'Open…', onTap: () {}),
+      ],
+    ),
+    PlinthMenubarMenu(
+      label: 'Edit',
+      items: [
+        PlinthMenuItem(label: 'Undo', onTap: () {}),
+        PlinthMenuItem(label: 'Redo', onTap: () {}),
+      ],
+    ),
+  ],
+)
+''',
+  'Dialog': r'''
+// Renders nothing inline — the panel is in the overlay, anchored to
+// a screen corner, and nothing behind it is blocked.
+PlinthDialog(
+  controller: _dialog,
+  title: 'Subscribe',
+  child: const PlinthText(
+    'Not a modal: the rest of the page still works.',
+    size: PlinthSize.sm,
+  ),
+)
+''',
+  'Floating Window': r'''
+Stack(
+  children: [
+    const Workspace(),
+    PlinthFloatingWindow(
+      title: 'Inspector',
+      onClose: () => setState(() => _showWindow = false),
+      child: const PlinthText('Several can be open at once.'),
+    ),
+  ],
+)
+''',
+  'Scroller': r'''
+PlinthScroller(
+  // The same controller the scrollable inside uses — it has to be
+  // built with it, so the widget can't create one.
+  controller: _scroller,
+  threshold: 80,
+  child: ListView.builder(
+    controller: _scroller,
+    itemCount: 30,
+    itemBuilder: (context, i) => PlinthText('Row $i'),
+  ),
+)
+''',
+  'Background Image': r'''
+const PlinthBackgroundImage(
+  src: 'https://picsum.photos/seed/plinth/600/200',
+  height: 140,
+  // A scrim goes between the photo and the text by default, because
+  // text over a photograph is unreadable against its light parts.
+  child: PlinthTitle('Ships tomorrow', order: 3),
+)
+''',
+  'Loader': r'''
+const PlinthGroup(
+  children: [
+    PlinthLoader(),
+    PlinthLoader(type: PlinthLoaderType.dots),
+    PlinthLoader(type: PlinthLoaderType.bars),
+  ],
+)
+''',
+  'Close Button': r'''
+PlinthGroup(
+  children: [
+    PlinthCloseButton(onPressed: () {}),
+    PlinthCloseButton(size: PlinthSize.lg, onPressed: () {}),
+  ],
+)
+''',
+  'Number Formatter': r'''
+const PlinthStack(
+  gap: PlinthSize.xs,
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    PlinthNumberFormatter(value: 1234567.5, prefix: r'$', decimalScale: 2),
+    PlinthNumberFormatter(value: 42, suffix: ' km'),
+    // Not localised on purpose — the separators are yours to pass.
+    PlinthNumberFormatter(
+      value: 1234.56,
+      thousandSeparator: '.',
+      decimalSeparator: ',',
+      decimalScale: 2,
+    ),
+  ],
+)
+''',
+  'Rolling Number': r'''
+PlinthRollingNumber(
+  value: _quantity * 1250,
+  prefix: r'$',
+  size: PlinthSize.xl,
+  weight: FontWeight.w700,
+)
+''',
+  'Semi Circle Progress': r'''
+PlinthSemiCircleProgress(
+  value: _rating / 5,
+  label: PlinthText(
+    '${(_rating / 5 * 100).round()}%',
+    weight: FontWeight.w700,
+  ),
+)
+''',
 };
