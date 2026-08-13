@@ -7,6 +7,72 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.13.0
+
+### Added
+
+The colour inputs — the last large gap in the Forms category, and the
+one where the interesting work was accessibility rather than painting.
+
+- **`PlinthColorPicker`** — saturation/brightness area, hue, and
+  optionally opacity. **It remembers the last meaningful hue**, which
+  is the difference between a picker that works and one that quietly
+  loses your colour: hue is undefined for greys and blacks, where
+  `HSVColor` reports 0, so reading it straight back snaps the picker to
+  red the moment brightness hits zero — and then the hue slider appears
+  dead on a black. Keeping the hue separately is what lets the two
+  controls behave independently.
+
+  A related trap, found while writing the test for it: the remembered
+  hue was a `late` field, and a lazy initialiser runs at first *read* —
+  which is only ever the moment the hue has already gone undefined. It
+  reliably recorded the 0 it existed to avoid. Captured eagerly now.
+
+  Without `withAlpha` the picker forces alpha to 1 rather than quietly
+  carrying through a transparency the UI gives no way to see or change.
+
+- **`PlinthHueSlider`** and **`PlinthAlphaSlider`** — the picker's
+  parts, exported separately because each is often the whole
+  interaction. Alpha's track sits over a chequer, the convention that
+  separates *transparent* from *pale*; without it, 50% black and solid
+  grey look identical.
+
+- **`PlinthAngleSlider`** — a circular dial for a direction: a
+  gradient's angle, a shadow's offset. Zero points up and grows
+  clockwise, the compass convention a dial implies rather than the
+  mathematical one. `divisions` snaps to equal steps.
+
+- **`PlinthColorInput`** — a hex field with a preview swatch that opens
+  the picker. The swatch is the trigger rather than the whole field: a
+  field that opened a dropdown on every tap would fight the caret for
+  the same gesture. Typing is parsed leniently (`#abc`, `abc`,
+  `#aabbcc`, and with `withAlpha`, CSS-order `#aabbccdd`), and an
+  unparseable value is *not* an error — it simply isn't reported, so a
+  half-finished `#2f9` isn't destroyed mid-keystroke. `formatHex` and
+  `parseHex` are exposed as statics.
+
+### The accessibility note that shaped all four sliders
+
+`PlinthSlider` wraps Flutter's `Slider` precisely so drag handling,
+keyboard steps, and screen-reader announcements don't have to be
+re-derived. These four can't: their tracks are gradients and a dial,
+and `SliderTheme` only paints flat colours.
+
+So everything `Slider` would have given for free is rebuilt
+deliberately — drag, tap-to-jump, arrow-key steps with Home/End, and a
+slider semantics node announcing a real value ("210 degrees", not
+"0.58"). It lives in one internal base (`PlinthColorSliderBase`) rather
+than being written twice and left half-done in one of them.
+
+Getting that right surfaced a framework contract worth recording: a
+semantics node exposing an increase/decrease action must also supply
+`increasedValue`/`decreasedValue` whenever it supplies `value`, or it
+asserts at build. That's why the base takes a *formatter* rather than a
+formatted string — it needs the value a step either side, not just the
+current one.
+
+97 components, 92 playgrounds, 205 Widgetbook use cases.
+
 ## 0.12.0
 
 ### Added

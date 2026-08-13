@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:plinth_components/plinth_components.dart';
 import 'package:widgetbook/widgetbook.dart';
@@ -1706,6 +1708,296 @@ final List<WidgetbookNode> plinthDirectories = [
                       PlinthButton(onPressed: () {}, child: const Text('Pay')),
                     ],
                   ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthColorInput',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final withAlpha = context.knobs.boolean(
+                label: 'withAlpha',
+                description: 'Adds an opacity slider and an eight-digit '
+                    'hex',
+              );
+              final label = context.knobs.stringOrNull(
+                label: 'label',
+                initialValue: 'Brand colour',
+                defaultToNull: true,
+              );
+              final error = context.knobs.stringOrNull(
+                label: 'error',
+                defaultToNull: true,
+              );
+              final enabled = context.knobs.boolean(
+                label: 'enabled',
+                initialValue: true,
+              );
+
+              return _themed(
+                SizedBox(
+                  width: 320,
+                  child: _Local<Color>(
+                    initial: const Color(0xFF2F9E44),
+                    builder: (value, onChanged) => PlinthColorInput(
+                      value: value,
+                      onChanged: enabled ? onChanged : null,
+                      label: label,
+                      error: error,
+                      withAlpha: withAlpha,
+                      enabled: enabled,
+                      size: _sizeKnob(context),
+                      swatches: const [
+                        Color(0xFF2F9E44),
+                        Color(0xFF1971C2),
+                        Color(0xFFE03131),
+                        Color(0xFFF08C00),
+                        Color(0xFF7048E8),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'Typing a hex',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 320,
+                child: _Local<Color>(
+                  initial: const Color(0xFF1971C2),
+                  builder: (value, onChanged) => PlinthColorInput(
+                    label: 'Type #abc, abc, or #aabbcc',
+                    description: 'A half-typed value reports nothing and '
+                        'is left alone under the caret',
+                    value: value,
+                    onChanged: onChanged,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthColorPicker',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final withAlpha = context.knobs.boolean(label: 'withAlpha');
+              final withSwatches = context.knobs.boolean(
+                label: 'swatches',
+                initialValue: true,
+              );
+              final areaHeight = context.knobs.double
+                  .slider(
+                    label: 'areaHeight',
+                    initialValue: 140,
+                    min: 80,
+                    max: 240,
+                  )
+                  .toDouble();
+
+              return _themed(
+                SizedBox(
+                  width: 260,
+                  child: _Local<Color>(
+                    initial: const Color(0xFF1971C2),
+                    builder: (value, onChanged) => PlinthColorPicker(
+                      value: value,
+                      onChanged: onChanged,
+                      withAlpha: withAlpha,
+                      areaHeight: areaHeight,
+                      swatches: withSwatches
+                          ? const [
+                              Color(0xFF2F9E44),
+                              Color(0xFF1971C2),
+                              Color(0xFFE03131),
+                              Color(0xFFF08C00),
+                              Color(0xFF7048E8),
+                              Color(0xFF0C8599),
+                            ]
+                          : null,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'Hue survives black',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 260,
+                child: _Local<Color>(
+                  initial: const Color(0xFF000000),
+                  builder: (value, onChanged) => PlinthStack(
+                    gap: PlinthSize.sm,
+                    children: [
+                      const PlinthText(
+                        'Drag brightness to zero, then move the hue and '
+                        'drag back up — the hue you chose is still there.',
+                        size: PlinthSize.xs,
+                      ),
+                      PlinthColorPicker(value: value, onChanged: onChanged),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthHueSlider',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final height = context.knobs.double
+                  .slider(label: 'height', initialValue: 14, min: 6, max: 40)
+                  .toDouble();
+
+              return _themed(
+                SizedBox(
+                  width: 320,
+                  child: _Local<double>(
+                    initial: 210,
+                    builder: (value, onChanged) => PlinthStack(
+                      gap: PlinthSize.sm,
+                      children: [
+                        PlinthHueSlider(
+                          value: value,
+                          onChanged: onChanged,
+                          height: height,
+                        ),
+                        PlinthText('${value.round()}°'),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthAlphaSlider',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final height = context.knobs.double
+                  .slider(label: 'height', initialValue: 14, min: 6, max: 40)
+                  .toDouble();
+
+              return _themed(
+                SizedBox(
+                  width: 320,
+                  child: _Local<double>(
+                    initial: 0.6,
+                    builder: (value, onChanged) => PlinthStack(
+                      gap: PlinthSize.sm,
+                      children: [
+                        PlinthAlphaSlider(
+                          color: const Color(0xFF1971C2),
+                          value: value,
+                          onChanged: onChanged,
+                          height: height,
+                        ),
+                        // The chequer behind the track is what makes
+                        // "transparent" readable as something other
+                        // than "pale".
+                        PlinthText('${(value * 100).round()}% opacity'),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthAngleSlider',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final divisions = context.knobs.boolean(label: 'snap to steps')
+                  ? context.knobs.int
+                      .slider(
+                        label: 'divisions',
+                        initialValue: 8,
+                        min: 2,
+                        max: 24,
+                      )
+                      .toInt()
+                  : null;
+
+              return _themed(
+                _Local<double>(
+                  initial: 45,
+                  builder: (value, onChanged) => PlinthGroup(
+                    children: [
+                      PlinthAngleSlider(
+                        value: value,
+                        onChanged: onChanged,
+                        divisions: divisions,
+                        size: context.knobs.double
+                            .slider(
+                              label: 'size',
+                              initialValue: 72,
+                              min: 40,
+                              max: 160,
+                            )
+                            .toDouble(),
+                        color: _colorKnob(context),
+                      ),
+                      PlinthText('${value.round()}°'),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'Driving a gradient',
+            builder: (context) => _themed(
+              _Local<double>(
+                initial: 45,
+                builder: (value, onChanged) => PlinthGroup(
+                  children: [
+                    PlinthAngleSlider(value: value, onChanged: onChanged),
+                    Container(
+                      width: 120,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        gradient: LinearGradient(
+                          begin: Alignment(
+                            -math.sin(value * math.pi / 180),
+                            math.cos(value * math.pi / 180),
+                          ),
+                          end: Alignment(
+                            math.sin(value * math.pi / 180),
+                            -math.cos(value * math.pi / 180),
+                          ),
+                          colors: const [
+                            Color(0xFF1971C2),
+                            Color(0xFF2F9E44),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

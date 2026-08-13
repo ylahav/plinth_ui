@@ -525,6 +525,81 @@ own `enabled` wired up. The legend is announced as a label for the
 group, so a screen reader reaches "Shipping address, Street" rather
 than a bare "Street".
 
+### `PlinthColorInput`
+`value` (a `Color`), `onChanged`, `label`, `description`,
+`placeholder`, `error`, `withAlpha`, `swatches`, `size`, `radius`,
+`enabled`. A hex text field with a preview swatch that opens a
+`PlinthColorPicker`.
+
+Both halves matter: typing `#2f9e44` is the fastest way in when you
+know the value, and the picker is the only way in when you don't. The
+swatch is the picker's trigger rather than the whole field, since a
+field that opened a dropdown on every tap would fight the caret for
+the same gesture.
+
+Typing is parsed leniently — `#abc`, `abc`, `#aabbcc`, `aabbcc`, and
+with `withAlpha`, `#aabbccdd` in CSS order. An unparseable value is
+simply not reported: the field keeps what was typed, so a half-finished
+`#2f9` isn't destroyed mid-keystroke, and `onChanged` fires only once
+the text means something. The static `formatHex`/`parseHex` are
+exposed, since the same string usually has to appear elsewhere.
+
+Where `PlinthColorSwatch` chooses from a fixed palette, this accepts
+any colour — so reach for the palette when the choice should stay
+on-system, and this when it genuinely shouldn't.
+
+### `PlinthColorPicker`
+`value`, `onChanged`, `withAlpha`, `swatches`, `areaHeight` (default
+`140`), `radius`. A saturation/brightness area, a hue slider, and
+optionally an opacity slider. Controlled like every other input here.
+
+It remembers the last meaningful hue. Hue is *undefined* for greys and
+blacks — `HSVColor` reports 0 — so reading it straight back would snap
+the picker to red the moment brightness hit zero, and dragging the hue
+slider on a black would appear to do nothing. Keeping the hue
+separately is what lets the two controls behave independently, and it's
+the difference between "drag to black and back" returning your colour
+or returning red.
+
+Without `withAlpha` the picker forces alpha to 1, rather than quietly
+carrying through a transparency the UI gives no way to see or change.
+
+### `PlinthHueSlider`
+`value` (degrees, 0–360), `onChanged`, `height`, `radius`,
+`saturation`/`brightness` (thumb preview only). One of the picker's
+parts, exported separately because a hue alone is often the whole
+interaction — tinting a chart series, theming a workspace — and a full
+picker would be the wrong amount of UI for it. The track always shows
+fully saturated hues; a washed-out track makes neighbouring hues hard
+to tell apart.
+
+### `PlinthAlphaSlider`
+`color` (the colour whose opacity is being chosen — its own alpha is
+ignored), `value` (0–1), `onChanged`, `height`, `radius`. The track
+runs from transparent to `color` over a chequer, the convention that
+separates *transparent* from *pale*: without it, 50% black and solid
+grey look identical.
+
+### `PlinthAngleSlider`
+`value` (degrees), `onChanged`, `size` (default `60`), `thickness`,
+`color`, `step`, `divisions`. A circular dial — the one control in this
+set that isn't about colour. It picks a direction: a gradient's angle,
+a shadow's offset, a rotation. Zero points up and the value grows
+clockwise, the compass convention a dial implies, rather than the
+mathematical one where zero points right and grows anticlockwise.
+`divisions` snaps to equal steps — 8 for the compass points, 12 for
+the clock positions.
+
+**A note on all four sliders.** `PlinthSlider` wraps Flutter's
+`Slider` precisely so drag handling, keyboard steps, and screen-reader
+announcements don't have to be re-derived. These can't: their tracks
+are gradients and a dial, and `SliderTheme` only paints flat colours.
+So the parts `Slider` would have given free are rebuilt deliberately —
+drag, tap-to-jump, arrow-key steps with Home/End, and a slider
+semantics node announcing a real value ("210 degrees", not "0.58").
+The shared machinery lives in one internal base so it isn't written
+twice and left half-done in one of them.
+
 ---
 
 ## Feedback
@@ -976,6 +1051,12 @@ Tapping an item closes the controller *then* calls its `onTap`.
   — shared listener/dispose plumbing behind `PlinthModalHost` and
   `PlinthDrawerHost`. Not part of the public API; any future route-based
   overlay host should wrap this the same way.
+- **`PlinthColorSliderBase`**
+  (`plinth_components/src/widgets/color_slider_base.dart`) — the drag,
+  tap-to-jump, arrow-key and slider-semantics behaviour behind
+  `PlinthHueSlider` and `PlinthAlphaSlider`. Everything Flutter's
+  `Slider` would have provided if a gradient track were paintable
+  through `SliderTheme`, written once rather than twice.
 
 ---
 
@@ -997,11 +1078,6 @@ from this one.
 
 ### Inputs
 
-- **`PlinthColorInput`** — a text field with a color preview and
-  picker. `PlinthColorSwatch` covers choosing from a preset palette.
-- **`PlinthColorPicker`** — the full picker, plus its
-  **`AlphaSlider`** / **`HueSlider`** / **`AngleSlider`** parts, which
-  exist in Mantine mainly as its building blocks.
 - **`PlinthInput`** — Mantine's unstyled base that its other fields are
   built from. Plinth's fields each own their chrome instead; adopting
   this would be an architectural change, not just a new widget.
