@@ -7,6 +7,79 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.14.0
+
+### Added — sorting and filtering on `PlinthTable`
+
+`sortable` makes every header tappable with a direction caret;
+`filter` keeps only rows containing that text across every column;
+`emptyState` replaces the rows when nothing matches.
+
+Both need something comparable, and **a widget cell has no value to
+compare** — one `PlinthBadge` isn't greater or less than another. So
+`PlinthTable.text` sorts and filters out of the box, while the widget
+constructor takes `sortValues`: the plain strings standing behind the
+widgets. Passing `sortable` or `filter` without them asserts in debug
+rather than silently doing nothing, which is the failure mode worth
+avoiding — a filter box that quietly never filters looks like a data
+bug, not an API mistake.
+
+Two details that are easy to get wrong and are pinned by tests:
+sorting is **numeric where both sides parse as numbers**, so a score
+column orders 9 before 10 rather than after it; and it is **stable**,
+because Dart's `sort` isn't, so equal keys keep their original order
+instead of reshuffling on every rebuild.
+
+Uncontrolled by default. `onSortChanged` takes it over — the table
+then reports the sort it would apply and leaves the row order alone,
+which is what a server-side or paginated table needs.
+
+### Added — the tree and hierarchy set
+
+- **`PlinthTree`** — expandable hierarchical navigation, controlled.
+  Expansion and selection are tracked by node `value` rather than
+  position, so a tree can be reordered or lazily filled without losing
+  its open branches. Arrow up/down move between rows, right opens a
+  branch, left closes it or steps out. Only branches carry an expanded
+  state in semantics: a leaf announcing "collapsed" would be claiming
+  it opens.
+
+- **`PlinthTreeSelect`** — a select whose options have structure.
+  Opening it expands the branches down to the current value, because a
+  field claiming to show a selection three levels deep should not hide
+  it. `selectableBranches: false` makes branches open-only.
+
+- **`PlinthCascader`** — column-by-column selection. The same data
+  `PlinthTreeSelect` shows, for a different question: a tree is for
+  *finding* something in a structure you explore, this is for *walking
+  a known path* where every level is a real decision. Its value is the
+  path rather than a leaf, which keeps a partial selection
+  representable instead of treating it as an error.
+
+- **`PlinthTableOfContents`** — a jump list of a page's headings.
+  **Headings are passed in, not discovered:** Flutter has no document
+  to walk, and crawling the widget tree for `PlinthTitle`s would be
+  fragile and blind to anything not yet built in a lazy list. Indent is
+  relative to the shallowest heading present, so a document starting at
+  level 2 isn't permanently indented.
+
+### Fixed
+
+- **`PlinthPopover` never rebuilt its overlay panel when its content
+  changed.** An open popover was frozen at whatever it was built with,
+  so anything interactive inside one — a tree that expands, a form that
+  validates — silently stopped updating. Found by putting a
+  `PlinthTree` in one.
+
+  The fix has a wrinkle worth recording: `didUpdateWidget` runs *during*
+  the build phase, and marking an `OverlayEntry` dirty then is illegal,
+  because the entry isn't a descendant and the framework may already
+  have walked past it. The rebuild is deferred to a post-frame callback.
+  `PlinthDialog` carried the same illegal call from 0.11.0 and is fixed
+  the same way.
+
+101 components, 96 playgrounds, 213 Widgetbook use cases.
+
 ## 0.13.0
 
 ### Added

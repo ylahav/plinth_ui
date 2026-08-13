@@ -83,7 +83,16 @@ class _PlinthDialogState extends State<PlinthDialog> {
       widget.controller.addListener(_onControllerChanged);
     }
     // Rebuild the panel so prop changes reach an already-open dialog.
-    _entry?.markNeedsBuild();
+    //
+    // Deferred because didUpdateWidget runs *during* the build phase,
+    // and marking an overlay entry dirty then is illegal: the entry is
+    // not a descendant of this widget, so the framework may already
+    // have walked past it.
+    if (_entry != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _entry?.markNeedsBuild();
+      });
+    }
   }
 
   void _onControllerChanged() {

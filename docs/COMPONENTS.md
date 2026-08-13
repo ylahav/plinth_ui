@@ -525,6 +525,40 @@ own `enabled` wired up. The legend is announced as a label for the
 group, so a screen reader reaches "Shipping address, Street" rather
 than a bare "Street".
 
+### `PlinthTreeSelect`
+`nodes` (`List<PlinthTreeNode>`), `value`, `onChanged`, `label`,
+`description`, `placeholder`, `error`, `selectableBranches`, `size`,
+`radius`, `enabled`, `dropdownWidth`, `dropdownMaxHeight`. A select
+whose options are a hierarchy.
+
+`PlinthSelect` flattens everything into one list, which stops working
+the moment the options have structure — a category and its
+subcategories, a folder and its files. This is that list with the
+structure kept. Opening it expands the branches leading to the current
+value, so a deep selection is visible rather than hidden three levels
+down. `selectableBranches: false` makes tapping a branch only open it,
+for when only leaves are real choices.
+
+### `PlinthCascader` + `PlinthCascaderOption`
+`options`, `value` (the path), `onChanged`, `columnWidth`, `height`,
+`size`, `color`. Column-by-column selection through a hierarchy.
+
+The same data `PlinthTreeSelect` shows, arranged for a different
+question. A tree is for *finding* one item in a structure you have to
+explore; this is for *walking a known path* — country → region → city
+— where every level is a real decision and seeing the alternatives at
+each one is the point.
+
+The value is the path (`['eu', 'fr', 'paris']`), not a leaf, which
+keeps a partial selection representable: choosing a category without
+yet choosing its subcategory is a normal intermediate state rather than
+an error. Choosing at a shallower level truncates the path, since
+everything to its right is no longer reachable.
+
+Renders inline. Wrap it in a `PlinthPopover` for the dropdown form —
+the columns are the part worth having, and keeping the trigger out
+means it composes into a filter bar or a settings panel just as easily.
+
 ### `PlinthColorInput`
 `value` (a `Color`), `onChanged`, `label`, `description`,
 `placeholder`, `error`, `withAlpha`, `swatches`, `size`, `radius`,
@@ -884,6 +918,28 @@ available width, so a cell is width-bounded: a `Row` inside one needs a
 `Flexible` or `Expanded` around anything that can grow, or it overflows
 rather than ellipsizing.
 
+**Sorting and filtering.** `sortable` makes every header tappable with
+a direction caret; `filter` keeps only rows containing that text, case
+insensitively, across every column; `emptyState` replaces the rows when
+nothing matches.
+
+Both need something comparable, and **a widget cell has no value to
+compare** — one `PlinthBadge` isn't greater or less than another. So
+`PlinthTable.text` sorts and filters out of the box, while the widget
+constructor needs `sortValues`: the plain strings standing behind the
+widgets, in the same shape as the rows. Passing `sortable` or `filter`
+without them asserts in debug rather than silently doing nothing.
+
+Sorting is numeric where both sides parse as numbers, so a quantity
+column orders 9 before 10 rather than after it, and stable for equal
+keys, so rows don't shuffle between rebuilds.
+
+It is uncontrolled by default — tapping sorts in place, tapping again
+reverses. Pass `onSortChanged` to take that over: the table then
+reports the sort it *would* apply and leaves the row order alone,
+which is what a server-side or paginated table needs. Same split as
+`PlinthTabs`/`PlinthTabView`.
+
 ---
 
 ## Navigation
@@ -925,6 +981,47 @@ has `title`, optional `description`/`icon`, and `active` (highlights the
 dot in the theme color — use for the current/most-recent event). Dots are
 connected by a line via `IntrinsicHeight` + `Expanded`, a standard Flutter
 pattern for "match this column's height to its sibling."
+
+### `PlinthTree` + `PlinthTreeNode`
+`nodes`, `expanded` (`Set<String>`), `onExpandedChanged`, `selected`,
+`onSelected`, `size`, `color`, `indent`. Hierarchical navigation with
+expandable branches. Each `PlinthTreeNode` has `value` (unique across
+the tree), `label`, `children`, and an optional `icon`.
+
+Controlled, and it matters more here than elsewhere: a file tree that
+loads children on expand, or restores its open branches between
+sessions, needs that state above the widget. Expansion and selection
+are tracked by `value` rather than by position, so a tree can be
+reordered or lazily filled without losing its open branches.
+
+Keyboard traversal works the way a tree is expected to — arrow
+up/down move between visible rows (Flutter's own directional
+traversal, since every row is focusable), right opens a branch, left
+closes it or steps out to the parent. Leaves reserve the caret's width
+so labels line up down a level instead of stepping in and out, and
+only branches carry an expanded state in semantics: a leaf announcing
+"collapsed" would be claiming it opens.
+
+### `PlinthTableOfContents` + `PlinthTocItem`
+`items`, `activeIndex`, `onSelected`, `size`, `color`, `indent`,
+`withRail`, `scrollDuration`. A jump list of a page's headings. Each
+`PlinthTocItem` has `label`, `order` (1–6, matching `PlinthTitle`), and
+an optional `targetKey`.
+
+**Headings are passed in, not discovered.** Mantine's version reads
+them out of the DOM; Flutter has no document to walk, and crawling the
+widget tree for `PlinthTitle`s would be both fragile and blind to
+anything not yet built inside a lazy list. The explicit list also means
+it can name sections that aren't headings at all.
+
+Indent is relative to the shallowest heading present, so a document
+starting at level 2 isn't permanently indented. Give an item a
+`targetKey` matching a key on the heading and tapping scrolls to it —
+via `Scrollable.ensureVisible`, which needs the target already built,
+so use a `SingleChildScrollView` or handle `onSelected` yourself in a
+lazy list. The active entry carries weight *and* colour, not just the
+rail: a rail alone is easy to miss, and colour alone doesn't survive a
+mono display.
 
 ### `PlinthNavLink`
 `label`, `icon`, `trailing` (e.g. a `PlinthBadge` for an unread count),
@@ -1095,16 +1192,9 @@ from this one.
 - **`PlinthCombobox`** / **`PlinthComboboxPopover`** — the low-level
   primitives Mantine's Select/Autocomplete/TagsInput are built on. Only
   worth it if several of the above land and start duplicating logic.
-- **`PlinthCascader`** / **`PlinthTreeSelect`** — multi-level and
-  hierarchical selection.
 
 ### Navigation & overlays
 
-- **`PlinthTableOfContents`** — headings extracted into a jump list.
-  Now that `PlinthTitle` carries heading levels, this has real
-  structure to read from.
-- **`PlinthTree`** — hierarchical navigation. Substantial work
-  (expansion state, keyboard traversal, selection).
 - **`PlinthMenubar`** — a horizontal bar of menus, desktop-style.
 - **`PlinthFloatingIndicator`** — the sliding indicator Mantine's tabs
   and segmented controls use. Plinth's equivalents deliberately use a

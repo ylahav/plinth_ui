@@ -73,6 +73,20 @@ class _PlinthPopoverState extends State<PlinthPopover> {
       oldWidget.controller.removeListener(_onControllerChanged);
       widget.controller.addListener(_onControllerChanged);
     }
+    // The panel lives in an OverlayEntry, which doesn't rebuild just
+    // because this widget did. Without this an open popover is frozen
+    // at whatever it was built with — a tree that expands inside one
+    // would never redraw.
+    //
+    // Deferred because didUpdateWidget runs *during* the build phase,
+    // and marking an overlay entry dirty then is illegal: the entry is
+    // not a descendant of this widget, so the framework may already
+    // have walked past it.
+    if (_entry != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _entry?.markNeedsBuild();
+      });
+    }
   }
 
   void _onControllerChanged() {

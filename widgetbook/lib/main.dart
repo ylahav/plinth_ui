@@ -127,6 +127,90 @@ const _paletteColors = [
 /// Shared knob definitions for the props nearly every Plinth component
 /// accepts, so the playground use cases offer one consistent
 /// vocabulary instead of re-declaring these fifteen times.
+/// Shared by the Tree and TreeSelect use cases, so the two show the
+/// same data arranged for their two different questions.
+const List<PlinthTreeNode> _fileTree = [
+  PlinthTreeNode(
+    value: 'src',
+    label: 'src',
+    icon: Icon(Icons.folder_outlined),
+    children: [
+      PlinthTreeNode(
+        value: 'widgets',
+        label: 'widgets',
+        icon: Icon(Icons.folder_outlined),
+        children: [
+          PlinthTreeNode(
+            value: 'button',
+            label: 'plinth_button.dart',
+            icon: Icon(Icons.description_outlined),
+          ),
+          PlinthTreeNode(
+            value: 'tree',
+            label: 'plinth_tree.dart',
+            icon: Icon(Icons.description_outlined),
+          ),
+        ],
+      ),
+      PlinthTreeNode(
+        value: 'main',
+        label: 'main.dart',
+        icon: Icon(Icons.description_outlined),
+      ),
+    ],
+  ),
+  PlinthTreeNode(
+    value: 'test',
+    label: 'test',
+    icon: Icon(Icons.folder_outlined),
+    children: [
+      PlinthTreeNode(
+        value: 'tree_test',
+        label: 'plinth_tree_test.dart',
+        icon: Icon(Icons.description_outlined),
+      ),
+    ],
+  ),
+];
+
+/// Country → region → city, the canonical shape a cascader is for.
+const List<PlinthCascaderOption> _places = [
+  PlinthCascaderOption(
+    value: 'eu',
+    label: 'Europe',
+    children: [
+      PlinthCascaderOption(
+        value: 'fr',
+        label: 'France',
+        children: [
+          PlinthCascaderOption(value: 'paris', label: 'Paris'),
+          PlinthCascaderOption(value: 'lyon', label: 'Lyon'),
+        ],
+      ),
+      PlinthCascaderOption(
+        value: 'de',
+        label: 'Germany',
+        children: [
+          PlinthCascaderOption(value: 'berlin', label: 'Berlin'),
+          PlinthCascaderOption(value: 'munich', label: 'Munich'),
+        ],
+      ),
+    ],
+  ),
+  PlinthCascaderOption(
+    value: 'as',
+    label: 'Asia',
+    children: [
+      PlinthCascaderOption(
+        value: 'jp',
+        label: 'Japan',
+        children: [PlinthCascaderOption(value: 'tokyo', label: 'Tokyo')],
+      ),
+    ],
+  ),
+  PlinthCascaderOption(value: 'an', label: 'Antarctica'),
+];
+
 PlinthSize _sizeKnob(
   BuildContext context, {
   PlinthSize initial = PlinthSize.md,
@@ -1715,6 +1799,141 @@ final List<WidgetbookNode> plinthDirectories = [
         ],
       ),
       WidgetbookComponent(
+        name: 'PlinthTreeSelect',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final selectableBranches = context.knobs.boolean(
+                label: 'selectableBranches',
+                initialValue: true,
+                description: 'Off means folders only open — useful when '
+                    'only leaves are real choices',
+              );
+              final error = context.knobs.stringOrNull(
+                label: 'error',
+                defaultToNull: true,
+              );
+
+              return _themed(
+                SizedBox(
+                  width: 300,
+                  child: _Local<String?>(
+                    initial: null,
+                    builder: (value, onChanged) => PlinthTreeSelect(
+                      nodes: _fileTree,
+                      value: value,
+                      onChanged: onChanged,
+                      label: 'File',
+                      error: error,
+                      selectableBranches: selectableBranches,
+                      size: _sizeKnob(context),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'Opens onto the current value',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 300,
+                child: _Local<String?>(
+                  // Starts three levels deep: opening the dropdown has
+                  // to reveal it rather than hide it.
+                  initial: 'tree',
+                  builder: (value, onChanged) => PlinthTreeSelect(
+                    nodes: _fileTree,
+                    value: value,
+                    onChanged: onChanged,
+                    label: 'File',
+                    description: 'Open it — the branches down to the '
+                        'selection are already expanded',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthCascader',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final columnWidth = context.knobs.double
+                  .slider(
+                    label: 'columnWidth',
+                    initialValue: 150,
+                    min: 90,
+                    max: 260,
+                  )
+                  .toDouble();
+              final height = context.knobs.double
+                  .slider(
+                      label: 'height', initialValue: 200, min: 100, max: 320)
+                  .toDouble();
+
+              return _themed(
+                _Local<List<String>>(
+                  initial: const ['eu', 'fr'],
+                  builder: (value, onChanged) => PlinthStack(
+                    gap: PlinthSize.sm,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PlinthCascader(
+                        options: _places,
+                        value: value,
+                        onChanged: onChanged,
+                        columnWidth: columnWidth,
+                        height: height,
+                        size: _sizeKnob(context),
+                        color: _colorKnob(context),
+                      ),
+                      // The value is the path, not the leaf — a partial
+                      // selection is a normal state, not an error.
+                      PlinthText(
+                        value.isEmpty ? 'Nothing chosen' : value.join(' › '),
+                        size: PlinthSize.sm,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'In a dropdown',
+            builder: (context) => _themed(
+              _Disclosed(
+                builder: (controller) => PlinthPopover(
+                  controller: controller,
+                  target: PlinthButton(
+                    onPressed: controller.toggle,
+                    variant: PlinthVariant.outline,
+                    child: const Text('Choose a place'),
+                  ),
+                  // Rendering inline is what makes this composable: the
+                  // dropdown form is a popover wrapped around it.
+                  content: _Local<List<String>>(
+                    initial: const [],
+                    builder: (value, onChanged) => PlinthCascader(
+                      options: _places,
+                      value: value,
+                      onChanged: onChanged,
+                      columnWidth: 130,
+                      height: 160,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
         name: 'PlinthColorInput',
         useCases: [
           WidgetbookUseCase(
@@ -2009,6 +2228,112 @@ final List<WidgetbookNode> plinthDirectories = [
   WidgetbookCategory(
     name: 'Navigation',
     children: [
+      WidgetbookComponent(
+        name: 'PlinthTree',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final indent = context.knobs.double
+                  .slider(label: 'indent', initialValue: 20, min: 8, max: 48)
+                  .toDouble();
+              final size = _sizeKnob(context);
+              final color = _colorKnob(context);
+
+              // Two pieces of state, both owned by the caller — which
+              // is the point of the component being controlled.
+              return _themed(
+                SizedBox(
+                  width: 280,
+                  child: _Local<Set<String>>(
+                    initial: const {'src'},
+                    builder: (expanded, onExpanded) => _Local<String?>(
+                      initial: null,
+                      builder: (selected, onSelected) => PlinthTree(
+                        nodes: _fileTree,
+                        expanded: expanded,
+                        onExpandedChanged: onExpanded,
+                        selected: selected,
+                        onSelected: onSelected,
+                        indent: indent,
+                        size: size,
+                        color: color,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'Keyboard traversal',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 280,
+                child: _Local<Set<String>>(
+                  initial: const {},
+                  builder: (expanded, onExpanded) => PlinthStack(
+                    gap: PlinthSize.sm,
+                    children: [
+                      const PlinthText(
+                        'Tab in, then arrow up/down to move, right to '
+                        'open a branch, left to close it or step out.',
+                        size: PlinthSize.xs,
+                      ),
+                      PlinthTree(
+                        nodes: _fileTree,
+                        expanded: expanded,
+                        onExpandedChanged: onExpanded,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthTableOfContents',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final withRail = context.knobs.boolean(
+                label: 'withRail',
+                initialValue: true,
+              );
+              final indent = context.knobs.double
+                  .slider(label: 'indent', initialValue: 14, min: 4, max: 32)
+                  .toDouble();
+
+              return _themed(
+                SizedBox(
+                  width: 240,
+                  child: _Local<int>(
+                    initial: 1,
+                    builder: (active, onSelected) => PlinthTableOfContents(
+                      items: const [
+                        PlinthTocItem(label: 'Introduction'),
+                        PlinthTocItem(label: 'Installing', order: 2),
+                        PlinthTocItem(label: 'From pub.dev', order: 3),
+                        PlinthTocItem(label: 'From source', order: 3),
+                        PlinthTocItem(label: 'Theming', order: 2),
+                      ],
+                      activeIndex: active,
+                      onSelected: onSelected,
+                      withRail: withRail,
+                      indent: indent,
+                      size: _sizeKnob(context, initial: PlinthSize.sm),
+                      color: _colorKnob(context),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       WidgetbookComponent(
         name: 'PlinthTabs',
         useCases: [
@@ -3886,6 +4211,43 @@ final List<WidgetbookNode> plinthDirectories = [
       WidgetbookComponent(
         name: 'PlinthTable',
         useCases: [
+          WidgetbookUseCase(
+            name: 'Sorting and filtering',
+            builder: (context) {
+              final sortable = context.knobs.boolean(
+                label: 'sortable',
+                initialValue: true,
+                description: 'Tap a header to sort; tap again to '
+                    'reverse. Score sorts as numbers, not text',
+              );
+              final query = context.knobs.string(
+                label: 'filter',
+                description: 'Matches any column, case insensitively',
+              );
+
+              return _themed(
+                SizedBox(
+                  width: 480,
+                  child: PlinthTable.text(
+                    columns: const ['Name', 'Role', 'Score'],
+                    sortable: sortable,
+                    filter: query,
+                    striped: context.knobs.boolean(label: 'striped'),
+                    emptyState: const PlinthEmptyState(
+                      title: 'No matches',
+                      description: 'Try a shorter search.',
+                    ),
+                    rows: const [
+                      ['Carol', 'Engineer', '9'],
+                      ['Alice', 'Designer', '10'],
+                      ['Bob', 'Engineer', '2'],
+                      ['Dan', 'Support', '31'],
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
           WidgetbookUseCase(
             name: 'Widget cells',
             builder: (context) => _themed(

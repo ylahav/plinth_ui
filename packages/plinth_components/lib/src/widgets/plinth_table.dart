@@ -43,16 +43,51 @@ import 'plinth_text.dart';
 ///   ],
 /// )
 /// ```
-class PlinthTable extends StatelessWidget {
+///
+/// ## Sorting and filtering
+///
+/// Both need something comparable to work with, and **a widget cell
+/// has no value to compare** — a `PlinthBadge` isn't greater or less
+/// than another one. So a text table sorts and filters out of the box,
+/// while a widget table needs [sortValues]: the plain strings standing
+/// behind the widgets, in the same shape as the rows.
+///
+/// ```dart
+/// PlinthTable(
+///   columns: const ['Name', 'Status'],
+///   sortable: true,
+///   filter: _query,
+///   rows: rows,
+///   sortValues: const [
+///     ['Alice', 'Active'],
+///     ['Bob', 'Invited'],
+///   ],
+/// )
+/// ```
+///
+/// Sorting is uncontrolled by default: tapping a header sorts in
+/// place, tapping again reverses it. Pass [onSortChanged] to take that
+/// over — the table then reports the sort it *would* apply and leaves
+/// the row order alone, which is what a server-side or paginated table
+/// needs. That's the same split as [PlinthTabs]/[PlinthTabView].
+class PlinthTable extends StatefulWidget {
   /// A table whose cells are arbitrary widgets.
   const PlinthTable({
     super.key,
     required this.columns,
     required List<List<Widget>> rows,
+    List<List<String>>? sortValues,
     this.striped = false,
     this.size = PlinthSize.md,
+    this.sortable = false,
+    this.sortColumn,
+    this.sortAscending = true,
+    this.onSortChanged,
+    this.filter,
+    this.emptyState,
   })  : _widgetRows = rows,
-        _textRows = null;
+        _textRows = null,
+        _sortValues = sortValues;
 
   /// A table of plain text, styled for you.
   ///
@@ -60,30 +95,158 @@ class PlinthTable extends StatelessWidget {
   /// a table of strings is the common case and should not have to wrap
   /// every value, while a union type would make the widget case
   /// unclear at the call site.
+  ///
+  /// Its own strings are what sorting and filtering compare, so
+  /// neither needs anything extra here.
   const PlinthTable.text({
     super.key,
     required this.columns,
     required List<List<String>> rows,
     this.striped = false,
     this.size = PlinthSize.md,
+    this.sortable = false,
+    this.sortColumn,
+    this.sortAscending = true,
+    this.onSortChanged,
+    this.filter,
+    this.emptyState,
   })  : _textRows = rows,
-        _widgetRows = null;
+        _widgetRows = null,
+        _sortValues = null;
 
   final List<String> columns;
 
   final List<List<Widget>>? _widgetRows;
   final List<List<String>>? _textRows;
 
+  /// Plain values behind widget cells, for sorting and filtering.
+  /// Unused by [PlinthTable.text], which already has them.
+  final List<List<String>>? _sortValues;
+
   /// Alternates row background color when true.
   final bool striped;
 
   final PlinthSize size;
 
-  /// How many rows the table holds, whichever constructor was used.
+  /// Makes every header tappable, with a direction caret on the active
+  /// column.
+  final bool sortable;
+
+  /// The column to show as sorted. Only meaningful alongside
+  /// [onSortChanged] — without it the table tracks its own.
+  final int? sortColumn;
+  final bool sortAscending;
+
+  /// Takes ownership of sorting. When set, the table reports the sort
+  /// it would apply and does **not** reorder anything itself.
+  final void Function(int column, bool ascending)? onSortChanged;
+
+  /// Keeps only rows with a value containing this text, case
+  /// insensitively, across every column. Null or empty shows all rows.
+  final String? filter;
+
+  /// Shown in place of the rows when nothing matches [filter]. A
+  /// [PlinthEmptyState] is the natural fit.
+  final Widget? emptyState;
+
+  /// How many rows the table was given, before any filtering.
   int get rowCount => _widgetRows?.length ?? _textRows!.length;
+
+  /// The comparable values for a row, or null when there are none.
+  List<String>? valuesFor(int row) {
+    final text = _textRows;
+    if (text != null) return text[row];
+    final values = _sortValues;
+    if (values == null || row >= values.length) return null;
+    return values[row];
+  }
+
+  bool get _hasValues => _textRows != null || _sortValues != null;
+
+  @override
+  State<PlinthTable> createState() => _PlinthTableState();
+}
+
+class _PlinthTableState extends State<PlinthTable> {
+  int? _sortColumn;
+  bool _ascending = true;
+
+  /// The caller owns the order the moment it asks to be told about it.
+  bool get _controlled => widget.onSortChanged != null;
+
+  int? get _activeColumn => _controlled ? widget.sortColumn : _sortColumn;
+  bool get _activeAscending => _controlled ? widget.sortAscending : _ascending;
+
+  void _onHeaderTap(int column) {
+    // First tap on a new column sorts ascending; tapping the active
+    // one reverses it, which is what every table people have used does.
+    final ascending = _activeColumn == column ? !_activeAscending : true;
+
+    if (_controlled) {
+      widget.onSortChanged!(column, ascending);
+    } else {
+      setState(() {
+        _sortColumn = column;
+        _ascending = ascending;
+      });
+    }
+  }
+
+  /// Numeric where both sides are numbers, textual otherwise — so a
+  /// quantity column orders 9 before 10 rather than after it.
+  static int _compare(String a, String b) {
+    final left = num.tryParse(a.trim());
+    final right = num.tryParse(b.trim());
+    if (left != null && right != null) return left.compareTo(right);
+    return a.toLowerCase().compareTo(b.toLowerCase());
+  }
+
+  List<int> _resolveRows() {
+    var indices = [for (var i = 0; i < widget.rowCount; i++) i];
+
+    final query = widget.filter?.trim().toLowerCase();
+    if (query != null && query.isNotEmpty) {
+      indices = indices.where((i) {
+        final values = widget.valuesFor(i);
+        if (values == null) return true;
+        return values.any((v) => v.toLowerCase().contains(query));
+      }).toList();
+    }
+
+    final column = _activeColumn;
+    if (!_controlled && column != null) {
+      indices.sort((a, b) {
+        final left = widget.valuesFor(a);
+        final right = widget.valuesFor(b);
+        if (left == null || right == null) return a.compareTo(b);
+        if (column >= left.length || column >= right.length) {
+          return a.compareTo(b);
+        }
+
+        final result = _compare(left[column], right[column]);
+        // Dart's sort isn't stable, so equal keys fall back to the
+        // original order rather than shuffling on every rebuild.
+        if (result != 0) return _activeAscending ? result : -result;
+        return a.compareTo(b);
+      });
+    }
+
+    return indices;
+  }
 
   @override
   Widget build(BuildContext context) {
+    assert(
+      !widget.sortable || widget._hasValues,
+      'PlinthTable.sortable needs values to compare. Pass sortValues '
+      'alongside widget rows, or use PlinthTable.text.',
+    );
+    assert(
+      widget.filter == null || widget._hasValues,
+      'PlinthTable.filter needs values to match against. Pass sortValues '
+      'alongside widget rows, or use PlinthTable.text.',
+    );
+
     final theme = context.plinth;
     final cellPadding = EdgeInsets.symmetric(
       horizontal: theme.spacing[PlinthSize.sm]!,
@@ -96,7 +259,7 @@ class PlinthTable extends StatelessWidget {
       return pad(
         PlinthText(
           text,
-          size: size,
+          size: widget.size,
           weight: header ? FontWeight.w700 : FontWeight.w400,
         ),
       );
@@ -106,16 +269,16 @@ class PlinthTable extends StatelessWidget {
     // style, so a bare Text in one lines up with a PlinthTable.text
     // cell beside it rather than sitting flush against the border.
     List<Widget> cellsFor(int row) {
-      final textRows = _textRows;
+      final textRows = widget._textRows;
       if (textRows != null) {
         return [for (final value in textRows[row]) textCell(value)];
       }
       return [
-        for (final child in _widgetRows![row])
+        for (final child in widget._widgetRows![row])
           pad(
             DefaultTextStyle.merge(
               style: TextStyle(
-                fontSize: theme.fontSizes[size],
+                fontSize: theme.fontSizes[widget.size],
                 color: theme.text,
               ),
               child: child,
@@ -124,7 +287,55 @@ class PlinthTable extends StatelessWidget {
       ];
     }
 
-    return Table(
+    Widget headerCell(int index) {
+      final label = widget.columns[index];
+      if (!widget.sortable) return textCell(label, header: true);
+
+      final active = _activeColumn == index;
+      final ascending = _activeAscending;
+
+      return Semantics(
+        button: true,
+        // Without this a screen reader gets a bare column name and no
+        // hint that the header does anything, let alone which way it
+        // is currently ordered.
+        label: active
+            ? '$label, sorted ${ascending ? 'ascending' : 'descending'}'
+            : '$label, not sorted',
+        excludeSemantics: true,
+        child: InkWell(
+          onTap: () => _onHeaderTap(index),
+          child: pad(
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: PlinthText(
+                    label,
+                    size: widget.size,
+                    weight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.4),
+                Icon(
+                  active
+                      ? (ascending ? Icons.arrow_upward : Icons.arrow_downward)
+                      : Icons.unfold_more,
+                  size: theme.fontSizes[widget.size]! * 0.9,
+                  // The inactive caret stays visible but recedes: it's
+                  // the affordance that says the header is tappable.
+                  color: active ? theme.text : theme.textDisabled,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    final rows = _resolveRows();
+
+    final table = Table(
       border: TableBorder(
         horizontalInside: BorderSide(color: theme.surfaceSunken),
         bottom: BorderSide(color: theme.surfaceSunken),
@@ -134,7 +345,8 @@ class PlinthTable extends StatelessWidget {
       // are the reason widget cells exist.
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       columnWidths: {
-        for (var i = 0; i < columns.length; i++) i: const FlexColumnWidth(),
+        for (var i = 0; i < widget.columns.length; i++)
+          i: const FlexColumnWidth(),
       },
       children: [
         TableRow(
@@ -143,17 +355,27 @@ class PlinthTable extends StatelessWidget {
                 Border(bottom: BorderSide(color: theme.borderMuted, width: 2)),
           ),
           children: [
-            for (final column in columns) textCell(column, header: true),
+            for (var i = 0; i < widget.columns.length; i++) headerCell(i),
           ],
         ),
-        for (var r = 0; r < rowCount; r++)
+        for (var r = 0; r < rows.length; r++)
           TableRow(
-            decoration: striped && r.isOdd
+            decoration: widget.striped && r.isOdd
                 ? BoxDecoration(color: theme.surfaceMuted)
                 : null,
-            children: cellsFor(r),
+            children: cellsFor(rows[r]),
           ),
       ],
+    );
+
+    if (rows.isNotEmpty || widget.emptyState == null) return table;
+
+    // A Table can't hold a widget spanning every column, so the empty
+    // state sits below the header rather than inside the grid.
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [table, widget.emptyState!],
     );
   }
 }
