@@ -1654,6 +1654,64 @@ final List<WidgetbookNode> plinthDirectories = [
           ),
         ],
       ),
+      WidgetbookComponent(
+        name: 'PlinthFieldset',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final legend = context.knobs.stringOrNull(
+                label: 'legend',
+                initialValue: 'Shipping address',
+                defaultToNull: true,
+              );
+              return _themed(
+                SizedBox(
+                  width: 360,
+                  child: PlinthFieldset(
+                    legend: legend,
+                    variant: _variantKnob(
+                      context,
+                      initial: PlinthVariant.defaultVariant,
+                    ),
+                    radius: _radiusKnob(context),
+                    padding: _gapKnob(context, label: 'padding'),
+                    disabled: context.knobs.boolean(label: 'disabled'),
+                    child: const PlinthStack(
+                      gap: PlinthSize.sm,
+                      children: [
+                        PlinthTextInput(label: 'Street'),
+                        PlinthTextInput(label: 'City'),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'Disabled section',
+            // The reason the prop exists: one flag switches a whole
+            // group off instead of each field carrying its own.
+            builder: (context) => _themed(
+              SizedBox(
+                width: 360,
+                child: PlinthFieldset(
+                  legend: 'Payment',
+                  disabled: true,
+                  child: PlinthStack(
+                    gap: PlinthSize.sm,
+                    children: [
+                      const PlinthTextInput(label: 'Card number'),
+                      PlinthButton(onPressed: () {}, child: const Text('Pay')),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     ],
   ),
   WidgetbookCategory(
@@ -2709,6 +2767,117 @@ final List<WidgetbookNode> plinthDirectories = [
           ),
         ],
       ),
+      WidgetbookComponent(
+        name: 'PlinthSemiCircleProgress',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final value = context.knobs.double.slider(
+                label: 'value',
+                initialValue: 0.72,
+                min: 0,
+                max: 1,
+                divisions: 20,
+              );
+              final diameter = context.knobs.double.slider(
+                label: 'size (diameter)',
+                initialValue: 160,
+                min: 60,
+                max: 240,
+                description: 'The rendered height is about half this — '
+                    'only the top half of the circle is drawn',
+              );
+              return _themed(
+                PlinthSemiCircleProgress(
+                  value: value,
+                  size: diameter,
+                  thickness: context.knobs.double.slider(
+                    label: 'thickness',
+                    initialValue: 12,
+                    min: 2,
+                    max: 40,
+                  ),
+                  color: _colorKnob(context),
+                  trackColor: context.knobs.colorOrNull(
+                    label: 'trackColor',
+                    defaultToNull: true,
+                  ),
+                  label: context.knobs.boolean(
+                    label: 'centre label',
+                    initialValue: true,
+                  )
+                      ? PlinthText(
+                          '${(value * 100).round()}%',
+                          size: PlinthSize.lg,
+                          weight: FontWeight.w700,
+                        )
+                      : null,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthEmptyState',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final icon = _iconKnob(context, label: 'icon');
+              final withAction = context.knobs.boolean(
+                label: 'action',
+                initialValue: true,
+                description: 'An empty state without one tells the user '
+                    'their situation but not what to do about it',
+              );
+              return _themed(
+                SizedBox(
+                  width: 360,
+                  child: PlinthEmptyState(
+                    icon: icon == null ? null : Icon(icon),
+                    title: context.knobs.string(
+                      label: 'title',
+                      initialValue: 'No messages',
+                    ),
+                    description: context.knobs.stringOrNull(
+                      label: 'description',
+                      initialValue: 'Anything sent to your team lands here.',
+                      defaultToNull: true,
+                    ),
+                    color: _colorKnob(context),
+                    action: withAction
+                        ? PlinthButton(
+                            onPressed: () {},
+                            child: const Text('Compose'),
+                          )
+                        : null,
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'Empty search result',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 360,
+                child: PlinthEmptyState(
+                  icon: const Icon(Icons.search_off),
+                  title: 'No results for "plinth"',
+                  description: 'Try a shorter or differently spelled term.',
+                  action: PlinthButton(
+                    variant: PlinthVariant.subtle,
+                    onPressed: () {},
+                    child: const Text('Clear search'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     ],
   ),
   WidgetbookCategory(
@@ -2808,6 +2977,74 @@ final List<WidgetbookNode> plinthDirectories = [
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthDialog',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final title = context.knobs.stringOrNull(
+                label: 'title',
+                initialValue: 'Subscribe',
+                defaultToNull: true,
+              );
+              final position = context.knobs.object.dropdown(
+                label: 'position',
+                options: PlinthDialogPosition.values,
+                initialOption: PlinthDialogPosition.bottomRight,
+                labelBuilder: (position) => position.name,
+              );
+              final width = context.knobs.double.slider(
+                label: 'width',
+                initialValue: 320,
+                min: 200,
+                max: 480,
+              );
+              final withCloseButton = context.knobs.boolean(
+                label: 'withCloseButton',
+                initialValue: true,
+              );
+              final radius = _radiusKnob(context);
+              final margin = _gapKnob(
+                context,
+                label: 'margin',
+                initial: PlinthSize.lg,
+              );
+              return _themed(
+                _Disclosed(
+                  // Like Modal, this renders nothing inline — the panel
+                  // goes into the overlay when the controller opens.
+                  // Unlike Modal, there's no barrier: the button below
+                  // stays clickable while the dialog is up.
+                  builder: (controller) => Stack(
+                    children: [
+                      Center(
+                        child: PlinthButton(
+                          onPressed: controller.open,
+                          child: const Text('Open dialog'),
+                        ),
+                      ),
+                      PlinthDialog(
+                        controller: controller,
+                        title: title,
+                        position: position,
+                        width: width,
+                        withCloseButton: withCloseButton,
+                        radius: radius,
+                        margin: margin,
+                        child: const PlinthText(
+                          'Get a monthly note when something ships.',
+                          size: PlinthSize.sm,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -3642,6 +3879,87 @@ final List<WidgetbookNode> plinthDirectories = [
           ),
         ],
       ),
+      WidgetbookComponent(
+        name: 'PlinthNumberFormatter',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final scaled = context.knobs.boolean(
+                label: 'fixed decimalScale',
+                initialValue: true,
+              );
+              return _themed(
+                PlinthNumberFormatter(
+                  value: context.knobs.double.input(
+                    label: 'value',
+                    initialValue: 1234567.5,
+                  ),
+                  prefix: context.knobs.stringOrNull(
+                    label: 'prefix',
+                    initialValue: r'$',
+                    defaultToNull: true,
+                  ),
+                  suffix: context.knobs.stringOrNull(
+                    label: 'suffix',
+                    defaultToNull: true,
+                  ),
+                  thousandSeparator: context.knobs.string(
+                    label: 'thousandSeparator',
+                    initialValue: ',',
+                    description: 'Empty groups nothing. Not localised — '
+                        'use intl for that',
+                  ),
+                  decimalSeparator: context.knobs.string(
+                    label: 'decimalSeparator',
+                    initialValue: '.',
+                  ),
+                  decimalScale: scaled
+                      ? context.knobs.int
+                          .slider(
+                            label: 'decimalScale',
+                            initialValue: 2,
+                            min: 0,
+                            max: 4,
+                          )
+                          .toInt()
+                      : null,
+                  trimTrailingZeros: context.knobs.boolean(
+                    label: 'trimTrailingZeros',
+                    description: 'No effect without a decimalScale',
+                  ),
+                  size: _sizeKnob(context, initial: PlinthSize.xl),
+                  color: _colorKnob(context),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'Formats side by side',
+            builder: (context) => _themed(
+              const PlinthStack(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                gap: PlinthSize.sm,
+                children: [
+                  PlinthNumberFormatter(
+                    value: 1234567.5,
+                    prefix: r'$',
+                    decimalScale: 2,
+                  ),
+                  PlinthNumberFormatter(value: 42, suffix: ' km'),
+                  PlinthNumberFormatter(value: -1500, prefix: r'$'),
+                  PlinthNumberFormatter(
+                    value: 1234.56,
+                    thousandSeparator: '.',
+                    decimalSeparator: ',',
+                    decimalScale: 2,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     ],
   ),
   WidgetbookCategory(
@@ -4042,6 +4360,36 @@ final List<WidgetbookNode> plinthDirectories = [
         ],
       ),
       WidgetbookComponent(
+        name: 'PlinthStack',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 320,
+                child: PlinthStack(
+                  gap: _gapKnob(context),
+                  crossAxisAlignment: context.knobs.object.dropdown(
+                    label: 'crossAxisAlignment',
+                    options: CrossAxisAlignment.values,
+                    initialOption: CrossAxisAlignment.stretch,
+                    labelBuilder: (alignment) => alignment.name,
+                    description: 'Stretches by default, unlike PlinthGroup — '
+                        'a column of fields usually wants full width',
+                  ),
+                  mainAxisAlignment: _mainAxisAlignmentKnob(context),
+                  children: [
+                    PlinthButton(onPressed: () {}, child: const Text('One')),
+                    PlinthButton(onPressed: () {}, child: const Text('Two')),
+                    PlinthButton(onPressed: () {}, child: const Text('Three')),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
         name: 'PlinthList',
         useCases: [
           WidgetbookUseCase(
@@ -4391,6 +4739,62 @@ final List<WidgetbookNode> plinthDirectories = [
                 child: PlinthImage(
                   src: 'https://picsum.photos/id/1015/480/320',
                   radius: PlinthSize.sm,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthBackgroundImage',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              PlinthBackgroundImage(
+                src: 'https://picsum.photos/id/1015/960/540',
+                width: 420,
+                height: context.knobs.double.slider(
+                  label: 'height',
+                  initialValue: 220,
+                  min: 120,
+                  max: 360,
+                ),
+                fit: context.knobs.object.dropdown(
+                  label: 'fit',
+                  options: BoxFit.values,
+                  initialOption: BoxFit.cover,
+                  labelBuilder: (fit) => fit.name,
+                ),
+                radius: _radiusKnob(context),
+                scrimOpacity: context.knobs.double.slider(
+                  label: 'scrimOpacity',
+                  initialValue: 0.35,
+                  min: 0,
+                  max: 1,
+                  divisions: 20,
+                  description: 'Drag to 0 to see why it defaults on — text '
+                      'over a photograph disappears into its light parts',
+                ),
+                alignment: context.knobs.object.dropdown(
+                  label: 'alignment',
+                  options: const [
+                    Alignment.center,
+                    Alignment.topLeft,
+                    Alignment.bottomLeft,
+                    Alignment.bottomRight,
+                  ],
+                  initialOption: Alignment.center,
+                  labelBuilder: (alignment) => switch (alignment) {
+                    Alignment.topLeft => 'topLeft',
+                    Alignment.bottomLeft => 'bottomLeft',
+                    Alignment.bottomRight => 'bottomRight',
+                    _ => 'center',
+                  },
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: PlinthTitle('Ships tomorrow', order: 3),
                 ),
               ),
             ),

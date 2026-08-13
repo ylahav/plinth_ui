@@ -7,6 +7,76 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.11.0
+
+### Added
+
+Seven components, closing most of what the `Coming soon` list called
+out as reachable. Four fill a real gap; three are wrappers that earn
+their place by getting a detail right that the obvious hand-rolled
+version gets wrong.
+
+- **`PlinthEmptyState`** — the "no results" placeholder, and the one
+  entry the gap list had flagged as highest value. Takes `title`,
+  `description`, `icon`, and an `action`, which is the part worth
+  insisting on: an empty state without one tells the user their
+  situation but not what to do about it. The icon is decorative and
+  excluded from semantics, since the title already says what it
+  illustrates.
+
+- **`PlinthFieldset`** — a bordered group with the legend sitting *in*
+  the border. That placement is what separates it from a titled
+  `PlinthCard`: the frame says "these belong together" without the
+  legend reading as a heading for the rest of the page. `disabled`
+  switches off a whole section — opacity, hit-testing, and semantics —
+  so each field inside doesn't need its own `enabled` wired up.
+
+- **`PlinthDialog`** — a small floating panel in a screen corner.
+  Deliberately not a modal: no barrier and no `IgnorePointer`, so taps
+  that miss the panel fall through and the rest of the app stays
+  usable. That's the whole point of it next to `PlinthModal` — a cookie
+  notice or "we've updated" prompt shouldn't take the screen. Joins the
+  other disclosure components on `PlinthDisclosureController`, so the
+  Overlays section is now five controller-based components, not four.
+
+- **`PlinthSemiCircleProgress`** — `PlinthRingProgress` as a 180° arc.
+  Suits a dashboard tile better than a full circle: the flat bottom
+  sits on a baseline, where a full ring's empty half reads as wasted
+  space. Thickness is clamped to `size / 2`, the same guard
+  `PlinthRingProgress` needs to stop an over-thick arc painting back
+  over itself.
+
+- **`PlinthStack`** — the vertical counterpart to `PlinthGroup`.
+  `PlinthFlex(direction: Axis.vertical)` already did this; it exists
+  because stacking vertically is common enough that saying so directly
+  reads better than configuring a flex. Stretches by default where
+  `PlinthGroup` doesn't, since a column of fields or buttons almost
+  always wants full width. Named for Mantine's component, not Flutter's
+  `Stack` — it never overlaps children.
+
+- **`PlinthBackgroundImage`** — an image behind arbitrary content. The
+  gap list had called this one barely worth wrapping, since a
+  `Container` with a `DecorationImage` is most of it. What changed the
+  call is the part that version gets wrong: text over a photograph is
+  unreadable against the light parts of it. This lays a scrim between
+  the two and gives the child the `onFilled` foreground. A failed image
+  also falls back to a muted fill and keeps rendering the child, rather
+  than taking the content down with it.
+
+- **`PlinthNumberFormatter`** — grouping, decimals, prefix, suffix.
+  **Not localised, on purpose.** The gap list had described this as
+  themed text around `intl`'s `NumberFormat`; pulling `intl` into the
+  dependency graph of every app using the library isn't worth a
+  thousands separator. The separators are yours to pass, which is
+  correct for a fixed format and wrong for anything that should follow
+  the user's locale — that case is a `NumberFormat` plus a
+  `PlinthText`, and the doc comment says so. The `formatted` getter
+  exposes the string for a chart axis or a semantics label.
+
+Each ships with widget tests and Widgetbook coverage, including a
+knob-driven `Playground` — 88 components, 83 playgrounds, 189 use
+cases.
+
 ## 0.10.1
 
 ### Added

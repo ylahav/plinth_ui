@@ -137,7 +137,7 @@ the sidebar.
   shared between them (a blue button is the same blue either way); only
   the chrome inverts. See
   **[docs/COMPONENTS.md § Theme tokens](docs/COMPONENTS.md#theme-tokens)**.
-- **81 components** across Primitives, Forms, Feedback, Data Display,
+- **88 components** across Primitives, Forms, Feedback, Data Display,
   Navigation, Surfaces, and Overlays — full list with props in
   **[docs/COMPONENTS.md](docs/COMPONENTS.md)**, kept current every round
   rather than duplicated here. A few architectural patterns worth
@@ -158,17 +158,17 @@ the sidebar.
     caller rather than managing it internally.
 - **Widgetbook gallery** (`widgetbook/`) — manual (non-codegen)
   registration of every component's key states as browsable use cases,
-  with a knob-driven **Playground** for 76 of the 81 components
+  with a knob-driven **Playground** for 83 of the 88 components
   alongside the static variant grids (the two answer different
   questions: a playground explores combinations, a grid compares
-  options side by side). A smoke test builds all 164 use cases in CI,
+  options side by side). A smoke test builds all 189 use cases in CI,
   so a page that compiles but throws on render is caught before anyone
   opens it. `web/` is checked in — `cd widgetbook && flutter run -d
   chrome`.
 - **Tests** — pure-logic tests for `PlinthTheme`'s shade generator and
   `PlinthDisclosureController`, a golden (visual regression) test suite
   for `PlinthButton` (variants, a color override, disabled state, all
-  sizes), and widget behavior tests across 34 test files. **Every
+  sizes), and widget behavior tests across 38 test files. **Every
   public component has at least one test** — the only untested class is
   `PlinthOverlayHost`, which is internal and exercised indirectly
   through `PlinthModalHost`/`PlinthDrawerHost`.

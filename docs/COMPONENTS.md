@@ -135,6 +135,19 @@ line by default when children overflow the available width (via
 that a bare `Row` would just overflow on. Set `wrap: false` to opt back
 into `Row`'s clip-and-overflow behavior.
 
+### `PlinthStack`
+`children`, `gap` (default `PlinthSize.md`), `crossAxisAlignment`
+(default `stretch`), `mainAxisAlignment`, `mainAxisSize` (default
+`min`). The vertical counterpart to `PlinthGroup`. Stretches by
+default where `PlinthGroup` doesn't, because a column of form fields
+or buttons almost always wants full width. Named for Mantine's
+component, not Flutter's `Stack` — this one lays children out in a
+line and never overlaps them.
+
+`PlinthFlex(direction: Axis.vertical)` does the same thing; this
+exists because stacking vertically is common enough that saying so
+directly reads better than configuring a flex.
+
 ### `PlinthList` + `PlinthListItem`
 `items` (`List<PlinthListItem>`), `type` (`PlinthListType`: `bullet,
 ordered` — default `bullet`), `spacing`, `size`. Each `PlinthListItem`
@@ -226,6 +239,19 @@ network image with an automatic loading placeholder and error
 fallback — Flutter's own `Image.network` shows nothing while loading
 and lets a failed URL surface as a raw render error, so this fills
 both gaps with a themed spinner and a broken-image icon.
+
+### `PlinthBackgroundImage`
+`src`, `child`, `width`, `height`, `fit` (default `BoxFit.cover`),
+`radius` (default `sm`), `scrimOpacity` (default `0.35`), `alignment`.
+An image behind arbitrary content. A `Container` with a
+`DecorationImage` is most of this already; what it adds is the part
+people forget — text over a photograph is unreadable against the light
+parts of it, so a scrim goes between the two, and `child` takes the
+`onFilled` foreground rather than the theme's body text colour. Set
+`scrimOpacity: 0` only when the image is known to be dark or nothing
+sits on top of it. A failed image falls back to a `surfaceMuted` fill
+and keeps rendering `child`, rather than taking the content down with
+it.
 
 ### `PlinthText`
 `data`, `size`, `color`, `weight`, `textAlign`, `italic`, `maxLines`, `overflow`.
@@ -463,6 +489,22 @@ state and pass `selected` per chip, same controlled-component pattern as
 primary color — a rating in brand blue reads oddly against the
 conventional gold-star look), `size`.
 
+### `PlinthFieldset`
+`child`, `legend`, `variant` (`defaultVariant` draws a border,
+`filled` uses a muted fill with no border; other variants fall back to
+the border treatment), `radius`, `padding` (default `md`), `disabled`.
+A bordered group of related fields, with the legend sitting *in* the
+border rather than above it — that's what distinguishes it from a
+titled `PlinthCard`: the frame says "these belong together" and the
+legend names the grouping without reading as a section heading for the
+rest of the page.
+
+`disabled` greys the contents and blocks interaction with everything
+inside, so a whole section switches off without each field needing its
+own `enabled` wired up. The legend is announced as a label for the
+group, so a screen reader reaches "Shipping address, Street" rather
+than a bare "Street".
+
 ---
 
 ## Feedback
@@ -487,6 +529,30 @@ default 80), `thickness` (default 8), `trackColor`, `label` (optional
 centered content, e.g. a percentage). Circular companion to
 `PlinthProgress` — built on `CustomPaint`, sweeping clockwise from 12
 o'clock.
+
+### `PlinthSemiCircleProgress`
+`value` (0.0–1.0, asserted in range), `color`, `size` (diameter of the
+full circle the arc is taken from, default 160 — rendered height is
+about half that), `thickness` (default 12), `trackColor`, `label`.
+`PlinthRingProgress` drawn as a 180° arc, which suits a dashboard tile
+better than a full circle: the flat bottom sits on a baseline, and the
+empty half of a full ring reads as wasted space when the value is the
+only thing on the card. `thickness` is clamped to `size / 2` so an
+over-thick arc can't paint back over itself.
+
+### `PlinthEmptyState`
+`title`, `description`, `icon` (shown above the title in a
+`PlinthThemeIcon`, and hidden from assistive tech as decorative —
+the title already says what it illustrates), `action`, `color`, `size`.
+The "nothing here" placeholder. Distinct from `PlinthSkeleton`, which
+stands in for content that is *coming*: this is for content that isn't
+there — an empty search result, an unused inbox, a project with no
+members yet.
+
+`action` is the way out, and worth passing: an empty state without one
+tells the user their situation but not what to do about it. The title
+renders at heading level 4, since an empty state heads a region rather
+than a page.
 
 ### `PlinthNotification`
 `title` (optional), `child`, `color` (default `'blue'`), `icon`, `onClose`,
@@ -616,6 +682,25 @@ Standalone selectable color square — for a picker, lay out several with
 your own selected-color state, same controlled-component pattern as
 `PlinthChip`.
 
+### `PlinthNumberFormatter`
+`value` (`num`), `prefix`, `suffix`, `thousandSeparator` (default
+`','` — pass an empty string to group nothing), `decimalSeparator`
+(default `'.'`), `decimalScale` (null keeps whatever the value has),
+`trimTrailingZeros`, `size`, `color`, `weight`. Grouping, decimals,
+prefix, and suffix — the formatting a figure in a table or a stat tile
+needs, without reaching for a package.
+
+**Not localised.** The separators are yours to pass, so it's correct
+for a fixed format and wrong for anything that should follow the
+user's locale. For that, format with `package:intl`'s `NumberFormat`
+and render the result with `PlinthText`; this widget deliberately
+doesn't pull `intl` into the dependency graph of every app using the
+library.
+
+The `formatted` getter exposes the string, so the same formatting can
+be reused where the widget doesn't fit — a chart axis, an exported
+CSV, a semantics label.
+
 ### `PlinthTable`
 `columns` (`List<String>`), `rows`, `striped`, `size`. Built on
 Flutter's low-level `Table` widget rather than `DataTable`, since
@@ -720,7 +805,7 @@ PlinthTabView<String>(
 
 ## Overlays
 
-All four controller-based overlay components share `PlinthDisclosureController`
+All five controller-based overlay components share `PlinthDisclosureController`
 (`plinth_hooks`) for open/close state — `open()`, `close()`, `toggle()`,
 `isOpen`. Always call `.dispose()` on the controller when its owning
 State is disposed.
@@ -744,6 +829,26 @@ dismissal (backdrop tap or `Navigator.pop`).
 Same shape as Modal, plus `position` (`PlinthDrawerPosition`: `left,
 right, top, bottom`). Slides in via `SlideTransition`; sizing is width
 for left/right, height for top/bottom.
+
+### `PlinthDialog`
+`controller`, `child`, `title`, `position` (`PlinthDialogPosition`:
+`topLeft, topRight, bottomLeft, bottomRight` — default `bottomRight`),
+`width` (default 320), `withCloseButton` (default `true`), `radius`,
+`margin` (distance from the screen edges, default `lg`). A small
+floating panel anchored to a screen corner.
+
+Deliberately *not* a modal. `PlinthModal` takes the screen, dims what's
+behind it, and demands an answer before anything else can happen; this
+sits in a corner and lets the user carry on — a cookie notice, a
+"we've updated" prompt, a quick feedback box. There's no barrier and
+no `IgnorePointer`, so a tap that misses the panel falls straight
+through to whatever is underneath.
+
+Renders nothing inline — the panel is mounted in the overlay, so it
+escapes any clipping ancestor. Mount it anywhere below an `Overlay`
+and drive it with the controller. `withCloseButton` defaults on
+because a dialog with no close button and no action inside it is a
+trap.
 
 ### `PlinthPopover`
 `controller`, `target`, `content`, `position` (`PlinthPopoverPosition`:
@@ -805,14 +910,6 @@ core components. Plinth's equivalent is the example app's showcase —
 see **[SHOWCASE.md](SHOWCASE.md)** for that gap list, which is separate
 from this one.
 
-### Highest value
-
-The gaps worth closing first, either because nothing here covers the
-need at all or because the work is mostly extraction:
-
-- **`PlinthEmptyState`** — the "no results" placeholder. Common enough
-  in real apps that most teams write their own.
-
 ### Inputs
 
 - **`PlinthColorInput`** — a text field with a color preview and
@@ -820,8 +917,6 @@ need at all or because the work is mostly extraction:
 - **`PlinthColorPicker`** — the full picker, plus its
   **`AlphaSlider`** / **`HueSlider`** / **`AngleSlider`** parts, which
   exist in Mantine mainly as its building blocks.
-- **`PlinthFieldset`** — a bordered group with a legend, for related
-  fields.
 - **`PlinthInput`** — Mantine's unstyled base that its other fields are
   built from. Plinth's fields each own their chrome instead; adopting
   this would be an architectural change, not just a new widget.
@@ -849,8 +944,6 @@ need at all or because the work is mostly extraction:
   structure to read from.
 - **`PlinthTree`** — hierarchical navigation. Substantial work
   (expansion state, keyboard traversal, selection).
-- **`PlinthDialog`** — a small floating panel that doesn't take the
-  screen the way `PlinthModal` does.
 - **`PlinthMenubar`** — a horizontal bar of menus, desktop-style.
 - **`PlinthFloatingIndicator`** — the sliding indicator Mantine's tabs
   and segmented controls use. Plinth's equivalents deliberately use a
@@ -861,23 +954,16 @@ need at all or because the work is mostly extraction:
 ### Data display & typography
 
 - **`PlinthDataList`** — key/value pairs in a definition-list layout.
-- **`PlinthNumberFormatter`** — locale-aware number display. Dart's
-  `intl` already does the formatting; this would be the themed text
-  around it.
 - **`PlinthRollingNumber`** — digits that animate on change.
 - **`PlinthOverflowList`** — shows as many items as fit, collapsing the
   rest into a "+N" marker.
-- **`PlinthBackgroundImage`** — an image behind arbitrary content. A
-  `Container` with a `DecorationImage` is close enough that the wrapper
-  earns little.
-- **`PlinthSemiCircleProgress`** — a gauge variant of
-  `PlinthRingProgress`.
+
+Note that `PlinthNumberFormatter` covers the fixed-format case only —
+a locale-aware version is `package:intl`'s job, deliberately left out
+of this package's dependency graph.
 
 ### Layout & miscellaneous
 
-- **`PlinthStack`** — a vertical `PlinthGroup`.
-  `PlinthFlex(direction: Axis.vertical)` already does this, so it would
-  be a convenience alias rather than new capability.
 - **`PlinthSplitter`** — resizable panes with a draggable divider.
 - **`PlinthMarquee`** — continuously scrolling content.
 - **`PlinthScroller`** — scroll-position helpers around `ScrollArea`.
