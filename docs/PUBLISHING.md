@@ -9,20 +9,26 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | 0.1.0 | 0.1.0 |
-| `plinth_hooks` | 0.0.1 | 0.0.1 — `publish_to: none` guard in place |
-| `plinth_components` | 0.6.0 | 0.6.0 |
+| `plinth_core` | 0.2.1 | 0.2.1 |
+| `plinth_hooks` | 0.0.2 | 0.0.2 |
+| `plinth_components` | 0.10.1 | 0.10.1 |
 
 `plinth_components` depends on the other two by hosted version
-(`plinth_core: ^0.1.0`, `plinth_hooks: ^0.0.1`), not by path. Melos
+(`plinth_core: ^0.2.0`, `plinth_hooks: >=0.0.1 <0.1.0`), not by path. Melos
 still writes a `pubspec_overrides.yaml` pointing at the local copies so
 the workspace builds against your working tree — see the caveat below.
 
-`plinth_hooks` still carries `publish_to: none` as a guard against an
-accidental publish; remove the line when you actually intend to push a
-new version. `plinth_core` and `plinth_components` don't: the guard
-blocks a publish outright rather than prompting, and `dart pub publish`
-confirms interactively anyway.
+**No package carries `publish_to: none`, and none should.** Beyond
+blocking a publish outright rather than prompting, pana clones this
+repository to verify each package is published from it — and a
+committed `publish_to` makes that check fail, costing 10 pub points
+with the message *"we are unable to verify the package is published
+from here"*. `plinth_hooks` sat at 150/160 for exactly that reason
+while the other two scored 160.
+
+That is easy to reintroduce by accident: removing the line locally to
+publish, then committing it back. `dart pub publish` confirms
+interactively regardless, so the guard was never buying much.
 
 ## ⚠️ Publish in dependency order, or you ship a broken version
 
@@ -119,8 +125,7 @@ publish that package first, then raise the constraint in
 Order matters, because pub.dev resolves the hosted constraint:
 
 1. Bump the version and add a CHANGELOG entry in that package.
-2. `flutter pub publish` it. (`plinth_hooks` still has a
-   `publish_to: none` guard to remove first; `plinth_core` doesn't.)
+2. `flutter pub publish` it.
 3. Raise the constraint in `packages/plinth_components/pubspec.yaml`
    (e.g. `plinth_core: ^0.1.0`).
 4. Bump `plinth_components` too — a consumer pinning the old version
@@ -139,9 +144,11 @@ package moves at a time.
 
 ## Version strategy
 
-`plinth_hooks` is still at 0.0.1 and has been stable since the initial
-publish. `plinth_core` moves only when the token layer does — it went
-to 0.1.0 for the widened palette and the dark-theme tokens.
+`plinth_hooks` is at 0.0.2 and has been stable since the initial
+publish — its only releases have been an example and a removed publish
+guard. `plinth_core` moves when the token layer does: 0.1.0 for the
+widened palette and dark-theme tokens, 0.2.0 for contrast-aware colour
+resolution.
 `plinth_components` is the package that actually moves; it's on a 0.x
 line where minor bumps carry new components and may include breaking
 changes without a major bump, as its CHANGELOG header states.
