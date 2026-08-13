@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_pill.dart';
 import 'plinth_text.dart';
 
 /// A single option for [PlinthMultiSelect].
@@ -12,17 +13,20 @@ class PlinthMultiSelectOption<T> {
 }
 
 /// A multi-value select matching Mantine's `MultiSelect`: chosen
-/// values render as removable chips inside the field; tapping the
+/// values render as removable pills inside the field; tapping the
 /// field opens a dropdown of the remaining options.
 ///
 /// Unlike [PlinthSelect] (single value, wraps [DropdownButton]), this
 /// is a bespoke implementation — [DropdownButton] has no multi-select
-/// mode, and a chips-in-field layout needs its own field chrome
-/// regardless. The chips themselves use Flutter's built-in [Chip]
-/// (not [PlinthChip]) — `PlinthChip` is a *selectable toggle* chip
-/// (selected/unselected state), a different semantic pattern than a
-/// removable value chip with a delete button, which `Chip`'s
-/// `deleteIcon`/`onDeleted` already models correctly.
+/// mode, and a pills-in-field layout needs its own field chrome
+/// regardless.
+///
+/// The values are [PlinthPill]s, not [PlinthChip]s: a chip is a
+/// *selectable toggle* with selected/unselected state, while a value
+/// here is one entry in a collection whose only action is to leave.
+/// This used Flutter's raw [Chip] until `PlinthPill` was extracted —
+/// `Chip` modelled the delete affordance correctly but carried
+/// Material's own sizing and colours through a themed field.
 ///
 /// ```dart
 /// PlinthMultiSelect<String>(
@@ -229,20 +233,14 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
                       runSpacing: 4,
                       children: [
                         for (final v in widget.value)
-                          Chip(
-                            label: Text(
-                              selectedLabels[v] ?? '$v',
-                              style: TextStyle(
-                                  fontSize:
-                                      (theme.fontSizes[widget.size] ?? 14) - 2),
-                            ),
-                            backgroundColor: theme.shaded(colorKey, 1),
-                            deleteIcon: const Icon(Icons.close, size: 14),
-                            onDeleted:
+                          PlinthPill(
+                            selectedLabels[v] ?? '$v',
+                            size: widget.size == PlinthSize.xs
+                                ? PlinthSize.xs
+                                : PlinthSize.sm,
+                            color: colorKey,
+                            onRemove:
                                 widget.enabled ? () => _removeValue(v) : null,
-                            materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
-                            visualDensity: VisualDensity.compact,
                           ),
                       ],
                     ),

@@ -1799,6 +1799,208 @@ final List<WidgetbookNode> plinthDirectories = [
         ],
       ),
       WidgetbookComponent(
+        name: 'PlinthPill',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final removable = context.knobs.boolean(
+                label: 'removable',
+                initialValue: true,
+                description: 'A pill with no onRemove is a value shown '
+                    'but not takeable out',
+              );
+              return _themed(
+                PlinthPill(
+                  context.knobs.string(label: 'label', initialValue: 'design'),
+                  size: _sizeKnob(context, initial: PlinthSize.sm),
+                  color: _colorKnob(context),
+                  onRemove: removable ? () {} : null,
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'Against Badge and Chip',
+            builder: (context) => _themed(
+              PlinthStack(
+                gap: PlinthSize.md,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Three chip-shaped things that are not
+                  // interchangeable: a label, a toggle, and a value.
+                  const PlinthText('Badge — states something, does nothing',
+                      size: PlinthSize.xs),
+                  const PlinthBadge('Active', color: 'green'),
+                  const PlinthText('Chip — a selectable toggle',
+                      size: PlinthSize.xs),
+                  PlinthChip(
+                      label: 'Remote', selected: true, onSelected: (_) {}),
+                  const PlinthText('Pill — one value, whose action is to leave',
+                      size: PlinthSize.xs),
+                  PlinthPill('design', onRemove: () {}),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthPillsInput',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final label = context.knobs.stringOrNull(
+                label: 'label',
+                initialValue: 'Recipients',
+                defaultToNull: true,
+              );
+              final error = context.knobs.stringOrNull(
+                label: 'error',
+                defaultToNull: true,
+              );
+              final focused = context.knobs.boolean(
+                label: 'focused',
+                description: 'Passed in, not tracked — whatever owns the '
+                    'input inside owns its focus node',
+              );
+              final empty = context.knobs.boolean(label: 'empty');
+
+              return _themed(
+                SizedBox(
+                  width: 340,
+                  child: _Local<List<String>>(
+                    initial: const ['ana@example.com', 'sam@example.com'],
+                    builder: (values, onChanged) => PlinthPillsInput(
+                      label: label,
+                      error: error,
+                      focused: focused,
+                      placeholder: 'Add someone',
+                      size: _sizeKnob(context),
+                      children: empty
+                          ? const []
+                          : [
+                              for (final v in values)
+                                PlinthPill(
+                                  v,
+                                  onRemove: () => onChanged(
+                                    [...values]..remove(v),
+                                  ),
+                                ),
+                            ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthCombobox',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final withDisabled = context.knobs.boolean(
+                label: 'a disabled option',
+                initialValue: true,
+                description: 'Arrow keys skip it — a disabled option the '
+                    'keyboard lands on is a trap',
+              );
+
+              return _themed(
+                SizedBox(
+                  width: 300,
+                  child: _Disclosed(
+                    builder: (controller) => _Local<String?>(
+                      initial: null,
+                      builder: (selected, onSelected) => PlinthCombobox<String>(
+                        controller: controller,
+                        selected: selected,
+                        maxHeight: context.knobs.double
+                            .slider(
+                              label: 'maxHeight',
+                              initialValue: 240,
+                              min: 80,
+                              max: 400,
+                            )
+                            .toDouble(),
+                        empty: const PlinthText('No matches'),
+                        target: PlinthButton(
+                          onPressed: controller.toggle,
+                          variant: PlinthVariant.outline,
+                          fullWidth: true,
+                          child: Text(selected ?? 'Pick a framework'),
+                        ),
+                        options: [
+                          const PlinthComboboxOption('flutter', 'Flutter'),
+                          PlinthComboboxOption(
+                            'react',
+                            'React',
+                            disabled: withDisabled,
+                          ),
+                          const PlinthComboboxOption('svelte', 'Svelte'),
+                          const PlinthComboboxOption('solid', 'Solid'),
+                        ],
+                        onSelected: onSelected,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'Filtering as you type',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 300,
+                child: _Disclosed(
+                  builder: (controller) => _Local<String>(
+                    initial: '',
+                    builder: (query, onQuery) {
+                      const all = [
+                        'Flutter',
+                        'React',
+                        'Svelte',
+                        'Solid',
+                        'Angular',
+                      ];
+                      final matches = all
+                          .where((o) =>
+                              o.toLowerCase().contains(query.toLowerCase()))
+                          .toList();
+
+                      // The open panel has to follow a list replaced
+                      // underneath it — the thing PlinthPopover used
+                      // not to do.
+                      return PlinthCombobox<String>(
+                        controller: controller,
+                        empty: const PlinthText('No matches'),
+                        target: PlinthTextInput(
+                          placeholder: 'Type to filter',
+                          onChanged: (v) {
+                            onQuery(v);
+                            controller.open();
+                          },
+                        ),
+                        options: [
+                          for (final m in matches)
+                            PlinthComboboxOption(m.toLowerCase(), m),
+                        ],
+                        onSelected: (_) {},
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
         name: 'PlinthTreeSelect',
         useCases: [
           WidgetbookUseCase(

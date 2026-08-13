@@ -7,6 +7,71 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.15.0
+
+### Added — the combobox primitives
+
+The gap list said these were "only worth it if several of the above
+land and start duplicating logic". They had: `PlinthTagsInput` carried
+a private `_TagChip` and `PlinthMultiSelect` used Flutter's raw `Chip`
+for the same job, in the same shape, with different sizing.
+
+- **`PlinthPill`** — a removable value chip, and a real extraction:
+  both components now render their values with it and their own
+  versions are gone. `Chip` modelled the delete affordance correctly
+  but carried Material's sizing and colours through a themed field.
+
+  Three chip-shaped things now live here and they are deliberately not
+  interchangeable: `PlinthBadge` is a **label** (states something, does
+  nothing), `PlinthChip` is a **toggle** (selected/unselected), and
+  this is a **value** (one entry in a collection, whose only action is
+  to leave). A remove button means something different from a selected
+  state, and conflating them makes both call sites read wrong.
+
+  Its remove button names its value — "Remove design" — so a field of
+  them isn't a row of identical "close" buttons to a screen reader.
+
+- **`PlinthPillsInput`** — the field chrome around those pills, for
+  when neither MultiSelect nor TagsInput fits and the values come from
+  somewhere else. Deliberately presentational: `focused` is passed in
+  rather than tracked, because whatever owns the input inside owns its
+  focus node, and two widgets disagreeing about focus is worse than one
+  prop.
+
+- **`PlinthCombobox`** — the option-list primitive. The genuinely
+  shared, genuinely fiddly part: an anchored overlay that tracks its
+  field, a highlight that moves with the arrow keys and **skips
+  disabled options** (one the keyboard lands on is a trap), Enter to
+  take it, Escape to abandon it, and a list that stays in sync when its
+  options are replaced underneath — which filtering does on every
+  keystroke.
+
+  Opening highlights the current value rather than the top, so the
+  first arrow press moves from where you are; the highlight stops at
+  the ends rather than wrapping, since wrapping past the bottom of a
+  long filtered list reads as a glitch; and opening takes keyboard
+  control *only if nothing inside the target already has it*, so a
+  text-field target keeps its caret while the arrows still reach the
+  list.
+
+  **Mantine's `Combobox.Dropdown` is folded in rather than exported
+  separately.** In React the dropdown is distinct markup; here the
+  overlay is plumbing, and `PlinthPopover` already covers "anchored
+  panel with arbitrary content". A second wrapper would be API surface
+  with nothing behind it.
+
+  The existing four dropdown-shaped components keep their own
+  mechanics. This is for building the next one.
+
+Two Flutter traps worth recording, both found by tests: `setState` in a
+`dispose` path throws on a defunct element, and it wasn't needed at all
+here — the panel is the overlay's and the highlight is only read while
+building it. And a `Focus` that never receives focus never receives key
+events, which is why opening requests it conditionally rather than not
+at all.
+
+104 components, 99 playgrounds, 218 Widgetbook use cases.
+
 ## 0.14.0
 
 ### Added — sorting and filtering on `PlinthTable`

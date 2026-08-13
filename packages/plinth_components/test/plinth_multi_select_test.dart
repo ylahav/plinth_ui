@@ -44,7 +44,10 @@ void main() {
       );
 
       expect(find.text('Dart'), findsOneWidget);
-      expect(find.byType(Chip), findsOneWidget);
+      // A PlinthPill, not Flutter's Chip: a selected value is one entry
+      // in a collection whose only action is to leave, which is what
+      // the pill models.
+      expect(find.byType(PlinthPill), findsOneWidget);
     });
 
     testWidgets('tapping the field opens a dropdown of unselected options',
@@ -136,7 +139,7 @@ void main() {
         ),
       );
 
-      // Chip's delete icon.
+      // The pill's remove button.
       await tester.tap(find.byIcon(Icons.close).first);
       await tester.pump();
 

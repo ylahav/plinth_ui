@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:plinth_core/plinth_core.dart';
 
-import 'plinth_close_button.dart';
+import 'plinth_pill.dart';
 import 'plinth_text.dart';
 
 /// Free-text entry that turns what you type into removable chips,
@@ -174,14 +174,12 @@ class _PlinthTagsInputState extends State<PlinthTagsInput> {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 for (final tag in widget.value)
-                  _TagChip(
-                    label: tag,
-                    fontSize: fontSize - 2,
-                    background: theme.shaded(colorKey, 1),
-                    foreground: theme.readableOn(
-                      colorKey,
-                      theme.shaded(colorKey, 1),
-                    ),
+                  PlinthPill(
+                    tag,
+                    size: widget.size == PlinthSize.xs
+                        ? PlinthSize.xs
+                        : PlinthSize.sm,
+                    color: colorKey,
                     onRemove: widget.enabled ? () => _remove(tag) : null,
                   ),
                 // A bounded width so the field wraps with its chips
@@ -223,45 +221,6 @@ class _PlinthTagsInputState extends State<PlinthTagsInput> {
           PlinthText(widget.error!, size: PlinthSize.xs, color: 'red'),
         ],
       ],
-    );
-  }
-}
-
-class _TagChip extends StatelessWidget {
-  const _TagChip({
-    required this.label,
-    required this.fontSize,
-    required this.background,
-    required this.foreground,
-    required this.onRemove,
-  });
-
-  final String label;
-  final double fontSize;
-  final Color background;
-  final Color foreground;
-  final VoidCallback? onRemove;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(left: 8, right: 2, top: 2, bottom: 2),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(label, style: TextStyle(fontSize: fontSize, color: foreground)),
-          if (onRemove != null)
-            PlinthCloseButton(
-              size: PlinthSize.xs,
-              onPressed: onRemove,
-              semanticLabel: 'Remove $label',
-            ),
-        ],
-      ),
     );
   }
 }

@@ -525,6 +525,77 @@ own `enabled` wired up. The legend is announced as a label for the
 group, so a screen reader reaches "Shipping address, Street" rather
 than a bare "Street".
 
+### `PlinthPill`
+`label` (positional), `onRemove`, `size`, `color`, `radius`,
+`leadingIcon`. A removable value chip.
+
+Three chip-shaped things live here and they are not interchangeable.
+`PlinthBadge` is a **label** — it states something and does nothing.
+`PlinthChip` is a **toggle** — it has selected/unselected state.
+This is a **value** — one entry in a collection the user built, whose
+only action is to leave. That's why it isn't a variant of either: a
+remove button means something quite different from a selected state,
+and conflating them makes both call sites read wrong.
+
+`PlinthMultiSelect` and `PlinthTagsInput` render their values with it.
+Before it existed, TagsInput had a private `_TagChip` and MultiSelect
+used Flutter's raw `Chip` — which modelled the delete affordance
+correctly but carried Material's own sizing and colours through a
+themed field. The remove button names its value ("Remove design"), so
+a row of them isn't a row of identical "close" buttons to a screen
+reader.
+
+### `PlinthPillsInput`
+`children`, `label`, `description`, `error`, `placeholder`, `size`,
+`color`, `radius`, `enabled`, `focused`, `onTap`. The field that holds
+pills: the label, the bordered box that wraps onto new lines, the
+focus and error borders, the message underneath.
+
+Chrome, not behaviour — what goes inside is yours. `PlinthMultiSelect`
+and `PlinthTagsInput` are the two finished components of this shape and
+either is the better answer when it fits; this is for when neither
+does, with values coming from somewhere else entirely.
+
+`focused` is passed in rather than tracked, because whatever owns the
+input inside also owns its focus node, and two widgets disagreeing
+about focus is worse than one prop. An `error` outranks `focused` on
+the border, the same order `PlinthTextInput` uses.
+
+### `PlinthCombobox` + `PlinthComboboxOption`
+`controller`, `target`, `options`, `onSelected`, `selected`, `width`,
+`maxHeight`, `empty`, `size`, `color`, `closeOnSelect`. The option-list
+primitive behind a select-shaped control.
+
+This is the part that is genuinely fiddly and genuinely shared: an
+overlay anchored to a field that tracks it through scrolling, a
+highlighted option that moves with the arrow keys and **skips disabled
+entries** (one the keyboard lands on is a trap), Enter to take the
+highlight, Escape to abandon it, and a list that stays in sync when
+its options are replaced underneath — which is what filtering as you
+type does on every keystroke.
+
+Opening highlights the current value rather than the top, so the first
+arrow press moves from where you are. The highlight stops at the ends
+rather than wrapping, since wrapping past the bottom of a long filtered
+list reads as a glitch. Opening also takes keyboard control only if
+nothing inside the target already has it, so a text-field target keeps
+its caret while the arrows still reach the list.
+
+Unlike `PlinthPopover`, tapping the target is *not* wired up: the
+trigger is usually a text field that needs its taps for the caret, so
+opening is the caller's call.
+
+**Mantine's `Combobox.Dropdown` is folded in rather than exported
+separately.** In React the dropdown is distinct markup; here the
+overlay is plumbing rather than something a caller composes, and
+`PlinthPopover` already covers "anchored panel with arbitrary
+content". A second wrapper would be API surface with nothing behind it.
+
+`PlinthSelect`, `PlinthAutocomplete`, `PlinthMultiSelect` and
+`PlinthTagsInput` predate this and keep their own dropdown mechanics.
+This is for building the next one — or a control none of them cover,
+like a command palette.
+
 ### `PlinthTreeSelect`
 `nodes` (`List<PlinthTreeNode>`), `value`, `onChanged`, `label`,
 `description`, `placeholder`, `error`, `selectableBranches`, `size`,
@@ -1183,15 +1254,6 @@ from this one.
 - **`PlinthNativeSelect`** — near-duplicate here: `PlinthSelect`
   already wraps Flutter's `DropdownButton`, which is the native
   control.
-
-### Combobox
-
-- **`PlinthPill`** / **`PlinthPillsInput`** — Mantine's removable-chip
-  primitives. `PlinthMultiSelect` already renders chips internally, so
-  this would be extracting them.
-- **`PlinthCombobox`** / **`PlinthComboboxPopover`** — the low-level
-  primitives Mantine's Select/Autocomplete/TagsInput are built on. Only
-  worth it if several of the above land and start duplicating logic.
 
 ### Navigation & overlays
 
