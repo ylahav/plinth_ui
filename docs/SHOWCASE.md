@@ -29,19 +29,21 @@ code panel will quietly show something the demo no longer does.
 
 ## What exists
 
-42 examples across 3 categories, borrowing Mantine UI's own category
+51 examples across 3 categories, borrowing Mantine UI's own category
 names so the two are directly comparable.
 
 | Category | Subcategory | Examples |
 |---|---|---|
 | Application UI | Navbars | Simple navbar, Navbar with avatar |
 | Application UI | Headers | Centered header, Header with breadcrumbs |
-| Application UI | Stats | Stat tiles, Stat with progress |
-| Application UI | Inputs | Search bar, Filter fields |
+| Application UI | Stats | Stat tiles, Stat with progress, Live metrics |
+| Application UI | Inputs | Search bar, Filter fields, Formatted fields |
 | Application UI | Buttons | Toolbar actions, Destructive actions |
 | Application UI | Sliders | Price range filter, Setting sliders |
 | Application UI | Grids | Dashboard grid, Card gallery |
-| Application UI | Tables | Member table, Invoice table |
+| Application UI | Tables | Member table, Invoice table, Sortable table |
+| Application UI | Dropzones | File dropzone, Avatar upload |
+| Application UI | Drag'n'Drop | Reorderable list, Kanban columns |
 | Application UI | User Info & Controls | User button, Profile card |
 | Application UI | Application Cards | Project card, Task card |
 | Application UI | Footers | Simple footer, Footer with link columns |
@@ -55,14 +57,19 @@ names so the two are directly comparable.
 | Blog UI | Article Cards | Simple article card, Article card with author |
 | Blog UI | Comments | Single comment, Comment thread |
 | Blog UI | Author Info | Inline author, Author card |
+| Blog UI | Table of Contents | Article contents, Contents rail |
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 42. The gap is mostly whole
-subcategories with nothing in them, and — this is the point — **almost
-none of it is blocked on missing components.** The Authentication,
-Stats, Error Pages, and Footers subcategories were all built from
-components that already shipped.
+Mantine UI has ~123 blocks against these 51. The gap is now depth
+rather than absence: **every subcategory has something in it except
+Carousels**, which is a deliberate scope call rather than a hole.
+
+The point still holds — almost none of it was ever blocked on missing
+components. The three subcategories that were empty are done: Dropzones
+and Drag'n'Drop from components that had shipped, and Table of Contents
+once `PlinthTableOfContents` landed in 0.14.0, which was the only entry
+here genuinely waiting on one.
 
 ### Application UI
 
@@ -73,14 +80,14 @@ components that already shipped.
 | Footers | 4 | 2 | |
 | Grids | 3 | 2 | |
 | User info and controls | 8 | 2 | |
-| Inputs | 14 | 2 | Composed field arrangements, not new inputs |
+| Inputs | 14 | 3 | Composed field arrangements, not new inputs |
 | Buttons | 6 | 2 | |
 | Sliders | 6 | 2 | |
 | Application cards | 7 | 2 | |
-| Stats | 9 | 2 | |
-| Tables | 4 | 2 | Unblocked in 0.10.0 — `PlinthTable` cells are widgets now |
-| Dropzones | 1 | **0** | Unblocked — `PlinthFileInput` shipped in 0.9.0 |
-| Drag'n'Drop | 3 | **0** | Flutter's own `Draggable`/`DragTarget` |
+| Stats | 9 | 3 | |
+| Tables | 4 | 3 | Sorting and filtering landed in 0.14.0 |
+| Dropzones | 1 | 2 | Done — `PlinthFileInput` and `PlinthFileButton` |
+| Drag'n'Drop | 3 | 2 | Built on Flutter's own `Draggable`/`DragTarget` |
 | Carousels | 2 | **0** | Mantine's is a separate package; same call applies here |
 
 ### Page Sections
@@ -100,30 +107,32 @@ components that already shipped.
 | Subcategory | Mantine UI | Plinth | Notes |
 |---|---|---|---|
 | Article cards | 7 | 2 | |
-| Table of contents | 2 | **0** | Would pair with a `PlinthTableOfContents` component, which also doesn't exist |
+| Table of contents | 2 | 2 | Complete — `PlinthTableOfContents` shipped in 0.14.0 |
 | Comments | 2 | 2 | Complete |
 
 ### Where to start
 
 Ordered by value against effort, given what already ships:
 
-Every subcategory now has at least two examples, so what remains is
-depth rather than coverage — Mantine offers 6–9 variants where this has
-2. Worth adding where a variant differs in *kind* rather than in
-styling:
+Every subcategory except Carousels now has at least two examples, so
+what remains is depth rather than coverage — Mantine offers 6–9
+variants where this has 2 or 3. Worth adding where a variant differs
+in *kind* rather than in styling:
 
 1. **Navbars** and **Headers** — collapsible and sectioned variants,
-   now that `PlinthAppShell` exists.
-2. **Dropzones** — unblocked by `PlinthFileInput` in 0.9.0; a dropzone
-   is that plus a drag target.
-3. **Application cards** and **Stats** — the kinds most often copied
+   now that `PlinthAppShell` exists. The biggest remaining gap by
+   count (9 and 6 against 2).
+2. **Application cards** and **Stats** — the kinds most often copied
    into real apps, so more variants pay off fastest.
-4. **Drag'n'Drop** — Flutter's own `Draggable`/`DragTarget`, composed
-   with Plinth surfaces.
+3. **Inputs** — 14 against 3, though many of Mantine's are variations
+   in styling rather than arrangement, so the real gap is smaller than
+   the number suggests.
+4. **Authentication** and **Error pages** — password reset, a
+   split-screen sign-in, maintenance and permission-denied.
 
-One remains blocked on component work rather than composition:
-**Table of contents** wants a `PlinthTableOfContents`. See
-[COMPONENTS.md § Coming soon](COMPONENTS.md#coming-soon).
+**Nothing here is blocked on a missing component any more.** Carousels
+is the one subcategory still empty, and deliberately: Mantine ships its
+carousel as a separate package, and the same call applies here.
 
 ## Adding an example
 

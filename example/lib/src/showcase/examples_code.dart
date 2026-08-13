@@ -1606,4 +1606,204 @@ return SizedBox(
   ),
 );
 ''',
+  'FileDropzoneExample': r'''
+PlinthFileInput<String>(
+  label: 'Documents',
+  description: 'PDF or PNG, up to 5 MB each',
+  multiple: true,
+  value: _files,
+  // A real app opens file_picker here.
+  onPick: () async => ['contract-${_files.length + 1}.pdf'],
+  onChanged: (files) => setState(() => _files = files),
+  labelBuilder: (file) => file,
+)
+''',
+  'AvatarUploadExample': r'''
+PlinthGroup(
+  gap: PlinthSize.md,
+  children: [
+    PlinthAvatar(initials: 'AN', size: PlinthSize.xl),
+    PlinthFileButton<String>(
+      size: PlinthSize.sm,
+      variant: PlinthVariant.outline,
+      onPick: () async => ['avatar.png'],
+      onChanged: (f) => setState(() => _picked = f.first),
+      child: const Text('Upload'),
+    ),
+  ],
+)
+''',
+  'ReorderableListExample': r'''
+ReorderableListView(
+  // onReorderItem hands back an index already adjusted for the
+  // removed item, so the usual off-by-one dance isn't needed.
+  onReorderItem: (oldIndex, newIndex) => setState(
+    () => _items.insert(newIndex, _items.removeAt(oldIndex)),
+  ),
+  children: [
+    for (final item in _items)
+      Padding(
+        key: ValueKey(item),
+        padding: const EdgeInsets.only(bottom: 6),
+        child: PlinthPaper(
+          p: PlinthSize.sm,
+          withBorder: true,
+          child: PlinthGroup(
+            children: [
+              const Icon(Icons.drag_indicator, size: 18),
+              PlinthText(item),
+            ],
+          ),
+        ),
+      ),
+  ],
+)
+''',
+  'KanbanDropExample': r'''
+DragTarget<({String card, String from})>(
+  onAcceptWithDetails: (details) =>
+      _move(details.data.card, details.data.from, column),
+  builder: (context, candidate, rejected) => PlinthPaper(
+    p: PlinthSize.sm,
+    withBorder: true,
+    child: PlinthStack(
+      gap: PlinthSize.xs,
+      children: [
+        PlinthText(
+          column,
+          weight: FontWeight.w700,
+          // Highlighting the target is the whole feedback loop.
+          color: candidate.isEmpty ? 'gray' : 'blue',
+        ),
+        for (final card in _columns[column]!)
+          Draggable<({String card, String from})>(
+            data: (card: card, from: column),
+            feedback: PlinthBadge(card, color: 'blue'),
+            childWhenDragging: const SizedBox.shrink(),
+            child: PlinthPaper(
+              p: PlinthSize.xs,
+              withBorder: true,
+              child: PlinthText(card, size: PlinthSize.sm),
+            ),
+          ),
+      ],
+    ),
+  ),
+)
+''',
+  'ArticleContentsExample': r'''
+PlinthTableOfContents(
+  activeIndex: _active,
+  onSelected: (i) => setState(() => _active = i),
+  items: const [
+    PlinthTocItem(label: 'Introduction'),
+    PlinthTocItem(label: 'Installing', order: 2),
+    PlinthTocItem(label: 'From pub.dev', order: 3),
+    PlinthTocItem(label: 'Theming', order: 2),
+    PlinthTocItem(label: 'Dark mode', order: 3),
+  ],
+)
+''',
+  'ArticleWithContentsRailExample': r'''
+PlinthGroup(
+  wrap: false,
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    SizedBox(
+      width: 160,
+      child: PlinthTableOfContents(
+        activeIndex: _active,
+        onSelected: (i) => setState(() => _active = i),
+        items: [
+          for (var i = 0; i < _sections.length; i++)
+            PlinthTocItem(label: _sections[i], targetKey: _keys[i]),
+        ],
+      ),
+    ),
+    Expanded(
+      // SingleChildScrollView, not ListView: ensureVisible needs the
+      // target already built.
+      child: SingleChildScrollView(
+        controller: _scroll,
+        child: PlinthStack(
+          children: [
+            for (var i = 0; i < _sections.length; i++)
+              PlinthTitle(_sections[i], key: _keys[i], order: 4),
+          ],
+        ),
+      ),
+    ),
+  ],
+)
+''',
+  'LiveMetricsExample': r'''
+PlinthGroup(
+  gap: PlinthSize.xl,
+  children: [
+    PlinthRollingNumber(
+      value: _revenue,
+      prefix: r'$',
+      size: PlinthSize.xl,
+      weight: FontWeight.w700,
+    ),
+    PlinthSemiCircleProgress(
+      value: 0.62,
+      size: 120,
+      label: const PlinthText('62%', weight: FontWeight.w700),
+    ),
+  ],
+)
+''',
+  'SortableTableExample': r'''
+PlinthStack(
+  gap: PlinthSize.sm,
+  children: [
+    PlinthTextInput(
+      placeholder: 'Filter members…',
+      leadingIcon: const Icon(Icons.search, size: 18),
+      onChanged: (v) => setState(() => _query = v),
+    ),
+    PlinthTable.text(
+      columns: const ['Name', 'Role', 'Commits'],
+      // Sortable and filterable because the values are strings — a
+      // widget-cell table needs sortValues alongside.
+      sortable: true,
+      filter: _query,
+      striped: true,
+      emptyState: const PlinthEmptyState(
+        title: 'No members match',
+        description: 'Try a shorter search.',
+      ),
+      rows: const [
+        ['Carol', 'Engineer', '9'],
+        ['Alice', 'Designer', '124'],
+        ['Bob', 'Engineer', '31'],
+      ],
+    ),
+  ],
+)
+''',
+  'FormattedFieldsExample': r'''
+PlinthStack(
+  gap: PlinthSize.sm,
+  children: [
+    PlinthMaskInput(
+      mask: '(###) ###-####',
+      label: 'Support line',
+      onChanged: (_) {},
+    ),
+    PlinthColorInput(
+      label: 'Brand colour',
+      value: _brand,
+      onChanged: (c) => setState(() => _brand = c),
+      swatches: const [Color(0xFF2F9E44), Color(0xFF1971C2)],
+    ),
+    const PlinthJsonInput(
+      label: 'Webhook payload',
+      description: 'Validated when you click away',
+      minLines: 3,
+    ),
+  ],
+)
+''',
 };

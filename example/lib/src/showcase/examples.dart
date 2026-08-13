@@ -2119,3 +2119,502 @@ class ContactWithDetailsExample extends StatelessWidget {
     );
   }
 }
+
+// ───────────────────────── Application UI: Dropzones ─────────────────────────
+
+class FileDropzoneExample extends StatefulWidget {
+  const FileDropzoneExample({super.key});
+
+  @override
+  State<FileDropzoneExample> createState() => _FileDropzoneExampleState();
+}
+
+class _FileDropzoneExampleState extends State<FileDropzoneExample> {
+  List<String> _files = [];
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthPaper(
+      p: PlinthSize.md,
+      withBorder: true,
+      child: PlinthStack(
+        gap: PlinthSize.sm,
+        children: [
+          const PlinthTitle('Attachments', order: 4),
+          PlinthFileInput<String>(
+            label: 'Documents',
+            description: 'PDF or PNG, up to 5 MB each',
+            multiple: true,
+            value: _files,
+            // A real app opens file_picker here; the showcase stands
+            // one in so the block is runnable on its own.
+            onPick: () async => ['contract-${_files.length + 1}.pdf'],
+            onChanged: (files) => setState(() => _files = files),
+            labelBuilder: (file) => file,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AvatarUploadExample extends StatefulWidget {
+  const AvatarUploadExample({super.key});
+
+  @override
+  State<AvatarUploadExample> createState() => _AvatarUploadExampleState();
+}
+
+class _AvatarUploadExampleState extends State<AvatarUploadExample> {
+  String? _picked;
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthPaper(
+      p: PlinthSize.md,
+      withBorder: true,
+      child: PlinthGroup(
+        gap: PlinthSize.md,
+        children: [
+          PlinthAvatar(
+              initials: _picked == null ? 'AN' : 'OK', size: PlinthSize.xl),
+          PlinthStack(
+            gap: PlinthSize.xs,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const PlinthText('Profile photo', weight: FontWeight.w600),
+              PlinthText(
+                _picked ?? 'PNG or JPG, square works best',
+                size: PlinthSize.xs,
+                color: 'gray',
+              ),
+              PlinthGroup(
+                gap: PlinthSize.xs,
+                children: [
+                  PlinthFileButton<String>(
+                    size: PlinthSize.sm,
+                    variant: PlinthVariant.outline,
+                    onPick: () async => ['avatar.png'],
+                    onChanged: (f) => setState(() => _picked = f.first),
+                    child: const Text('Upload'),
+                  ),
+                  if (_picked != null)
+                    PlinthButton(
+                      size: PlinthSize.sm,
+                      variant: PlinthVariant.subtle,
+                      color: 'red',
+                      onPressed: () => setState(() => _picked = null),
+                      child: const Text('Remove'),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ──────────────────────── Application UI: Drag'n'Drop ────────────────────────
+
+class ReorderableListExample extends StatefulWidget {
+  const ReorderableListExample({super.key});
+
+  @override
+  State<ReorderableListExample> createState() => _ReorderableListExampleState();
+}
+
+class _ReorderableListExampleState extends State<ReorderableListExample> {
+  final List<String> _items = ['Draft the brief', 'Review copy', 'Ship it'];
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthPaper(
+      p: PlinthSize.md,
+      withBorder: true,
+      child: PlinthStack(
+        gap: PlinthSize.sm,
+        children: [
+          const PlinthTitle('Backlog', order: 4),
+          // Flutter's own ReorderableListView rather than a Plinth
+          // component: drag-to-reorder is exactly the kind of thing
+          // not worth re-deriving, and it takes Plinth children fine.
+          SizedBox(
+            height: 160,
+            child: ReorderableListView(
+              buildDefaultDragHandles: true,
+              // onReorderItem rather than onReorder: it hands back an
+              // index already adjusted for the removed item, so the
+              // usual `if (newIndex > oldIndex) newIndex -= 1` dance
+              // that everyone gets wrong once isn't needed.
+              onReorderItem: (oldIndex, newIndex) => setState(
+                () => _items.insert(newIndex, _items.removeAt(oldIndex)),
+              ),
+              children: [
+                for (final item in _items)
+                  Padding(
+                    key: ValueKey(item),
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: PlinthPaper(
+                      p: PlinthSize.sm,
+                      withBorder: true,
+                      child: PlinthGroup(
+                        children: [
+                          const Icon(Icons.drag_indicator, size: 18),
+                          PlinthText(item),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class KanbanDropExample extends StatefulWidget {
+  const KanbanDropExample({super.key});
+
+  @override
+  State<KanbanDropExample> createState() => _KanbanDropExampleState();
+}
+
+class _KanbanDropExampleState extends State<KanbanDropExample> {
+  final Map<String, List<String>> _columns = {
+    'To do': ['Write tests'],
+    'Done': ['Set up CI'],
+  };
+
+  void _move(String card, String from, String to) {
+    if (from == to) return;
+    setState(() {
+      _columns[from]!.remove(card);
+      _columns[to]!.add(card);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthGroup(
+      gap: PlinthSize.sm,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final column in _columns.keys)
+          SizedBox(
+            width: 180,
+            child: DragTarget<({String card, String from})>(
+              onAcceptWithDetails: (details) =>
+                  _move(details.data.card, details.data.from, column),
+              builder: (context, candidate, rejected) => PlinthPaper(
+                p: PlinthSize.sm,
+                withBorder: true,
+                child: PlinthStack(
+                  gap: PlinthSize.xs,
+                  children: [
+                    PlinthText(
+                      column,
+                      size: PlinthSize.sm,
+                      weight: FontWeight.w700,
+                      // Highlighting the target is the whole feedback
+                      // loop of a drag — without it you are guessing.
+                      color: candidate.isEmpty ? 'gray' : 'blue',
+                    ),
+                    for (final card in _columns[column]!)
+                      Draggable<({String card, String from})>(
+                        data: (card: card, from: column),
+                        feedback: PlinthBadge(card, color: 'blue'),
+                        childWhenDragging: const SizedBox.shrink(),
+                        child: PlinthPaper(
+                          p: PlinthSize.xs,
+                          withBorder: true,
+                          child: PlinthText(card, size: PlinthSize.sm),
+                        ),
+                      ),
+                    if (_columns[column]!.isEmpty)
+                      const PlinthText('Drop here',
+                          size: PlinthSize.xs, color: 'gray'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+// ────────────────────────── Blog UI: Table of Contents ──────────────────────────
+
+class ArticleContentsExample extends StatefulWidget {
+  const ArticleContentsExample({super.key});
+
+  @override
+  State<ArticleContentsExample> createState() => _ArticleContentsExampleState();
+}
+
+class _ArticleContentsExampleState extends State<ArticleContentsExample> {
+  int _active = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthPaper(
+      p: PlinthSize.md,
+      withBorder: true,
+      child: SizedBox(
+        width: 240,
+        child: PlinthStack(
+          gap: PlinthSize.sm,
+          children: [
+            const PlinthText('On this page',
+                size: PlinthSize.xs, weight: FontWeight.w700),
+            PlinthTableOfContents(
+              activeIndex: _active,
+              onSelected: (i) => setState(() => _active = i),
+              items: const [
+                PlinthTocItem(label: 'Introduction'),
+                PlinthTocItem(label: 'Installing', order: 2),
+                PlinthTocItem(label: 'From pub.dev', order: 3),
+                PlinthTocItem(label: 'Theming', order: 2),
+                PlinthTocItem(label: 'Dark mode', order: 3),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ArticleWithContentsRailExample extends StatefulWidget {
+  const ArticleWithContentsRailExample({super.key});
+
+  @override
+  State<ArticleWithContentsRailExample> createState() =>
+      _ArticleWithContentsRailExampleState();
+}
+
+class _ArticleWithContentsRailExampleState
+    extends State<ArticleWithContentsRailExample> {
+  final _sections = ['Introduction', 'Installing', 'Theming'];
+  final _keys = [GlobalKey(), GlobalKey(), GlobalKey()];
+  final _scroll = ScrollController();
+  int _active = 0;
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 260,
+      child: PlinthGroup(
+        gap: PlinthSize.md,
+        wrap: false,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 160,
+            child: PlinthTableOfContents(
+              activeIndex: _active,
+              onSelected: (i) => setState(() => _active = i),
+              items: [
+                for (var i = 0; i < _sections.length; i++)
+                  PlinthTocItem(label: _sections[i], targetKey: _keys[i]),
+              ],
+            ),
+          ),
+          Expanded(
+            // A SingleChildScrollView rather than a ListView: the
+            // rail scrolls to a heading via ensureVisible, which needs
+            // the target already built.
+            child: SingleChildScrollView(
+              controller: _scroll,
+              child: PlinthStack(
+                gap: PlinthSize.md,
+                children: [
+                  for (var i = 0; i < _sections.length; i++)
+                    PlinthStack(
+                      gap: PlinthSize.xs,
+                      children: [
+                        PlinthTitle(_sections[i], key: _keys[i], order: 4),
+                        const PlinthText(
+                          'Body copy for this section, long enough that '
+                          'the rail has somewhere to scroll to.',
+                          size: PlinthSize.sm,
+                        ),
+                        const SizedBox(height: 40),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ───────────────────── Blocks built on the newer components ─────────────────────
+
+class LiveMetricsExample extends StatefulWidget {
+  const LiveMetricsExample({super.key});
+
+  @override
+  State<LiveMetricsExample> createState() => _LiveMetricsExampleState();
+}
+
+class _LiveMetricsExampleState extends State<LiveMetricsExample> {
+  num _revenue = 48210;
+  static const double _capacity = 0.62;
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthPaper(
+      p: PlinthSize.md,
+      withBorder: true,
+      child: PlinthGroup(
+        gap: PlinthSize.xl,
+        children: [
+          PlinthStack(
+            gap: PlinthSize.xs,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const PlinthText('Revenue', size: PlinthSize.xs, color: 'gray'),
+              PlinthRollingNumber(
+                value: _revenue,
+                prefix: r'$',
+                size: PlinthSize.xl,
+                weight: FontWeight.w700,
+              ),
+              PlinthButton(
+                size: PlinthSize.xs,
+                variant: PlinthVariant.subtle,
+                onPressed: () => setState(() => _revenue += 1372),
+                child: const Text('Simulate sale'),
+              ),
+            ],
+          ),
+          PlinthStack(
+            gap: PlinthSize.xs,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const PlinthText('Capacity', size: PlinthSize.xs, color: 'gray'),
+              PlinthSemiCircleProgress(
+                value: _capacity,
+                size: 120,
+                label: PlinthText(
+                  '${(_capacity * 100).round()}%',
+                  weight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SortableTableExample extends StatefulWidget {
+  const SortableTableExample({super.key});
+
+  @override
+  State<SortableTableExample> createState() => _SortableTableExampleState();
+}
+
+class _SortableTableExampleState extends State<SortableTableExample> {
+  String _query = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthPaper(
+      p: PlinthSize.md,
+      withBorder: true,
+      child: PlinthStack(
+        gap: PlinthSize.sm,
+        children: [
+          PlinthTextInput(
+            placeholder: 'Filter members…',
+            leadingIcon: const Icon(Icons.search, size: 18),
+            onChanged: (v) => setState(() => _query = v),
+          ),
+          PlinthTable.text(
+            columns: const ['Name', 'Role', 'Commits'],
+            // Sortable and filterable because the values are strings —
+            // a widget-cell table would need sortValues alongside.
+            sortable: true,
+            filter: _query,
+            striped: true,
+            emptyState: const PlinthEmptyState(
+              title: 'No members match',
+              description: 'Try a shorter search.',
+            ),
+            rows: const [
+              ['Carol', 'Engineer', '9'],
+              ['Alice', 'Designer', '124'],
+              ['Bob', 'Engineer', '31'],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FormattedFieldsExample extends StatefulWidget {
+  const FormattedFieldsExample({super.key});
+
+  @override
+  State<FormattedFieldsExample> createState() => _FormattedFieldsExampleState();
+}
+
+class _FormattedFieldsExampleState extends State<FormattedFieldsExample> {
+  Color _brand = const Color(0xFF2F9E44);
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthPaper(
+      p: PlinthSize.md,
+      withBorder: true,
+      child: PlinthStack(
+        gap: PlinthSize.sm,
+        children: [
+          const PlinthTitle('Workspace settings', order: 4),
+          PlinthMaskInput(
+            mask: '(###) ###-####',
+            label: 'Support line',
+            onChanged: (_) {},
+          ),
+          PlinthColorInput(
+            label: 'Brand colour',
+            value: _brand,
+            onChanged: (c) => setState(() => _brand = c),
+            swatches: const [
+              Color(0xFF2F9E44),
+              Color(0xFF1971C2),
+              Color(0xFFE03131),
+              Color(0xFF7048E8),
+            ],
+          ),
+          const PlinthJsonInput(
+            label: 'Webhook payload',
+            description: 'Validated when you click away',
+            minLines: 3,
+            maxLines: 6,
+          ),
+        ],
+      ),
+    );
+  }
+}

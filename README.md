@@ -365,10 +365,15 @@ intentional rather than bugs:
   visual logic. See `docs/TESTING.md`.
 - Consider hue-drift at the extremes of the color-shade ramp for
   richer darks/lights (currently hue is held fixed).
-- Extend the composed-blocks showcase — 12 examples against Mantine
-  UI's 123, with Authentication, Stats, Error pages, and Footers
-  entirely empty. Most need no new components. See
+- Extend the composed-blocks showcase — 51 examples against Mantine
+  UI's ~123. Every subcategory now has something in it except
+  Carousels (a deliberate scope call), so what remains is depth:
+  Navbars and Headers are the thinnest at 2 against 9 and 6. Nothing
+  is blocked on a missing component. See
   **[docs/SHOWCASE.md](docs/SHOWCASE.md)**.
+- Bring the example app's component tour up to date — 37 of the 111
+  components appear only in Widgetbook, not in the example's own
+  per-component sections.
 
 ## Naming note
 

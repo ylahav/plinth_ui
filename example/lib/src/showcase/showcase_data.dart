@@ -62,6 +62,8 @@ final List<CategoryData> showcaseCategories = [
             'Stat tiles', _statTileRow, exampleCode['StatTileRowExample']!),
         ExampleEntry('Stat with progress', _statWithProgress,
             exampleCode['StatWithProgressExample']!),
+        ExampleEntry(
+            'Live metrics', _liveMetrics, exampleCode['LiveMetricsExample']!),
       ]),
       SubcategoryData('User Info & Controls', Icons.account_circle_outlined, [
         ExampleEntry(
@@ -79,6 +81,8 @@ final List<CategoryData> showcaseCategories = [
             'Search bar', _searchBar, exampleCode['SearchBarExample']!),
         ExampleEntry('Filter fields', _filterFields,
             exampleCode['FilterFieldsExample']!),
+        ExampleEntry('Formatted fields', _formattedFields,
+            exampleCode['FormattedFieldsExample']!),
       ]),
       SubcategoryData('Buttons', Icons.smart_button_outlined, [
         ExampleEntry('Toolbar actions', _toolbarActions,
@@ -103,6 +107,20 @@ final List<CategoryData> showcaseCategories = [
             'Member table', _memberTable, exampleCode['MemberTableExample']!),
         ExampleEntry('Invoice table', _invoiceTable,
             exampleCode['InvoiceTableExample']!),
+        ExampleEntry('Sortable table', _sortableTable,
+            exampleCode['SortableTableExample']!),
+      ]),
+      SubcategoryData('Dropzones', Icons.upload_file_outlined, [
+        ExampleEntry('File dropzone', _fileDropzone,
+            exampleCode['FileDropzoneExample']!),
+        ExampleEntry('Avatar upload', _avatarUpload,
+            exampleCode['AvatarUploadExample']!),
+      ]),
+      SubcategoryData("Drag'n'Drop", Icons.drag_indicator, [
+        ExampleEntry('Reorderable list', _reorderableList,
+            exampleCode['ReorderableListExample']!),
+        ExampleEntry(
+            'Kanban columns', _kanbanDrop, exampleCode['KanbanDropExample']!),
       ]),
       SubcategoryData('Footers', Icons.horizontal_rule, [
         ExampleEntry('Simple footer', _simpleFooter,
@@ -189,6 +207,12 @@ final List<CategoryData> showcaseCategories = [
         ExampleEntry(
             'Author card', _authorCard, exampleCode['AuthorCardExample']!),
       ]),
+      SubcategoryData('Table of Contents', Icons.list_alt_outlined, [
+        ExampleEntry('Article contents', _articleContents,
+            exampleCode['ArticleContentsExample']!),
+        ExampleEntry('Contents rail', _articleContentsRail,
+            exampleCode['ArticleWithContentsRailExample']!),
+      ]),
     ],
   ),
 ];
@@ -249,3 +273,13 @@ Widget _cardGalleryGrid(BuildContext context) => const CardGalleryGridExample();
 Widget _contactForm(BuildContext context) => const ContactFormExample();
 Widget _contactWithDetails(BuildContext context) =>
     const ContactWithDetailsExample();
+Widget _fileDropzone(BuildContext context) => const FileDropzoneExample();
+Widget _avatarUpload(BuildContext context) => const AvatarUploadExample();
+Widget _reorderableList(BuildContext context) => const ReorderableListExample();
+Widget _kanbanDrop(BuildContext context) => const KanbanDropExample();
+Widget _articleContents(BuildContext context) => const ArticleContentsExample();
+Widget _articleContentsRail(BuildContext context) =>
+    const ArticleWithContentsRailExample();
+Widget _liveMetrics(BuildContext context) => const LiveMetricsExample();
+Widget _sortableTable(BuildContext context) => const SortableTableExample();
+Widget _formattedFields(BuildContext context) => const FormattedFieldsExample();
