@@ -1129,4 +1129,131 @@ PlinthEmptyState(
   ),
 )
 ''',
+  'Color Input': r'''
+PlinthColorInput(
+  label: 'Brand colour',
+  value: _brand,
+  onChanged: (c) => setState(() => _brand = c),
+  swatches: const [
+    Color(0xFF2F9E44),
+    Color(0xFF1971C2),
+    Color(0xFFE03131),
+    Color(0xFF7048E8),
+  ],
+)
+''',
+  'Color Picker': r'''
+PlinthColorPicker(
+  value: _brand,
+  onChanged: (c) => setState(() => _brand = c),
+)
+''',
+  'Hue Slider': r'''
+PlinthHueSlider(
+  value: _hue,
+  onChanged: (h) => setState(() => _hue = h),
+)
+''',
+  'Alpha Slider': r'''
+PlinthAlphaSlider(
+  color: const Color(0xFF1971C2),
+  value: _alpha,
+  onChanged: (a) => setState(() => _alpha = a),
+)
+''',
+  'Angle Slider': r'''
+PlinthAngleSlider(
+  value: _angle,
+  onChanged: (a) => setState(() => _angle = a),
+)
+''',
+  'Mask Input': r'''
+PlinthMaskInput(
+  mask: '(###) ###-####',
+  label: 'Phone',
+  onChanged: (_) {},
+)
+''',
+  'JSON Input': r'''
+const PlinthJsonInput(
+  label: 'Payload',
+  description: 'Validated when focus leaves',
+  minLines: 3,
+  maxLines: 6,
+)
+''',
+  'File Input': r'''
+PlinthFileInput<String>(
+  label: 'Attachments',
+  multiple: true,
+  value: _attachments,
+  // A real app opens file_picker here.
+  onPick: () async => ['file-${_attachments.length + 1}.pdf'],
+  onChanged: (f) => setState(() => _attachments = f),
+  labelBuilder: (f) => f,
+)
+''',
+  'File Button': r'''
+PlinthFileButton<String>(
+  variant: PlinthVariant.outline,
+  onPick: () async => ['avatar.png'],
+  onChanged: (_) {},
+  leadingIcon: const Icon(Icons.upload, size: 16),
+  child: const Text('Upload'),
+)
+''',
+  'Tags Input': r'''
+PlinthTagsInput(
+  label: 'Tags',
+  value: _tags,
+  onChanged: (t) => setState(() => _tags = t),
+)
+''',
+  'Autocomplete': r'''
+PlinthAutocomplete(
+  label: 'Fruit',
+  value: _fruit,
+  onChanged: (v) => setState(() => _fruit = v),
+  options: const ['Apple', 'Apricot', 'Banana', 'Blackberry', 'Cherry'],
+)
+''',
+  'Pill': r'''
+PlinthGroup(
+  children: [
+    const PlinthPill('read only'),
+    PlinthPill('removable', onRemove: () {}),
+    PlinthPill('coloured', color: 'grape', onRemove: () {}),
+  ],
+)
+''',
+  'Pills Input': r'''
+PlinthPillsInput(
+  label: 'Recipients',
+  placeholder: 'Nobody yet',
+  children: [
+    for (final p in _pills)
+      PlinthPill(p, onRemove: () => setState(() => _pills.remove(p))),
+  ],
+)
+''',
+  'Combobox': r'''
+PlinthCombobox<String>(
+  controller: _combobox,
+  selected: _framework,
+  empty: const PlinthText('No matches'),
+  target: PlinthButton(
+    variant: PlinthVariant.outline,
+    fullWidth: true,
+    onPressed: _combobox.toggle,
+    child: Text(_framework ?? 'Pick a framework'),
+  ),
+  options: const [
+    PlinthComboboxOption('flutter', 'Flutter'),
+    // Arrow keys skip a disabled option rather than landing on it.
+    PlinthComboboxOption('react', 'React', disabled: true),
+    PlinthComboboxOption('svelte', 'Svelte'),
+  ],
+  onSelected: (v) => setState(() => _framework = v),
+)
+''',
 };

@@ -130,6 +130,16 @@ class _ShowcasePageState extends State<ShowcasePage> {
   List<String> _skills = ['dart'];
   String _pin = '';
   bool _collapsed = true;
+  Color _brand = const Color(0xFF2F9E44);
+  double _hue = 210;
+  double _alpha = 0.6;
+  double _angle = 45;
+  List<String> _tags = ['design'];
+  List<String> _attachments = [];
+  String _fruit = '';
+  final List<String> _pills = ['ana@example.com', 'sam@example.com'];
+  String? _framework;
+  final PlinthDisclosureController _combobox = PlinthDisclosureController();
 
   // Keyed per section title so the sidebar nav can scroll to each one
   // via Scrollable.ensureVisible — populated lazily inside
@@ -224,6 +234,20 @@ class _ShowcasePageState extends State<ShowcasePage> {
     'Data List',
     'Overflow List',
     'Empty State',
+    'Color Input',
+    'Color Picker',
+    'Hue Slider',
+    'Alpha Slider',
+    'Angle Slider',
+    'Mask Input',
+    'JSON Input',
+    'File Input',
+    'File Button',
+    'Tags Input',
+    'Autocomplete',
+    'Pill',
+    'Pills Input',
+    'Combobox',
     'Button Variants',
     'Button Sizes',
     'Button Colors',
@@ -245,6 +269,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
     _drawer.dispose();
     _popover.dispose();
     _menu.dispose();
+    _combobox.dispose();
     super.dispose();
   }
 
@@ -1830,6 +1855,197 @@ class _ShowcasePageState extends State<ShowcasePage> {
                         action: PlinthButton(
                           onPressed: () {},
                           child: const Text('Compose'),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Color Input'),
+                      _gap(12),
+                      SizedBox(
+                        width: 320,
+                        child: PlinthColorInput(
+                          label: 'Brand colour',
+                          value: _brand,
+                          onChanged: (c) => setState(() => _brand = c),
+                          swatches: const [
+                            Color(0xFF2F9E44),
+                            Color(0xFF1971C2),
+                            Color(0xFFE03131),
+                            Color(0xFF7048E8),
+                          ],
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Color Picker'),
+                      _gap(12),
+                      SizedBox(
+                        width: 260,
+                        child: PlinthColorPicker(
+                          value: _brand,
+                          onChanged: (c) => setState(() => _brand = c),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Hue Slider'),
+                      _gap(12),
+                      SizedBox(
+                        width: 320,
+                        child: PlinthHueSlider(
+                          value: _hue,
+                          onChanged: (h) => setState(() => _hue = h),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Alpha Slider'),
+                      _gap(12),
+                      SizedBox(
+                        width: 320,
+                        child: PlinthAlphaSlider(
+                          color: const Color(0xFF1971C2),
+                          value: _alpha,
+                          onChanged: (a) => setState(() => _alpha = a),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Angle Slider'),
+                      _gap(12),
+                      PlinthGroup(
+                        children: [
+                          PlinthAngleSlider(
+                            value: _angle,
+                            onChanged: (a) => setState(() => _angle = a),
+                          ),
+                          PlinthText('${_angle.round()}°'),
+                        ],
+                      ),
+                      _gap(),
+                      _sectionTitle('Mask Input'),
+                      _gap(12),
+                      SizedBox(
+                        width: 320,
+                        child: PlinthMaskInput(
+                          mask: '(###) ###-####',
+                          label: 'Phone',
+                          onChanged: (_) {},
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('JSON Input'),
+                      _gap(12),
+                      const SizedBox(
+                        width: 360,
+                        child: PlinthJsonInput(
+                          label: 'Payload',
+                          description: 'Validated when focus leaves',
+                          minLines: 3,
+                          maxLines: 6,
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('File Input'),
+                      _gap(12),
+                      SizedBox(
+                        width: 360,
+                        child: PlinthFileInput<String>(
+                          label: 'Attachments',
+                          multiple: true,
+                          value: _attachments,
+                          // A real app opens file_picker here; the demo
+                          // stands one in so the section works offline.
+                          onPick: () async =>
+                              ['file-${_attachments.length + 1}.pdf'],
+                          onChanged: (f) => setState(() => _attachments = f),
+                          labelBuilder: (f) => f,
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('File Button'),
+                      _gap(12),
+                      PlinthFileButton<String>(
+                        variant: PlinthVariant.outline,
+                        onPick: () async => ['avatar.png'],
+                        onChanged: (_) {},
+                        leadingIcon: const Icon(Icons.upload, size: 16),
+                        child: const Text('Upload'),
+                      ),
+                      _gap(),
+                      _sectionTitle('Tags Input'),
+                      _gap(12),
+                      SizedBox(
+                        width: 360,
+                        child: PlinthTagsInput(
+                          label: 'Tags',
+                          value: _tags,
+                          onChanged: (t) => setState(() => _tags = t),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Autocomplete'),
+                      _gap(12),
+                      SizedBox(
+                        width: 320,
+                        child: PlinthAutocomplete(
+                          label: 'Fruit',
+                          value: _fruit,
+                          onChanged: (v) => setState(() => _fruit = v),
+                          options: const [
+                            'Apple',
+                            'Apricot',
+                            'Banana',
+                            'Blackberry',
+                            'Cherry',
+                          ],
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Pill'),
+                      _gap(12),
+                      PlinthGroup(
+                        children: [
+                          const PlinthPill('read only'),
+                          PlinthPill('removable', onRemove: () {}),
+                          PlinthPill('coloured', color: 'grape', onRemove: () {}),
+                        ],
+                      ),
+                      _gap(),
+                      _sectionTitle('Pills Input'),
+                      _gap(12),
+                      SizedBox(
+                        width: 360,
+                        child: PlinthPillsInput(
+                          label: 'Recipients',
+                          placeholder: 'Nobody yet',
+                          children: [
+                            for (final p in _pills)
+                              PlinthPill(
+                                p,
+                                onRemove: () =>
+                                    setState(() => _pills.remove(p)),
+                              ),
+                          ],
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Combobox'),
+                      _gap(12),
+                      SizedBox(
+                        width: 320,
+                        child: PlinthCombobox<String>(
+                          controller: _combobox,
+                          selected: _framework,
+                          empty: const PlinthText('No matches'),
+                          target: PlinthButton(
+                            variant: PlinthVariant.outline,
+                            fullWidth: true,
+                            onPressed: _combobox.toggle,
+                            child: Text(_framework ?? 'Pick a framework'),
+                          ),
+                          options: const [
+                            PlinthComboboxOption('flutter', 'Flutter'),
+                            PlinthComboboxOption('react', 'React',
+                                disabled: true),
+                            PlinthComboboxOption('svelte', 'Svelte'),
+                          ],
+                          onSelected: (v) => setState(() => _framework = v),
                         ),
                       ),
                       _gap(),
