@@ -129,6 +129,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   RangeValues _priceRange = const RangeValues(20, 80);
   List<String> _skills = ['dart'];
   String _pin = '';
+  bool _collapsed = true;
 
   // Keyed per section title so the sidebar nav can scroll to each one
   // via Scrollable.ensureVisible — populated lazily inside
@@ -210,6 +211,19 @@ class _ShowcasePageState extends State<ShowcasePage> {
     'Portal',
     'Image',
     'Box + Text + Disclosure',
+    'Title',
+    'Paper',
+    'Stack',
+    'Grid',
+    'Fieldset',
+    'Collapse',
+    'Splitter',
+    'App Shell',
+    'Marquee',
+    'Highlight',
+    'Data List',
+    'Overflow List',
+    'Empty State',
     'Button Variants',
     'Button Sizes',
     'Button Colors',
@@ -1609,6 +1623,213 @@ class _ShowcasePageState extends State<ShowcasePage> {
                               child: const Text('Toggle'),
                             ),
                           ],
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Title'),
+                      _gap(12),
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          PlinthTitle('Heading level 1'),
+                          PlinthTitle('Heading level 3', order: 3),
+                          PlinthTitle('Heading level 5', order: 5),
+                        ],
+                      ),
+                      _gap(),
+                      _sectionTitle('Paper'),
+                      _gap(12),
+                      const PlinthGroup(
+                        children: [
+                          PlinthPaper(
+                            p: PlinthSize.md,
+                            withBorder: true,
+                            child: PlinthText('Bordered'),
+                          ),
+                          PlinthPaper(
+                            p: PlinthSize.md,
+                            shadow: PlinthShadow.md,
+                            child: PlinthText('Raised'),
+                          ),
+                        ],
+                      ),
+                      _gap(),
+                      _sectionTitle('Stack'),
+                      _gap(12),
+                      const SizedBox(
+                        width: 220,
+                        child: PlinthStack(
+                          gap: PlinthSize.sm,
+                          children: [
+                            PlinthPaper(p: PlinthSize.sm, child: Text('One')),
+                            PlinthPaper(p: PlinthSize.sm, child: Text('Two')),
+                            PlinthPaper(p: PlinthSize.sm, child: Text('Three')),
+                          ],
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Grid'),
+                      _gap(12),
+                      const PlinthGrid(
+                        gutter: PlinthSize.sm,
+                        children: [
+                          PlinthGridCol(
+                            span: 6,
+                            child: PlinthPaper(
+                                p: PlinthSize.sm, child: Text('span 6')),
+                          ),
+                          PlinthGridCol(
+                            span: 3,
+                            child: PlinthPaper(
+                                p: PlinthSize.sm, child: Text('span 3')),
+                          ),
+                          PlinthGridCol(
+                            span: 3,
+                            child: PlinthPaper(
+                                p: PlinthSize.sm, child: Text('span 3')),
+                          ),
+                        ],
+                      ),
+                      _gap(),
+                      _sectionTitle('Fieldset'),
+                      _gap(12),
+                      const SizedBox(
+                        width: 320,
+                        child: PlinthFieldset(
+                          legend: 'Shipping address',
+                          child: PlinthStack(
+                            gap: PlinthSize.sm,
+                            children: [
+                              PlinthTextInput(label: 'Street'),
+                              PlinthTextInput(label: 'City'),
+                            ],
+                          ),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Collapse'),
+                      _gap(12),
+                      PlinthStack(
+                        gap: PlinthSize.sm,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          PlinthButton(
+                            size: PlinthSize.sm,
+                            variant: PlinthVariant.outline,
+                            onPressed: () =>
+                                setState(() => _collapsed = !_collapsed),
+                            child: Text(_collapsed ? 'Show' : 'Hide'),
+                          ),
+                          PlinthCollapse(
+                            opened: !_collapsed,
+                            child: const PlinthPaper(
+                              p: PlinthSize.sm,
+                              withBorder: true,
+                              child: Text('Animates its own height.'),
+                            ),
+                          ),
+                        ],
+                      ),
+                      _gap(),
+                      _sectionTitle('Splitter'),
+                      _gap(12),
+                      const SizedBox(
+                        height: 120,
+                        child: PlinthSplitter(
+                          first: PlinthPaper(
+                              p: PlinthSize.sm, child: Text('Drag the divider')),
+                          second:
+                              PlinthPaper(p: PlinthSize.sm, child: Text('→')),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('App Shell'),
+                      _gap(12),
+                      // Bounded height on purpose: the shell fills
+                      // whatever it is given, so a page-length demo
+                      // would push everything below it off-screen.
+                      const SizedBox(
+                        height: 200,
+                        child: PlinthAppShell(
+                          header: PlinthPaper(
+                            p: PlinthSize.sm,
+                            child: PlinthText('Header'),
+                          ),
+                          navbar: PlinthPaper(
+                            p: PlinthSize.sm,
+                            child: PlinthText('Navbar'),
+                          ),
+                          child: PlinthPaper(
+                            p: PlinthSize.sm,
+                            child: PlinthText('Content'),
+                          ),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Marquee'),
+                      _gap(12),
+                      const SizedBox(
+                        width: 360,
+                        child: PlinthMarquee(
+                          speed: 30,
+                          child: PlinthGroup(
+                            wrap: false,
+                            children: [
+                              PlinthBadge('Flutter'),
+                              PlinthBadge('Dart'),
+                              PlinthBadge('Plinth'),
+                            ],
+                          ),
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Highlight'),
+                      _gap(12),
+                      const PlinthHighlight(
+                        'Search terms are highlighted in place.',
+                        highlight: ['highlighted'],
+                      ),
+                      _gap(),
+                      _sectionTitle('Data List'),
+                      _gap(12),
+                      const SizedBox(
+                        width: 320,
+                        child: PlinthDataList(
+                          items: [
+                            PlinthDataListItem.text('Order', '#4021'),
+                            PlinthDataListItem.text('Placed', '12 Aug 2026'),
+                            PlinthDataListItem(
+                              label: 'Status',
+                              value: PlinthBadge('Shipped', color: 'green'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Overflow List'),
+                      _gap(12),
+                      const SizedBox(
+                        width: 240,
+                        child: PlinthOverflowList(
+                          children: [
+                            PlinthBadge('Design'),
+                            PlinthBadge('Research'),
+                            PlinthBadge('Copy'),
+                            PlinthBadge('QA'),
+                            PlinthBadge('Ops'),
+                          ],
+                        ),
+                      ),
+                      _gap(),
+                      _sectionTitle('Empty State'),
+                      _gap(12),
+                      PlinthEmptyState(
+                        icon: const Icon(Icons.inbox_outlined),
+                        title: 'No messages',
+                        description: 'Anything sent to your team lands here.',
+                        action: PlinthButton(
+                          onPressed: () {},
+                          child: const Text('Compose'),
                         ),
                       ),
                       _gap(),

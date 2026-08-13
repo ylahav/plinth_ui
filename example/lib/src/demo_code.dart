@@ -967,4 +967,166 @@ Wrap(
     ],
   ),
 ''',
+  'Title': r'''
+const Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    PlinthTitle('Heading level 1'),
+    PlinthTitle('Heading level 3', order: 3),
+    PlinthTitle('Heading level 5', order: 5),
+  ],
+)
+''',
+  'Paper': r'''
+const PlinthGroup(
+  children: [
+    PlinthPaper(
+      p: PlinthSize.md,
+      withBorder: true,
+      child: PlinthText('Bordered'),
+    ),
+    PlinthPaper(
+      p: PlinthSize.md,
+      shadow: PlinthShadow.md,
+      child: PlinthText('Raised'),
+    ),
+  ],
+)
+''',
+  'Stack': r'''
+const PlinthStack(
+  gap: PlinthSize.sm,
+  children: [
+    PlinthPaper(p: PlinthSize.sm, child: Text('One')),
+    PlinthPaper(p: PlinthSize.sm, child: Text('Two')),
+    PlinthPaper(p: PlinthSize.sm, child: Text('Three')),
+  ],
+)
+''',
+  'Grid': r'''
+const PlinthGrid(
+  gutter: PlinthSize.sm,
+  children: [
+    PlinthGridCol(
+      span: 6,
+      child: PlinthPaper(p: PlinthSize.sm, child: Text('span 6')),
+    ),
+    PlinthGridCol(
+      span: 3,
+      child: PlinthPaper(p: PlinthSize.sm, child: Text('span 3')),
+    ),
+    PlinthGridCol(
+      span: 3,
+      child: PlinthPaper(p: PlinthSize.sm, child: Text('span 3')),
+    ),
+  ],
+)
+''',
+  'Fieldset': r'''
+const PlinthFieldset(
+  legend: 'Shipping address',
+  child: PlinthStack(
+    gap: PlinthSize.sm,
+    children: [
+      PlinthTextInput(label: 'Street'),
+      PlinthTextInput(label: 'City'),
+    ],
+  ),
+)
+''',
+  'Collapse': r'''
+PlinthStack(
+  gap: PlinthSize.sm,
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    PlinthButton(
+      size: PlinthSize.sm,
+      variant: PlinthVariant.outline,
+      onPressed: () => setState(() => _collapsed = !_collapsed),
+      child: Text(_collapsed ? 'Show' : 'Hide'),
+    ),
+    PlinthCollapse(
+      opened: !_collapsed,
+      child: const PlinthPaper(
+        p: PlinthSize.sm,
+        withBorder: true,
+        child: Text('Animates its own height.'),
+      ),
+    ),
+  ],
+)
+''',
+  'Splitter': r'''
+const SizedBox(
+  height: 120,
+  child: PlinthSplitter(
+    first: PlinthPaper(p: PlinthSize.sm, child: Text('Drag the divider')),
+    second: PlinthPaper(p: PlinthSize.sm, child: Text('→')),
+  ),
+)
+''',
+  'App Shell': r'''
+// Bounded height on purpose: the shell fills whatever it is given.
+const SizedBox(
+  height: 200,
+  child: PlinthAppShell(
+    header: PlinthPaper(p: PlinthSize.sm, child: PlinthText('Header')),
+    navbar: PlinthPaper(p: PlinthSize.sm, child: PlinthText('Navbar')),
+    child: PlinthPaper(p: PlinthSize.sm, child: PlinthText('Content')),
+  ),
+)
+''',
+  'Marquee': r'''
+const PlinthMarquee(
+  speed: 30,
+  child: PlinthGroup(
+    wrap: false,
+    children: [
+      PlinthBadge('Flutter'),
+      PlinthBadge('Dart'),
+      PlinthBadge('Plinth'),
+    ],
+  ),
+)
+''',
+  'Highlight': r'''
+const PlinthHighlight(
+  'Search terms are highlighted in place.',
+  highlight: ['highlighted'],
+)
+''',
+  'Data List': r'''
+const PlinthDataList(
+  items: [
+    PlinthDataListItem.text('Order', '#4021'),
+    PlinthDataListItem.text('Placed', '12 Aug 2026'),
+    PlinthDataListItem(
+      label: 'Status',
+      value: PlinthBadge('Shipped', color: 'green'),
+    ),
+  ],
+)
+''',
+  'Overflow List': r'''
+const PlinthOverflowList(
+  children: [
+    PlinthBadge('Design'),
+    PlinthBadge('Research'),
+    PlinthBadge('Copy'),
+    PlinthBadge('QA'),
+    PlinthBadge('Ops'),
+  ],
+)
+''',
+  'Empty State': r'''
+PlinthEmptyState(
+  icon: const Icon(Icons.inbox_outlined),
+  title: 'No messages',
+  description: 'Anything sent to your team lands here.',
+  action: PlinthButton(
+    onPressed: () {},
+    child: const Text('Compose'),
+  ),
+)
+''',
 };
