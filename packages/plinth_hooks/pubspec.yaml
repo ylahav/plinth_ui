@@ -1,6 +1,6 @@
 name: plinth_hooks
 description: Reusable stateful controllers for Plinth UI (equivalent to Mantine's @mantine/hooks).
-version: 0.0.1
+version: 0.0.2
 # Deliberately kept as a publish safety guard — remove this line only
 # when actually ready to run `dart pub publish` for real.
 publish_to: none

@@ -1,6 +1,6 @@
 name: plinth_components
 description: Themeable, accessible Flutter widgets for Plinth UI.
-version: 0.10.0
+version: 0.10.1
 homepage: https://github.com/ylahav/plinth_ui
 repository: https://github.com/ylahav/plinth_ui
 issue_tracker: https://github.com/ylahav/plinth_ui/issues
@@ -15,7 +15,9 @@ dependencies:
   # Switched from path: deps to real published versions now that
   # both are live on pub.dev.
   plinth_core: ^0.2.0
-  plinth_hooks: ^0.0.1
+  # Not ^0.0.1: for pre-1.0 versions caret means >=0.0.1 <0.0.2, which
+  # would exclude every future 0.0.x of a package whose API is stable.
+  plinth_hooks: '>=0.0.1 <0.1.0'
 
 dev_dependencies:
   flutter_test:

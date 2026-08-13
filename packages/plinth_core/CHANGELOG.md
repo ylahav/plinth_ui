@@ -7,6 +7,16 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.2.1
+
+### Added
+- An `example/`, so pub.dev's Example tab shows how to register the
+  theme and read tokens from it rather than sending people to the repo.
+  Since this package has no widgets, the example is plain Flutter
+  styled entirely from `PlinthTheme` — including `shaded`,
+  `contrastingOn`, and `readableOn`, which are the parts hardest to
+  infer from the API alone.
+
 ## 0.2.0
 
 ### Added

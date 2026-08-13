@@ -7,6 +7,14 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.10.1
+
+### Added
+- An `example/` — a small sign-up form covering the things worth seeing
+  before installing: registering light and dark themes, error state
+  taking precedence over focus, a null callback meaning disabled, and
+  the newer form components in use.
+
 ## 0.10.0
 
 ### Changed
