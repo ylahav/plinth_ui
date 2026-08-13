@@ -127,6 +127,46 @@ const _paletteColors = [
 /// Shared knob definitions for the props nearly every Plinth component
 /// accepts, so the playground use cases offer one consistent
 /// vocabulary instead of re-declaring these fifteen times.
+/// Owns a [ScrollController] for the Scroller use case — the widget
+/// and the scrollable inside it have to share one, so a use-case
+/// builder (a stateless function) can't create it inline.
+class _Scrolled extends StatefulWidget {
+  const _Scrolled({required this.threshold, this.color});
+
+  final double threshold;
+  final String? color;
+
+  @override
+  State<_Scrolled> createState() => _ScrolledState();
+}
+
+class _ScrolledState extends State<_Scrolled> {
+  final ScrollController _controller = ScrollController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthScroller(
+      controller: _controller,
+      threshold: widget.threshold,
+      color: widget.color,
+      child: ListView.builder(
+        controller: _controller,
+        itemCount: 60,
+        itemBuilder: (context, i) => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: PlinthText('Row $i'),
+        ),
+      ),
+    );
+  }
+}
+
 /// Shared by the Tree and TreeSelect use cases, so the two show the
 /// same data arranged for their two different questions.
 const List<PlinthTreeNode> _fileTree = [
@@ -1799,6 +1839,97 @@ final List<WidgetbookNode> plinthDirectories = [
         ],
       ),
       WidgetbookComponent(
+        name: 'PlinthMaskInput',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 320,
+                child: PlinthMaskInput(
+                  mask: context.knobs.object.dropdown(
+                    label: 'mask',
+                    options: const [
+                      '(###) ###-####',
+                      '##/##/####',
+                      'AAA-####',
+                      '**-**-**',
+                    ],
+                    description: '# digit, A letter, * either; anything '
+                        'else is a literal the field fills in',
+                  ),
+                  label: 'Masked',
+                  size: _sizeKnob(context),
+                  onChanged: (_) {},
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthJsonInput',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 360,
+                child: PlinthJsonInput(
+                  label: 'Payload',
+                  description: 'Validates on blur — click away to see it. '
+                      'Half-typed JSON is invalid by definition',
+                  formatOnBlur: context.knobs.boolean(
+                    label: 'formatOnBlur',
+                    initialValue: true,
+                  ),
+                  minLines: 4,
+                  maxLines: 12,
+                  size: _sizeKnob(context),
+                  onChanged: (_) {},
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthFileButton',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              _Local<List<String>>(
+                initial: const [],
+                builder: (files, onChanged) => PlinthGroup(
+                  children: [
+                    PlinthFileButton<String>(
+                      variant: _variantKnob(context),
+                      size: _sizeKnob(context),
+                      color: _colorKnob(context),
+                      // Stands in for your picker — the button
+                      // disables itself for as long as it runs.
+                      onPick: () async {
+                        await Future<void>.delayed(
+                          const Duration(milliseconds: 800),
+                        );
+                        return ['photo-${files.length + 1}.png'];
+                      },
+                      onChanged: (picked) => onChanged([...files, ...picked]),
+                      child: const Text('Upload'),
+                    ),
+                    PlinthText(
+                      files.isEmpty ? 'Nothing picked' : files.join(', '),
+                      size: PlinthSize.sm,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
         name: 'PlinthPill',
         useCases: [
           WidgetbookUseCase(
@@ -2430,6 +2561,56 @@ final List<WidgetbookNode> plinthDirectories = [
   WidgetbookCategory(
     name: 'Navigation',
     children: [
+      WidgetbookComponent(
+        name: 'PlinthMenubar',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              PlinthStack(
+                gap: PlinthSize.sm,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const PlinthText(
+                    'Open one, then move across the bar — the next opens '
+                    'without a second click. That is what makes it a '
+                    'menubar rather than a row of menus.',
+                    size: PlinthSize.xs,
+                  ),
+                  PlinthMenubar(
+                    size: _sizeKnob(context, initial: PlinthSize.sm),
+                    color: _colorKnob(context),
+                    menus: [
+                      PlinthMenubarMenu(
+                        label: 'File',
+                        items: [
+                          PlinthMenuItem(label: 'New', onTap: () {}),
+                          PlinthMenuItem(label: 'Open…', onTap: () {}),
+                          PlinthMenuItem(label: 'Save', onTap: () {}),
+                        ],
+                      ),
+                      PlinthMenubarMenu(
+                        label: 'Edit',
+                        items: [
+                          PlinthMenuItem(label: 'Undo', onTap: () {}),
+                          PlinthMenuItem(label: 'Redo', onTap: () {}),
+                        ],
+                      ),
+                      PlinthMenubarMenu(
+                        label: 'View',
+                        items: [
+                          PlinthMenuItem(label: 'Zoom in', onTap: () {}),
+                          PlinthMenuItem(label: 'Zoom out', onTap: () {}),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
       WidgetbookComponent(
         name: 'PlinthTree',
         useCases: [
@@ -4286,6 +4467,50 @@ final List<WidgetbookNode> plinthDirectories = [
         ],
       ),
       WidgetbookComponent(
+        name: 'PlinthFloatingWindow',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 460,
+                height: 320,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color(0x22000000)),
+                  ),
+                  child: Stack(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(12),
+                        child: PlinthText(
+                          'Drag the header to move it, the corner to '
+                          'resize. Both clamp to this box — a window '
+                          'dragged off the edge could never come back.',
+                          size: PlinthSize.xs,
+                        ),
+                      ),
+                      PlinthFloatingWindow(
+                        title: 'Inspector',
+                        resizable: context.knobs.boolean(
+                          label: 'resizable',
+                          initialValue: true,
+                        ),
+                        onClose: () {},
+                        child: const PlinthText(
+                          'Not a modal: nothing behind it is blocked.',
+                          size: PlinthSize.sm,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
         name: 'PlinthAffix',
         useCases: [
           WidgetbookUseCase(
@@ -5000,6 +5225,72 @@ final List<WidgetbookNode> plinthDirectories = [
   WidgetbookCategory(
     name: 'Layout & Typography',
     children: [
+      WidgetbookComponent(
+        name: 'PlinthSplitter',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 460,
+                height: 220,
+                child: PlinthSplitter(
+                  direction: context.knobs.object.dropdown(
+                    label: 'direction',
+                    options: Axis.values,
+                    labelBuilder: (a) => a.name,
+                  ),
+                  initialFraction: context.knobs.double
+                      .slider(
+                        label: 'initialFraction',
+                        initialValue: 0.4,
+                        min: 0.15,
+                        max: 0.85,
+                      )
+                      .toDouble(),
+                  thickness: context.knobs.double
+                      .slider(
+                          label: 'thickness', initialValue: 8, min: 4, max: 20)
+                      .toDouble(),
+                  first: const PlinthPaper(
+                    p: PlinthSize.sm,
+                    child: PlinthText('First pane'),
+                  ),
+                  second: const PlinthPaper(
+                    p: PlinthSize.sm,
+                    child: PlinthText('Second pane'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'PlinthScroller',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 320,
+                height: 300,
+                child: _Scrolled(
+                  threshold: context.knobs.double
+                      .slider(
+                        label: 'threshold',
+                        initialValue: 200,
+                        min: 40,
+                        max: 600,
+                      )
+                      .toDouble(),
+                  color: _colorKnob(context),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       WidgetbookComponent(
         name: 'PlinthMarquee',
         useCases: [

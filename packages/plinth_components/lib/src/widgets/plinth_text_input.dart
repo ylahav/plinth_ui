@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:plinth_core/plinth_core.dart';
 
 import 'plinth_text.dart';
@@ -32,6 +33,8 @@ class PlinthTextInput extends StatefulWidget {
     this.obscureText = false,
     this.enabled = true,
     this.leadingIcon,
+    this.inputFormatters,
+    this.keyboardType,
   });
 
   final String? label;
@@ -55,6 +58,14 @@ class PlinthTextInput extends StatefulWidget {
   final bool obscureText;
   final bool enabled;
   final Widget? leadingIcon;
+
+  /// Passed straight through to the underlying [TextField]. Added for
+  /// [PlinthMaskInput], which is nothing but a formatter over this
+  /// field — reproducing the chrome to attach one would have been the
+  /// worse trade.
+  final List<TextInputFormatter>? inputFormatters;
+
+  final TextInputType? keyboardType;
 
   @override
   State<PlinthTextInput> createState() => _PlinthTextInputState();
@@ -143,6 +154,8 @@ class _PlinthTextInputState extends State<PlinthTextInput> {
                   onChanged: widget.onChanged,
                   obscureText: widget.obscureText,
                   enabled: widget.enabled,
+                  inputFormatters: widget.inputFormatters,
+                  keyboardType: widget.keyboardType,
                   style: TextStyle(fontSize: fontSize),
                   decoration: InputDecoration(
                     hintText: widget.placeholder,

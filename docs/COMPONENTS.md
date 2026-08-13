@@ -148,6 +148,61 @@ line and never overlaps them.
 exists because stacking vertically is common enough that saying so
 directly reads better than configuring a flex.
 
+### `PlinthSplitter`
+`first`, `second`, `direction` (default `horizontal`),
+`initialFraction`, `minFraction`, `maxFraction`, `thickness`,
+`onFractionChanged`. Two resizable panes with a draggable divider.
+
+The divider position is presentation-local and kept internally, like
+`PlinthSpoiler`'s expanded state: it's a view preference, not
+application data, and making every caller hold a double to get a
+draggable divider would be friction with nothing behind it.
+`onFractionChanged` reports moves for callers persisting a layout. The
+drag is clamped to `minFraction`/`maxFraction`, so a pane can't be
+dragged away entirely and left with no handle to drag back.
+
+### `PlinthScroller`
+`controller`, `child`, `threshold`, `alignment`, `padding`,
+`duration`, `color`, `icon`, `semanticLabel`. A back-to-top button that
+appears once there's something to go back to.
+
+The `ScrollController` is shared rather than created here, because the
+scrollable inside has to be built with it. State changes only when the
+offset crosses `threshold`, not on every scroll pixel — a `setState`
+per pixel is exactly what this widget has to avoid. While hidden it's
+wrapped in an `IgnorePointer`: an invisible button that still takes
+taps is worse than no button.
+
+### `PlinthMenubar` + `PlinthMenubarMenu`
+`menus`, `size`, `color`. A horizontal bar of menus, desktop-style.
+
+The behaviour that makes it a menubar rather than a row of
+`PlinthMenu`s: **once one menu is open, moving the pointer across the
+bar opens the next one** without a second click. A row of independent
+menus makes you click, dismiss, click again — wrong for a File/Edit/View
+bar in a way that's hard to name until you use one. Hovering with
+nothing open does nothing, which is the other half of the rule;
+otherwise merely crossing the bar would open menus.
+
+Only one menu is open at a time and the bar owns that, which is why the
+controllers live inside rather than being passed in.
+
+### `PlinthFloatingWindow`
+`child`, `title`, `initialOffset`, `initialSize`, `minSize`,
+`resizable`, `onClose`, `onMoved`, `onResized`, `radius`. A draggable,
+resizable panel.
+
+Not a modal and not a dialog: it stays where it's put, several can be
+open at once, and nothing behind it is blocked — a tool palette, an
+inspector, a preview you want beside your work rather than over it.
+
+Position and size are kept internally for the same reason as
+`PlinthSplitter`'s divider; `onMoved`/`onResized` report them for
+restoring a layout. Both are clamped to the parent's bounds, so a
+window can't be dragged off the edge and stranded where its header is
+unreachable. Expects a bounded parent — put it in a `Stack` filling the
+area it should float over.
+
 ### `PlinthMarquee`
 `child`, `speed` (logical pixels per second, default `40`), `gap`
 (default `xl`), `pauseOnHover` (default `true`), `reverse`. Content
@@ -524,6 +579,61 @@ inside, so a whole section switches off without each field needing its
 own `enabled` wired up. The legend is announced as a label for the
 group, so a screen reader reaches "Shipping address, Street" rather
 than a bare "Street".
+
+### `PlinthMaskInput`
+`mask`, `value`, `onChanged`, plus `PlinthTextInput`'s label,
+description, placeholder, error, size, colour, radius and enabled. A
+field that formats as you type. `#` is a digit, `A` a letter, `*`
+either; everything else is a literal the field inserts.
+
+`onChanged` reports the masked text as shown. The static
+`PlinthMaskInput.unmask(masked, mask)` strips it back to the typed
+characters — a phone number is usually stored without its brackets,
+and the widget shouldn't decide that for you.
+
+The formatter rebuilds the whole value on every edit rather than
+patching it. Patching is where masked inputs usually go wrong: deleting
+a character in the middle, or pasting, leaves the literals in the wrong
+places. Characters that can't fill a slot are skipped rather than
+rejecting the edit, so a stray space in a pasted number doesn't discard
+the paste.
+
+### `PlinthJsonInput`
+`value`, `onChanged`, `onValidChanged`, `label`, `description`,
+`placeholder`, `error`, `formatOnBlur`, `validationMessage`,
+`minLines`, `maxLines`, `size`, `color`, `radius`, `enabled`. A
+textarea that validates JSON.
+
+**Validation runs on blur, not on every keystroke.** Half-typed JSON is
+invalid by definition — an object is broken from the opening brace
+until the closing one — so validating as you type means showing an
+error for the entire time somebody is writing. Focusing again clears
+it, rather than leaving a red field while it's being fixed.
+
+`formatOnBlur` pretty-prints valid JSON when focus leaves, which is the
+one moment it's welcome: reformatting mid-edit moves the caret out from
+under whoever is typing. A caller-supplied `error` outranks the parse
+error, since a schema problem is more specific than "this isn't JSON".
+The statics `isValid` and `format` are exposed for the form that has to
+ask the same question before submitting.
+
+### `PlinthFileButton`
+`onPick`, `onChanged`, `child`, plus `PlinthButton`'s variant, size,
+colour, radius, fullWidth, leadingIcon and enabled. A button that opens
+your file picker.
+
+**It does not open a picker**, for the same reason `PlinthFileInput`
+doesn't: Flutter has no built-in one, and every package that provides
+it would become a dependency of `plinth_components` for every app.
+`onPick` is yours; returning null or an empty list means cancelled, and
+reports nothing.
+
+Where `PlinthFileInput` is a form field — label, error, files listed
+underneath — this is only the trigger, for when the selection is shown
+somewhere else or not at all. It disables itself while `onPick` is in
+flight, which is the one thing a plain button gets wrong here: a picker
+is slow enough to invite a second tap, and two open pickers is a state
+nobody handles.
 
 ### `PlinthPill`
 `label` (positional), `onRemove`, `size`, `color`, `radius`,
@@ -1249,25 +1359,16 @@ from this one.
 - **`PlinthInput`** — Mantine's unstyled base that its other fields are
   built from. Plinth's fields each own their chrome instead; adopting
   this would be an architectural change, not just a new widget.
-- **`PlinthJsonInput`** / **`PlinthMaskInput`** — a validating JSON
-  textarea and a format-masked field.
 - **`PlinthNativeSelect`** — near-duplicate here: `PlinthSelect`
   already wraps Flutter's `DropdownButton`, which is the native
   control.
 
 ### Navigation & overlays
 
-- **`PlinthMenubar`** — a horizontal bar of menus, desktop-style.
 - **`PlinthFloatingIndicator`** — the sliding indicator Mantine's tabs
   and segmented controls use. Plinth's equivalents deliberately use a
   static per-item fill instead, so this would be a change of approach
   rather than an addition (see `PlinthTabs`).
-- **`PlinthFloatingWindow`** — a draggable, resizable panel.
-
-### Layout & miscellaneous
-
-- **`PlinthSplitter`** — resizable panes with a draggable divider.
-- **`PlinthScroller`** — scroll-position helpers around `ScrollArea`.
 
 ### Deliberately not planned
 

@@ -7,6 +7,70 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.16.0
+
+### Added — the last batch of the Mantine gap
+
+Seven components, closing every remaining entry on the gap list that
+was ever going to be built.
+
+- **`PlinthMaskInput`** — formats as you type. The formatter rebuilds
+  the whole value on every edit rather than patching it: patching is
+  where masked inputs usually go wrong, leaving literals in the wrong
+  places after a mid-string delete or a paste. Characters that can't
+  fill a slot are skipped rather than rejecting the edit, so a stray
+  space in a pasted phone number doesn't discard the paste.
+
+  It is a formatter over `PlinthTextInput`, not a new field — which
+  needed `inputFormatters` and `keyboardType` passed through, added
+  here. Reproducing the chrome to attach a formatter would have been
+  the worse trade.
+
+- **`PlinthJsonInput`** — **validates on blur, not on every
+  keystroke.** Half-typed JSON is invalid by definition, so validating
+  as you type means showing an error for the entire time somebody is
+  writing. Focusing again clears it rather than leaving a red field
+  while it's being fixed, and `formatOnBlur` pretty-prints at the one
+  moment reformatting doesn't move the caret out from under you.
+
+- **`PlinthFileButton`** — the trigger-only counterpart to
+  `PlinthFileInput`, with the same "the picker is yours" contract. It
+  disables itself while `onPick` is in flight, which is the one thing
+  a plain button gets wrong: a picker is slow enough to invite a second
+  tap, and two open pickers is a state nobody handles.
+
+- **`PlinthSplitter`** — two resizable panes. The divider position is
+  presentation-local and kept internally, like `PlinthSpoiler`'s
+  expanded state; the drag is clamped so a pane can't be dragged away
+  entirely and left with no handle to drag back.
+
+- **`PlinthScroller`** — a back-to-top button that appears once there
+  is something to go back to. State changes only when the offset
+  crosses the threshold, never per scroll pixel, and the hidden button
+  is wrapped in an `IgnorePointer`: invisible but tappable is worse
+  than absent.
+
+- **`PlinthMenubar`** — the behaviour that makes it a menubar rather
+  than a row of `PlinthMenu`s: **once one menu is open, moving the
+  pointer across the bar opens the next** without a second click.
+  Hovering with nothing open does nothing, which is the other half of
+  the rule — otherwise merely crossing the bar would open menus.
+
+- **`PlinthFloatingWindow`** — a draggable, resizable panel that isn't
+  a modal: it stays put, several can be open, nothing behind it is
+  blocked. Movement and resizing are clamped to the parent, so a window
+  can't be stranded with its header off-screen.
+
+### The gap list is closed
+
+What remains on it is what was always meant to remain: `PlinthInput`
+and `PlinthNativeSelect` (architectural mismatches rather than missing
+widgets), `PlinthFloatingIndicator` (a change of approach `PlinthTabs`
+deliberately doesn't take), and the "deliberately not planned" set
+where Flutter's own answer is better.
+
+111 components, 106 playgrounds, 225 Widgetbook use cases.
+
 ## 0.15.0
 
 ### Added — the combobox primitives
