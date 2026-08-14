@@ -306,9 +306,14 @@ the sidebar.
   `PlinthCopyButton`'s clipboard write + timer-based revert,
   `PlinthMenu`/`PlinthNotification`'s overlay-dismissal behavior. See
   `docs/TESTING.md` for the full breakdown and how to run them.
-  Note that the golden test fails locally on Windows/macOS by design
-  (the reference images are Linux-rendered to match CI) — see
-  `docs/TESTING.md` §7 before chasing it.
+  Golden coverage spans `PlinthButton`, `PlinthTextInput` (focus and
+  error borders) and `PlinthAlert` (colour tinting) — 18 images.
+  **All of them fail locally on Windows/macOS by design**, because the
+  reference images are Linux-rendered to match CI, so a local
+  `flutter test` reports 13 golden failures and a green CI. Filter them
+  out while working (`flutter test --exclude-tags` isn't wired up; the
+  simplest is running a specific test file) and see `docs/TESTING.md`
+  §7 before chasing one.
 - **CI is green** — `.github/workflows/ci.yml` passes end-to-end
   (bootstrap, format, analyze, test) on GitHub Actions as of this
   writing. Getting there surfaced two real, non-obvious issues worth
@@ -363,8 +368,12 @@ intentional rather than bugs:
   (focus/error border states) and `PlinthAlert` (color tinting) are the
   next highest-value targets, since they have the most conditional
   visual logic. See `docs/TESTING.md`.
-- Consider hue-drift at the extremes of the color-shade ramp for
-  richer darks/lights (currently hue is held fixed).
+- ~~Consider hue-drift at the extremes of the color-shade ramp~~ —
+  tried and rejected. One signed drift can't suit every hue: rotating
+  darks the same way sends red toward magenta and yellow toward orange
+  (fine) but blue toward cyan (worse). Doing it properly needs per-hue
+  drift tables rather than a formula. Contrast wasn't the blocker —
+  the WCAG suite passed throughout. See `_generateShades`.
 - Extend the composed-blocks showcase — 51 examples against Mantine
   UI's ~123. Every subcategory now has something in it except
   Carousels (a deliberate scope call), so what remains is depth:

@@ -328,10 +328,24 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// friends default to for filled/base color — lands closest to
   /// how a typical brand color actually reads.
   ///
-  /// Hue is held fixed across the ramp. Real Mantine palettes also
-  /// drift hue slightly at the extremes (a common trick for richer
-  /// darks/lights); that's a reasonable future improvement but isn't
-  /// implemented here.
+  /// Hue is held fixed across the ramp. Real Mantine palettes drift
+  /// hue slightly at the extremes for richer darks and lights, and
+  /// that was tried here — `+8°` down to `-6°`, zero at shades 5–6 so
+  /// the brand colour a caller supplies comes back unchanged.
+  ///
+  /// It was reverted, and the reason is worth keeping: **one signed
+  /// drift cannot suit every hue on a circle.** Rotating darks the
+  /// same direction for all thirteen ramps sends red toward magenta
+  /// and yellow toward orange, which reads fine, but blue toward cyan,
+  /// which reads worse — dark blues get richer drifting the other way.
+  /// The effect measured 8–10 RGB units at the dark end and 1–4 at the
+  /// light end, so it is a real visual change, not a free one.
+  ///
+  /// Hand-tuned palettes drift each hue in the direction that suits it
+  /// individually, which is precisely what a single generated formula
+  /// can't express. Doing this properly means per-hue drift tables —
+  /// a different and much larger job than a curve tweak. Contrast is
+  /// not the blocker: `plinth_contrast_test.dart` passed throughout.
   static PlinthColorShades _generateShades(Color base) {
     final baseHsl = HSLColor.fromColor(base);
     final hue = baseHsl.hue;

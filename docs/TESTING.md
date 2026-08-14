@@ -190,6 +190,14 @@ the ones most likely to have a subtle visual regression slip through
 focus/error states or `PlinthAlert`'s color tinting) over ones that are
 mostly just text (`PlinthText`, `PlinthBadge`'s label).
 
+**Regenerate on CI, not locally — and note the workflow is pinned.**
+`regenerate-goldens.yml` pins the same `flutter-version` as `ci.yml`
+(3.44.8). That pin is load-bearing: it previously tracked `stable`
+while CI pinned, and so produced reference images CI then rejected by
+about 44 pixels of corner antialiasing per widget — a failure that
+looks exactly like a visual regression and isn't one. **Bump both
+workflows together**, and regenerate the images when you do.
+
 **Platform sensitivity — read this before regenerating goldens locally.**
 Golden images are sensitive to the platform they were generated on: font
 hinting and anti-aliasing differ slightly between Windows, macOS, and
