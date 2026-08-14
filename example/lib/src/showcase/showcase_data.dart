@@ -76,6 +76,12 @@ final List<CategoryData> showcaseCategories = [
             exampleCode['StatWithProgressExample']!),
         ExampleEntry(
             'Live metrics', _liveMetrics, exampleCode['LiveMetricsExample']!),
+        ExampleEntry('Stat by period', _statWithPeriod,
+            exampleCode['StatWithPeriodExample']!),
+        ExampleEntry('Stat breakdown', _statBreakdown,
+            exampleCode['StatBreakdownExample']!),
+        ExampleEntry(
+            'Goal rings', _statGoalRings, exampleCode['StatGoalRingsExample']!),
       ]),
       SubcategoryData('User Info & Controls', Icons.account_circle_outlined, [
         ExampleEntry(
@@ -321,3 +327,6 @@ Widget _userStatus(BuildContext context) => const UserStatusExample();
 Widget _pricingCard(BuildContext context) => const PricingCardExample();
 Widget _mediaCard(BuildContext context) => const MediaCardExample();
 Widget _activityCard(BuildContext context) => const ActivityCardExample();
+Widget _statWithPeriod(BuildContext context) => const StatWithPeriodExample();
+Widget _statBreakdown(BuildContext context) => const StatBreakdownExample();
+Widget _statGoalRings(BuildContext context) => const StatGoalRingsExample();

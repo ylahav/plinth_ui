@@ -3239,3 +3239,177 @@ class ActivityCardExample extends StatelessWidget {
     );
   }
 }
+
+// ───────────────────── Application UI: Stats (depth) ─────────────────────
+
+class StatWithPeriodExample extends StatefulWidget {
+  const StatWithPeriodExample({super.key});
+
+  @override
+  State<StatWithPeriodExample> createState() => _StatWithPeriodExampleState();
+}
+
+class _StatWithPeriodExampleState extends State<StatWithPeriodExample> {
+  String _period = 'month';
+
+  static const _values = {'week': 12480, 'month': 48210, 'year': 512900};
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 320,
+      child: PlinthPaper(
+        withBorder: true,
+        p: PlinthSize.md,
+        child: PlinthStack(
+          gap: PlinthSize.sm,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const PlinthText('Revenue', size: PlinthSize.sm, color: 'gray'),
+            // The number rolls between periods rather than swapping,
+            // which is the one place an animated figure earns itself:
+            // it shows the two values are the same measure.
+            PlinthRollingNumber(
+              value: _values[_period]!,
+              prefix: r'$',
+              size: PlinthSize.xl,
+              weight: FontWeight.w700,
+            ),
+            PlinthSegmentedControl<String>(
+              size: PlinthSize.sm,
+              fullWidth: true,
+              value: _period,
+              onChanged: (p) => setState(() => _period = p),
+              items: const [
+                PlinthSegmentedControlItem('week', 'Week'),
+                PlinthSegmentedControlItem('month', 'Month'),
+                PlinthSegmentedControlItem('year', 'Year'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class StatBreakdownExample extends StatelessWidget {
+  const StatBreakdownExample({super.key});
+
+  static const _segments = [
+    (label: 'Direct', share: 5, color: 'blue'),
+    (label: 'Search', share: 3, color: 'teal'),
+    (label: 'Social', share: 2, color: 'grape'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.plinth;
+
+    return SizedBox(
+      width: 360,
+      child: PlinthPaper(
+        withBorder: true,
+        p: PlinthSize.md,
+        child: PlinthStack(
+          gap: PlinthSize.sm,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const PlinthText('Sessions', size: PlinthSize.sm, color: 'gray'),
+            const PlinthNumberFormatter(
+              value: 18420,
+              size: PlinthSize.xl,
+              weight: FontWeight.w700,
+            ),
+            // A part-to-whole bar rather than three separate figures:
+            // the point of this arrangement is the proportion, which
+            // separate numbers make you compute yourself.
+            ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: SizedBox(
+                height: 8,
+                child: Row(
+                  children: [
+                    for (final s in _segments)
+                      Expanded(
+                        flex: s.share,
+                        child: ColoredBox(color: theme.shaded(s.color, 6)),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            PlinthGroup(
+              gap: PlinthSize.md,
+              children: [
+                for (final s in _segments)
+                  PlinthGroup(
+                    gap: PlinthSize.xs,
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: theme.shaded(s.color, 6),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      PlinthText(s.label, size: PlinthSize.xs),
+                    ],
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class StatGoalRingsExample extends StatelessWidget {
+  const StatGoalRingsExample({super.key});
+
+  static const _goals = [
+    (label: 'Signups', value: 0.82, color: 'teal'),
+    (label: 'Activation', value: 0.46, color: 'blue'),
+    (label: 'Retention', value: 0.91, color: 'grape'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 420,
+      child: PlinthPaper(
+        withBorder: true,
+        p: PlinthSize.md,
+        child: PlinthGroup(
+          gap: PlinthSize.xl,
+          children: [
+            for (final g in _goals)
+              PlinthStack(
+                gap: PlinthSize.xs,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Rings rather than bars: these are three unrelated
+                  // targets, not parts of one total, and a row of bars
+                  // would imply they add up.
+                  PlinthRingProgress(
+                    value: g.value,
+                    color: g.color,
+                    size: 72,
+                    label: PlinthText(
+                      '${(g.value * 100).round()}%',
+                      size: PlinthSize.sm,
+                      weight: FontWeight.w700,
+                    ),
+                  ),
+                  PlinthText(g.label, size: PlinthSize.xs, color: 'gray'),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -29,14 +29,14 @@ code panel will quietly show something the demo no longer does.
 
 ## What exists
 
-63 examples across 3 categories, borrowing Mantine UI's own category
+66 examples across 3 categories, borrowing Mantine UI's own category
 names so the two are directly comparable.
 
 | Category | Subcategory | Examples |
 |---|---|---|
 | Application UI | Navbars | Simple navbar, Navbar with avatar, Collapsible navbar, Sectioned navbar, Navbar with search |
 | Application UI | Headers | Centered header, Header with breadcrumbs, Header with tabs, Header with filters, Sticky header |
-| Application UI | Stats | Stat tiles, Stat with progress, Live metrics |
+| Application UI | Stats | Stat tiles, Stat with progress, Live metrics, Stat by period, Stat breakdown, Goal rings |
 | Application UI | User Info & Controls | User button, Profile card, User menu, Member list, Presence status |
 | Application UI | Application Cards | Project card, Task card, Pricing card, Media card, Activity card |
 | Application UI | Inputs | Search bar, Filter fields, Formatted fields |
@@ -61,7 +61,7 @@ names so the two are directly comparable.
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 63. The gap is now depth
+Mantine UI has ~123 blocks against these 66. The gap is now depth
 rather than absence: **every subcategory has something in it except
 Carousels**, which is a deliberate scope call rather than a hole.
 
@@ -84,7 +84,7 @@ here genuinely waiting on one.
 | Buttons | 6 | 2 | |
 | Sliders | 6 | 2 | |
 | Application cards | 7 | 5 | Pricing, media and activity variants added |
-| Stats | 9 | 3 | |
+| Stats | 9 | 6 | Period switcher, part-to-whole breakdown and goal rings added |
 | Tables | 4 | 3 | Sorting and filtering landed in 0.14.0 |
 | Dropzones | 1 | 2 | Done — `PlinthFileInput` and `PlinthFileButton` |
 | Drag'n'Drop | 3 | 2 | Built on Flutter's own `Draggable`/`DragTarget` |
@@ -119,20 +119,21 @@ what remains is depth rather than coverage — Mantine offers 6–9
 variants where this has 2 or 3. Worth adding where a variant differs
 in *kind* rather than in styling:
 
-1. **Stats** — 9 against 3, now the widest gap in Application UI, and
-   the kind most often copied into a real dashboard.
+1. **Inputs** — 14 against 3 on paper, the widest remaining gap, though
+   many of Mantine's are variations in styling rather than arrangement,
+   so the real gap is smaller than the number suggests.
 2. **Authentication** and **Error pages** — password reset, a
    split-screen sign-in, maintenance and permission-denied.
 3. **Sliders** and **Buttons** — 6 against 2 each.
-4. **Inputs** — 14 against 3, though many of Mantine's are variations
-   in styling rather than arrangement, so the real gap is smaller than
-   the number suggests.
+4. **Article cards** — 7 against 2, the widest gap outside Application
+   UI.
 
-Navbars, Headers, User info and Application cards were the thinnest and
-are now at 5 each. Each new variant differs in *kind* rather than
-styling — a navbar that collapses, a card whose body is a sequence, an
-avatar that carries presence — which is the bar worth holding new
-blocks to. A fifth restyled card teaches nothing.
+Navbars, Headers, User info and Application cards are at 5 each and
+Stats at 6; the thin ones are now the ones nobody has needed yet. Each
+new variant differs in *kind* rather than styling — a navbar that
+collapses, a card whose body is a sequence, three goal rings that
+deliberately don't add up to anything. That's the bar worth holding new
+blocks to: a fifth restyled card teaches nothing.
 
 **A gotcha worth knowing before you write one:** `PlinthGroup` wraps by
 default, so it is a `Wrap` rather than a `Row`, and `Expanded` or

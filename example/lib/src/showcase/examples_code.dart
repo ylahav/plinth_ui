@@ -2126,4 +2126,90 @@ PlinthCard(
   ),
 )
 ''',
+  'StatWithPeriodExample': r'''
+PlinthStack(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    const PlinthText('Revenue', size: PlinthSize.sm, color: 'gray'),
+    // The number rolls between periods rather than swapping, which is
+    // the one place an animated figure earns itself: it shows the two
+    // values are the same measure.
+    PlinthRollingNumber(
+      value: _values[_period]!,
+      prefix: r'$',
+      size: PlinthSize.xl,
+      weight: FontWeight.w700,
+    ),
+    PlinthSegmentedControl<String>(
+      size: PlinthSize.sm,
+      fullWidth: true,
+      value: _period,
+      onChanged: (p) => setState(() => _period = p),
+      items: const [
+        PlinthSegmentedControlItem('week', 'Week'),
+        PlinthSegmentedControlItem('month', 'Month'),
+        PlinthSegmentedControlItem('year', 'Year'),
+      ],
+    ),
+  ],
+)
+''',
+  'StatBreakdownExample': r'''
+PlinthStack(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    const PlinthNumberFormatter(
+      value: 18420,
+      size: PlinthSize.xl,
+      weight: FontWeight.w700,
+    ),
+    // A part-to-whole bar rather than three separate figures: the
+    // point here is the proportion, which separate numbers make you
+    // compute yourself.
+    ClipRRect(
+      borderRadius: BorderRadius.circular(999),
+      child: SizedBox(
+        height: 8,
+        child: Row(
+          children: [
+            for (final s in _segments)
+              Expanded(
+                flex: s.share,
+                child: ColoredBox(color: theme.shaded(s.color, 6)),
+              ),
+          ],
+        ),
+      ),
+    ),
+  ],
+)
+''',
+  'StatGoalRingsExample': r'''
+PlinthGroup(
+  gap: PlinthSize.xl,
+  children: [
+    for (final g in _goals)
+      PlinthStack(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Rings rather than bars: these are three unrelated targets,
+          // not parts of one total, and a row of bars would imply they
+          // add up.
+          PlinthRingProgress(
+            value: g.value,
+            color: g.color,
+            size: 72,
+            label: PlinthText(
+              '${(g.value * 100).round()}%',
+              size: PlinthSize.sm,
+              weight: FontWeight.w700,
+            ),
+          ),
+          PlinthText(g.label, size: PlinthSize.xs, color: 'gray'),
+        ],
+      ),
+  ],
+)
+''',
 };
