@@ -7,6 +7,43 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.16.3
+
+### Fixed
+
+- **`PlinthButton`, `PlinthAlert` and `PlinthNotification` discarded
+  the ambient text style**, `fontFamily` above all. They wrapped their
+  content in `DefaultTextStyle(style: …)`, which *replaces* rather than
+  merges, so anything the widget didn't restate was dropped. In an app
+  setting brand typography those three fell back to the platform font
+  while everything around them didn't — a mismatch that reads as a
+  rendering glitch rather than a library bug.
+
+  Four other components already used `.merge`, so the right pattern
+  was established and these three were simply inconsistent with it.
+
+  Found while rendering the pub.dev screenshots: every label came out
+  in Roboto except the button's, which arrived in the fallback font.
+  The regression test sets the family on the *theme* rather than a
+  `DefaultTextStyle` wrapper, because `Material` re-applies the theme's
+  own style beneath any wrapper and a wrapper alone can't tell a
+  replace from a merge.
+
+  Ten golden images were regenerated for it — five alert, five button.
+  Text input is untouched, which is the blast radius you'd expect.
+
+### Added
+
+- **pub.dev listing metadata**: four screenshots, `topics`, a fuller
+  description, and a `homepage` pointing at the live demo rather than
+  the source, since `repository` already covers that.
+
+  The screenshots are rendered by `example/tool/generate_screenshots.dart`
+  rather than captured by hand, so they can be regenerated when the
+  theme moves. It loads the real Roboto and MaterialIcons from the SDK
+  cache first: golden images are unusable here precisely because the
+  placeholder test font draws text as solid blocks.
+
 ## 0.16.2
 
 ### Fixed
