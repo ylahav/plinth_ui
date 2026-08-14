@@ -90,7 +90,7 @@ class PlinthButton extends StatelessWidget {
                   // than derived from the content: fullWidth, a narrow
                   // parent, or a large text scale.
                   Flexible(
-                    child: DefaultTextStyle(
+                    child: DefaultTextStyle.merge(
                       style: TextStyle(
                         color: foreground,
                         fontSize: fontSize,

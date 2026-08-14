@@ -1,9 +1,43 @@
 name: plinth_components
-description: Themeable, accessible Flutter widgets for Plinth UI.
+description: >-
+  A Mantine-inspired component library for Flutter: 111 themeable,
+  accessible widgets on a shared design-token foundation, with light
+  and dark themes and WCAG-checked colour.
 version: 0.16.2
-homepage: https://github.com/ylahav/plinth_ui
+# The live demo rather than the source: `repository` already covers
+# the code, and someone reading the listing wants to try it.
+homepage: https://ylahav.github.io/plinth_ui/
 repository: https://github.com/ylahav/plinth_ui
 issue_tracker: https://github.com/ylahav/plinth_ui/issues
+
+# Max five, lowercase, hyphens allowed. These are what someone
+# browsing pub.dev by subject would actually search.
+topics:
+  - ui
+  - widgets
+  - design-system
+  - components
+  - theming
+
+# Rendered by example/tool/generate_screenshots.dart rather than
+# captured by hand, so they can be regenerated when the theme changes.
+screenshots:
+  - description: >-
+      A sign-up form built from PlinthTitle, PlinthTextInput with an
+      error state, badges, a pill and a full-width button.
+    path: screenshots/components.png
+  - description: >-
+      The same components in dark mode, which is a value swap rather
+      than a second theme to maintain.
+    path: screenshots/dark-mode.png
+  - description: >-
+      PlinthTable with sortable headers, striped rows and widget cells
+      holding status badges.
+    path: screenshots/data-display.png
+  - description: >-
+      Six of the thirteen generated colour ramps, ten shades each,
+      contrast-checked against WCAG AA.
+    path: screenshots/theming.png
 
 environment:
   sdk: ">=3.4.0 <4.0.0"

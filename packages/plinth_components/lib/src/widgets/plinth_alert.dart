@@ -73,7 +73,7 @@ class PlinthAlert extends StatelessWidget {
                   PlinthText(title!, weight: FontWeight.w700, color: color),
                 if (title != null)
                   SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.5),
-                DefaultTextStyle(
+                DefaultTextStyle.merge(
                   style: TextStyle(color: theme.text, fontSize: 14),
                   child: child,
                 ),

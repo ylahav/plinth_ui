@@ -16,7 +16,57 @@ Widget _wrap(Widget child) {
   );
 }
 
+/// The ambient text style a component's label ends up with.
+TextStyle _labelStyle(WidgetTester tester, String text) =>
+    DefaultTextStyle.of(tester.element(find.text(text))).style;
+
 void main() {
+  group('ambient text style', () {
+    /// `DefaultTextStyle(style: ...)` replaces the ambient style
+    /// outright, dropping anything it doesn't restate — `fontFamily`
+    /// above all. In an app with brand typography that means the label
+    /// silently falls back to the platform font while everything
+    /// around it doesn't. `.merge` is the fix, and three components
+    /// had the wrong one.
+    // The family goes on the theme rather than a DefaultTextStyle
+    // wrapper: Material re-applies the theme's own text style beneath
+    // any wrapper, so a wrapper alone can't tell a replace from a
+    // merge.
+    Widget branded(Widget child) => MaterialApp(
+          theme: ThemeData(
+            fontFamily: 'Brand',
+            extensions: [PlinthTheme.defaultTheme],
+          ),
+          home: Scaffold(body: child),
+        );
+
+    testWidgets('PlinthButton keeps it', (tester) async {
+      await tester.pumpWidget(
+        branded(PlinthButton(onPressed: () {}, child: const Text('Save'))),
+      );
+
+      expect(_labelStyle(tester, 'Save').fontFamily, 'Brand');
+      // The button's own choices still win over the ambient ones.
+      expect(_labelStyle(tester, 'Save').fontWeight, FontWeight.w600);
+    });
+
+    testWidgets('PlinthAlert keeps it', (tester) async {
+      await tester.pumpWidget(
+        branded(const PlinthAlert(child: Text('Heads up'))),
+      );
+
+      expect(_labelStyle(tester, 'Heads up').fontFamily, 'Brand');
+    });
+
+    testWidgets('PlinthNotification keeps it', (tester) async {
+      await tester.pumpWidget(
+        branded(const PlinthNotification(child: Text('Saved'))),
+      );
+
+      expect(_labelStyle(tester, 'Saved').fontFamily, 'Brand');
+    });
+  });
+
   group('PlinthButton', () {
     testWidgets('renders its child label', (tester) async {
       await tester.pumpWidget(
