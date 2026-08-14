@@ -20,7 +20,7 @@ jobs:
   update-goldens:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: subosito/flutter-action@v2
         with:
@@ -42,7 +42,7 @@ jobs:
         run: melos run update-goldens
 
       - name: Upload updated goldens
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: updated-goldens
           path: packages/*/test/goldens/
