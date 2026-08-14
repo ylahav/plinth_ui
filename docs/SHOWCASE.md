@@ -29,7 +29,7 @@ code panel will quietly show something the demo no longer does.
 
 ## What exists
 
-57 examples across 3 categories, borrowing Mantine UI's own category
+63 examples across 3 categories, borrowing Mantine UI's own category
 names so the two are directly comparable.
 
 | Category | Subcategory | Examples |
@@ -37,6 +37,8 @@ names so the two are directly comparable.
 | Application UI | Navbars | Simple navbar, Navbar with avatar, Collapsible navbar, Sectioned navbar, Navbar with search |
 | Application UI | Headers | Centered header, Header with breadcrumbs, Header with tabs, Header with filters, Sticky header |
 | Application UI | Stats | Stat tiles, Stat with progress, Live metrics |
+| Application UI | User Info & Controls | User button, Profile card, User menu, Member list, Presence status |
+| Application UI | Application Cards | Project card, Task card, Pricing card, Media card, Activity card |
 | Application UI | Inputs | Search bar, Filter fields, Formatted fields |
 | Application UI | Buttons | Toolbar actions, Destructive actions |
 | Application UI | Sliders | Price range filter, Setting sliders |
@@ -44,8 +46,6 @@ names so the two are directly comparable.
 | Application UI | Tables | Member table, Invoice table, Sortable table |
 | Application UI | Dropzones | File dropzone, Avatar upload |
 | Application UI | Drag'n'Drop | Reorderable list, Kanban columns |
-| Application UI | User Info & Controls | User button, Profile card |
-| Application UI | Application Cards | Project card, Task card |
 | Application UI | Footers | Simple footer, Footer with link columns |
 | Page Sections | Hero Sections | Centered hero, Split hero |
 | Page Sections | Feature Sections | Feature grid, Feature list |
@@ -61,7 +61,7 @@ names so the two are directly comparable.
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 57. The gap is now depth
+Mantine UI has ~123 blocks against these 63. The gap is now depth
 rather than absence: **every subcategory has something in it except
 Carousels**, which is a deliberate scope call rather than a hole.
 
@@ -79,11 +79,11 @@ here genuinely waiting on one.
 | Headers | 6 | 5 | Tabs, filters and a sticky variant added |
 | Footers | 4 | 2 | |
 | Grids | 3 | 2 | |
-| User info and controls | 8 | 2 | |
+| User info and controls | 8 | 5 | Menu, member list and presence variants added |
 | Inputs | 14 | 3 | Composed field arrangements, not new inputs |
 | Buttons | 6 | 2 | |
 | Sliders | 6 | 2 | |
-| Application cards | 7 | 2 | |
+| Application cards | 7 | 5 | Pricing, media and activity variants added |
 | Stats | 9 | 3 | |
 | Tables | 4 | 3 | Sorting and filtering landed in 0.14.0 |
 | Dropzones | 1 | 2 | Done — `PlinthFileInput` and `PlinthFileButton` |
@@ -119,21 +119,26 @@ what remains is depth rather than coverage — Mantine offers 6–9
 variants where this has 2 or 3. Worth adding where a variant differs
 in *kind* rather than in styling:
 
-1. **User info and controls** — 8 against 2, now the widest gap in
-   Application UI.
-2. **Application cards** and **Stats** — the kinds most often copied
-   into real apps, so more variants pay off fastest (7 and 9 against
-   2 and 3).
-3. **Authentication** and **Error pages** — password reset, a
+1. **Stats** — 9 against 3, now the widest gap in Application UI, and
+   the kind most often copied into a real dashboard.
+2. **Authentication** and **Error pages** — password reset, a
    split-screen sign-in, maintenance and permission-denied.
+3. **Sliders** and **Buttons** — 6 against 2 each.
 4. **Inputs** — 14 against 3, though many of Mantine's are variations
    in styling rather than arrangement, so the real gap is smaller than
    the number suggests.
 
-Navbars and Headers were the thinnest and are now at 5 each. The three
-navbar variants differ in *kind* rather than styling — one collapses,
-one groups under headings, one carries a search control — which is the
-bar worth holding new blocks to.
+Navbars, Headers, User info and Application cards were the thinnest and
+are now at 5 each. Each new variant differs in *kind* rather than
+styling — a navbar that collapses, a card whose body is a sequence, an
+avatar that carries presence — which is the bar worth holding new
+blocks to. A fifth restyled card teaches nothing.
+
+**A gotcha worth knowing before you write one:** `PlinthGroup` wraps by
+default, so it is a `Wrap` rather than a `Row`, and `Expanded` or
+`Spacer` inside it throws "assertion thrown while applying parent
+data". Reach for a plain `Row` when a child needs to flex, or pass
+`wrap: false`. Two of these six blocks hit it.
 
 **Nothing here is blocked on a missing component any more.** Carousels
 is the one subcategory still empty, and deliberately: Mantine ships its

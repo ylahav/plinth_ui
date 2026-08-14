@@ -1951,4 +1951,179 @@ Column(
   ],
 )
 ''',
+  'UserMenuExample': r'''
+PlinthMenu(
+  controller: _menu,
+  items: [
+    PlinthMenuItem(label: 'Profile', onTap: () {}),
+    PlinthMenuItem(label: 'Settings', onTap: () {}),
+    PlinthMenuItem(label: 'Sign out', onTap: () {}),
+  ],
+  // The whole control is the trigger, not a separate caret — the
+  // avatar and name are what people aim at.
+  target: const PlinthGroup(
+    gap: PlinthSize.xs,
+    children: [
+      PlinthAvatar(initials: 'YL', size: PlinthSize.sm),
+      PlinthStack(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PlinthText('Yair Lahav', weight: FontWeight.w600),
+          PlinthText('Owner', size: PlinthSize.xs, color: 'gray'),
+        ],
+      ),
+      Icon(Icons.keyboard_arrow_down, size: 16),
+    ],
+  ),
+)
+''',
+  'MemberListExample': r'''
+PlinthStack(
+  gap: PlinthSize.sm,
+  children: [
+    const Row(
+      children: [
+        Expanded(child: PlinthText('Members', weight: FontWeight.w700)),
+        // The people beyond the first few, without a second row.
+        PlinthOverflowList(
+          children: [
+            PlinthAvatar(initials: 'AN', size: PlinthSize.sm),
+            PlinthAvatar(initials: 'BK', size: PlinthSize.sm),
+            PlinthAvatar(initials: 'CD', size: PlinthSize.sm),
+            PlinthAvatar(initials: 'EF', size: PlinthSize.sm),
+            PlinthAvatar(initials: 'GH', size: PlinthSize.sm),
+          ],
+        ),
+      ],
+    ),
+    for (final m in _members)
+      PlinthGroup(
+        gap: PlinthSize.sm,
+        children: [
+          PlinthAvatar(initials: m.initials, size: PlinthSize.sm),
+          Expanded(child: PlinthText(m.name, size: PlinthSize.sm)),
+          PlinthBadge(m.role, color: m.color),
+        ],
+      ),
+  ],
+)
+''',
+  'UserStatusExample': r'''
+PlinthStack(
+  gap: PlinthSize.sm,
+  children: [
+    PlinthGroup(
+      gap: PlinthSize.sm,
+      children: [
+        // The dot rides the avatar rather than sitting beside it,
+        // which is what makes presence readable at a glance.
+        PlinthIndicator(
+          color: _colors[_status],
+          child: const PlinthAvatar(initials: 'YL'),
+        ),
+        PlinthText(_status, size: PlinthSize.xs, color: 'gray'),
+      ],
+    ),
+    PlinthSegmentedControl<String>(
+      size: PlinthSize.sm,
+      value: _status,
+      onChanged: (s) => setState(() => _status = s),
+      items: const [
+        PlinthSegmentedControlItem('online', 'Online'),
+        PlinthSegmentedControlItem('away', 'Away'),
+        PlinthSegmentedControlItem('busy', 'Busy'),
+      ],
+    ),
+  ],
+)
+''',
+  'PricingCardExample': r'''
+PlinthCard(
+  withBorder: true,
+  header: const PlinthGroup(
+    children: [
+      PlinthText('Pro', size: PlinthSize.lg, weight: FontWeight.w700),
+      PlinthBadge('Popular', color: 'violet'),
+    ],
+  ),
+  footer: PlinthButton(
+    fullWidth: true,
+    onPressed: () {},
+    child: const Text('Start trial'),
+  ),
+  child: const PlinthStack(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // The price is what's being compared, so it carries the weight
+      // rather than the plan name above it.
+      PlinthGroup(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          PlinthNumberFormatter(
+            value: 24,
+            prefix: r'$',
+            size: PlinthSize.xl,
+            weight: FontWeight.w700,
+          ),
+          PlinthText('/ month', size: PlinthSize.xs, color: 'gray'),
+        ],
+      ),
+      PlinthList(
+        size: PlinthSize.sm,
+        items: [
+          PlinthListItem(PlinthText('Unlimited projects'),
+              icon: Icon(Icons.check, size: 14)),
+          PlinthListItem(PlinthText('Priority support'),
+              icon: Icon(Icons.check, size: 14)),
+        ],
+      ),
+    ],
+  ),
+)
+''',
+  'MediaCardExample': r'''
+PlinthCard(
+  withBorder: true,
+  // The image is the header rather than a child, so it runs to the
+  // card's edges instead of sitting inside its padding.
+  header: const PlinthBackgroundImage(
+    src: 'https://picsum.photos/seed/plinth-card/600/240',
+    height: 120,
+    child: PlinthTitle('Kyoto', order: 4),
+  ),
+  child: PlinthStack(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const PlinthText('Twelve temples, two days.', size: PlinthSize.sm),
+      PlinthGroup(
+        children: [
+          const PlinthBadge('Travel'),
+          const Spacer(),
+          PlinthActionIcon(
+            icon: const Icon(Icons.bookmark_border, size: 16),
+            variant: PlinthVariant.subtle,
+            onPressed: () {},
+          ),
+        ],
+      ),
+    ],
+  ),
+)
+''',
+  'ActivityCardExample': r'''
+PlinthCard(
+  withBorder: true,
+  header: const PlinthText('Deployment', weight: FontWeight.w700),
+  // A card whose body is a sequence rather than a paragraph — the
+  // arrangement a status panel actually needs.
+  child: PlinthTimeline(
+    items: [
+      PlinthTimelineItem(title: 'Queued', description: '14:02', active: true),
+      PlinthTimelineItem(title: 'Building', description: '14:03', active: true),
+      PlinthTimelineItem(title: 'Deploying', description: 'Pending'),
+    ],
+  ),
+)
+''',
 };

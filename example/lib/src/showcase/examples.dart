@@ -2926,3 +2926,316 @@ class StickyHeaderExample extends StatelessWidget {
     );
   }
 }
+
+// ────────────── Application UI: User Info & Controls (depth) ──────────────
+
+class UserMenuExample extends StatefulWidget {
+  const UserMenuExample({super.key});
+
+  @override
+  State<UserMenuExample> createState() => _UserMenuExampleState();
+}
+
+class _UserMenuExampleState extends State<UserMenuExample> {
+  final PlinthDisclosureController _menu = PlinthDisclosureController();
+
+  @override
+  void dispose() {
+    _menu.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthPaper(
+      p: PlinthSize.sm,
+      withBorder: true,
+      child: PlinthMenu(
+        controller: _menu,
+        items: [
+          PlinthMenuItem(label: 'Profile', onTap: () {}),
+          PlinthMenuItem(label: 'Settings', onTap: () {}),
+          PlinthMenuItem(label: 'Sign out', onTap: () {}),
+        ],
+        // The whole control is the trigger, not a separate caret —
+        // the avatar and name are what people aim at.
+        target: const PlinthGroup(
+          gap: PlinthSize.xs,
+          children: [
+            PlinthAvatar(initials: 'YL', size: PlinthSize.sm),
+            PlinthStack(
+              gap: PlinthSize.xs,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PlinthText('Yair Lahav',
+                    size: PlinthSize.sm, weight: FontWeight.w600),
+                PlinthText('Owner', size: PlinthSize.xs, color: 'gray'),
+              ],
+            ),
+            Icon(Icons.keyboard_arrow_down, size: 16),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MemberListExample extends StatelessWidget {
+  const MemberListExample({super.key});
+
+  static const _members = [
+    (initials: 'AN', name: 'Alice Nguyen', role: 'Owner', color: 'green'),
+    (initials: 'BK', name: 'Ben Kaur', role: 'Editor', color: 'blue'),
+    (initials: 'CD', name: 'Cara Diaz', role: 'Viewer', color: 'gray'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 360,
+      child: PlinthPaper(
+        p: PlinthSize.md,
+        withBorder: true,
+        child: PlinthStack(
+          gap: PlinthSize.sm,
+          children: [
+            const Row(
+              children: [
+                Expanded(
+                  child: PlinthText('Members', weight: FontWeight.w700),
+                ),
+                // The people beyond the first few, without a second row.
+                PlinthOverflowList(
+                  children: [
+                    PlinthAvatar(initials: 'AN', size: PlinthSize.sm),
+                    PlinthAvatar(initials: 'BK', size: PlinthSize.sm),
+                    PlinthAvatar(initials: 'CD', size: PlinthSize.sm),
+                    PlinthAvatar(initials: 'EF', size: PlinthSize.sm),
+                    PlinthAvatar(initials: 'GH', size: PlinthSize.sm),
+                  ],
+                ),
+              ],
+            ),
+            for (final m in _members)
+              // A Row rather than PlinthGroup: Group wraps by default,
+              // and Expanded's parent data means nothing to a Wrap.
+              Row(
+                children: [
+                  PlinthAvatar(initials: m.initials, size: PlinthSize.sm),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: PlinthText(m.name, size: PlinthSize.sm),
+                  ),
+                  PlinthBadge(m.role, color: m.color),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class UserStatusExample extends StatefulWidget {
+  const UserStatusExample({super.key});
+
+  @override
+  State<UserStatusExample> createState() => _UserStatusExampleState();
+}
+
+class _UserStatusExampleState extends State<UserStatusExample> {
+  String _status = 'online';
+
+  static const _colors = {
+    'online': 'green',
+    'away': 'yellow',
+    'busy': 'red',
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthPaper(
+      p: PlinthSize.md,
+      withBorder: true,
+      child: PlinthStack(
+        gap: PlinthSize.sm,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PlinthGroup(
+            gap: PlinthSize.sm,
+            children: [
+              // The dot rides the avatar rather than sitting beside it,
+              // which is what makes presence readable at a glance.
+              PlinthIndicator(
+                color: _colors[_status],
+                child: const PlinthAvatar(initials: 'YL'),
+              ),
+              PlinthStack(
+                gap: PlinthSize.xs,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const PlinthText('Yair Lahav', weight: FontWeight.w600),
+                  PlinthText(_status, size: PlinthSize.xs, color: 'gray'),
+                ],
+              ),
+            ],
+          ),
+          PlinthSegmentedControl<String>(
+            size: PlinthSize.sm,
+            value: _status,
+            onChanged: (s) => setState(() => _status = s),
+            items: const [
+              PlinthSegmentedControlItem('online', 'Online'),
+              PlinthSegmentedControlItem('away', 'Away'),
+              PlinthSegmentedControlItem('busy', 'Busy'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────── Application UI: Application Cards (depth) ───────────────
+
+class PricingCardExample extends StatelessWidget {
+  const PricingCardExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 260,
+      child: PlinthCard(
+        withBorder: true,
+        header: const PlinthGroup(
+          children: [
+            PlinthText('Pro', size: PlinthSize.lg, weight: FontWeight.w700),
+            PlinthBadge('Popular', color: 'violet'),
+          ],
+        ),
+        footer: PlinthButton(
+          fullWidth: true,
+          onPressed: () {},
+          child: const Text('Start trial'),
+        ),
+        child: const PlinthStack(
+          gap: PlinthSize.sm,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // The price is the thing being compared, so it carries the
+            // weight rather than the plan name above it.
+            PlinthGroup(
+              gap: PlinthSize.xs,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                PlinthNumberFormatter(
+                  value: 24,
+                  prefix: r'$',
+                  size: PlinthSize.xl,
+                  weight: FontWeight.w700,
+                ),
+                PlinthText('/ month', size: PlinthSize.xs, color: 'gray'),
+              ],
+            ),
+            PlinthList(
+              size: PlinthSize.sm,
+              items: [
+                PlinthListItem(PlinthText('Unlimited projects'),
+                    icon: Icon(Icons.check, size: 14)),
+                PlinthListItem(PlinthText('Priority support'),
+                    icon: Icon(Icons.check, size: 14)),
+                PlinthListItem(PlinthText('Audit log'),
+                    icon: Icon(Icons.check, size: 14)),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MediaCardExample extends StatelessWidget {
+  const MediaCardExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      // 320 rather than 280: two tags plus the bookmark action overflow
+      // a narrower card, and shrinking the tags to fit would misrepresent
+      // how much room this arrangement actually needs.
+      width: 320,
+      child: PlinthCard(
+        withBorder: true,
+        // The image is the header rather than a child, so it runs to
+        // the card's edges instead of sitting inside its padding.
+        header: const PlinthBackgroundImage(
+          src: 'https://picsum.photos/seed/plinth-card/600/240',
+          height: 120,
+          child: PlinthTitle('Kyoto', order: 4),
+        ),
+        child: PlinthStack(
+          gap: PlinthSize.xs,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const PlinthText(
+              'Twelve temples, two days, and more stairs than either of '
+              'us expected.',
+              size: PlinthSize.sm,
+            ),
+            // Row, not PlinthGroup: Spacer is an Expanded underneath,
+            // and Group wraps by default so the flex never applies.
+            Row(
+              children: [
+                const PlinthBadge('Travel'),
+                const SizedBox(width: 4),
+                const PlinthBadge('Photography'),
+                const Spacer(),
+                PlinthActionIcon(
+                  icon: const Icon(Icons.bookmark_border, size: 16),
+                  variant: PlinthVariant.subtle,
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ActivityCardExample extends StatelessWidget {
+  const ActivityCardExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: 300,
+      child: PlinthCard(
+        withBorder: true,
+        header: PlinthText('Deployment', weight: FontWeight.w700),
+        // A card whose body is a sequence rather than a paragraph —
+        // the arrangement a status panel actually needs.
+        child: PlinthTimeline(
+          items: [
+            PlinthTimelineItem(
+              title: 'Queued',
+              description: '14:02',
+              active: true,
+            ),
+            PlinthTimelineItem(
+              title: 'Building',
+              description: '14:03',
+              active: true,
+            ),
+            PlinthTimelineItem(title: 'Deploying', description: 'Pending'),
+          ],
+        ),
+      ),
+    );
+  }
+}

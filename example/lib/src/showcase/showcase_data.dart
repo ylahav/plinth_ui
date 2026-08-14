@@ -82,11 +82,22 @@ final List<CategoryData> showcaseCategories = [
             'User button', _userButton, exampleCode['UserButtonExample']!),
         ExampleEntry('Profile card', _userProfileCard,
             exampleCode['UserProfileCardExample']!),
+        ExampleEntry('User menu', _userMenu, exampleCode['UserMenuExample']!),
+        ExampleEntry(
+            'Member list', _memberList, exampleCode['MemberListExample']!),
+        ExampleEntry(
+            'Presence status', _userStatus, exampleCode['UserStatusExample']!),
       ]),
       SubcategoryData('Application Cards', Icons.dashboard_outlined, [
         ExampleEntry(
             'Project card', _projectCard, exampleCode['ProjectCardExample']!),
         ExampleEntry('Task card', _taskCard, exampleCode['TaskCardExample']!),
+        ExampleEntry(
+            'Pricing card', _pricingCard, exampleCode['PricingCardExample']!),
+        ExampleEntry(
+            'Media card', _mediaCard, exampleCode['MediaCardExample']!),
+        ExampleEntry('Activity card', _activityCard,
+            exampleCode['ActivityCardExample']!),
       ]),
       SubcategoryData('Inputs', Icons.input, [
         ExampleEntry(
@@ -304,3 +315,9 @@ Widget _headerWithTabs(BuildContext context) => const HeaderWithTabsExample();
 Widget _headerWithFilters(BuildContext context) =>
     const HeaderWithFiltersExample();
 Widget _stickyHeader(BuildContext context) => const StickyHeaderExample();
+Widget _userMenu(BuildContext context) => const UserMenuExample();
+Widget _memberList(BuildContext context) => const MemberListExample();
+Widget _userStatus(BuildContext context) => const UserStatusExample();
+Widget _pricingCard(BuildContext context) => const PricingCardExample();
+Widget _mediaCard(BuildContext context) => const MediaCardExample();
+Widget _activityCard(BuildContext context) => const ActivityCardExample();
