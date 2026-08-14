@@ -364,10 +364,12 @@ intentional rather than bugs:
 
 ## Next steps (not yet built)
 
-- Extend golden test coverage beyond `PlinthButton` — `PlinthTextInput`
-  (focus/error border states) and `PlinthAlert` (color tinting) are the
-  next highest-value targets, since they have the most conditional
-  visual logic. See `docs/TESTING.md`.
+- ~~Extend golden test coverage beyond `PlinthButton`~~ — done.
+  `PlinthTextInput` (focus and error borders) and `PlinthAlert` (colour
+  tinting) now have 13 images between them, 18 in total. Extending it
+  further is cheap now that `test/helpers/golden.dart` exists; the next
+  candidates by conditional visual logic are `PlinthBadge`'s six
+  variants and `PlinthLoader`'s three types.
 - ~~Consider hue-drift at the extremes of the color-shade ramp~~ —
   tried and rejected. One signed drift can't suit every hue: rotating
   darks the same way sends red toward magenta and yellow toward orange
@@ -380,9 +382,19 @@ intentional rather than bugs:
   Navbars and Headers are the thinnest at 2 against 9 and 6. Nothing
   is blocked on a missing component. See
   **[docs/SHOWCASE.md](docs/SHOWCASE.md)**.
-- Bring the example app's component tour up to date — 37 of the 111
-  components appear only in Widgetbook, not in the example's own
-  per-component sections.
+- ~~Bring the example app's component tour up to date~~ — done. All
+  111 components have a section, and `example/test/section_coverage_test.dart`
+  now holds the section list against the snippet map so the two can't
+  drift apart silently.
+- Make a local `flutter test` quiet again. The 18 golden images are
+  Linux-rendered, so 13 of them fail on Windows and macOS by design —
+  which trains you to skim past failures. Tagging the golden tests
+  (`@Tags(['golden'])` plus a `dart_test.yaml` preset) would let the
+  default local run exclude them while CI keeps running everything.
+- Fill in pub.dev's discoverability fields — the package scores
+  160/160 on pana but ships no `topics:` and no `screenshots:` in its
+  pubspec, which are the two things that make it findable by someone
+  who isn't already looking for it.
 
 ## Naming note
 
