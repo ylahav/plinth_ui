@@ -188,11 +188,26 @@ class _DigitSlot extends StatelessWidget {
   final TextStyle style;
   final TextScaler textScaler;
 
+  /// How much of a wheel's turn is spent carrying from the one below.
+  /// A real odometer's tens wheel only moves while the units wheel is
+  /// passing 9 back to 0; the rest of the time it sits still.
+  static const double _carryBand = 0.1;
+
   @override
   Widget build(BuildContext context) {
-    // The digit's own continuous position: as the value climbs this
-    // climbs with it, wrapping through 9 back to 0 going forwards.
-    final position = value / math.pow(10, place);
+    final scaled = value / math.pow(10, place);
+    final settled = scaled.floorToDouble();
+    final carry = scaled - settled;
+
+    // Only the carry moves this wheel. Using `scaled` directly — which
+    // is what this did — leaves every wheel above the units sitting at
+    // a permanent fraction contributed by the digits below it: at
+    // 58,210 the ten-thousands wheel sat at 5.82, four fifths of a line
+    // out of place and showing mostly the 6 above it.
+    final position = carry > 1 - _carryBand
+        ? settled + (carry - (1 - _carryBand)) / _carryBand
+        : settled;
+
     final metrics = _measure('0', style, textScaler);
     final lowest = position.floor() - 1;
 

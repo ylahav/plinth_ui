@@ -7,6 +7,30 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.16.2
+
+### Fixed
+
+- **`PlinthRollingNumber` rendered the wrong digits at rest.** Each
+  wheel's position was `value / 10^place`, which leaves every wheel
+  above the units carrying the fraction contributed by the digits
+  below it. At 58,210 the ten-thousands wheel sat at 5.82 — four
+  fifths of a line out of place, showing mostly the 6 above the 5, so
+  the number read closer to 68,210 than to what it was given. The
+  further left the digit, the worse it got.
+
+  A real odometer's tens wheel only turns while the units wheel passes
+  9 back to 0, and it now works that way: the fraction is applied over
+  the last tenth of the wheel below rather than continuously. Rest
+  positions are exact, and the roll still carries across a power of
+  ten.
+
+  Found by looking at the example app's Live metrics block, which is
+  the argument for the showcase existing at all — 494 passing tests
+  didn't catch it, because none of them asked where the glyphs
+  actually sat. One now does, checked against the unfixed widget: it
+  reports only `10` of `58210` settled.
+
 ## 0.16.1
 
 ### Fixed

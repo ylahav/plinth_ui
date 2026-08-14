@@ -192,6 +192,56 @@ void main() {
       expect(find.bySemanticsLabel(r'$1,500 km'), findsOneWidget);
     });
 
+    /// The glyphs actually sitting flush in their slots, left to right.
+    /// Each slot renders its neighbours too, so "which Text exists" is
+    /// not the question — "which one is at rest" is.
+    ///
+    /// Half a pixel rather than exactly zero: `99 / 10` is
+    /// 9.900000000000000355 in binary floating point, so a wheel that
+    /// is visually settled can land a few femtopixels off. The bug
+    /// this guards against was four fifths of a line.
+    String settledDigits(WidgetTester tester) {
+      return tester
+          .widgetList<Positioned>(find.byType(Positioned))
+          .where((p) => (p.top ?? double.infinity).abs() < 0.5)
+          .map((p) => (p.child as Text).data!)
+          .join();
+    }
+
+    testWidgets('every wheel sits flush when the value is at rest', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthRollingNumber(value: 58210), reduceMotion: true),
+      );
+      await tester.pump();
+
+      // Regression: each wheel used to carry the fraction contributed
+      // by the digits below it, so at 58,210 the ten-thousands wheel
+      // sat 82% of a line out of place and rendered mostly the 6 above
+      // the 5 — the number read wrong, not just crooked.
+      expect(settledDigits(tester), '58210');
+    });
+
+    testWidgets('rest alignment holds across magnitudes', (tester) async {
+      for (final (value, expected) in [
+        (7, '7'),
+        (99, '99'),
+        (100, '100'),
+        (982345, '982345'),
+      ]) {
+        await tester.pumpWidget(
+          _wrap(
+            PlinthRollingNumber(value: value, thousandSeparator: ''),
+            reduceMotion: true,
+          ),
+        );
+        await tester.pump();
+
+        expect(settledDigits(tester), expected, reason: 'value $value');
+      }
+    });
+
     testWidgets('handles negatives, decimals, and zero', (tester) async {
       for (final value in [0, -42, -1234.5, 0.25]) {
         await tester.pumpWidget(
