@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:plinth_components/plinth_components.dart';
 import 'package:plinth_example/main.dart';
 import 'package:plinth_example/src/showcase/home_page.dart';
 
@@ -59,7 +60,17 @@ void main() {
 
       await tester.tap(find.text('Navbars'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Home'));
+
+      // Scoped to the breadcrumb rather than a bare find.text('Home'):
+      // the blocks on this page are navbars, and a navbar demo with a
+      // "Home" link in it is entirely normal — one was added and made
+      // the loose finder ambiguous.
+      await tester.tap(
+        find.descendant(
+          of: find.byType(PlinthBreadcrumbs),
+          matching: find.text('Home'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(HomePage), findsOneWidget);

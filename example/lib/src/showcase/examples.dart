@@ -2618,3 +2618,311 @@ class _FormattedFieldsExampleState extends State<FormattedFieldsExample> {
     );
   }
 }
+
+// ───────────────────── Application UI: Navbars (depth) ─────────────────────
+
+class CollapsibleNavbarExample extends StatefulWidget {
+  const CollapsibleNavbarExample({super.key});
+
+  @override
+  State<CollapsibleNavbarExample> createState() =>
+      _CollapsibleNavbarExampleState();
+}
+
+class _CollapsibleNavbarExampleState extends State<CollapsibleNavbarExample> {
+  bool _collapsed = false;
+  String _active = 'home';
+
+  static const _items = [
+    (value: 'home', label: 'Home', icon: Icons.home_outlined),
+    (value: 'projects', label: 'Projects', icon: Icons.folder_outlined),
+    (value: 'team', label: 'Team', icon: Icons.people_outline),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 220,
+      child: PlinthPaper(
+        p: PlinthSize.sm,
+        withBorder: true,
+        child: SizedBox(
+          // The whole point of this variant: the rail changes width
+          // rather than disappearing, so the icons stay reachable.
+          width: _collapsed ? 64 : 200,
+          child: PlinthStack(
+            gap: PlinthSize.xs,
+            children: [
+              PlinthBurger(
+                opened: !_collapsed,
+                onPressed: () => setState(() => _collapsed = !_collapsed),
+              ),
+              for (final item in _items)
+                PlinthNavLink(
+                  label: _collapsed ? '' : item.label,
+                  icon: Icon(item.icon, size: 18),
+                  active: _active == item.value,
+                  onTap: () => setState(() => _active = item.value),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SectionedNavbarExample extends StatelessWidget {
+  const SectionedNavbarExample({super.key});
+
+  Widget _heading(String text) => Padding(
+        padding: const EdgeInsets.only(top: 12, bottom: 4, left: 8),
+        child: PlinthText(
+          text.toUpperCase(),
+          size: PlinthSize.xs,
+          color: 'gray',
+          weight: FontWeight.w700,
+        ),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 220,
+      child: PlinthPaper(
+        p: PlinthSize.sm,
+        withBorder: true,
+        child: PlinthStack(
+          gap: PlinthSize.xs,
+          children: [
+            // Headings rather than a tree: these are flat destinations
+            // that happen to group, not a hierarchy you navigate into.
+            _heading('Workspace'),
+            PlinthNavLink(
+              label: 'Overview',
+              icon: const Icon(Icons.dashboard_outlined, size: 18),
+              active: true,
+              onTap: () {},
+            ),
+            PlinthNavLink(
+              label: 'Reports',
+              icon: const Icon(Icons.insights_outlined, size: 18),
+              onTap: () {},
+            ),
+            _heading('Settings'),
+            PlinthNavLink(
+              label: 'Members',
+              icon: const Icon(Icons.people_outline, size: 18),
+              trailing: const PlinthBadge('4'),
+              onTap: () {},
+            ),
+            PlinthNavLink(
+              label: 'Billing',
+              icon: const Icon(Icons.credit_card, size: 18),
+              onTap: () {},
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class NavbarWithSearchExample extends StatelessWidget {
+  const NavbarWithSearchExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthPaper(
+      p: PlinthSize.md,
+      withBorder: true,
+      child: Row(
+        children: [
+          const PlinthText('Acme',
+              size: PlinthSize.lg, weight: FontWeight.w700),
+          const SizedBox(width: 24),
+          // A navbar that carries a control rather than only links —
+          // the arrangement most app shells actually need.
+          const Expanded(
+            child: PlinthTextInput(
+              placeholder: 'Search projects…',
+              size: PlinthSize.sm,
+              leadingIcon: Icon(Icons.search, size: 16),
+            ),
+          ),
+          const SizedBox(width: 16),
+          const PlinthKbd('Ctrl'),
+          const SizedBox(width: 4),
+          const PlinthKbd('K'),
+          const SizedBox(width: 16),
+          PlinthActionIcon(
+            icon: const Icon(Icons.settings_outlined, size: 18),
+            variant: PlinthVariant.subtle,
+            onPressed: () {},
+          ),
+          const SizedBox(width: 8),
+          const PlinthAvatar(initials: 'YL', size: PlinthSize.sm),
+        ],
+      ),
+    );
+  }
+}
+
+// ───────────────────── Application UI: Headers (depth) ─────────────────────
+
+class HeaderWithTabsExample extends StatefulWidget {
+  const HeaderWithTabsExample({super.key});
+
+  @override
+  State<HeaderWithTabsExample> createState() => _HeaderWithTabsExampleState();
+}
+
+class _HeaderWithTabsExampleState extends State<HeaderWithTabsExample> {
+  String _tab = 'overview';
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthStack(
+      gap: PlinthSize.sm,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Expanded(
+              child: PlinthText('Plinth UI',
+                  size: PlinthSize.xl, weight: FontWeight.w700),
+            ),
+            PlinthButton(
+              variant: PlinthVariant.outline,
+              onPressed: () {},
+              child: const Text('Share'),
+            ),
+          ],
+        ),
+        // Tabs belong to the header rather than the body: the title
+        // stays put while the section below it changes.
+        PlinthTabs<String>(
+          value: _tab,
+          onChanged: (t) => setState(() => _tab = t),
+          tabs: const [
+            PlinthTabItem('overview', 'Overview'),
+            PlinthTabItem('activity', 'Activity'),
+            PlinthTabItem('settings', 'Settings'),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class HeaderWithFiltersExample extends StatefulWidget {
+  const HeaderWithFiltersExample({super.key});
+
+  @override
+  State<HeaderWithFiltersExample> createState() =>
+      _HeaderWithFiltersExampleState();
+}
+
+class _HeaderWithFiltersExampleState extends State<HeaderWithFiltersExample> {
+  String _view = 'all';
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthStack(
+      gap: PlinthSize.sm,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const PlinthText('Issues',
+                size: PlinthSize.xl, weight: FontWeight.w700),
+            const SizedBox(width: 8),
+            const PlinthBadge('128', color: 'gray'),
+            const Spacer(),
+            PlinthButton(
+              onPressed: () {},
+              leadingIcon: const Icon(Icons.add, size: 16),
+              child: const Text('New issue'),
+            ),
+          ],
+        ),
+        PlinthGroup(
+          children: [
+            PlinthSegmentedControl<String>(
+              value: _view,
+              onChanged: (v) => setState(() => _view = v),
+              items: const [
+                PlinthSegmentedControlItem('all', 'All'),
+                PlinthSegmentedControlItem('open', 'Open'),
+                PlinthSegmentedControlItem('closed', 'Closed'),
+              ],
+            ),
+            const SizedBox(
+              width: 220,
+              child: PlinthTextInput(
+                placeholder: 'Filter…',
+                size: PlinthSize.sm,
+                leadingIcon: Icon(Icons.filter_list, size: 16),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class StickyHeaderExample extends StatelessWidget {
+  const StickyHeaderExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 220,
+      child: PlinthPaper(
+        // xs rather than the md default: the header and list supply
+        // their own padding, and doubling it wastes the panel.
+        p: PlinthSize.xs,
+        withBorder: true,
+        child: Column(
+          children: [
+            // Fixed row plus a scrolling Expanded, rather than a
+            // SliverAppBar: the header never moves, so there is no
+            // collapse behaviour to tune.
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: context.plinth.surfaceSunken),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: PlinthText('Changelog', weight: FontWeight.w700),
+                  ),
+                  PlinthActionIcon(
+                    icon: const Icon(Icons.close, size: 16),
+                    variant: PlinthVariant.subtle,
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(12),
+                itemCount: 12,
+                itemBuilder: (context, i) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child:
+                      PlinthText('Release 0.${16 - i}.0', size: PlinthSize.sm),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

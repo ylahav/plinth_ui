@@ -1806,4 +1806,149 @@ PlinthStack(
   ],
 )
 ''',
+  'CollapsibleNavbarExample': r'''
+SizedBox(
+  // The rail changes width rather than disappearing, so the icons
+  // stay reachable while collapsed.
+  width: _collapsed ? 64 : 200,
+  child: PlinthStack(
+    gap: PlinthSize.xs,
+    children: [
+      PlinthBurger(
+        opened: !_collapsed,
+        onPressed: () => setState(() => _collapsed = !_collapsed),
+      ),
+      for (final item in _items)
+        PlinthNavLink(
+          label: _collapsed ? '' : item.label,
+          icon: Icon(item.icon, size: 18),
+          active: _active == item.value,
+          onTap: () => setState(() => _active = item.value),
+        ),
+    ],
+  ),
+)
+''',
+  'SectionedNavbarExample': r'''
+PlinthStack(
+  gap: PlinthSize.xs,
+  children: [
+    // Headings rather than a tree: flat destinations that happen to
+    // group, not a hierarchy you navigate into.
+    _heading('Workspace'),
+    PlinthNavLink(
+      label: 'Overview',
+      icon: const Icon(Icons.dashboard_outlined, size: 18),
+      active: true,
+      onTap: () {},
+    ),
+    _heading('Settings'),
+    PlinthNavLink(
+      label: 'Members',
+      icon: const Icon(Icons.people_outline, size: 18),
+      trailing: const PlinthBadge('4'),
+      onTap: () {},
+    ),
+  ],
+)
+''',
+  'NavbarWithSearchExample': r'''
+Row(
+  children: [
+    const PlinthText('Acme', size: PlinthSize.lg, weight: FontWeight.w700),
+    const SizedBox(width: 24),
+    // A navbar carrying a control rather than only links.
+    const Expanded(
+      child: PlinthTextInput(
+        placeholder: 'Search projects…',
+        size: PlinthSize.sm,
+        leadingIcon: Icon(Icons.search, size: 16),
+      ),
+    ),
+    const SizedBox(width: 16),
+    const PlinthKbd('Ctrl'),
+    const SizedBox(width: 4),
+    const PlinthKbd('K'),
+    const SizedBox(width: 16),
+    const PlinthAvatar(initials: 'YL', size: PlinthSize.sm),
+  ],
+)
+''',
+  'HeaderWithTabsExample': r'''
+PlinthStack(
+  gap: PlinthSize.sm,
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    const PlinthText('Plinth UI', size: PlinthSize.xl, weight: FontWeight.w700),
+    // Tabs belong to the header: the title stays put while the
+    // section below it changes.
+    PlinthTabs<String>(
+      value: _tab,
+      onChanged: (t) => setState(() => _tab = t),
+      tabs: const [
+        PlinthTabItem('overview', 'Overview'),
+        PlinthTabItem('activity', 'Activity'),
+        PlinthTabItem('settings', 'Settings'),
+      ],
+    ),
+  ],
+)
+''',
+  'HeaderWithFiltersExample': r'''
+PlinthStack(
+  gap: PlinthSize.sm,
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Row(
+      children: [
+        const PlinthText('Issues', size: PlinthSize.xl, weight: FontWeight.w700),
+        const SizedBox(width: 8),
+        const PlinthBadge('128', color: 'gray'),
+        const Spacer(),
+        PlinthButton(onPressed: () {}, child: const Text('New issue')),
+      ],
+    ),
+    PlinthGroup(
+      children: [
+        PlinthSegmentedControl<String>(
+          value: _view,
+          onChanged: (v) => setState(() => _view = v),
+          items: const [
+            PlinthSegmentedControlItem('all', 'All'),
+            PlinthSegmentedControlItem('open', 'Open'),
+            PlinthSegmentedControlItem('closed', 'Closed'),
+          ],
+        ),
+        const SizedBox(
+          width: 220,
+          child: PlinthTextInput(placeholder: 'Filter…', size: PlinthSize.sm),
+        ),
+      ],
+    ),
+  ],
+)
+''',
+  'StickyHeaderExample': r'''
+// A fixed row plus a scrolling Expanded, rather than a SliverAppBar:
+// the header never moves, so there is no collapse behaviour to tune.
+Column(
+  children: [
+    Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: context.plinth.surfaceSunken),
+        ),
+      ),
+      child: const PlinthText('Changelog', weight: FontWeight.w700),
+    ),
+    Expanded(
+      child: ListView.builder(
+        itemCount: 12,
+        itemBuilder: (context, i) => PlinthText('Release 0.${16 - i}.0'),
+      ),
+    ),
+  ],
+)
+''',
 };

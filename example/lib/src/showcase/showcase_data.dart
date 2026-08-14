@@ -47,6 +47,12 @@ final List<CategoryData> showcaseCategories = [
           _navbarWithAvatar,
           exampleCode['NavbarWithAvatarExample']!,
         ),
+        ExampleEntry('Collapsible navbar', _collapsibleNavbar,
+            exampleCode['CollapsibleNavbarExample']!),
+        ExampleEntry('Sectioned navbar', _sectionedNavbar,
+            exampleCode['SectionedNavbarExample']!),
+        ExampleEntry('Navbar with search', _navbarWithSearch,
+            exampleCode['NavbarWithSearchExample']!),
       ]),
       SubcategoryData('Headers', Icons.view_headline, [
         ExampleEntry('Centered header', _centeredHeader,
@@ -56,6 +62,12 @@ final List<CategoryData> showcaseCategories = [
           _headerWithBreadcrumbs,
           exampleCode['HeaderWithBreadcrumbsExample']!,
         ),
+        ExampleEntry('Header with tabs', _headerWithTabs,
+            exampleCode['HeaderWithTabsExample']!),
+        ExampleEntry('Header with filters', _headerWithFilters,
+            exampleCode['HeaderWithFiltersExample']!),
+        ExampleEntry('Sticky header', _stickyHeader,
+            exampleCode['StickyHeaderExample']!),
       ]),
       SubcategoryData('Stats', Icons.insights_outlined, [
         ExampleEntry(
@@ -283,3 +295,12 @@ Widget _articleContentsRail(BuildContext context) =>
 Widget _liveMetrics(BuildContext context) => const LiveMetricsExample();
 Widget _sortableTable(BuildContext context) => const SortableTableExample();
 Widget _formattedFields(BuildContext context) => const FormattedFieldsExample();
+Widget _collapsibleNavbar(BuildContext context) =>
+    const CollapsibleNavbarExample();
+Widget _sectionedNavbar(BuildContext context) => const SectionedNavbarExample();
+Widget _navbarWithSearch(BuildContext context) =>
+    const NavbarWithSearchExample();
+Widget _headerWithTabs(BuildContext context) => const HeaderWithTabsExample();
+Widget _headerWithFilters(BuildContext context) =>
+    const HeaderWithFiltersExample();
+Widget _stickyHeader(BuildContext context) => const StickyHeaderExample();
