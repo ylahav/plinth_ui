@@ -25,6 +25,12 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          # MUST match ci.yml's pin. This workflow exists to produce
+          # images CI will accept, and rendering shifts between SDK
+          # versions — tracking `stable` here while CI pins meant it
+          # emitted goldens CI then rejected, by about 44 pixels of
+          # corner antialiasing per widget. Bump both together.
+          flutter-version: '3.44.8'
 
       - name: Activate Melos
         run: dart pub global activate melos
