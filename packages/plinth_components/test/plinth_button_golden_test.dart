@@ -2,30 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_components/plinth_components.dart';
 
-/// Same wrapper as plinth_button_test.dart, but sized to a fixed
-/// rectangle via [RepaintBoundary] + [SizedBox] rather than filling
-/// the whole test surface — golden images should be tightly cropped
-/// around the widget under test, not a full-screen screenshot, so a
-/// diff actually highlights what changed instead of drowning it in
-/// unrelated whitespace.
-Widget _goldenWrap(Widget child, {double width = 300, double height = 100}) {
-  return MaterialApp(
-    debugShowCheckedModeBanner: false,
-    theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
-    home: Scaffold(
-      body: Center(
-        child: RepaintBoundary(
-          key: const ValueKey('golden-boundary'),
-          child: SizedBox(
-            width: width,
-            height: height,
-            child: Center(child: child),
-          ),
-        ),
-      ),
-    ),
-  );
-}
+import 'helpers/golden.dart';
 
 void main() {
   group('PlinthButton golden', () {
@@ -42,19 +19,19 @@ void main() {
 
     testWidgets('filled variant', (tester) async {
       await tester.pumpWidget(
-        _goldenWrap(
+        goldenWrap(
           PlinthButton(onPressed: () {}, child: const Text('Save')),
         ),
       );
       await expectLater(
-        find.byKey(const ValueKey('golden-boundary')),
+        find.byKey(goldenBoundary),
         matchesGoldenFile('goldens/plinth_button_filled.png'),
       );
     });
 
     testWidgets('outline variant', (tester) async {
       await tester.pumpWidget(
-        _goldenWrap(
+        goldenWrap(
           PlinthButton(
             variant: PlinthVariant.outline,
             onPressed: () {},
@@ -63,14 +40,14 @@ void main() {
         ),
       );
       await expectLater(
-        find.byKey(const ValueKey('golden-boundary')),
+        find.byKey(goldenBoundary),
         matchesGoldenFile('goldens/plinth_button_outline.png'),
       );
     });
 
     testWidgets('light variant, red color', (tester) async {
       await tester.pumpWidget(
-        _goldenWrap(
+        goldenWrap(
           PlinthButton(
             variant: PlinthVariant.light,
             color: 'red',
@@ -80,26 +57,26 @@ void main() {
         ),
       );
       await expectLater(
-        find.byKey(const ValueKey('golden-boundary')),
+        find.byKey(goldenBoundary),
         matchesGoldenFile('goldens/plinth_button_light_red.png'),
       );
     });
 
     testWidgets('disabled', (tester) async {
       await tester.pumpWidget(
-        _goldenWrap(
+        goldenWrap(
           const PlinthButton(onPressed: null, child: Text('Save')),
         ),
       );
       await expectLater(
-        find.byKey(const ValueKey('golden-boundary')),
+        find.byKey(goldenBoundary),
         matchesGoldenFile('goldens/plinth_button_disabled.png'),
       );
     });
 
     testWidgets('all sizes side by side', (tester) async {
       await tester.pumpWidget(
-        _goldenWrap(
+        goldenWrap(
           Row(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -116,7 +93,7 @@ void main() {
         ),
       );
       await expectLater(
-        find.byKey(const ValueKey('golden-boundary')),
+        find.byKey(goldenBoundary),
         matchesGoldenFile('goldens/plinth_button_sizes.png'),
       );
     });
