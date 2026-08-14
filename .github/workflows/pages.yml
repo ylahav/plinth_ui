@@ -1,0 +1,81 @@
+name: Deploy site
+
+# Builds both demo apps for the web and publishes them to GitHub Pages:
+#   /            the example app — the curated tour and composed blocks
+#   /widgetbook/ the gallery — every component's states, with knobs
+#
+# Free for a public repository: Actions minutes are unlimited and a
+# Flutter web build sits far under Pages' 1 GB site limit.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Pages deployment needs these; the default GITHUB_TOKEN has neither.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time, and let a newer push win rather than queueing
+# a site that is already out of date. `cancel-in-progress: false`
+# would leave two runs racing to publish.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          # Same pin as ci.yml, so the site is built with the SDK the
+          # tests passed against rather than whatever stable is today.
+          flutter-version: '3.44.8'
+
+      - name: Activate Melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        run: melos bootstrap
+
+      # --base-href is the part that is easy to get wrong: a project
+      # site is served from /plinth_ui/, not the domain root, and
+      # without this the page loads and then 404s on main.dart.js —
+      # a blank white screen with no obvious cause.
+      - name: Build the example app
+        run: flutter build web --release --base-href /plinth_ui/
+        working-directory: example
+
+      - name: Build the Widgetbook gallery
+        run: flutter build web --release --base-href /plinth_ui/widgetbook/
+        working-directory: widgetbook
+
+      - name: Assemble the site
+        run: |
+          mkdir -p _site
+          cp -r example/build/web/. _site/
+          mkdir -p _site/widgetbook
+          cp -r widgetbook/build/web/. _site/widgetbook/
+          # Pages runs Jekyll unless told not to, which would drop any
+          # file or folder beginning with an underscore.
+          touch _site/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

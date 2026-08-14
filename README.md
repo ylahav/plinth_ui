@@ -25,7 +25,15 @@ plinth_ui/
 
 [![CI](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml/badge.svg)](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml)
 
+🌐 **[Live demo](https://ylahav.github.io/plinth_ui/)** · 🎛️ **[Widgetbook gallery](https://ylahav.github.io/plinth_ui/widgetbook/)**
+
 📖 **[Component reference](docs/COMPONENTS.md)** · 🧱 **[Showcase blocks](docs/SHOWCASE.md)** · 🧪 **[Testing guide](docs/TESTING.md)**
+
+Both are the real apps in this repo, built for the web and deployed on
+every push to `main` by `.github/workflows/pages.yml`. The demo is the
+curated tour — every component, plus the composed blocks, each with its
+source. The gallery is the exhaustive one: every state of every
+component, with knobs to poke at them.
 
 ## Using Plinth in your app
 
@@ -204,17 +212,18 @@ panel, which is what makes the drift easy to miss.
 
 ## Running the example app on Web and Desktop
 
-The `example/` app has no platform folders checked in yet (`web/`,
-`windows/`, `macos/`, `linux/`) — Flutter generates these from a
-template tied to your exact installed SDK version, so they need to be
-created locally rather than hand-written here. One-time setup:
+`web/` is checked in for both `example/` and `widgetbook/`, which is
+what lets the Pages workflow build them. The desktop folders
+(`windows/`, `macos/`, `linux/`) are not — Flutter generates those from
+a template tied to your exact SDK version, so create them locally if
+you want a desktop build:
 
 ```bash
 cd example
-flutter create --platforms=web,windows,macos,linux .
+flutter create --platforms=windows,macos,linux .
 ```
 
-This adds the platform folders without touching `lib/main.dart` or
+That adds the platform folders without touching `lib/main.dart` or
 `pubspec.yaml`. After that:
 
 ```bash
