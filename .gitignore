@@ -46,3 +46,7 @@ widgetbook/test/failures/
 # holds source files (index.html, manifest.json) that should be
 # committed, not build output. Only build/web/ (already covered by
 # the top-level build/ rule above) is generated.
+
+# Local reference material, not part of the project.
+llms-full.txt
+
