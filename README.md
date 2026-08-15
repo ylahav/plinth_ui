@@ -316,7 +316,13 @@ the sidebar.
   `PlinthMenu`/`PlinthNotification`'s overlay-dismissal behavior. See
   `docs/TESTING.md` for the full breakdown and how to run them.
   Golden coverage spans `PlinthButton`, `PlinthTextInput` (focus and
-  error borders) and `PlinthAlert` (colour tinting) — 18 images.
+  error borders), `PlinthAlert` (colour tinting), and the components
+  that place things by arithmetic rather than by layout —
+  `PlinthRollingNumber`, the two arc progress widgets,
+  `PlinthAngleSlider`, `PlinthOverflowList` and the colour sliders.
+  24 images. That last group exists because a behaviour test can only
+  confirm the number that went in: `PlinthRollingNumber` shipped
+  rendering 58,210 as nearly 68,210 while 494 tests passed.
   The reference images are Linux-rendered to match CI, so they can only
   pass on Linux. `dart_test.yaml` tags them and excludes that tag on
   Windows and macOS, which is why a local `flutter test` is green: they
@@ -372,12 +378,13 @@ intentional rather than bugs:
 
 ## Next steps (not yet built)
 
-- ~~Extend golden test coverage beyond `PlinthButton`~~ — done.
-  `PlinthTextInput` (focus and error borders) and `PlinthAlert` (colour
-  tinting) now have 13 images between them, 18 in total. Extending it
-  further is cheap now that `test/helpers/golden.dart` exists; the next
-  candidates by conditional visual logic are `PlinthBadge`'s six
-  variants and `PlinthLoader`'s three types.
+- ~~Extend golden test coverage beyond `PlinthButton`~~ — done, twice.
+  `PlinthTextInput` and `PlinthAlert` first, then the components that
+  compute their own offsets and angles, which is where the two real
+  visual bugs found so far both lived. 24 images. The remaining
+  candidates are lower value: `PlinthBadge`'s variants and
+  `PlinthLoader`'s three types are conditional but not computed, so a
+  behaviour test already reaches most of what could break.
 - ~~Consider hue-drift at the extremes of the color-shade ramp~~ —
   tried and rejected. One signed drift can't suit every hue: rotating
   darks the same way sends red toward magenta and yellow toward orange
