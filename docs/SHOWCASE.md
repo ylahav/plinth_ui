@@ -29,7 +29,7 @@ code panel will quietly show something the demo no longer does.
 
 ## What exists
 
-72 examples across 3 categories, borrowing Mantine UI's own category
+76 examples across 3 categories, borrowing Mantine UI's own category
 names so the two are directly comparable.
 
 | Category | Subcategory | Examples |
@@ -54,14 +54,14 @@ names so the two are directly comparable.
 | Page Sections | Banners | Announcement, Consent banner |
 | Page Sections | Contact Us | Contact form, Contact with details |
 | Page Sections | Error Pages | 404 not found, 500 server error, Maintenance, Permission denied, Offline |
-| Blog UI | Article Cards | Simple article card, Article card with author |
+| Blog UI | Article Cards | Simple article card, Article card with author, Horizontal card, Overlay card, Quote card, Article list |
 | Blog UI | Comments | Single comment, Comment thread |
 | Blog UI | Author Info | Inline author, Author card |
 | Blog UI | Table of Contents | Article contents, Contents rail |
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 72. The gap is now depth
+Mantine UI has ~123 blocks against these 76. The gap is now depth
 rather than absence: **every subcategory has something in it except
 Carousels**, which is a deliberate scope call rather than a hole.
 
@@ -106,7 +106,7 @@ here genuinely waiting on one.
 
 | Subcategory | Mantine UI | Plinth | Notes |
 |---|---|---|---|
-| Article cards | 7 | 2 | |
+| Article cards | 7 | 6 | Horizontal, overlay, quote and dense-list variants added |
 | Table of contents | 2 | 2 | Complete — `PlinthTableOfContents` shipped in 0.14.0 |
 | Comments | 2 | 2 | Complete |
 
@@ -119,30 +119,36 @@ what remains is depth rather than coverage — Mantine offers 6–9
 variants where this has 2 or 3. Worth adding where a variant differs
 in *kind* rather than in styling:
 
-1. **Article cards** — 7 against 2, and the arrangements genuinely
-   differ: horizontal, image-led, quote, list item.
-2. **Sliders** and **Buttons** — 6 against 2 each.
-3. **Hero sections** and **Feature sections** — 6 and 5 against 2.
+1. **Sliders** and **Buttons** — 6 against 2 each, and both are
+   genuinely under-served: a slider with marks or a stepped range, a
+   split button or a button group with a menu.
+2. **Hero sections** and **Feature sections** — 6 and 5 against 2.
+3. **Footers** and **Grids** — 4 and 3 against 2, the last of the
+   small gaps.
 4. **Inputs** — 14 against 3 on paper, the widest number, but the
    softest target: most of Mantine's are styling variations rather
    than different arrangements, so counting them overstates the gap.
 
-**Authentication and Error pages are done** — both now meet or exceed
-Mantine's count, which is worth saying because "complete" here means
-the arrangements are covered, not that no variant could ever be added.
+**Authentication, Error pages, Article cards, Comments and Table of
+contents are done** — each meets or nearly meets Mantine's count.
+"Done" here means the arrangements are covered, not that no variant
+could ever be added.
 
-Navbars, Headers, User info and Application cards are at 5 each and
-Stats at 6; the thin ones are now the ones nobody has needed yet. Each
-new variant differs in *kind* rather than styling — a navbar that
-collapses, a card whose body is a sequence, three goal rings that
-deliberately don't add up to anything. That's the bar worth holding new
-blocks to: a fifth restyled card teaches nothing.
+Every subcategory except Carousels now has at least five examples in
+the areas people actually copy from. Each new variant differs in *kind*
+rather than styling — a navbar that collapses, a card whose body is a
+sequence, three goal rings that deliberately don't add up, a card whose
+pull-quote *is* the card. That's the bar worth holding new blocks to: a
+fifth restyled card teaches nothing.
 
-**A gotcha worth knowing before you write one:** `PlinthGroup` wraps by
-default, so it is a `Wrap` rather than a `Row`, and `Expanded` or
+**Two gotchas worth knowing before you write one.** `PlinthGroup` wraps
+by default, so it is a `Wrap` rather than a `Row`, and `Expanded` or
 `Spacer` inside it throws "assertion thrown while applying parent
-data". Reach for a plain `Row` when a child needs to flex, or pass
-`wrap: false`. Two of these six blocks hit it.
+data" — reach for a plain `Row` when a child needs to flex, or pass
+`wrap: false`. And blocks are laid out for a page, so a fixed width
+that is 10px too narrow overflows in the smoke test rather than
+wrapping; widen the block rather than shrinking its content, which
+would misrepresent how much room the arrangement needs.
 
 **Nothing here is blocked on a missing component any more.** Carousels
 is the one subcategory still empty, and deliberately: Mantine ships its

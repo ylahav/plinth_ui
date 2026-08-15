@@ -234,6 +234,14 @@ final List<CategoryData> showcaseCategories = [
           _articleCardWithAuthor,
           exampleCode['ArticleCardWithAuthorExample']!,
         ),
+        ExampleEntry('Horizontal card', _horizontalArticleCard,
+            exampleCode['HorizontalArticleCardExample']!),
+        ExampleEntry('Overlay card', _overlayArticleCard,
+            exampleCode['OverlayArticleCardExample']!),
+        ExampleEntry('Quote card', _quoteArticleCard,
+            exampleCode['QuoteArticleCardExample']!),
+        ExampleEntry('Article list', _articleListItem,
+            exampleCode['ArticleListItemExample']!),
       ]),
       SubcategoryData('Comments', Icons.forum_outlined, [
         ExampleEntry('Single comment', _singleComment,
@@ -348,3 +356,10 @@ Widget _maintenance(BuildContext context) => const MaintenanceExample();
 Widget _permissionDenied(BuildContext context) =>
     const PermissionDeniedExample();
 Widget _offline(BuildContext context) => const OfflineExample();
+Widget _horizontalArticleCard(BuildContext context) =>
+    const HorizontalArticleCardExample();
+Widget _overlayArticleCard(BuildContext context) =>
+    const OverlayArticleCardExample();
+Widget _quoteArticleCard(BuildContext context) =>
+    const QuoteArticleCardExample();
+Widget _articleListItem(BuildContext context) => const ArticleListItemExample();

@@ -3667,3 +3667,195 @@ class OfflineExample extends StatelessWidget {
     );
   }
 }
+
+// ───────────────────────── Blog UI: Article Cards (depth) ─────────────────────────
+
+class HorizontalArticleCardExample extends StatelessWidget {
+  const HorizontalArticleCardExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 460,
+      child: PlinthPaper(
+        p: PlinthSize.sm,
+        withBorder: true,
+        // Horizontal rather than stacked: a feed of these fits far
+        // more articles on screen, and the image can shrink without
+        // the headline reflowing.
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: const PlinthImage(
+                src: 'https://picsum.photos/seed/plinth-row/240/240',
+                width: 96,
+                height: 96,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: PlinthStack(
+                gap: PlinthSize.xs,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  PlinthBadge('Engineering', color: 'blue'),
+                  PlinthText(
+                    'What a render object is actually for',
+                    weight: FontWeight.w700,
+                  ),
+                  PlinthText(
+                    'Most layout problems are solved by composition. '
+                    'A few are not, and knowing which is the skill.',
+                    size: PlinthSize.sm,
+                    color: 'gray',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  PlinthText('6 min read', size: PlinthSize.xs, color: 'gray'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class OverlayArticleCardExample extends StatelessWidget {
+  const OverlayArticleCardExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: 300,
+      // Text over the photograph rather than beneath it. This only
+      // works because PlinthBackgroundImage lays a scrim between the
+      // two — over a light photo the same text would be unreadable.
+      child: PlinthBackgroundImage(
+        src: 'https://picsum.photos/seed/plinth-overlay/600/400',
+        height: 200,
+        alignment: Alignment.bottomLeft,
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: PlinthStack(
+            gap: PlinthSize.xs,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PlinthBadge('Travel', color: 'teal'),
+              PlinthText(
+                'Two days in Kyoto',
+                size: PlinthSize.lg,
+                weight: FontWeight.w700,
+              ),
+              PlinthText('12 August · 4 min read', size: PlinthSize.xs),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class QuoteArticleCardExample extends StatelessWidget {
+  const QuoteArticleCardExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: 380,
+      child: PlinthPaper(
+        p: PlinthSize.md,
+        withBorder: true,
+        child: PlinthStack(
+          gap: PlinthSize.sm,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // The pull-quote is the card. A headline would compete
+            // with it, so the attribution does the naming instead.
+            PlinthBlockquote(
+              quote: 'A component library is a set of decisions you only '
+                  'have to make once.',
+              citation: 'Design systems, in practice',
+            ),
+            PlinthGroup(
+              gap: PlinthSize.xs,
+              children: [
+                PlinthAvatar(initials: 'AN', size: PlinthSize.sm),
+                PlinthText('Alice Nguyen',
+                    size: PlinthSize.xs, weight: FontWeight.w600),
+                PlinthText('· 3 min read', size: PlinthSize.xs, color: 'gray'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ArticleListItemExample extends StatelessWidget {
+  const ArticleListItemExample({super.key});
+
+  static const _articles = [
+    (n: '01', title: 'Why the theme is a ThemeExtension', read: '4 min'),
+    (n: '02', title: 'Controlled components, and when not to', read: '7 min'),
+    (n: '03', title: 'Goldens catch what assertions cannot', read: '5 min'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.plinth;
+
+    return SizedBox(
+      width: 420,
+      child: PlinthPaper(
+        p: PlinthSize.md,
+        withBorder: true,
+        child: PlinthStack(
+          gap: PlinthSize.xs,
+          children: [
+            const PlinthText('Most read', weight: FontWeight.w700),
+            // Dense rows rather than cards: a "related articles" list
+            // is scanned, not browsed, so every pixel of chrome per
+            // item is one fewer item on screen.
+            for (final a in _articles) ...[
+              const PlinthDivider(),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 28,
+                    child: PlinthText(
+                      a.n,
+                      size: PlinthSize.lg,
+                      weight: FontWeight.w700,
+                      color: 'gray',
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        PlinthText(a.title, size: PlinthSize.sm),
+                        PlinthText(
+                          a.read,
+                          size: PlinthSize.xs,
+                          color: 'gray',
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right, size: 16, color: theme.textMuted),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}

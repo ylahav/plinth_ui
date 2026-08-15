@@ -2184,6 +2184,112 @@ PlinthStack(
   ],
 )
 ''',
+  'HorizontalArticleCardExample': r'''
+// Horizontal rather than stacked: a feed of these fits far more
+// articles on screen, and the image can shrink without the headline
+// reflowing.
+Row(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: const PlinthImage(
+        src: 'https://picsum.photos/seed/plinth-row/240/240',
+        width: 96,
+        height: 96,
+      ),
+    ),
+    const SizedBox(width: 12),
+    const Expanded(
+      child: PlinthStack(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PlinthBadge('Engineering', color: 'blue'),
+          PlinthText('What a render object is actually for',
+              weight: FontWeight.w700),
+          PlinthText(
+            'Most layout problems are solved by composition.',
+            size: PlinthSize.sm,
+            color: 'gray',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    ),
+  ],
+)
+''',
+  'OverlayArticleCardExample': r'''
+// Text over the photograph rather than beneath it. This only works
+// because PlinthBackgroundImage lays a scrim between the two — over a
+// light photo the same text would be unreadable.
+const PlinthBackgroundImage(
+  src: 'https://picsum.photos/seed/plinth-overlay/600/400',
+  height: 200,
+  alignment: Alignment.bottomLeft,
+  child: Padding(
+    padding: EdgeInsets.all(16),
+    child: PlinthStack(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        PlinthBadge('Travel', color: 'teal'),
+        PlinthText('Two days in Kyoto',
+            size: PlinthSize.lg, weight: FontWeight.w700),
+        PlinthText('12 August · 4 min read', size: PlinthSize.xs),
+      ],
+    ),
+  ),
+)
+''',
+  'QuoteArticleCardExample': r'''
+const PlinthStack(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    // The pull-quote is the card. A headline would compete with it, so
+    // the attribution does the naming instead.
+    PlinthBlockquote(
+      quote: 'A component library is a set of decisions you only have '
+          'to make once.',
+      citation: 'Design systems, in practice',
+    ),
+    PlinthGroup(
+      children: [
+        PlinthAvatar(initials: 'AN', size: PlinthSize.sm),
+        PlinthText('Alice Nguyen',
+            size: PlinthSize.xs, weight: FontWeight.w600),
+      ],
+    ),
+  ],
+)
+''',
+  'ArticleListItemExample': r'''
+// Dense rows rather than cards: a "related articles" list is scanned,
+// not browsed, so every pixel of chrome per item is one fewer item on
+// screen.
+PlinthStack(
+  gap: PlinthSize.xs,
+  children: [
+    const PlinthText('Most read', weight: FontWeight.w700),
+    for (final a in _articles) ...[
+      const PlinthDivider(),
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 28,
+            child: PlinthText(a.n,
+                size: PlinthSize.lg, weight: FontWeight.w700, color: 'gray'),
+          ),
+          Expanded(child: PlinthText(a.title, size: PlinthSize.sm)),
+          Icon(Icons.chevron_right, size: 16, color: theme.textMuted),
+        ],
+      ),
+    ],
+  ],
+)
+''',
   'PasswordResetExample': r'''
 PlinthStack(
   crossAxisAlignment: CrossAxisAlignment.start,
