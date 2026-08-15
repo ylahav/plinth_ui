@@ -29,7 +29,7 @@ code panel will quietly show something the demo no longer does.
 
 ## What exists
 
-66 examples across 3 categories, borrowing Mantine UI's own category
+72 examples across 3 categories, borrowing Mantine UI's own category
 names so the two are directly comparable.
 
 | Category | Subcategory | Examples |
@@ -49,11 +49,11 @@ names so the two are directly comparable.
 | Application UI | Footers | Simple footer, Footer with link columns |
 | Page Sections | Hero Sections | Centered hero, Split hero |
 | Page Sections | Feature Sections | Feature grid, Feature list |
-| Page Sections | Authentication | Sign in, Sign up |
+| Page Sections | Authentication | Sign in, Sign up, Password reset, Two-factor code, Split sign in |
 | Page Sections | FAQ | FAQ accordion, FAQ with contact |
 | Page Sections | Banners | Announcement, Consent banner |
 | Page Sections | Contact Us | Contact form, Contact with details |
-| Page Sections | Error Pages | 404 not found, 500 server error |
+| Page Sections | Error Pages | 404 not found, 500 server error, Maintenance, Permission denied, Offline |
 | Blog UI | Article Cards | Simple article card, Article card with author |
 | Blog UI | Comments | Single comment, Comment thread |
 | Blog UI | Author Info | Inline author, Author card |
@@ -61,7 +61,7 @@ names so the two are directly comparable.
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 66. The gap is now depth
+Mantine UI has ~123 blocks against these 72. The gap is now depth
 rather than absence: **every subcategory has something in it except
 Carousels**, which is a deliberate scope call rather than a hole.
 
@@ -96,10 +96,10 @@ here genuinely waiting on one.
 |---|---|---|---|
 | Hero headers | 6 | 2 | |
 | Features section | 5 | 2 | |
-| Authentication | 4 | 2 | Sign-in and sign-up; password reset and a split-screen variant are the obvious next ones |
+| Authentication | 4 | 5 | Complete — reset, two-factor and split-screen added |
 | Frequently asked questions | 4 | 2 | |
 | Contact us section | 3 | 2 | |
-| Error pages | 5 | 2 | 404 and 500; maintenance and permission-denied remain |
+| Error pages | 5 | 5 | Complete — maintenance, permission-denied and offline added |
 | Banners | 3 | 2 | |
 
 ### Blog UI
@@ -119,14 +119,17 @@ what remains is depth rather than coverage — Mantine offers 6–9
 variants where this has 2 or 3. Worth adding where a variant differs
 in *kind* rather than in styling:
 
-1. **Inputs** — 14 against 3 on paper, the widest remaining gap, though
-   many of Mantine's are variations in styling rather than arrangement,
-   so the real gap is smaller than the number suggests.
-2. **Authentication** and **Error pages** — password reset, a
-   split-screen sign-in, maintenance and permission-denied.
-3. **Sliders** and **Buttons** — 6 against 2 each.
-4. **Article cards** — 7 against 2, the widest gap outside Application
-   UI.
+1. **Article cards** — 7 against 2, and the arrangements genuinely
+   differ: horizontal, image-led, quote, list item.
+2. **Sliders** and **Buttons** — 6 against 2 each.
+3. **Hero sections** and **Feature sections** — 6 and 5 against 2.
+4. **Inputs** — 14 against 3 on paper, the widest number, but the
+   softest target: most of Mantine's are styling variations rather
+   than different arrangements, so counting them overstates the gap.
+
+**Authentication and Error pages are done** — both now meet or exceed
+Mantine's count, which is worth saying because "complete" here means
+the arrangements are covered, not that no variant could ever be added.
 
 Navbars, Headers, User info and Application cards are at 5 each and
 Stats at 6; the thin ones are now the ones nobody has needed yet. Each

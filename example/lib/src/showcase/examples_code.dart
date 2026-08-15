@@ -2184,6 +2184,138 @@ PlinthStack(
   ],
 )
 ''',
+  'PasswordResetExample': r'''
+PlinthStack(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    const PlinthTitle('Reset your password', order: 4),
+    const PlinthTextInput(label: 'Email', placeholder: 'you@example.com'),
+    PlinthButton(
+      fullWidth: true,
+      onPressed: () {},
+      child: const Text('Send reset link'),
+    ),
+    // The way back matters as much as the way forward: a reset screen
+    // with no exit strands anyone who mistyped the URL.
+    Center(child: PlinthAnchor('Back to sign in', onTap: () {})),
+  ],
+)
+''',
+  'TwoFactorExample': r'''
+PlinthStack(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    const PlinthTitle('Two-factor code', order: 4),
+    Center(
+      child: PlinthPinInput(
+        length: 6,
+        value: _code,
+        onChanged: (v) => setState(() => _code = v),
+      ),
+    ),
+    PlinthButton(
+      fullWidth: true,
+      // Disabled until the code is complete — the button is the
+      // affordance that says how many digits are expected.
+      onPressed: _code.length == 6 ? () {} : null,
+      child: const Text('Verify'),
+    ),
+  ],
+)
+''',
+  'SplitAuthExample': r'''
+Row(
+  children: [
+    // The brand half is decoration: first in the tree but carrying no
+    // focusable content, so a screen reader reaches the form directly.
+    const Expanded(
+      child: PlinthBackgroundImage(
+        src: 'https://picsum.photos/seed/plinth-auth/600/600',
+        height: double.infinity,
+        child: PlinthTitle('Build faster', order: 3),
+      ),
+    ),
+    Expanded(
+      child: PlinthStack(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const PlinthTitle('Welcome back', order: 4),
+          const PlinthTextInput(label: 'Email'),
+          const PlinthTextInput(label: 'Password', obscureText: true),
+          PlinthButton(
+            fullWidth: true,
+            onPressed: () {},
+            child: const Text('Sign in'),
+          ),
+        ],
+      ),
+    ),
+  ],
+)
+''',
+  'MaintenanceExample': r'''
+PlinthEmptyState(
+  icon: const Icon(Icons.build_outlined),
+  title: 'Down for maintenance',
+  description: 'We are upgrading the database. Back at 14:30 UTC.',
+  // The one error state where the useful action is elsewhere, so it
+  // points at status rather than offering a retry that cannot succeed.
+  action: PlinthButton(
+    variant: PlinthVariant.outline,
+    onPressed: () {},
+    child: const Text('Status page'),
+  ),
+)
+''',
+  'PermissionDeniedExample': r'''
+PlinthStack(
+  children: [
+    PlinthEmptyState(
+      icon: const Icon(Icons.lock_outline),
+      title: 'You do not have access',
+      description: 'Ask an owner of this workspace to invite you.',
+      color: 'red',
+      action: PlinthButton(
+        onPressed: () {},
+        child: const Text('Request access'),
+      ),
+    ),
+    // Naming who can help turns a dead end into a next step —
+    // "contact an administrator" rarely says which one.
+    const PlinthDataList(
+      items: [
+        PlinthDataListItem.text('Workspace', 'Acme design'),
+        PlinthDataListItem.text('Owner', 'alice@acme.com'),
+      ],
+    ),
+  ],
+)
+''',
+  'OfflineExample': r'''
+PlinthStack(
+  children: [
+    const PlinthAlert(
+      title: 'You are offline',
+      color: 'yellow',
+      icon: Icon(Icons.wifi_off),
+      child: Text('Changes are saved locally and will sync later.'),
+    ),
+    // Unlike the other error states this one resolves itself, so the
+    // page keeps working rather than replacing itself with an apology.
+    const PlinthDataList(
+      items: [
+        PlinthDataListItem.text('Queued changes', '3'),
+        PlinthDataListItem.text('Last synced', '11:42'),
+      ],
+    ),
+    PlinthButton(
+      variant: PlinthVariant.outline,
+      onPressed: () {},
+      child: const Text('Retry now'),
+    ),
+  ],
+)
+''',
   'StatGoalRingsExample': r'''
 PlinthGroup(
   gap: PlinthSize.xl,

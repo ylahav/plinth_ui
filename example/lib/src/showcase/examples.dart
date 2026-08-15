@@ -3413,3 +3413,257 @@ class StatGoalRingsExample extends StatelessWidget {
     );
   }
 }
+
+// ───────────────────── Page Sections: Authentication (depth) ─────────────────────
+
+class PasswordResetExample extends StatelessWidget {
+  const PasswordResetExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 340,
+      child: PlinthPaper(
+        p: PlinthSize.lg,
+        withBorder: true,
+        child: PlinthStack(
+          gap: PlinthSize.sm,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const PlinthTitle('Reset your password', order: 4),
+            const PlinthText(
+              'We will send a link to the address on your account.',
+              size: PlinthSize.sm,
+              color: 'gray',
+            ),
+            const PlinthTextInput(
+              label: 'Email',
+              placeholder: 'you@example.com',
+            ),
+            PlinthButton(
+              fullWidth: true,
+              onPressed: () {},
+              child: const Text('Send reset link'),
+            ),
+            // The way back matters as much as the way forward: a reset
+            // screen with no exit strands anyone who mistyped the URL.
+            Center(child: PlinthAnchor('Back to sign in', onTap: () {})),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class TwoFactorExample extends StatefulWidget {
+  const TwoFactorExample({super.key});
+
+  @override
+  State<TwoFactorExample> createState() => _TwoFactorExampleState();
+}
+
+class _TwoFactorExampleState extends State<TwoFactorExample> {
+  String _code = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 340,
+      child: PlinthPaper(
+        p: PlinthSize.lg,
+        withBorder: true,
+        child: PlinthStack(
+          gap: PlinthSize.sm,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const PlinthTitle('Two-factor code', order: 4),
+            const PlinthText(
+              'Enter the six digits from your authenticator app.',
+              size: PlinthSize.sm,
+              color: 'gray',
+            ),
+            Center(
+              child: PlinthPinInput(
+                length: 6,
+                value: _code,
+                onChanged: (v) => setState(() => _code = v),
+              ),
+            ),
+            PlinthButton(
+              fullWidth: true,
+              // Disabled until the code is complete — the button is the
+              // affordance that says how many digits are expected.
+              onPressed: _code.length == 6 ? () {} : null,
+              child: const Text('Verify'),
+            ),
+            Center(child: PlinthAnchor('Send a new code', onTap: () {})),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SplitAuthExample extends StatelessWidget {
+  const SplitAuthExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 620,
+      height: 300,
+      child: PlinthPaper(
+        p: PlinthSize.xs,
+        withBorder: true,
+        child: Row(
+          children: [
+            // The brand half is decoration, so it goes first in the
+            // tree but carries no focusable content — a screen reader
+            // reaches the form without wading through it.
+            const Expanded(
+              child: PlinthBackgroundImage(
+                src: 'https://picsum.photos/seed/plinth-auth/600/600',
+                height: double.infinity,
+                child: PlinthTitle('Build faster', order: 3),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: PlinthStack(
+                  gap: PlinthSize.sm,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const PlinthTitle('Welcome back', order: 4),
+                    const PlinthTextInput(label: 'Email'),
+                    const PlinthTextInput(label: 'Password', obscureText: true),
+                    PlinthButton(
+                      fullWidth: true,
+                      onPressed: () {},
+                      child: const Text('Sign in'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ───────────────────── Page Sections: Error Pages (depth) ─────────────────────
+
+class MaintenanceExample extends StatelessWidget {
+  const MaintenanceExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 420,
+      child: PlinthEmptyState(
+        icon: const Icon(Icons.build_outlined),
+        title: 'Down for maintenance',
+        description: 'We are upgrading the database. Back at 14:30 UTC.',
+        // A maintenance page is the one error state where the useful
+        // action is elsewhere, so it points at status rather than
+        // offering a retry that cannot succeed yet.
+        action: PlinthButton(
+          variant: PlinthVariant.outline,
+          onPressed: () {},
+          leadingIcon: const Icon(Icons.open_in_new, size: 16),
+          child: const Text('Status page'),
+        ),
+      ),
+    );
+  }
+}
+
+class PermissionDeniedExample extends StatelessWidget {
+  const PermissionDeniedExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 420,
+      child: PlinthStack(
+        gap: PlinthSize.sm,
+        children: [
+          PlinthEmptyState(
+            icon: const Icon(Icons.lock_outline),
+            title: 'You do not have access',
+            description: 'Ask an owner of this workspace to invite you.',
+            color: 'red',
+            action: PlinthButton(
+              onPressed: () {},
+              child: const Text('Request access'),
+            ),
+          ),
+          // Naming who can actually help turns a dead end into a next
+          // step — "contact an administrator" rarely says which one.
+          const PlinthDataList(
+            orientation: PlinthDataListOrientation.horizontal,
+            items: [
+              PlinthDataListItem.text('Workspace', 'Acme design'),
+              PlinthDataListItem.text('Owner', 'alice@acme.com'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class OfflineExample extends StatelessWidget {
+  const OfflineExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 420,
+      child: PlinthPaper(
+        p: PlinthSize.lg,
+        withBorder: true,
+        child: PlinthStack(
+          gap: PlinthSize.sm,
+          children: [
+            const PlinthAlert(
+              title: 'You are offline',
+              color: 'yellow',
+              icon: Icon(Icons.wifi_off),
+              child: Text(
+                'Changes are saved locally and will sync when the '
+                'connection returns.',
+              ),
+            ),
+            // Unlike the other two, this state resolves itself, so the
+            // page keeps working rather than replacing itself with an
+            // apology.
+            const PlinthDataList(
+              items: [
+                PlinthDataListItem.text('Queued changes', '3'),
+                PlinthDataListItem.text('Last synced', '11:42'),
+              ],
+            ),
+            PlinthGroup(
+              children: [
+                PlinthButton(
+                  variant: PlinthVariant.outline,
+                  onPressed: () {},
+                  leadingIcon: const Icon(Icons.refresh, size: 16),
+                  child: const Text('Retry now'),
+                ),
+                PlinthButton(
+                  variant: PlinthVariant.subtle,
+                  onPressed: () {},
+                  child: const Text('Work offline'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

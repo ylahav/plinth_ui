@@ -391,11 +391,11 @@ intentional rather than bugs:
   (fine) but blue toward cyan (worse). Doing it properly needs per-hue
   drift tables rather than a formula. Contrast wasn't the blocker —
   the WCAG suite passed throughout. See `_generateShades`.
-- Extend the composed-blocks showcase — 66 examples against Mantine
-  UI's ~123. Every subcategory now has something in it except
-  Carousels (a deliberate scope call), so what remains is depth in the
-  ones nobody has needed yet. Nothing is blocked on a missing
-  component. See **[docs/SHOWCASE.md](docs/SHOWCASE.md)**.
+- Extend the composed-blocks showcase — 72 examples against Mantine
+  UI's ~123. Authentication and Error pages now match or exceed
+  Mantine's count; Article cards is the widest remaining gap at 7
+  against 2. Nothing is blocked on a missing component. See
+  **[docs/SHOWCASE.md](docs/SHOWCASE.md)**.
 - ~~Bring the example app's component tour up to date~~ — done. All
   111 components have a section, and `example/test/section_coverage_test.dart`
   now holds the section list against the snippet map so the two can't

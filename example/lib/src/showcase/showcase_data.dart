@@ -181,6 +181,12 @@ final List<CategoryData> showcaseCategories = [
       SubcategoryData('Authentication', Icons.lock_outline, [
         ExampleEntry('Sign in', _signInForm, exampleCode['SignInFormExample']!),
         ExampleEntry('Sign up', _signUpForm, exampleCode['SignUpFormExample']!),
+        ExampleEntry('Password reset', _passwordReset,
+            exampleCode['PasswordResetExample']!),
+        ExampleEntry(
+            'Two-factor code', _twoFactor, exampleCode['TwoFactorExample']!),
+        ExampleEntry(
+            'Split sign in', _splitAuth, exampleCode['SplitAuthExample']!),
       ]),
       SubcategoryData('FAQ', Icons.help_outline, [
         ExampleEntry('FAQ accordion', _faqAccordion,
@@ -205,6 +211,11 @@ final List<CategoryData> showcaseCategories = [
             exampleCode['NotFoundPageExample']!),
         ExampleEntry('500 server error', _serverErrorPage,
             exampleCode['ServerErrorPageExample']!),
+        ExampleEntry(
+            'Maintenance', _maintenance, exampleCode['MaintenanceExample']!),
+        ExampleEntry('Permission denied', _permissionDenied,
+            exampleCode['PermissionDeniedExample']!),
+        ExampleEntry('Offline', _offline, exampleCode['OfflineExample']!),
       ]),
     ],
   ),
@@ -330,3 +341,10 @@ Widget _activityCard(BuildContext context) => const ActivityCardExample();
 Widget _statWithPeriod(BuildContext context) => const StatWithPeriodExample();
 Widget _statBreakdown(BuildContext context) => const StatBreakdownExample();
 Widget _statGoalRings(BuildContext context) => const StatGoalRingsExample();
+Widget _passwordReset(BuildContext context) => const PasswordResetExample();
+Widget _twoFactor(BuildContext context) => const TwoFactorExample();
+Widget _splitAuth(BuildContext context) => const SplitAuthExample();
+Widget _maintenance(BuildContext context) => const MaintenanceExample();
+Widget _permissionDenied(BuildContext context) =>
+    const PermissionDeniedExample();
+Widget _offline(BuildContext context) => const OfflineExample();
