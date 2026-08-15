@@ -190,6 +190,20 @@ the ones most likely to have a subtle visual regression slip through
 focus/error states or `PlinthAlert`'s color tinting) over ones that are
 mostly just text (`PlinthText`, `PlinthBadge`'s label).
 
+**They are skipped off Linux, on purpose.** Each golden file carries
+`@Tags(['golden'])`, and `packages/plinth_components/dart_test.yaml`
+excludes that tag on Windows and macOS. Before that, a local
+`flutter test` reported 13 failures against a green CI — standing noise
+that teaches you to skim past failures, which is precisely how a real
+one gets missed.
+
+The exclusion is by OS rather than by default, so CI still runs them;
+that is the only place their result means anything. The trade-off is
+that `--tags golden` won't force them back on locally — the OS
+exclusion wins — but they cannot pass off Linux anyway, so there is
+nothing to force. To see them run, use the `workflow_dispatch` trigger
+on `ci.yml`.
+
 **Regenerate on CI, not locally — and note the workflow is pinned.**
 `regenerate-goldens.yml` pins the same `flutter-version` as `ci.yml`
 (3.44.8). That pin is load-bearing: it previously tracked `stable`

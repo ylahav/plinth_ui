@@ -1,0 +1,21 @@
+# Golden tests are skipped on Windows and macOS, and only there.
+#
+# The reference images are rendered on Linux to match CI (see
+# docs/TESTING.md §7), so on any other platform they fail by design —
+# font hinting and antialiasing differ. That meant a local
+# `flutter test` reported 13 failures against a green CI, which is the
+# kind of standing noise that trains you to skim past failures. A real
+# regression would have arrived looking exactly like the other twelve.
+#
+# Skipping by OS rather than by default: the tests still run in CI,
+# which is the only place their result means anything. A blanket
+# `exclude_tags` would have quietly stopped checking them everywhere.
+tags:
+  golden:
+    # Named so the tag isn't rejected as unknown; no settings needed.
+
+on_os:
+  windows:
+    exclude_tags: golden
+  mac-os:
+    exclude_tags: golden

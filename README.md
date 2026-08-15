@@ -317,12 +317,11 @@ the sidebar.
   `docs/TESTING.md` for the full breakdown and how to run them.
   Golden coverage spans `PlinthButton`, `PlinthTextInput` (focus and
   error borders) and `PlinthAlert` (colour tinting) — 18 images.
-  **All of them fail locally on Windows/macOS by design**, because the
-  reference images are Linux-rendered to match CI, so a local
-  `flutter test` reports 13 golden failures and a green CI. Filter them
-  out while working (`flutter test --exclude-tags` isn't wired up; the
-  simplest is running a specific test file) and see `docs/TESTING.md`
-  §7 before chasing one.
+  The reference images are Linux-rendered to match CI, so they can only
+  pass on Linux. `dart_test.yaml` tags them and excludes that tag on
+  Windows and macOS, which is why a local `flutter test` is green: they
+  run in CI, where their result means something, and are skipped where
+  it wouldn't. See `docs/TESTING.md` §7.
 - **CI is green** — `.github/workflows/ci.yml` passes end-to-end
   (bootstrap, format, analyze, test) on GitHub Actions as of this
   writing. Getting there surfaced two real, non-obvious issues worth
@@ -394,11 +393,12 @@ intentional rather than bugs:
   111 components have a section, and `example/test/section_coverage_test.dart`
   now holds the section list against the snippet map so the two can't
   drift apart silently.
-- Make a local `flutter test` quiet again. The 18 golden images are
-  Linux-rendered, so 13 of them fail on Windows and macOS by design —
-  which trains you to skim past failures. Tagging the golden tests
-  (`@Tags(['golden'])` plus a `dart_test.yaml` preset) would let the
-  default local run exclude them while CI keeps running everything.
+- ~~Make a local `flutter test` quiet again~~ — done. The golden tests
+  carry `@Tags(['golden'])` and `dart_test.yaml` excludes that tag on
+  Windows and macOS only, so they still run in CI. Note this also means
+  you can't force them on locally with `--tags golden`; the OS
+  exclusion wins. That's deliberate — they cannot pass off Linux — but
+  it's worth knowing before you go looking for the flag.
 - Fill in pub.dev's discoverability fields — the package scores
   160/160 on pana but ships no `topics:` and no `screenshots:` in its
   pubspec, which are the two things that make it findable by someone
