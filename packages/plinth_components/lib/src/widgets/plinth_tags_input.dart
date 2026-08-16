@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_close_button.dart';
 import 'plinth_pill.dart';
 import 'plinth_text.dart';
 
@@ -38,6 +39,7 @@ class PlinthTagsInput extends StatefulWidget {
     this.color,
     this.radius,
     this.enabled = true,
+    this.clearable = false,
     this.maxTags,
     this.allowDuplicates = false,
   });
@@ -53,6 +55,10 @@ class PlinthTagsInput extends StatefulWidget {
   final String? color;
   final PlinthSize? radius;
   final bool enabled;
+
+  /// Shows a button that removes every tag at once. Each pill can
+  /// already remove itself; this is for starting over.
+  final bool clearable;
 
   /// Stops accepting new tags once reached. Null for no limit.
   final int? maxTags;
@@ -212,6 +218,18 @@ class _PlinthTagsInputState extends State<PlinthTagsInput> {
                     ),
                   ),
                 ),
+                // Inside the Wrap with the pills rather than pinned to
+                // the right: this field grows to as many rows as its
+                // tags need, and a button anchored to one edge of that
+                // would sit beside whichever row happened to be last.
+                if (widget.clearable &&
+                    widget.value.isNotEmpty &&
+                    widget.enabled)
+                  PlinthCloseButton(
+                    size: PlinthSize.xs,
+                    semanticLabel: 'Clear all tags',
+                    onPressed: () => widget.onChanged(const []),
+                  ),
               ],
             ),
           ),

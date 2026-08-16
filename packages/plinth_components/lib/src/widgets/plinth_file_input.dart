@@ -50,6 +50,7 @@ class PlinthFileInput<T> extends StatelessWidget {
     this.color,
     this.radius,
     this.enabled = true,
+    this.clearable = false,
     this.multiple = false,
     this.icon,
   });
@@ -80,6 +81,10 @@ class PlinthFileInput<T> extends StatelessWidget {
   final String? color;
   final PlinthSize? radius;
   final bool enabled;
+
+  /// Shows a button that drops every chosen file at once. Each file
+  /// chip can already remove itself; this is for starting over.
+  final bool clearable;
 
   /// Whether picking replaces the selection or adds to it. The picker
   /// itself also needs telling — this only governs what happens to what
@@ -176,6 +181,18 @@ class PlinthFileInput<T> extends StatelessWidget {
                             ],
                           ),
                   ),
+                  // Wrapped so the tap clears rather than reopening the
+                  // picker underneath it, the same guard the file chips
+                  // needed.
+                  if (clearable && value.isNotEmpty && enabled)
+                    GestureDetector(
+                      onTap: () => onChanged(const []),
+                      child: PlinthCloseButton(
+                        size: PlinthSize.xs,
+                        semanticLabel: 'Clear selected files',
+                        onPressed: () => onChanged(const []),
+                      ),
+                    ),
                 ],
               ),
             ),

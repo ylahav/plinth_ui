@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_close_button.dart';
 import 'plinth_highlight.dart';
 import 'plinth_text.dart';
 
@@ -38,6 +39,7 @@ class PlinthAutocomplete extends StatefulWidget {
     this.color,
     this.radius,
     this.enabled = true,
+    this.clearable = false,
     this.limit = 8,
     this.onOptionSelected,
   });
@@ -59,6 +61,9 @@ class PlinthAutocomplete extends StatefulWidget {
   final String? color;
   final PlinthSize? radius;
   final bool enabled;
+
+  /// Shows a button that empties the field, reporting an empty string.
+  final bool clearable;
 
   /// How many suggestions to show at once. A long unfiltered list is
   /// noise rather than help.
@@ -256,24 +261,47 @@ class _PlinthAutocompleteState extends State<PlinthAutocomplete> {
             ),
             padding:
                 EdgeInsets.symmetric(horizontal: theme.spacing[widget.size]!),
-            child: TextField(
-              controller: _controller,
-              focusNode: _focusNode,
-              enabled: widget.enabled,
-              style: TextStyle(fontSize: fontSize),
-              onChanged: (text) {
-                widget.onChanged(text);
-                // Rebuild the overlay so the list narrows as they type.
-                _refreshOptions();
-              },
-              decoration: InputDecoration(
-                hintText: widget.placeholder,
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: theme.spacing[widget.size]! * 0.5,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    focusNode: _focusNode,
+                    enabled: widget.enabled,
+                    style: TextStyle(fontSize: fontSize),
+                    onChanged: (text) {
+                      widget.onChanged(text);
+                      // Rebuild the overlay so the list narrows as they
+                      // type.
+                      _refreshOptions();
+                    },
+                    decoration: InputDecoration(
+                      hintText: widget.placeholder,
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: theme.spacing[widget.size]! * 0.5,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                // The controller is cleared as well as the value
+                // reported: this field owns the text it displays, so
+                // reporting an empty string alone would leave the old
+                // text sitting there.
+                if (widget.clearable &&
+                    _controller.text.isNotEmpty &&
+                    widget.enabled)
+                  PlinthCloseButton(
+                    size: PlinthSize.xs,
+                    semanticLabel: 'Clear search',
+                    onPressed: () {
+                      _controller.clear();
+                      widget.onChanged('');
+                      _refreshOptions();
+                    },
+                  ),
+              ],
             ),
           ),
         ),

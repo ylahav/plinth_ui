@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_close_button.dart';
 import 'plinth_text.dart';
 
 /// A single option for [PlinthSelect].
@@ -41,11 +42,18 @@ class PlinthSelect<T> extends StatelessWidget {
     this.color,
     this.radius,
     this.enabled = true,
+    this.clearable = false,
   });
 
   final List<PlinthSelectOption<T>> options;
   final T? value;
   final ValueChanged<T?>? onChanged;
+
+  /// Shows a clear button once something is chosen, reporting null.
+  ///
+  /// Off by default: a required field that can be emptied invites the
+  /// state the form then has to reject.
+  final bool clearable;
   final String? label;
   final String? description;
   final String? placeholder;
@@ -92,39 +100,56 @@ class PlinthSelect<T> extends StatelessWidget {
               color: enabled ? theme.surface : theme.surfaceMuted,
             ),
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<T>(
-                isExpanded: true,
-                value: value,
-                hint: placeholder != null
-                    ? Text(
-                        placeholder!,
-                        style:
-                            TextStyle(fontSize: fontSize, color: Colors.grey),
-                      )
-                    : null,
-                icon: const Icon(Icons.keyboard_arrow_down, size: 18),
-                onChanged: enabled ? onChanged : null,
-                items: [
-                  for (final option in options)
-                    DropdownMenuItem<T>(
-                      value: option.value,
-                      child: Text(option.label,
-                          style: TextStyle(fontSize: fontSize)),
+            child: Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<T>(
+                      isExpanded: true,
+                      value: value,
+                      hint: placeholder != null
+                          ? Text(
+                              placeholder!,
+                              style: TextStyle(
+                                  fontSize: fontSize, color: Colors.grey),
+                            )
+                          : null,
+                      icon: const Icon(Icons.keyboard_arrow_down, size: 18),
+                      onChanged: enabled ? onChanged : null,
+                      items: [
+                        for (final option in options)
+                          DropdownMenuItem<T>(
+                            value: option.value,
+                            child: Text(option.label,
+                                style: TextStyle(fontSize: fontSize)),
+                          ),
+                      ],
+                      selectedItemBuilder: (context) => [
+                        for (final option in options)
+                          Padding(
+                            padding:
+                                EdgeInsets.symmetric(vertical: verticalPadding),
+                            child: Text(
+                              option.label,
+                              style: TextStyle(fontSize: fontSize),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                      ],
                     ),
-                ],
-                selectedItemBuilder: (context) => [
-                  for (final option in options)
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: verticalPadding),
-                      child: Text(
-                        option.label,
-                        style: TextStyle(fontSize: fontSize),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                ],
-              ),
+                  ),
+                ),
+                // Outside the DropdownButton rather than in its `icon`
+                // slot: the icon sits inside the dropdown's own hit
+                // area, so a tap there would open the menu it is
+                // supposed to be clearing.
+                if (clearable && value != null && enabled)
+                  PlinthCloseButton(
+                    size: PlinthSize.xs,
+                    semanticLabel: 'Clear selection',
+                    onPressed: () => onChanged?.call(null),
+                  ),
+              ],
             ),
           ),
         ),

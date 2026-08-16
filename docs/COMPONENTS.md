@@ -483,7 +483,7 @@ PlinthRadioGroup<String>(
 ### `PlinthFileInput<T>`
 `value` (`List<T>`), `onPick`, `onChanged`, `labelBuilder`, `label`,
 `description`, `placeholder`, `error`, `size`, `color`, `radius`,
-`enabled`, `multiple`, `icon`.
+`enabled`, `clearable`, `multiple`, `icon`.
 
 **It does not open a file picker.** Flutter has no built-in one, and
 every package providing it (`file_picker`, `file_selector`,
@@ -501,8 +501,8 @@ untouched rather than clearing it.
 ### `PlinthTagsInput`
 `value` (`List<String>`), `onChanged`, `label`, `description`,
 `placeholder`, `error`, `size`, `color`, `radius`, `enabled`,
-`maxTags`, `allowDuplicates`. Free-text entry producing removable
-chips.
+`clearable`, `maxTags`, `allowDuplicates`. Free-text entry producing
+removable chips.
 
 `PlinthMultiSelect` is the fixed-options equivalent, where the user
 picks from a list you supply; this is where they invent the values.
@@ -513,8 +513,8 @@ tell them apart.
 
 ### `PlinthAutocomplete`
 `value`, `onChanged`, `options`, `label`, `description`, `placeholder`,
-`error`, `size`, `color`, `radius`, `enabled`, `limit` (default `8`),
-`onOptionSelected`. A text field with suggestions.
+`error`, `size`, `color`, `radius`, `enabled`, `clearable`, `limit`
+(default `8`), `onOptionSelected`. A text field with suggestions.
 
 The difference from `PlinthSelect` is what the field accepts, not how
 it looks: a select constrains the user to your list, while this takes
@@ -527,9 +527,15 @@ should do more than set the text.
 
 ### `PlinthSelect<T>`
 `options` (`List<PlinthSelectOption<T>>`), `value`, `onChanged`, `label`,
-`description`, `placeholder`, `error`, `size`, `color`, `radius`, `enabled`.
+`description`, `placeholder`, `error`, `size`, `color`, `radius`, `enabled`,
+`clearable`.
 Shares `PlinthTextInput`'s label/description/error chrome; wraps
 `DropdownButton` internally with the default underline hidden.
+
+`clearable` shows a small clear button once a value is chosen, reporting
+`null`. It sits *outside* the `DropdownButton` rather than in its `icon`
+slot, since that slot is inside the dropdown's own hit area and a tap
+there would open the menu it is supposed to be clearing.
 
 ### `PlinthSwitch`
 `value`, `onChanged` (nullable), `label`, `size`, `color`. Same
@@ -568,7 +574,8 @@ they do there, with both thumbs emphasising the mark they sit on.
 
 ### `PlinthMultiSelect<T>` + `PlinthMultiSelectOption<T>`
 `options`, `value` (`List<T>`), `onChanged`, `label`, `description`,
-`placeholder`, `error`, `size`, `color`, `radius`, `enabled`. Chosen
+`placeholder`, `error`, `size`, `color`, `radius`, `enabled`,
+`clearable`. Chosen
 values render as removable chips inside the field (via Flutter's
 built-in `Chip`, not `PlinthChip` — that's a *selectable toggle*
 pattern, a different semantic than a removable value chip); tapping

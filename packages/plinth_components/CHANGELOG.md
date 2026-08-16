@@ -89,6 +89,29 @@ which components were missing.
   `color` fills the tooltip from the palette for warnings, with the
   label resolved against that fill rather than the theme's text color.
 
+- **`clearable` on `PlinthSelect`, `PlinthMultiSelect`,
+  `PlinthTagsInput`, `PlinthFileInput` and `PlinthAutocomplete`.**
+  Mantine offers it on seven inputs; Plinth had it on none, so "I chose
+  a value and now want none" meant building the affordance outside the
+  field.
+
+  Off by default everywhere: a required field that can be emptied
+  invites the state the form then has to reject. The button appears
+  only when there is something to clear and the field is enabled.
+
+  Three of the five needed care about where the tap lands. On
+  `PlinthSelect` the button sits *outside* the `DropdownButton` rather
+  than in its `icon` slot, which is inside the dropdown's hit area — a
+  tap there would open the menu it is meant to be clearing. On
+  `PlinthFileInput` it stops the tap reaching the field, which would
+  otherwise clear the files and immediately ask for new ones. And
+  `PlinthAutocomplete` clears its own controller as well as reporting
+  the empty value, since it owns the text it displays.
+
+  **Not on `PlinthColorInput`**, whose value is a non-nullable `Color`:
+  there is no such thing as no colour, and a clear button would have to
+  invent one.
+
 ### Fixed
 
 - **Disabled buttons looked enabled.** `PlinthButton` and

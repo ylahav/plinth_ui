@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_close_button.dart';
 import 'plinth_pill.dart';
 import 'plinth_text.dart';
 
@@ -53,11 +54,17 @@ class PlinthMultiSelect<T> extends StatefulWidget {
     this.color,
     this.radius,
     this.enabled = true,
+    this.clearable = false,
   });
 
   final List<PlinthMultiSelectOption<T>> options;
   final List<T> value;
   final ValueChanged<List<T>> onChanged;
+
+  /// Shows a button that empties the field in one move. Each pill can
+  /// already remove itself; this is the difference between undoing a
+  /// choice and starting the filter over.
+  final bool clearable;
   final String? label;
   final String? description;
   final String? placeholder;
@@ -217,33 +224,51 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
                 border: Border.all(color: borderColor, width: hasError ? 2 : 1),
                 color: widget.enabled ? theme.surface : theme.surfaceMuted,
               ),
-              child: widget.value.isEmpty
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 4, vertical: 6),
-                      child: Text(
-                        widget.placeholder ?? '',
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: theme.fontSizes[widget.size]),
-                      ),
-                    )
-                  : Wrap(
-                      spacing: 4,
-                      runSpacing: 4,
-                      children: [
-                        for (final v in widget.value)
-                          PlinthPill(
-                            selectedLabels[v] ?? '$v',
-                            size: widget.size == PlinthSize.xs
-                                ? PlinthSize.xs
-                                : PlinthSize.sm,
-                            color: colorKey,
-                            onRemove:
-                                widget.enabled ? () => _removeValue(v) : null,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: widget.value.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 6),
+                            child: Text(
+                              widget.placeholder ?? '',
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: theme.fontSizes[widget.size]),
+                            ),
+                          )
+                        : Wrap(
+                            spacing: 4,
+                            runSpacing: 4,
+                            children: [
+                              for (final v in widget.value)
+                                PlinthPill(
+                                  selectedLabels[v] ?? '$v',
+                                  size: widget.size == PlinthSize.xs
+                                      ? PlinthSize.xs
+                                      : PlinthSize.sm,
+                                  color: colorKey,
+                                  onRemove: widget.enabled
+                                      ? () => _removeValue(v)
+                                      : null,
+                                ),
+                            ],
                           ),
-                      ],
+                  ),
+                  // Each pill removes itself; this empties the field in
+                  // one move, which is the difference between undoing a
+                  // choice and starting the filter over.
+                  if (widget.clearable &&
+                      widget.value.isNotEmpty &&
+                      widget.enabled)
+                    PlinthCloseButton(
+                      size: PlinthSize.xs,
+                      semanticLabel: 'Clear all selections',
+                      onPressed: () => widget.onChanged(const []),
                     ),
+                ],
+              ),
             ),
           ),
         ),
