@@ -29,7 +29,7 @@ code panel will quietly show something the demo no longer does.
 
 ## What exists
 
-88 examples across 3 categories, borrowing Mantine UI's own category
+94 examples across 3 categories, borrowing Mantine UI's own category
 names so the two are directly comparable.
 
 | Category | Subcategory | Examples |
@@ -50,9 +50,9 @@ names so the two are directly comparable.
 | Page Sections | Hero Sections | Centered hero, Split hero, Hero with image, Hero with signup, Hero with proof |
 | Page Sections | Feature Sections | Feature grid, Feature list, Alternating screenshots, Comparison table, Logo strip |
 | Page Sections | Authentication | Sign in, Sign up, Password reset, Two-factor code, Split sign in |
-| Page Sections | FAQ | FAQ accordion, FAQ with contact |
-| Page Sections | Banners | Announcement, Consent banner |
-| Page Sections | Contact Us | Contact form, Contact with details |
+| Page Sections | FAQ | FAQ accordion, FAQ with contact, Two-column FAQ, Searchable FAQ |
+| Page Sections | Banners | Announcement, Consent banner, Promo banner, Update available |
+| Page Sections | Contact Us | Contact form, Contact with details, Support channels, Contact with hours |
 | Page Sections | Error Pages | 404 not found, 500 server error, Maintenance, Permission denied, Offline |
 | Blog UI | Article Cards | Simple article card, Article card with author, Horizontal card, Overlay card, Quote card, Article list |
 | Blog UI | Comments | Single comment, Comment thread |
@@ -61,7 +61,7 @@ names so the two are directly comparable.
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 88. The gap is now depth
+Mantine UI has ~123 blocks against these 94. The gap is now depth
 rather than absence: **every subcategory has something in it except
 Carousels**, which is a deliberate scope call rather than a hole.
 
@@ -97,10 +97,10 @@ here genuinely waiting on one.
 | Hero headers | 6 | 5 | Image-led, signup and social-proof variants added |
 | Features section | 5 | 5 | Complete — alternating screenshots, comparison table and logo strip |
 | Authentication | 4 | 5 | Complete — reset, two-factor and split-screen added |
-| Frequently asked questions | 4 | 2 | |
-| Contact us section | 3 | 2 | |
+| Frequently asked questions | 4 | 4 | Complete — two-column and searchable added |
+| Contact us section | 3 | 4 | Complete — channel routing and reply expectations added |
 | Error pages | 5 | 5 | Complete — maintenance, permission-denied and offline added |
-| Banners | 3 | 2 | |
+| Banners | 3 | 4 | Complete — dismissible promo and update-available added |
 
 ### Blog UI
 
@@ -119,19 +119,21 @@ what remains is depth rather than coverage — Mantine offers 6–9
 variants where this has 2 or 3. Worth adding where a variant differs
 in *kind* rather than in styling:
 
-1. **FAQ**, **Contact us** and **Banners** — 4, 3 and 3 against 2. The
-   last of the Page Sections gaps, and all small.
-2. **Footers** and **Grids** — 4 and 3 against 2.
-3. **Inputs** — 14 against 3 on paper, the widest number, but the
+1. **Footers** and **Grids** — 4 and 3 against 2, the last of the
+   small gaps.
+2. **Inputs** — 14 against 3 on paper, the widest number, but the
    softest target: most of Mantine's are styling variations rather
    than different arrangements, so counting them overstates the gap.
+3. **Navbars**, **User info** and **Stats** — 9, 8 and 9 against 5, 5
+   and 6. Real gaps by count, but the obvious arrangements are taken;
+   what's left needs a variant that differs in kind, not a sixth one.
 4. **Tables**, **Dropzones**, **Drag'n'Drop** — already at or near
    parity; only worth extending if a specific arrangement is missing.
 
-**Nine subcategories are done** — Heroes, Features, Authentication,
-Error pages, Article cards, Buttons, Sliders, Comments and Table of
-contents each meet or nearly meet Mantine's count. "Done" here means
-the arrangements are covered, not that no variant could ever be added.
+**Page Sections is complete** — all seven subcategories meet or exceed
+Mantine's count. Twelve subcategories overall are done. "Done" here
+means the arrangements are covered, not that no variant could ever be
+added.
 
 Every subcategory except Carousels now has at least five examples in
 the areas people actually copy from. Each new variant differs in *kind*

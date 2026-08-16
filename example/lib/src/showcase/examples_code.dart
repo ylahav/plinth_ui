@@ -2184,6 +2184,154 @@ PlinthStack(
   ],
 )
 ''',
+  'FaqTwoColumnExample': r'''
+// Everything open in two columns rather than an accordion. For four
+// short answers, hiding them behind a click costs more than the
+// vertical space it saves.
+PlinthSimpleGrid(
+  columns: 2,
+  children: [
+    for (final f in _faqs)
+      PlinthStack(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PlinthText(f.q, weight: FontWeight.w700),
+          PlinthText(f.a, size: PlinthSize.sm, color: 'gray'),
+        ],
+      ),
+  ],
+)
+''',
+  'FaqSearchExample': r'''
+PlinthStack(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    PlinthTextInput(
+      placeholder: 'Search questions…',
+      onChanged: (v) => setState(() => _query = v),
+    ),
+    if (matches.isEmpty)
+      // A search that can return nothing needs to say so; an empty
+      // accordion just looks broken.
+      const PlinthEmptyState(title: 'No matching questions')
+    else
+      PlinthAccordion(
+        items: [
+          for (final f in matches)
+            PlinthAccordionItem(
+              value: f.id,
+              title: f.q,
+              content: PlinthText(f.a, size: PlinthSize.sm),
+            ),
+        ],
+      ),
+  ],
+)
+''',
+  'SupportChannelsExample': r'''
+// Routing rather than a form: when several channels exist, the
+// reader's first decision is which one, and a form presumes that
+// answer for them.
+PlinthSimpleGrid(
+  columns: 3,
+  children: [
+    for (final c in _channels)
+      PlinthPaper(
+        p: PlinthSize.md,
+        withBorder: true,
+        child: PlinthStack(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            PlinthThemeIcon(
+              icon: Icon(c.icon),
+              variant: PlinthVariant.light,
+              color: c.colour,
+            ),
+            PlinthText(c.title, weight: FontWeight.w700),
+            PlinthText(c.detail, size: PlinthSize.xs, color: 'gray'),
+          ],
+        ),
+      ),
+  ],
+)
+''',
+  'ContactWithHoursExample': r'''
+Row(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Expanded(
+      child: PlinthStack(
+        children: [
+          const PlinthTextInput(label: 'Email'),
+          const PlinthTextarea(label: 'How can we help?', minLines: 3),
+          PlinthButton(onPressed: () {}, child: const Text('Send')),
+        ],
+      ),
+    ),
+    const SizedBox(width: 24),
+    // Setting expectations beside the form rather than after it:
+    // knowing the reply window before writing changes what people
+    // write, and whether they wait.
+    const Expanded(
+      child: PlinthDataList(
+        orientation: PlinthDataListOrientation.vertical,
+        items: [
+          PlinthDataListItem.text('Weekdays', 'Within 4 hours'),
+          PlinthDataListItem.text('Timezone', 'UTC+0'),
+        ],
+      ),
+    ),
+  ],
+)
+''',
+  'PromoBannerExample': r'''
+Row(
+  children: [
+    const PlinthBadge('Offer', color: 'grape'),
+    const Expanded(
+      child: PlinthText('Annual plans are 20% off until Friday.'),
+    ),
+    PlinthButton(
+      size: PlinthSize.xs,
+      color: 'grape',
+      onPressed: () {},
+      child: const Text('See plans'),
+    ),
+    // Dismissible, unlike the consent banner: a promo the reader has
+    // declined should not keep asking.
+    PlinthCloseButton(
+      size: PlinthSize.xs,
+      onPressed: () => setState(() => _visible = false),
+      semanticLabel: 'Dismiss offer',
+    ),
+  ],
+)
+''',
+  'UpdateBannerExample': r'''
+PlinthAlert(
+  title: 'Version 0.17.0 is available',
+  icon: const Icon(Icons.system_update_alt),
+  child: PlinthGroup(
+    children: [
+      // Two actions, and the passive one is not a dismissal: an update
+      // banner that can only be closed teaches people to close it.
+      PlinthButton(
+        size: PlinthSize.xs,
+        onPressed: () {},
+        child: const Text('Update now'),
+      ),
+      PlinthButton(
+        size: PlinthSize.xs,
+        variant: PlinthVariant.subtle,
+        onPressed: () {},
+        child: const Text('Release notes'),
+      ),
+    ],
+  ),
+)
+''',
   'HeroWithImageExample': r'''
 // The photograph is the hero rather than sitting beside it. The scrim
 // is doing real work: over the light half of this image the headline

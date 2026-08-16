@@ -4303,6 +4303,331 @@ class HeroWithProofExample extends StatelessWidget {
   }
 }
 
+// ─────────────────── Page Sections: FAQ / Contact / Banners (depth) ───────────────────
+
+class FaqTwoColumnExample extends StatelessWidget {
+  const FaqTwoColumnExample({super.key});
+
+  static const _faqs = [
+    (q: 'Is it free?', a: 'Yes, MIT licensed, including commercial use.'),
+    (
+      q: 'Does it do dark mode?',
+      a: 'Register darkTheme and the library follows.'
+    ),
+    (q: 'Can I retheme it?', a: 'Every colour prop is a key into the palette.'),
+    (
+      q: 'Which platforms?',
+      a: 'Anywhere Flutter runs; the demo is on the web.'
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 560,
+      child: PlinthStack(
+        gap: PlinthSize.md,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const PlinthTitle('Common questions', order: 3),
+          // Everything open in two columns rather than an accordion.
+          // For four short answers, hiding them behind a click costs
+          // more than the vertical space it saves.
+          PlinthSimpleGrid(
+            columns: 2,
+            children: [
+              for (final f in _faqs)
+                PlinthStack(
+                  gap: PlinthSize.xs,
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    PlinthText(f.q, weight: FontWeight.w700),
+                    PlinthText(f.a, size: PlinthSize.sm, color: 'gray'),
+                  ],
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FaqSearchExample extends StatefulWidget {
+  const FaqSearchExample({super.key});
+
+  @override
+  State<FaqSearchExample> createState() => _FaqSearchExampleState();
+}
+
+class _FaqSearchExampleState extends State<FaqSearchExample> {
+  String _query = '';
+
+  static const _faqs = [
+    (id: 'billing', q: 'When am I billed?', a: 'On the same day each month.'),
+    (id: 'cancel', q: 'How do I cancel?', a: 'From Settings, any time.'),
+    (id: 'refund', q: 'Do you refund?', a: 'Within 30 days, no questions.'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final matches = _faqs
+        .where((f) => f.q.toLowerCase().contains(_query.toLowerCase()))
+        .toList();
+
+    return SizedBox(
+      width: 520,
+      child: PlinthStack(
+        gap: PlinthSize.sm,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PlinthTextInput(
+            placeholder: 'Search questions…',
+            leadingIcon: const Icon(Icons.search, size: 18),
+            onChanged: (v) => setState(() => _query = v),
+          ),
+          if (matches.isEmpty)
+            // A search that can return nothing needs to say so; an
+            // empty accordion just looks broken.
+            const PlinthEmptyState(
+              title: 'No matching questions',
+              description: 'Try a different word, or contact support.',
+            )
+          else
+            PlinthAccordion(
+              items: [
+                for (final f in matches)
+                  PlinthAccordionItem(
+                    value: f.id,
+                    title: f.q,
+                    content: PlinthText(f.a, size: PlinthSize.sm),
+                  ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class SupportChannelsExample extends StatelessWidget {
+  const SupportChannelsExample({super.key});
+
+  static const _channels = [
+    (
+      icon: Icons.chat_bubble_outline,
+      title: 'Live chat',
+      detail: 'Weekdays, 9–17 UTC',
+      colour: 'blue'
+    ),
+    (
+      icon: Icons.mail_outline,
+      title: 'Email',
+      detail: 'Replies within a day',
+      colour: 'teal'
+    ),
+    (
+      icon: Icons.menu_book_outlined,
+      title: 'Docs',
+      detail: 'Answers most questions',
+      colour: 'grape'
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 560,
+      // Routing rather than a form: when several channels exist, the
+      // reader's first decision is which one, and a form presumes that
+      // answer for them.
+      child: PlinthSimpleGrid(
+        columns: 3,
+        children: [
+          for (final c in _channels)
+            PlinthPaper(
+              p: PlinthSize.md,
+              withBorder: true,
+              child: PlinthStack(
+                gap: PlinthSize.xs,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  PlinthThemeIcon(
+                    icon: Icon(c.icon),
+                    variant: PlinthVariant.light,
+                    color: c.colour,
+                  ),
+                  PlinthText(c.title, weight: FontWeight.w700),
+                  PlinthText(c.detail, size: PlinthSize.xs, color: 'gray'),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class ContactWithHoursExample extends StatelessWidget {
+  const ContactWithHoursExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 560,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: PlinthStack(
+              gap: PlinthSize.sm,
+              children: [
+                const PlinthTitle('Talk to us', order: 4),
+                const PlinthTextInput(label: 'Email'),
+                const PlinthTextarea(label: 'How can we help?', minLines: 3),
+                PlinthButton(onPressed: () {}, child: const Text('Send')),
+              ],
+            ),
+          ),
+          const SizedBox(width: 24),
+          // Setting expectations beside the form rather than after it:
+          // knowing the reply window before writing changes what people
+          // write, and whether they wait.
+          const Expanded(
+            child: PlinthStack(
+              gap: PlinthSize.sm,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PlinthText('When we reply', weight: FontWeight.w700),
+                PlinthDataList(
+                  orientation: PlinthDataListOrientation.vertical,
+                  items: [
+                    PlinthDataListItem.text('Weekdays', 'Within 4 hours'),
+                    PlinthDataListItem.text('Weekends', 'Next working day'),
+                    PlinthDataListItem.text('Timezone', 'UTC+0'),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PromoBannerExample extends StatefulWidget {
+  const PromoBannerExample({super.key});
+
+  @override
+  State<PromoBannerExample> createState() => _PromoBannerExampleState();
+}
+
+class _PromoBannerExampleState extends State<PromoBannerExample> {
+  bool _visible = true;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_visible) {
+      return PlinthButton(
+        variant: PlinthVariant.subtle,
+        size: PlinthSize.sm,
+        onPressed: () => setState(() => _visible = true),
+        child: const Text('Show the banner again'),
+      );
+    }
+
+    final theme = context.plinth;
+
+    return SizedBox(
+      width: 560,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: theme.spacing[PlinthSize.md]!,
+          vertical: theme.spacing[PlinthSize.sm]!,
+        ),
+        decoration: BoxDecoration(
+          color: theme.shaded('grape', 0),
+          borderRadius:
+              BorderRadius.circular(theme.radius[theme.defaultRadius]!),
+        ),
+        child: Row(
+          children: [
+            const PlinthBadge('Offer', color: 'grape'),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: PlinthText(
+                'Annual plans are 20% off until Friday.',
+                size: PlinthSize.sm,
+              ),
+            ),
+            PlinthButton(
+              size: PlinthSize.xs,
+              color: 'grape',
+              onPressed: () {},
+              child: const Text('See plans'),
+            ),
+            // Dismissible, unlike the consent banner: a promo the
+            // reader has declined should not keep asking.
+            PlinthCloseButton(
+              size: PlinthSize.xs,
+              onPressed: () => setState(() => _visible = false),
+              semanticLabel: 'Dismiss offer',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class UpdateBannerExample extends StatelessWidget {
+  const UpdateBannerExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 560,
+      child: PlinthAlert(
+        title: 'Version 0.17.0 is available',
+        color: 'blue',
+        icon: const Icon(Icons.system_update_alt),
+        child: PlinthStack(
+          gap: PlinthSize.sm,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const PlinthText(
+              'Adds four components and fixes a marquee overflow.',
+              size: PlinthSize.sm,
+            ),
+            // Two actions, and the passive one is not a dismissal:
+            // an update banner that can only be closed teaches people
+            // to close it.
+            PlinthGroup(
+              gap: PlinthSize.xs,
+              children: [
+                PlinthButton(
+                  size: PlinthSize.xs,
+                  onPressed: () {},
+                  child: const Text('Update now'),
+                ),
+                PlinthButton(
+                  size: PlinthSize.xs,
+                  variant: PlinthVariant.subtle,
+                  onPressed: () {},
+                  child: const Text('Release notes'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 // ──────────────────────── Page Sections: Features (depth) ────────────────────────
 
 class FeatureWithScreenshotExample extends StatelessWidget {

@@ -217,18 +217,30 @@ final List<CategoryData> showcaseCategories = [
             exampleCode['FaqAccordionExample']!),
         ExampleEntry('FAQ with contact', _faqWithContact,
             exampleCode['FaqWithContactExample']!),
+        ExampleEntry('Two-column FAQ', _faqTwoColumn,
+            exampleCode['FaqTwoColumnExample']!),
+        ExampleEntry(
+            'Searchable FAQ', _faqSearch, exampleCode['FaqSearchExample']!),
       ]),
       SubcategoryData('Banners', Icons.campaign_outlined, [
         ExampleEntry('Announcement', _announcementBanner,
             exampleCode['AnnouncementBannerExample']!),
         ExampleEntry('Consent banner', _consentBanner,
             exampleCode['ConsentBannerExample']!),
+        ExampleEntry(
+            'Promo banner', _promoBanner, exampleCode['PromoBannerExample']!),
+        ExampleEntry('Update available', _updateBanner,
+            exampleCode['UpdateBannerExample']!),
       ]),
       SubcategoryData('Contact Us', Icons.alternate_email, [
         ExampleEntry(
             'Contact form', _contactForm, exampleCode['ContactFormExample']!),
         ExampleEntry('Contact with details', _contactWithDetails,
             exampleCode['ContactWithDetailsExample']!),
+        ExampleEntry('Support channels', _supportChannels,
+            exampleCode['SupportChannelsExample']!),
+        ExampleEntry('Contact with hours', _contactWithHours,
+            exampleCode['ContactWithHoursExample']!),
       ]),
       SubcategoryData('Error Pages', Icons.error_outline, [
         ExampleEntry('404 not found', _notFoundPage,
@@ -395,6 +407,13 @@ Widget _featureComparison(BuildContext context) =>
     const FeatureComparisonExample();
 Widget _featureLogoStrip(BuildContext context) =>
     const FeatureLogoStripExample();
+Widget _faqTwoColumn(BuildContext context) => const FaqTwoColumnExample();
+Widget _faqSearch(BuildContext context) => const FaqSearchExample();
+Widget _supportChannels(BuildContext context) => const SupportChannelsExample();
+Widget _contactWithHours(BuildContext context) =>
+    const ContactWithHoursExample();
+Widget _promoBanner(BuildContext context) => const PromoBannerExample();
+Widget _updateBanner(BuildContext context) => const UpdateBannerExample();
 Widget _horizontalArticleCard(BuildContext context) =>
     const HorizontalArticleCardExample();
 Widget _overlayArticleCard(BuildContext context) =>
