@@ -1,9 +1,16 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:plinth_components/plinth_components.dart';
 
 import '../../main.dart' show ThemeToggleButton;
 import 'code_panel.dart';
 import 'showcase_data.dart';
+
+/// Width of the widest showcase block. Blocks declare their own width
+/// — most are 560 — and the preview area gives them at least this much
+/// so a narrow screen pans rather than clips.
+const double _widestBlock = 640;
 
 /// Detail page for one subcategory (e.g. "Navbars"), listing its
 /// example layouts stacked vertically with a title and a "Show code"
@@ -26,13 +33,15 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final compact = MediaQuery.sizeOf(context).width < 600;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.subcategory.title),
         actions: const [ThemeToggleButton(), SizedBox(width: 8)],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(compact ? 16 : 24),
         child: PlinthContainer(
           size: PlinthContainerSize.lg,
           child: Column(
@@ -108,7 +117,31 @@ class _ExampleSection extends StatelessWidget {
         PlinthPaper(
           p: PlinthSize.lg,
           withBorder: true,
-          child: Builder(builder: example.builder),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Blocks are laid out for a page — the widest is 640 —
+              // so on a phone the preview pans sideways inside its
+              // border rather than overflowing the screen. The child
+              // keeps a *bounded* width: handing it the unbounded
+              // width a bare scroller would give breaks every Row with
+              // an Expanded or Spacer in it.
+              final width = math.max(constraints.maxWidth, _widestBlock);
+
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                // Nothing to scroll once the page is wide enough, and
+                // a scrollable that can't move still eats trackpad
+                // gestures aimed at the page behind it.
+                physics: width > constraints.maxWidth
+                    ? const ClampingScrollPhysics()
+                    : const NeverScrollableScrollPhysics(),
+                child: SizedBox(
+                  width: width,
+                  child: Builder(builder: example.builder),
+                ),
+              );
+            },
+          ),
         ),
         AnimatedSize(
           duration: const Duration(milliseconds: 150),

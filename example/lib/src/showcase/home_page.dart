@@ -14,24 +14,40 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    // A phone has room for the title, one icon and the theme toggle —
+    // not for a labelled button as well. The tooltip carries the label
+    // that the button drops.
+    final compact = width < 600;
+
+    void openGallery() => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const ShowcasePage()),
+        );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Plinth UI'),
         actions: [
-          TextButton.icon(
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const ShowcasePage()),
+          if (compact)
+            IconButton(
+              onPressed: openGallery,
+              icon: const Icon(Icons.widgets_outlined),
+              tooltip: 'Component gallery',
+            )
+          else ...[
+            TextButton.icon(
+              onPressed: openGallery,
+              icon: const Icon(Icons.widgets_outlined, size: 18),
+              label: const Text('Component gallery'),
             ),
-            icon: const Icon(Icons.widgets_outlined, size: 18),
-            label: const Text('Component gallery'),
-          ),
-          const SizedBox(width: 8),
+            const SizedBox(width: 8),
+          ],
           const ThemeToggleButton(),
           const SizedBox(width: 8),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(compact ? 16 : 24),
         child: PlinthContainer(
           size: PlinthContainerSize.lg,
           child: Column(
@@ -76,8 +92,12 @@ class _CategorySection extends StatelessWidget {
         const PlinthSpace(h: PlinthSize.xs),
         PlinthText(category.description, size: PlinthSize.sm, color: 'gray'),
         const PlinthSpace(h: PlinthSize.md),
+        // Mobile-first: three tiles across a phone leaves each title
+        // about 40px of room, which wraps it to one letter per line.
         PlinthSimpleGrid(
-          columns: 3,
+          columns: 1,
+          columnsXs: 2,
+          columnsMd: 3,
           spacing: PlinthSize.md,
           children: [
             for (final sub in category.subcategories)

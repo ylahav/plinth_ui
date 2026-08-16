@@ -149,6 +149,14 @@ that is 10px too narrow overflows in the smoke test rather than
 wrapping; widen the block rather than shrinking its content, which
 would misrepresent how much room the arrangement needs.
 
+**Blocks keep their designed width on a phone.** The detail page gives
+each preview at least 640 logical pixels and lets it pan sideways
+inside its border, so a 560-wide block renders as intended on a 390px
+screen rather than being squeezed into a shape nobody designed. That
+width is bounded rather than unbounded, which is what keeps `Expanded`
+and `Spacer` working inside it. The home page is the responsive part —
+its tile grid is `columns: 1, columnsXs: 2, columnsMd: 3`.
+
 **Nothing here is blocked on a missing component any more.** Carousels
 is the one subcategory still empty, and deliberately: Mantine ships its
 carousel as a separate package, and the same call applies here.

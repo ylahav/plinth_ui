@@ -7,6 +7,25 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.17.0
+
+### Added
+
+- **`PlinthSimpleGrid` takes per-breakpoint column counts.** `columns`
+  is joined by `columnsXs` through `columnsXl`, matching Mantine's
+  `cols={{ base: 1, md: 3 }}` and reusing the mobile-first direction
+  and `kDefaultBreakpoints` that `PlinthGridCol`'s spans already use:
+  the unqualified `columns` is the smallest case, and each breakpoint
+  applies from its width upward.
+
+  A grid could previously only be told one column count, so any
+  responsive layout had to be assembled from a `LayoutBuilder` and a
+  count computed by the caller — which is what the example app was
+  missing, and why its home page put three tiles across a phone.
+
+  Existing callers are unaffected: with no breakpoint set, `columns: 3`
+  still means three at every width, which a test now pins.
+
 ## 0.16.4
 
 ### Fixed

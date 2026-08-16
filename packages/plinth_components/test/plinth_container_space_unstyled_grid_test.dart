@@ -133,5 +133,58 @@ void main() {
       final size = tester.getSize(find.byKey(const Key('cell')));
       expect(size.width, closeTo(expectedWidth, 0.5));
     });
+
+    testWidgets('per-breakpoint counts apply from that width upward',
+        (tester) async {
+      // 700 clears xs (576) but not md (992), so the xs count wins
+      // over both the base and the wider md.
+      const grid = PlinthSimpleGrid(
+        columns: 1,
+        columnsXs: 2,
+        columnsMd: 4,
+        children: [Text('a')],
+      );
+
+      expect(grid.columnsFor(400), 1);
+      expect(grid.columnsFor(700), 2);
+      expect(grid.columnsFor(1000), 4);
+    });
+
+    testWidgets('a breakpoint count changes how wide each cell is',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          SizedBox(
+            width: 300,
+            child: PlinthSimpleGrid(
+              columns: 1,
+              columnsMd: 3,
+              spacing: PlinthSize.md,
+              children: [
+                Container(key: const Key('narrow'), height: 10),
+                Container(height: 10),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      // 300 is below every breakpoint, so the base count of 1 applies
+      // and the cell takes the full width rather than a third of it.
+      expect(
+        tester.getSize(find.byKey(const Key('narrow'))).width,
+        closeTo(300, 0.5),
+      );
+    });
+
+    testWidgets('an unqualified count still applies at every width',
+        (tester) async {
+      // Guards the existing callers: adding breakpoints must not
+      // change what `columns: 3` on its own means.
+      const grid = PlinthSimpleGrid(columns: 3, children: [Text('a')]);
+
+      expect(grid.columnsFor(320), 3);
+      expect(grid.columnsFor(1600), 3);
+    });
   });
 }

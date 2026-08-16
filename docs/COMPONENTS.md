@@ -291,8 +291,13 @@ than overflowing its row. Like SimpleGrid it is neither scrollable nor
 virtualized and needs a bounded width.
 
 ### `PlinthSimpleGrid`
-`children`, `columns`, `spacing` (default `PlinthSize.md`). A grid with
-a fixed number of columns per row and consistent spacing. Unlike
+`children`, `columns`, `spacing` (default `PlinthSize.md`), plus
+`columnsXs`/`columnsSm`/`columnsMd`/`columnsLg`/`columnsXl`. A grid with
+the same number of equal-width columns per row and consistent spacing.
+The per-breakpoint counts work exactly like `PlinthGridCol`'s spans —
+mobile-first, applying from that width upward — so `columns: 1,
+columnsMd: 3` stacks on a phone and goes three across on a desktop, and
+`columns: 3` on its own still means three at every width. Unlike
 `GridView`, this isn't scrollable or virtualized — it sizes to its
 content and expects a bounded-width ancestor (uses `LayoutBuilder`
 internally to compute cell width; an unbounded-width parent, like a
