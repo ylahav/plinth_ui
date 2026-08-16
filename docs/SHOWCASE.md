@@ -29,7 +29,7 @@ code panel will quietly show something the demo no longer does.
 
 ## What exists
 
-98 examples across 3 categories, borrowing Mantine UI's own category
+102 examples across 3 categories, borrowing Mantine UI's own category
 names so the two are directly comparable.
 
 | Category | Subcategory | Examples |
@@ -39,7 +39,7 @@ names so the two are directly comparable.
 | Application UI | Stats | Stat tiles, Stat with progress, Live metrics, Stat by period, Stat breakdown, Goal rings |
 | Application UI | User Info & Controls | User button, Profile card, User menu, Member list, Presence status |
 | Application UI | Application Cards | Project card, Task card, Pricing card, Media card, Activity card |
-| Application UI | Inputs | Search bar, Filter fields, Formatted fields |
+| Application UI | Inputs | Search bar, Filter fields, Formatted fields, Password strength, Verification code, Secret field, Address form |
 | Application UI | Buttons | Toolbar actions, Destructive actions, Split button, Async button, Inline confirm |
 | Application UI | Sliders | Price range filter, Setting sliders, Slider with marks, Budget slider, Colour controls |
 | Application UI | Grids | Dashboard grid, Card gallery, Asymmetric grid, Image gallery |
@@ -61,7 +61,7 @@ names so the two are directly comparable.
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 98. The gap is now depth
+Mantine UI has ~123 blocks against these 102. The gap is now depth
 rather than absence: **every subcategory has something in it except
 Carousels**, which is a deliberate scope call rather than a hole.
 
@@ -80,7 +80,7 @@ here genuinely waiting on one.
 | Footers | 4 | 4 | Complete — newsletter signup and a one-line app footer added |
 | Grids | 3 | 4 | Complete — twelve-column spans and a fixed-ratio gallery added |
 | User info and controls | 8 | 5 | Menu, member list and presence variants added |
-| Inputs | 14 | 3 | Composed field arrangements, not new inputs |
+| Inputs | 14 | 7 | Live validation, code entry, a read-only secret and a spanned form |
 | Buttons | 6 | 5 | Split, async and inline-confirm variants added |
 | Sliders | 6 | 5 | Marks, formatted output and colour controls added |
 | Application cards | 7 | 5 | Pricing, media and activity variants added |
@@ -119,12 +119,12 @@ what remains is depth rather than coverage — Mantine offers 6–9
 variants where this has 2 or 3. Worth adding where a variant differs
 in *kind* rather than in styling:
 
-1. **Inputs** — 14 against 3 on paper, the widest number, but the
-   softest target: most of Mantine's are styling variations rather
-   than different arrangements, so counting them overstates the gap.
-2. **Navbars**, **User info** and **Stats** — 9, 8 and 9 against 5, 5
+1. **Navbars**, **User info** and **Stats** — 9, 8 and 9 against 5, 5
    and 6. Real gaps by count, but the obvious arrangements are taken;
    what's left needs a variant that differs in kind, not a sixth one.
+2. **Inputs** — 14 against 7. The remaining seven are mostly styling
+   variations on arrangements already here (contained fields, floating
+   labels), so the number overstates what's left.
 3. **Tables**, **Dropzones**, **Drag'n'Drop** — already at or near
    parity; only worth extending if a specific arrangement is missing.
 

@@ -112,6 +112,14 @@ final List<CategoryData> showcaseCategories = [
             exampleCode['FilterFieldsExample']!),
         ExampleEntry('Formatted fields', _formattedFields,
             exampleCode['FormattedFieldsExample']!),
+        ExampleEntry('Password strength', _passwordStrength,
+            exampleCode['PasswordStrengthExample']!),
+        ExampleEntry('Verification code', _verificationCode,
+            exampleCode['VerificationCodeExample']!),
+        ExampleEntry(
+            'Secret field', _secretField, exampleCode['SecretFieldExample']!),
+        ExampleEntry(
+            'Address form', _addressForm, exampleCode['AddressFormExample']!),
       ]),
       SubcategoryData('Buttons', Icons.smart_button_outlined, [
         ExampleEntry('Toolbar actions', _toolbarActions,
@@ -345,6 +353,12 @@ Widget _footerMinimal(BuildContext context) => const FooterMinimalExample();
 Widget _asymmetricGrid(BuildContext context) => const AsymmetricGridExample();
 Widget _imageGalleryGrid(BuildContext context) =>
     const ImageGalleryGridExample();
+Widget _passwordStrength(BuildContext context) =>
+    const PasswordStrengthExample();
+Widget _verificationCode(BuildContext context) =>
+    const VerificationCodeExample();
+Widget _secretField(BuildContext context) => const SecretFieldExample();
+Widget _addressForm(BuildContext context) => const AddressFormExample();
 Widget _faqAccordion(BuildContext context) => const FaqAccordionExample();
 Widget _faqWithContact(BuildContext context) => const FaqWithContactExample();
 Widget _userButton(BuildContext context) => const UserButtonExample();

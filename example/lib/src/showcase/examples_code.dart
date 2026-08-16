@@ -1947,6 +1947,199 @@ PlinthStack(
   ],
 )
 ''',
+  'PasswordStrengthExample': r'''
+// Not const: a record holding a closure can't be. Keeping each rule
+// beside its test is what stops the checklist from drifting out of
+// step with what actually passes.
+static final _rules = <({String label, bool Function(String) met})>[
+  (label: 'At least 8 characters', met: (v) => v.length >= 8),
+  (label: 'Includes a number', met: (v) => v.contains(RegExp(r'\d'))),
+  (label: 'Includes a capital letter', met: (v) => v.contains(RegExp('[A-Z]'))),
+  (label: 'Includes a symbol', met: (v) => v.contains(RegExp(r'[!@#$%^&*]'))),
+];
+
+final met = _rules.where((r) => r.met(_value)).length;
+final strength = met / _rules.length;
+
+return PlinthStack(
+  gap: PlinthSize.sm,
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    PlinthPasswordInput(
+      label: 'Password',
+      placeholder: 'Choose a password',
+      onChanged: (v) => setState(() => _value = v),
+    ),
+    PlinthProgress(
+      value: strength,
+      size: PlinthSize.xs,
+      // Three bands rather than a gradient: the useful question is
+      // whether this will be accepted.
+      color: strength == 1
+          ? 'green'
+          : strength >= 0.5
+              ? 'yellow'
+              : 'red',
+    ),
+    for (final rule in _rules)
+      Row(
+        children: [
+          Icon(
+            rule.met(_value) ? Icons.check_circle : Icons.circle_outlined,
+            size: 16,
+            color: rule.met(_value)
+                ? context.plinth.shaded('green', 6)
+                : Colors.grey,
+          ),
+          const SizedBox(width: 8),
+          PlinthText(
+            rule.label,
+            size: PlinthSize.sm,
+            color: rule.met(_value) ? null : 'gray',
+          ),
+        ],
+      ),
+  ],
+);
+''',
+  'VerificationCodeExample': r'''
+return PlinthPaper(
+  p: PlinthSize.lg,
+  withBorder: true,
+  child: PlinthStack(
+    gap: PlinthSize.sm,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      const PlinthTitle('Enter your code', order: 4),
+      const PlinthText(
+        'We sent six digits to hello@example.com. Try 123456.',
+        size: PlinthSize.sm,
+        color: 'gray',
+        textAlign: TextAlign.center,
+      ),
+      PlinthPinInput(
+        length: 6,
+        value: _code,
+        // Checked on completion rather than per keystroke: a
+        // half-typed code is not a wrong code, and marking it red
+        // while someone is still typing says otherwise.
+        onChanged: (v) => setState(() {
+          _code = v;
+          if (v.length < _expected.length) _accepted = null;
+        }),
+        onCompleted: (v) => setState(() => _accepted = v == _expected),
+        error: _accepted == false,
+      ),
+      if (_accepted == true)
+        const PlinthText('Verified', size: PlinthSize.sm, color: 'green')
+      else if (_accepted == false)
+        const PlinthText('That code has expired or is wrong',
+            size: PlinthSize.sm, color: 'red')
+      else
+        const PlinthText('Code expires in 9:58',
+            size: PlinthSize.sm, color: 'gray'),
+      PlinthAnchor('Send a new code',
+          size: PlinthSize.sm, onTap: () => setState(() => _code = '')),
+    ],
+  ),
+);
+''',
+  'SecretFieldExample': r'''
+// A field nobody types into: the value arrives from the server, and
+// the arrangement exists to get it back out again intact.
+final _controller = TextEditingController(text: 'pk_live_4f8Xq2Lm90Zt');
+
+return PlinthStack(
+  gap: PlinthSize.xs,
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Expanded(
+          // A password field for its reveal toggle rather than for
+          // secrecy — a key on screen in a shared window is a key in
+          // a screenshot.
+          child: PlinthPasswordInput(
+            label: 'Publishable key',
+            controller: _controller,
+          ),
+        ),
+        const SizedBox(width: 8),
+        PlinthCopyButton(value: _controller.text),
+        const SizedBox(width: 4),
+        PlinthButton(
+          variant: PlinthVariant.outline,
+          onPressed: _regenerate,
+          child: const Text('Regenerate'),
+        ),
+      ],
+    ),
+    const PlinthText(
+      'Regenerating takes effect immediately. Existing calls with the '
+      'old key will start failing.',
+      size: PlinthSize.xs,
+      color: 'gray',
+    ),
+  ],
+);
+''',
+  'AddressFormExample': r'''
+// A fieldset rather than a heading above the fields: it names the
+// group for a screen reader too, so the field is announced as
+// "Shipping address, City" rather than a bare "City".
+return PlinthFieldset(
+  legend: 'Shipping address',
+  child: PlinthGrid(
+    gutter: PlinthSize.sm,
+    children: [
+      // Spans rather than a stack of full-width fields: a postcode box
+      // as wide as the street line invites the wrong thing to be typed
+      // into it.
+      const PlinthGridCol(
+        span: 12,
+        child: PlinthTextInput(label: 'Street address'),
+      ),
+      const PlinthGridCol(
+        span: 12,
+        spanXs: 7,
+        child: PlinthTextInput(label: 'City'),
+      ),
+      PlinthGridCol(
+        span: 12,
+        spanXs: 5,
+        child: PlinthMaskInput(
+          mask: '#######',
+          label: 'Postcode',
+          onChanged: (_) {},
+        ),
+      ),
+      PlinthGridCol(
+        span: 12,
+        spanXs: 7,
+        child: PlinthSelect<String>(
+          label: 'Country',
+          value: _country,
+          onChanged: (v) => setState(() => _country = v),
+          options: const [
+            PlinthSelectOption('il', 'Israel'),
+            PlinthSelectOption('uk', 'United Kingdom'),
+            PlinthSelectOption('us', 'United States'),
+          ],
+        ),
+      ),
+      const PlinthGridCol(
+        span: 12,
+        spanXs: 5,
+        child: PlinthTextInput(
+          label: 'Phone',
+          placeholder: 'For delivery only',
+        ),
+      ),
+    ],
+  ),
+);
+''',
   'FormattedFieldsExample': r'''
 PlinthStack(
   gap: PlinthSize.sm,
