@@ -2184,6 +2184,137 @@ PlinthStack(
   ],
 )
 ''',
+  'SliderWithMarksExample': r'''
+PlinthSlider(
+  value: _value,
+  max: 4,
+  // Discrete rather than continuous: the marks below are the real
+  // scale, so a value between them would be a position no label can
+  // name.
+  divisions: 4,
+  label: _marks[_value.round()],
+  onChanged: (v) => setState(() => _value = v),
+)
+''',
+  'BudgetSliderExample': r'''
+PlinthStack(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    // Formatted rather than raw: a slider reporting "2400" leaves the
+    // reader to supply the currency and separators the figure means
+    // nothing without.
+    PlinthNumberFormatter(
+      value: _budget.round(),
+      prefix: r'$',
+      size: PlinthSize.lg,
+      weight: FontWeight.w700,
+    ),
+    PlinthSlider(
+      value: _budget,
+      min: 500,
+      max: 10000,
+      divisions: 19,
+      onChanged: (v) => setState(() => _budget = v),
+    ),
+  ],
+)
+''',
+  'ColourControlsExample': r'''
+// Two slider types driving one preview. On their own the colour
+// sliders look like decoration; the swatch is what makes them read as
+// controls.
+Row(
+  children: [
+    Expanded(
+      child: PlinthStack(
+        children: [
+          PlinthHueSlider(
+            value: _hue,
+            onChanged: (h) => setState(() => _hue = h),
+          ),
+          PlinthAlphaSlider(
+            color: colour,
+            value: _alpha,
+            onChanged: (a) => setState(() => _alpha = a),
+          ),
+        ],
+      ),
+    ),
+    Container(
+      width: 96,
+      height: 72,
+      decoration: BoxDecoration(
+        color: colour,
+        borderRadius: BorderRadius.circular(8),
+      ),
+    ),
+  ],
+)
+''',
+  'SplitButtonExample': r'''
+// The common action stays one tap away; the alternatives hide behind
+// the caret. A plain menu would cost a tap for the thing people pick
+// nine times in ten.
+PlinthButtonGroup(
+  children: [
+    PlinthButton(onPressed: () {}, child: const Text('Deploy')),
+    PlinthMenu(
+      controller: _menu,
+      items: [
+        PlinthMenuItem(label: 'Deploy to staging', onTap: () {}),
+        PlinthMenuItem(label: 'Dry run', onTap: () {}),
+      ],
+      target: PlinthButton(
+        onPressed: _menu.toggle,
+        child: const Icon(Icons.keyboard_arrow_down, size: 16),
+      ),
+    ),
+  ],
+)
+''',
+  'AsyncButtonExample': r'''
+PlinthButton(
+  // Null while busy rather than a separate flag: the button is
+  // disabled for the same reason it shows a spinner, so one piece of
+  // state drives both and they cannot disagree.
+  onPressed: _busy ? null : _run,
+  leadingIcon: _busy
+      ? const PlinthLoader(size: PlinthSize.xs)
+      : const Icon(Icons.cloud_upload_outlined, size: 16),
+  child: Text(_busy ? 'Publishing…' : 'Publish'),
+)
+''',
+  'ConfirmInlineExample': r'''
+// Two steps in place rather than a modal. A modal is right when the
+// consequence needs explaining; for a single reversible row it costs a
+// dialog to answer a question the button can ask itself.
+if (!_confirming) {
+  return PlinthButton(
+    variant: PlinthVariant.subtle,
+    color: 'red',
+    onPressed: () => setState(() => _confirming = true),
+    child: const Text('Delete project'),
+  );
+}
+
+return PlinthGroup(
+  children: [
+    const PlinthText('Delete permanently?', size: PlinthSize.sm),
+    PlinthButton(
+      size: PlinthSize.sm,
+      color: 'red',
+      onPressed: _delete,
+      child: const Text('Delete'),
+    ),
+    PlinthButton(
+      size: PlinthSize.sm,
+      variant: PlinthVariant.subtle,
+      onPressed: () => setState(() => _confirming = false),
+      child: const Text('Cancel'),
+    ),
+  ],
+);
+''',
   'HorizontalArticleCardExample': r'''
 // Horizontal rather than stacked: a feed of these fits far more
 // articles on screen, and the image can shrink without the headline

@@ -118,12 +118,24 @@ final List<CategoryData> showcaseCategories = [
             exampleCode['ToolbarActionsExample']!),
         ExampleEntry('Destructive actions', _destructiveActions,
             exampleCode['DestructiveActionsExample']!),
+        ExampleEntry(
+            'Split button', _splitButton, exampleCode['SplitButtonExample']!),
+        ExampleEntry(
+            'Async button', _asyncButton, exampleCode['AsyncButtonExample']!),
+        ExampleEntry('Inline confirm', _confirmInline,
+            exampleCode['ConfirmInlineExample']!),
       ]),
       SubcategoryData('Sliders', Icons.tune, [
         ExampleEntry('Price range filter', _priceRangeFilter,
             exampleCode['PriceRangeFilterExample']!),
         ExampleEntry('Setting sliders', _settingSliders,
             exampleCode['SettingSlidersExample']!),
+        ExampleEntry('Slider with marks', _sliderWithMarks,
+            exampleCode['SliderWithMarksExample']!),
+        ExampleEntry('Budget slider', _budgetSlider,
+            exampleCode['BudgetSliderExample']!),
+        ExampleEntry('Colour controls', _colourControls,
+            exampleCode['ColourControlsExample']!),
       ]),
       SubcategoryData('Grids', Icons.grid_view, [
         ExampleEntry('Dashboard grid', _dashboardGrid,
@@ -356,6 +368,12 @@ Widget _maintenance(BuildContext context) => const MaintenanceExample();
 Widget _permissionDenied(BuildContext context) =>
     const PermissionDeniedExample();
 Widget _offline(BuildContext context) => const OfflineExample();
+Widget _sliderWithMarks(BuildContext context) => const SliderWithMarksExample();
+Widget _budgetSlider(BuildContext context) => const BudgetSliderExample();
+Widget _colourControls(BuildContext context) => const ColourControlsExample();
+Widget _splitButton(BuildContext context) => const SplitButtonExample();
+Widget _asyncButton(BuildContext context) => const AsyncButtonExample();
+Widget _confirmInline(BuildContext context) => const ConfirmInlineExample();
 Widget _horizontalArticleCard(BuildContext context) =>
     const HorizontalArticleCardExample();
 Widget _overlayArticleCard(BuildContext context) =>

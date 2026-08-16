@@ -3859,3 +3859,309 @@ class ArticleListItemExample extends StatelessWidget {
     );
   }
 }
+
+// ───────────────────────── Application UI: Sliders (depth) ─────────────────────────
+
+class SliderWithMarksExample extends StatefulWidget {
+  const SliderWithMarksExample({super.key});
+
+  @override
+  State<SliderWithMarksExample> createState() => _SliderWithMarksExampleState();
+}
+
+class _SliderWithMarksExampleState extends State<SliderWithMarksExample> {
+  double _value = 2;
+
+  static const _marks = ['Off', 'Low', 'Medium', 'High', 'Max'];
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 380,
+      child: PlinthPaper(
+        p: PlinthSize.md,
+        withBorder: true,
+        child: PlinthStack(
+          gap: PlinthSize.xs,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const PlinthText('Compression', weight: FontWeight.w600),
+            PlinthSlider(
+              value: _value,
+              max: 4,
+              // Discrete rather than continuous: the marks below are
+              // the real scale, so a value between them would be a
+              // position no label can name.
+              divisions: 4,
+              label: _marks[_value.round()],
+              onChanged: (v) => setState(() => _value = v),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                for (var i = 0; i < _marks.length; i++)
+                  PlinthText(
+                    _marks[i],
+                    size: PlinthSize.xs,
+                    color: i == _value.round() ? null : 'gray',
+                    weight: i == _value.round() ? FontWeight.w700 : null,
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BudgetSliderExample extends StatefulWidget {
+  const BudgetSliderExample({super.key});
+
+  @override
+  State<BudgetSliderExample> createState() => _BudgetSliderExampleState();
+}
+
+class _BudgetSliderExampleState extends State<BudgetSliderExample> {
+  double _budget = 2400;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 380,
+      child: PlinthPaper(
+        p: PlinthSize.md,
+        withBorder: true,
+        child: PlinthStack(
+          gap: PlinthSize.sm,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Expanded(
+                  child: PlinthText('Monthly budget', weight: FontWeight.w600),
+                ),
+                // Formatted rather than raw: a slider reporting "2400"
+                // leaves the reader to supply the currency and
+                // separators the figure means nothing without.
+                PlinthNumberFormatter(
+                  value: _budget.round(),
+                  prefix: r'$',
+                  size: PlinthSize.lg,
+                  weight: FontWeight.w700,
+                ),
+              ],
+            ),
+            PlinthSlider(
+              value: _budget,
+              min: 500,
+              max: 10000,
+              divisions: 19,
+              onChanged: (v) => setState(() => _budget = v),
+            ),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                PlinthText(r'$500', size: PlinthSize.xs, color: 'gray'),
+                PlinthText(r'$10,000', size: PlinthSize.xs, color: 'gray'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ColourControlsExample extends StatefulWidget {
+  const ColourControlsExample({super.key});
+
+  @override
+  State<ColourControlsExample> createState() => _ColourControlsExampleState();
+}
+
+class _ColourControlsExampleState extends State<ColourControlsExample> {
+  double _hue = 210;
+  double _alpha = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    final colour = HSVColor.fromAHSV(_alpha, _hue, 0.8, 0.9).toColor();
+
+    return SizedBox(
+      width: 420,
+      child: PlinthPaper(
+        p: PlinthSize.md,
+        withBorder: true,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Two slider types driving one preview. On their own the
+            // colour sliders look like decoration; the swatch is what
+            // makes them read as controls.
+            Expanded(
+              child: PlinthStack(
+                gap: PlinthSize.sm,
+                children: [
+                  PlinthHueSlider(
+                    value: _hue,
+                    onChanged: (h) => setState(() => _hue = h),
+                  ),
+                  PlinthAlphaSlider(
+                    color: colour,
+                    value: _alpha,
+                    onChanged: (a) => setState(() => _alpha = a),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            Container(
+              width: 96,
+              height: 72,
+              decoration: BoxDecoration(
+                color: colour,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: context.plinth.border),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ───────────────────────── Application UI: Buttons (depth) ─────────────────────────
+
+class SplitButtonExample extends StatefulWidget {
+  const SplitButtonExample({super.key});
+
+  @override
+  State<SplitButtonExample> createState() => _SplitButtonExampleState();
+}
+
+class _SplitButtonExampleState extends State<SplitButtonExample> {
+  final PlinthDisclosureController _menu = PlinthDisclosureController();
+
+  @override
+  void dispose() {
+    _menu.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthButtonGroup(
+      children: [
+        // The common action stays one tap away; the alternatives hide
+        // behind the caret. A plain menu would cost a tap for the
+        // thing people pick nine times in ten.
+        PlinthButton(onPressed: () {}, child: const Text('Deploy')),
+        PlinthMenu(
+          controller: _menu,
+          items: [
+            PlinthMenuItem(label: 'Deploy to staging', onTap: () {}),
+            PlinthMenuItem(label: 'Deploy and tag', onTap: () {}),
+            PlinthMenuItem(label: 'Dry run', onTap: () {}),
+          ],
+          target: PlinthButton(
+            onPressed: _menu.toggle,
+            child: const Icon(Icons.keyboard_arrow_down, size: 16),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class AsyncButtonExample extends StatefulWidget {
+  const AsyncButtonExample({super.key});
+
+  @override
+  State<AsyncButtonExample> createState() => _AsyncButtonExampleState();
+}
+
+class _AsyncButtonExampleState extends State<AsyncButtonExample> {
+  bool _busy = false;
+  bool _done = false;
+
+  Future<void> _run() async {
+    setState(() {
+      _busy = true;
+      _done = false;
+    });
+    await Future<void>.delayed(const Duration(milliseconds: 900));
+    if (!mounted) return;
+    setState(() {
+      _busy = false;
+      _done = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthGroup(
+      gap: PlinthSize.sm,
+      children: [
+        PlinthButton(
+          // Null while busy rather than a flag: the button is disabled
+          // for the same reason it shows a spinner, so one piece of
+          // state drives both and they cannot disagree.
+          onPressed: _busy ? null : _run,
+          leadingIcon: _busy
+              ? const PlinthLoader(size: PlinthSize.xs)
+              : const Icon(Icons.cloud_upload_outlined, size: 16),
+          child: Text(_busy ? 'Publishing…' : 'Publish'),
+        ),
+        if (_done) const PlinthBadge('Published', color: 'green'),
+      ],
+    );
+  }
+}
+
+class ConfirmInlineExample extends StatefulWidget {
+  const ConfirmInlineExample({super.key});
+
+  @override
+  State<ConfirmInlineExample> createState() => _ConfirmInlineExampleState();
+}
+
+class _ConfirmInlineExampleState extends State<ConfirmInlineExample> {
+  bool _confirming = false;
+
+  @override
+  Widget build(BuildContext context) {
+    // Two steps in place rather than a modal. A modal is right when
+    // the consequence needs explaining; for a single reversible row it
+    // costs a dialog to answer a question the button can ask itself.
+    if (!_confirming) {
+      return PlinthButton(
+        variant: PlinthVariant.subtle,
+        color: 'red',
+        onPressed: () => setState(() => _confirming = true),
+        leadingIcon: const Icon(Icons.delete_outline, size: 16),
+        child: const Text('Delete project'),
+      );
+    }
+
+    return PlinthGroup(
+      gap: PlinthSize.xs,
+      children: [
+        const PlinthText('Delete permanently?', size: PlinthSize.sm),
+        PlinthButton(
+          size: PlinthSize.sm,
+          color: 'red',
+          onPressed: () => setState(() => _confirming = false),
+          child: const Text('Delete'),
+        ),
+        PlinthButton(
+          size: PlinthSize.sm,
+          variant: PlinthVariant.subtle,
+          onPressed: () => setState(() => _confirming = false),
+          child: const Text('Cancel'),
+        ),
+      ],
+    );
+  }
+}

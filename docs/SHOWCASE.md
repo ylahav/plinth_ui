@@ -29,7 +29,7 @@ code panel will quietly show something the demo no longer does.
 
 ## What exists
 
-76 examples across 3 categories, borrowing Mantine UI's own category
+82 examples across 3 categories, borrowing Mantine UI's own category
 names so the two are directly comparable.
 
 | Category | Subcategory | Examples |
@@ -40,8 +40,8 @@ names so the two are directly comparable.
 | Application UI | User Info & Controls | User button, Profile card, User menu, Member list, Presence status |
 | Application UI | Application Cards | Project card, Task card, Pricing card, Media card, Activity card |
 | Application UI | Inputs | Search bar, Filter fields, Formatted fields |
-| Application UI | Buttons | Toolbar actions, Destructive actions |
-| Application UI | Sliders | Price range filter, Setting sliders |
+| Application UI | Buttons | Toolbar actions, Destructive actions, Split button, Async button, Inline confirm |
+| Application UI | Sliders | Price range filter, Setting sliders, Slider with marks, Budget slider, Colour controls |
 | Application UI | Grids | Dashboard grid, Card gallery |
 | Application UI | Tables | Member table, Invoice table, Sortable table |
 | Application UI | Dropzones | File dropzone, Avatar upload |
@@ -61,7 +61,7 @@ names so the two are directly comparable.
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 76. The gap is now depth
+Mantine UI has ~123 blocks against these 82. The gap is now depth
 rather than absence: **every subcategory has something in it except
 Carousels**, which is a deliberate scope call rather than a hole.
 
@@ -81,8 +81,8 @@ here genuinely waiting on one.
 | Grids | 3 | 2 | |
 | User info and controls | 8 | 5 | Menu, member list and presence variants added |
 | Inputs | 14 | 3 | Composed field arrangements, not new inputs |
-| Buttons | 6 | 2 | |
-| Sliders | 6 | 2 | |
+| Buttons | 6 | 5 | Split, async and inline-confirm variants added |
+| Sliders | 6 | 5 | Marks, formatted output and colour controls added |
 | Application cards | 7 | 5 | Pricing, media and activity variants added |
 | Stats | 9 | 6 | Period switcher, part-to-whole breakdown and goal rings added |
 | Tables | 4 | 3 | Sorting and filtering landed in 0.14.0 |
@@ -119,20 +119,20 @@ what remains is depth rather than coverage — Mantine offers 6–9
 variants where this has 2 or 3. Worth adding where a variant differs
 in *kind* rather than in styling:
 
-1. **Sliders** and **Buttons** — 6 against 2 each, and both are
-   genuinely under-served: a slider with marks or a stepped range, a
-   split button or a button group with a menu.
-2. **Hero sections** and **Feature sections** — 6 and 5 against 2.
-3. **Footers** and **Grids** — 4 and 3 against 2, the last of the
-   small gaps.
-4. **Inputs** — 14 against 3 on paper, the widest number, but the
+1. **Hero sections** and **Feature sections** — 6 and 5 against 2, now
+   the widest real gaps.
+2. **Footers** and **Grids** — 4 and 3 against 2, the last of the
+   small ones.
+3. **Inputs** — 14 against 3 on paper, the widest number, but the
    softest target: most of Mantine's are styling variations rather
    than different arrangements, so counting them overstates the gap.
+4. **Tables**, **Dropzones**, **Drag'n'Drop** — already at or near
+   parity; only worth extending if a specific arrangement is missing.
 
-**Authentication, Error pages, Article cards, Comments and Table of
-contents are done** — each meets or nearly meets Mantine's count.
-"Done" here means the arrangements are covered, not that no variant
-could ever be added.
+**Authentication, Error pages, Article cards, Buttons, Sliders,
+Comments and Table of contents are done** — each meets or nearly meets
+Mantine's count. "Done" here means the arrangements are covered, not
+that no variant could ever be added.
 
 Every subcategory except Carousels now has at least five examples in
 the areas people actually copy from. Each new variant differs in *kind*

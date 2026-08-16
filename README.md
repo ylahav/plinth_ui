@@ -391,9 +391,9 @@ intentional rather than bugs:
   (fine) but blue toward cyan (worse). Doing it properly needs per-hue
   drift tables rather than a formula. Contrast wasn't the blocker —
   the WCAG suite passed throughout. See `_generateShades`.
-- Extend the composed-blocks showcase — 76 examples against Mantine
-  UI's ~123. The subcategories people copy from most are at five or
-  six each; what's left is Sliders, Buttons, Heroes and Features at two
+- Extend the composed-blocks showcase — 82 examples against Mantine
+  UI's ~123. Eleven of the twenty-four subcategories are now at five or
+  more; Hero and Feature sections are the widest remaining at two
   apiece. Nothing is blocked on a missing component. See
   **[docs/SHOWCASE.md](docs/SHOWCASE.md)**.
 - ~~Bring the example app's component tour up to date~~ — done. All
