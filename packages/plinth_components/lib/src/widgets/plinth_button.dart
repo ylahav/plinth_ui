@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_loader.dart';
+
 /// A themeable button matching Mantine's Button API shape: a
 /// `variant` controlling visual weight, a `size` from the shared
 /// [PlinthSize] scale, and a `color` that keys into the active
@@ -20,9 +22,13 @@ class PlinthButton extends StatelessWidget {
     this.radius,
     this.fullWidth = false,
     this.leadingIcon,
+    this.loading = false,
   });
 
+  /// Null disables the button, Flutter's own convention — and unlike
+  /// before 0.19.0, a disabled button now *looks* disabled.
   final VoidCallback? onPressed;
+
   final Widget child;
   final PlinthVariant variant;
   final PlinthSize size;
@@ -37,6 +43,15 @@ class PlinthButton extends StatelessWidget {
   final bool fullWidth;
   final Widget? leadingIcon;
 
+  /// Shows a spinner in place of [leadingIcon] and stops responding to
+  /// taps, for the span between a submit and its answer.
+  ///
+  /// Keeps the button's own colors rather than the disabled ones: it
+  /// is *busy*, not unavailable, and greying it out would say the
+  /// press didn't land. Taps are ignored regardless, so a slow request
+  /// can't be submitted twice.
+  final bool loading;
+
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
@@ -48,24 +63,31 @@ class PlinthButton extends StatelessWidget {
     final horizontalPadding = theme.spacing[size]!;
     final fontSize = theme.fontSizes[size]!;
 
-    final (background, foreground, border) = _resolveColors(
-      variant: variant,
-      colorKey: colorKey,
-      baseColor: baseColor,
-      lightColor: theme.shaded(colorKey, 1),
-      theme: theme,
-    );
+    final disabled = onPressed == null;
+
+    final (background, foreground, border) = disabled
+        ? _disabledColors(variant, theme)
+        : _resolveColors(
+            variant: variant,
+            colorKey: colorKey,
+            baseColor: baseColor,
+            lightColor: theme.shaded(colorKey, 1),
+            theme: theme,
+          );
 
     return SizedBox(
       width: fullWidth ? double.infinity : null,
       child: Semantics(
         button: true,
-        enabled: onPressed != null,
+        enabled: !disabled && !loading,
         child: Material(
           color: background,
           borderRadius: BorderRadius.circular(resolvedRadius),
           child: InkWell(
-            onTap: onPressed,
+            // A button mid-request must not take a second press, so
+            // loading removes the callback rather than only dressing
+            // the button up as busy.
+            onTap: loading ? null : onPressed,
             borderRadius: BorderRadius.circular(resolvedRadius),
             child: Container(
               padding: EdgeInsets.symmetric(
@@ -80,7 +102,17 @@ class PlinthButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (leadingIcon != null) ...[
+                  if (loading) ...[
+                    // Sized to the label rather than the size scale, so
+                    // starting to load doesn't change the button's
+                    // height — and tinted to the foreground, which on a
+                    // filled button is a colour the palette can't name.
+                    PlinthLoader(
+                      dimension: fontSize,
+                      colorValue: foreground,
+                    ),
+                    SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
+                  ] else if (leadingIcon != null) ...[
                     leadingIcon!,
                     SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
                   ],
@@ -106,6 +138,37 @@ class PlinthButton extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// What every variant collapses to once the button can't be pressed.
+  ///
+  /// A muted fill rather than an opacity wrapper: opacity lets whatever
+  /// sits behind the button show through it, so the same disabled
+  /// button reads differently on a card and on a photograph. The
+  /// variants that draw nothing keep drawing nothing — a disabled
+  /// `subtle` button with a grey plate would be *more* prominent than
+  /// its enabled self.
+  (Color background, Color foreground, Color? border) _disabledColors(
+    PlinthVariant variant,
+    PlinthTheme theme,
+  ) {
+    return switch (variant) {
+      PlinthVariant.subtle || PlinthVariant.transparent => (
+          Colors.transparent,
+          theme.textDisabled,
+          null
+        ),
+      PlinthVariant.outline || PlinthVariant.defaultVariant => (
+          theme.surfaceMuted,
+          theme.textDisabled,
+          theme.borderMuted
+        ),
+      PlinthVariant.filled || PlinthVariant.light => (
+          theme.surfaceMuted,
+          theme.textDisabled,
+          null
+        ),
+    };
   }
 
   (Color background, Color foreground, Color? border) _resolveColors({

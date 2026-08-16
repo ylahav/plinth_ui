@@ -7,6 +7,50 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.19.0
+
+First batch of the [pre-1.0 audit](../../docs/PRE_1_0_AUDIT.md), which
+compared each component against Mantine's own props rather than asking
+which components were missing.
+
+### Added
+
+- **`loading` on `PlinthButton` and `PlinthActionIcon`.** A spinner in
+  place of the leading icon (or of the icon itself), and taps ignored
+  while it is set, so a slow request can't be submitted twice.
+
+  It keeps the button's own colors rather than the disabled ones: busy
+  is not unavailable, and greying the button out would suggest the
+  press never landed. The spinner is sized to the label's font size, so
+  a button doesn't change height when it starts loading.
+
+- **`PlinthLoader` takes `colorValue` and `dimension`** — exact
+  overrides for `color` and `size`. Both exist because a spinner inside
+  a filled button needs the foreground `contrastingOn` resolved for
+  that fill, which the palette can't name, at the label's line height,
+  which isn't a step on the size scale.
+
+### Fixed
+
+- **Disabled buttons looked enabled.** `PlinthButton` and
+  `PlinthActionIcon` took a null `onPressed` — the library's convention
+  for disabled — and changed nothing but the semantics. To anyone not
+  using a screen reader, including the person wondering why their tap
+  does nothing, a disabled button was indistinguishable from a live
+  one.
+
+  Both now use the `surfaceMuted`/`textDisabled` tokens the theme has
+  had all along and `PlinthCloseButton`, `PlinthTextInput` and
+  `PlinthSelect` were already using. The variants that draw nothing
+  (`subtle`, `transparent`) keep drawing nothing — a grey plate behind
+  a disabled subtle button would make it *more* prominent than its
+  enabled self.
+
+  A muted fill rather than an opacity wrapper, so a disabled button
+  doesn't read differently on a card than on a photograph. The
+  `plinth_button_disabled` golden was recording the bug and has been
+  regenerated.
+
 ## 0.18.0
 
 ### Added

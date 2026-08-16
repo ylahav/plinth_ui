@@ -35,6 +35,8 @@ class PlinthLoader extends StatefulWidget {
     this.type = PlinthLoaderType.oval,
     this.size = PlinthSize.md,
     this.color,
+    this.colorValue,
+    this.dimension,
   });
 
   final PlinthLoaderType type;
@@ -43,6 +45,22 @@ class PlinthLoader extends StatefulWidget {
   /// Color key into the theme palette, resolved at shade 6. Falls back
   /// to the theme's primary color.
   final String? color;
+
+  /// An exact color, for a spinner sitting on something the palette
+  /// cannot name — the foreground of a filled button, which is
+  /// whatever `contrastingOn` resolved against that fill. Takes
+  /// precedence over [color].
+  ///
+  /// Mantine's single `color` prop accepts a theme key *or* any CSS
+  /// color; in Dart those are two types, so they are two parameters.
+  final Color? colorValue;
+
+  /// An exact extent in logical pixels, overriding [size].
+  ///
+  /// For a spinner that has to match something measured rather than
+  /// something on the size scale — a button's line height, say, so the
+  /// button doesn't change height when it starts loading.
+  final double? dimension;
 
   @override
   State<PlinthLoader> createState() => _PlinthLoaderState();
@@ -98,8 +116,9 @@ class _PlinthLoaderState extends State<PlinthLoader>
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final color = theme.shaded(widget.color ?? theme.primaryColor, 6);
-    final extent = _loaderSizes[widget.size]!;
+    final color = widget.colorValue ??
+        theme.shaded(widget.color ?? theme.primaryColor, 6);
+    final extent = widget.dimension ?? _loaderSizes[widget.size]!;
 
     return switch (widget.type) {
       // The oval type defers to Flutter's own indicator rather than

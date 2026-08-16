@@ -488,6 +488,9 @@ final List<WidgetbookNode> plinthDirectories = [
                   color: _colorKnob(context),
                   radius: _radiusKnob(context),
                   fullWidth: context.knobs.boolean(label: 'fullWidth'),
+                  // Worth toggling against `enabled`: loading keeps the
+                  // button's own colors, disabled doesn't.
+                  loading: context.knobs.boolean(label: 'loading'),
                   leadingIcon: leadingIcon == null ? null : Icon(leadingIcon),
                   // Disabled is expressed by a null callback rather
                   // than a flag, so the knob toggles the callback.
@@ -621,6 +624,7 @@ final List<WidgetbookNode> plinthDirectories = [
                   // no effect once circle is on — hide it rather than
                   // offer a control that silently does nothing.
                   radius: circle ? null : _radiusKnob(context),
+                  loading: context.knobs.boolean(label: 'loading'),
                   onPressed: context.knobs
                           .boolean(label: 'enabled', initialValue: true)
                       ? () {}

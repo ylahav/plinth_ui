@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_loader.dart';
+
 /// An icon-only button matching Mantine's `ActionIcon`: same
 /// variant/size/color resolution as [PlinthButton], but square
 /// (or circular) with no label.
@@ -23,9 +25,13 @@ class PlinthActionIcon extends StatelessWidget {
     this.color,
     this.radius,
     this.circle = false,
+    this.loading = false,
   });
 
   final Widget icon;
+
+  /// Null disables the control, and from 0.19.0 that is visible rather
+  /// than only semantic.
   final VoidCallback? onPressed;
   final PlinthVariant variant;
   final PlinthSize size;
@@ -34,6 +40,11 @@ class PlinthActionIcon extends StatelessWidget {
 
   /// Fully circular instead of rounded-square when true.
   final bool circle;
+
+  /// Shows a spinner in place of [icon] and stops responding to taps.
+  /// Keeps its own colors, the same reasoning as [PlinthButton.loading]:
+  /// busy is not the same as unavailable.
+  final bool loading;
 
   static const Map<PlinthSize, double> _dimensions = {
     PlinthSize.xs: 24,
@@ -61,43 +72,69 @@ class PlinthActionIcon extends StatelessWidget {
     final resolvedRadius =
         circle ? dimension / 2 : theme.radius[radius ?? theme.defaultRadius]!;
 
-    final (background, foreground, border) = switch (variant) {
-      PlinthVariant.filled => (baseColor, theme.contrastingOn(baseColor), null),
-      PlinthVariant.light => (
-          lightColor,
-          theme.readableOn(colorKey, lightColor),
-          null
-        ),
-      PlinthVariant.outline => (
-          Colors.transparent,
-          theme.readableOn(colorKey, theme.surface),
-          theme.readableOn(colorKey, theme.surface)
-        ),
-      PlinthVariant.subtle => (
-          Colors.transparent,
-          theme.readableOn(colorKey, theme.surface),
-          null
-        ),
-      PlinthVariant.transparent => (
-          Colors.transparent,
-          theme.readableOn(colorKey, theme.surface),
-          null
-        ),
-      PlinthVariant.defaultVariant => (
-          theme.surface,
-          theme.text,
-          theme.border,
-        ),
-    };
+    final disabled = onPressed == null;
+
+    // Same treatment as PlinthButton's disabled state, and for the same
+    // reason: the variants that draw nothing keep drawing nothing.
+    final (background, foreground, border) = disabled
+        ? switch (variant) {
+            PlinthVariant.subtle || PlinthVariant.transparent => (
+                Colors.transparent,
+                theme.textDisabled,
+                null,
+              ),
+            PlinthVariant.outline || PlinthVariant.defaultVariant => (
+                theme.surfaceMuted,
+                theme.textDisabled,
+                theme.borderMuted,
+              ),
+            PlinthVariant.filled || PlinthVariant.light => (
+                theme.surfaceMuted,
+                theme.textDisabled,
+                null,
+              ),
+          }
+        : switch (variant) {
+            PlinthVariant.filled => (
+                baseColor,
+                theme.contrastingOn(baseColor),
+                null
+              ),
+            PlinthVariant.light => (
+                lightColor,
+                theme.readableOn(colorKey, lightColor),
+                null
+              ),
+            PlinthVariant.outline => (
+                Colors.transparent,
+                theme.readableOn(colorKey, theme.surface),
+                theme.readableOn(colorKey, theme.surface)
+              ),
+            PlinthVariant.subtle => (
+                Colors.transparent,
+                theme.readableOn(colorKey, theme.surface),
+                null
+              ),
+            PlinthVariant.transparent => (
+                Colors.transparent,
+                theme.readableOn(colorKey, theme.surface),
+                null
+              ),
+            PlinthVariant.defaultVariant => (
+                theme.surface,
+                theme.text,
+                theme.border,
+              ),
+          };
 
     return Semantics(
       button: true,
-      enabled: onPressed != null,
+      enabled: !disabled && !loading,
       child: Material(
         color: background,
         borderRadius: BorderRadius.circular(resolvedRadius),
         child: InkWell(
-          onTap: onPressed,
+          onTap: loading ? null : onPressed,
           borderRadius: BorderRadius.circular(resolvedRadius),
           child: Container(
             width: dimension,
@@ -107,10 +144,16 @@ class PlinthActionIcon extends StatelessWidget {
               borderRadius: BorderRadius.circular(resolvedRadius),
               border: border != null ? Border.all(color: border) : null,
             ),
-            child: IconTheme(
-              data: IconThemeData(size: _iconSizes[size], color: foreground),
-              child: icon,
-            ),
+            child: loading
+                ? PlinthLoader(
+                    dimension: _iconSizes[size],
+                    colorValue: foreground,
+                  )
+                : IconTheme(
+                    data: IconThemeData(
+                        size: _iconSizes[size], color: foreground),
+                    child: icon,
+                  ),
           ),
         ),
       ),

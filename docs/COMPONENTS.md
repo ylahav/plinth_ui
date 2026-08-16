@@ -81,9 +81,22 @@ reads as a known one rather than an oversight.
 ## Primitives
 
 ### `PlinthButton`
-`onPressed`, `child`, `variant`, `size`, `color`, `radius`, `fullWidth`, `leadingIcon`.
+`onPressed`, `child`, `variant`, `size`, `color`, `radius`, `fullWidth`,
+`leadingIcon`, `loading`.
 The reference implementation — every other component's variant/size/color
 resolution logic follows this one's pattern.
+
+A null `onPressed` disables it, Flutter's own convention, and since
+0.19.0 that is visible: a muted fill and `textDisabled` label, or for
+the variants that draw nothing (`subtle`, `transparent`) just the muted
+label. A muted fill rather than an opacity wrapper, so the same disabled
+button doesn't read differently on a card and on a photograph.
+
+`loading` shows a spinner in place of `leadingIcon` and ignores taps, so
+a slow request can't be submitted twice. It keeps the button's own
+colors — busy is not unavailable, and greying it out would suggest the
+press never landed. The spinner is sized to the label's font size, so
+loading doesn't change the button's height.
 
 ### `PlinthButtonGroup`
 `children`. Visually joins a row of buttons (or any bordered children)
@@ -93,9 +106,11 @@ doubling up. A layout wrapper only; doesn't alter children's own
 behavior.
 
 ### `PlinthActionIcon`
-`icon`, `onPressed`, `variant`, `size`, `color`, `radius`, `circle`. Same
-variant/size/color resolution as `PlinthButton`, but square (or fully
-circular) with no label — for icon-only actions.
+`icon`, `onPressed`, `variant`, `size`, `color`, `radius`, `circle`,
+`loading`. Same variant/size/color resolution as `PlinthButton`, but
+square (or fully circular) with no label — for icon-only actions.
+Disabled and loading behave exactly as they do there; `loading` replaces
+the icon rather than sitting beside it, since there is no label to keep.
 
 ### `PlinthCopyButton`
 `value` (the text to copy), `color`, `size`, `confirmDuration` (default
@@ -886,9 +901,18 @@ timing, and swipe-to-dismiss rather than reimplementing a toast stack.
 
 ### `PlinthLoader`
 `type` (`PlinthLoaderType`: `oval, dots, bars` — default `oval`), `size`,
-`color`. The loading indicator on its own, for a button mid-submit or an
-empty panel awaiting its first fetch. `PlinthLoadingOverlay` already
-shows a spinner, but only as part of covering existing content.
+`color`, `colorValue`, `dimension`. The loading indicator on its own, for
+a button mid-submit or an empty panel awaiting its first fetch.
+`PlinthLoadingOverlay` already shows a spinner, but only as part of
+covering existing content.
+
+`colorValue` and `dimension` are exact overrides for `color` and `size`,
+added so `PlinthButton.loading` could put a spinner in a filled button:
+its foreground is whatever `contrastingOn` resolved against that fill, a
+color the palette can't name, and its extent has to match the label's
+line height rather than a step on the size scale. Mantine's `color`
+takes a theme key *or* any CSS color; in Dart those are two types, so
+they are two parameters.
 
 `oval` wraps Flutter's `CircularProgressIndicator` (same
 wrap-don't-reimplement rationale as `PlinthSlider`); `dots` and `bars`

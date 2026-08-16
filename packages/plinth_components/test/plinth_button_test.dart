@@ -156,4 +156,150 @@ void main() {
       expect(semantics.flagsCollection.isButton, isTrue);
     });
   });
+
+  group('disabled', () {
+    /// The fill the button actually paints, read off the `Material`
+    /// that paints it.
+    Color background(WidgetTester tester) => tester
+        .widget<Material>(
+          find.descendant(
+            of: find.byType(PlinthButton),
+            matching: find.byType(Material),
+          ),
+        )
+        .color!;
+
+    testWidgets('a null onPressed changes how the button looks',
+        (tester) async {
+      // Until 0.19.0 it changed only the semantics, so a disabled
+      // button was indistinguishable from an enabled one to everyone
+      // not using a screen reader — including the person wondering why
+      // their tap does nothing.
+      await tester.pumpWidget(
+        _wrap(PlinthButton(onPressed: () {}, child: const Text('Save'))),
+      );
+      final enabled = background(tester);
+
+      await tester.pumpWidget(
+        _wrap(const PlinthButton(onPressed: null, child: Text('Save'))),
+      );
+
+      expect(background(tester), isNot(enabled));
+      expect(background(tester), PlinthTheme.defaultTheme.surfaceMuted);
+      expect(
+        _labelStyle(tester, 'Save').color,
+        PlinthTheme.defaultTheme.textDisabled,
+      );
+    });
+
+    testWidgets('the variants that draw nothing keep drawing nothing',
+        (tester) async {
+      // A disabled `subtle` button with a grey plate behind it would be
+      // more prominent than its enabled self.
+      await tester.pumpWidget(
+        _wrap(const PlinthButton(
+          onPressed: null,
+          variant: PlinthVariant.subtle,
+          child: Text('Save'),
+        )),
+      );
+
+      expect(background(tester), Colors.transparent);
+      expect(
+        _labelStyle(tester, 'Save').color,
+        PlinthTheme.defaultTheme.textDisabled,
+      );
+    });
+  });
+
+  group('loading', () {
+    testWidgets('shows a spinner and ignores taps', (tester) async {
+      var presses = 0;
+      await tester.pumpWidget(
+        _wrap(PlinthButton(
+          loading: true,
+          onPressed: () => presses++,
+          child: const Text('Save'),
+        )),
+      );
+
+      expect(find.byType(PlinthLoader), findsOneWidget);
+
+      await tester.tap(find.text('Save'));
+      await tester.pump();
+
+      // A slow request must not be submittable twice.
+      expect(presses, 0);
+    });
+
+    testWidgets('keeps its own colors rather than the disabled ones',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthButton(
+          loading: true,
+          onPressed: () {},
+          child: const Text('Save'),
+        )),
+      );
+
+      // Busy is not unavailable: greying the button out would say the
+      // press didn't land.
+      final material = tester.widget<Material>(
+        find.descendant(
+          of: find.byType(PlinthButton),
+          matching: find.byType(Material),
+        ),
+      );
+      expect(material.color, isNot(PlinthTheme.defaultTheme.surfaceMuted));
+    });
+
+    testWidgets('takes the place of the leading icon, not the label',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthButton(
+          loading: true,
+          leadingIcon: const Icon(Icons.save),
+          onPressed: () {},
+          child: const Text('Save'),
+        )),
+      );
+
+      expect(find.byIcon(Icons.save), findsNothing);
+      expect(find.text('Save'), findsOneWidget);
+    });
+  });
+
+  group('PlinthActionIcon', () {
+    testWidgets('a null onPressed changes how it looks', (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthActionIcon(icon: Icon(Icons.add), onPressed: null)),
+      );
+
+      final material = tester.widget<Material>(
+        find.descendant(
+          of: find.byType(PlinthActionIcon),
+          matching: find.byType(Material),
+        ),
+      );
+      expect(material.color, PlinthTheme.defaultTheme.surfaceMuted);
+    });
+
+    testWidgets('loading replaces the icon and ignores taps', (tester) async {
+      var presses = 0;
+      await tester.pumpWidget(
+        _wrap(PlinthActionIcon(
+          icon: const Icon(Icons.refresh),
+          loading: true,
+          onPressed: () => presses++,
+        )),
+      );
+
+      expect(find.byIcon(Icons.refresh), findsNothing);
+      expect(find.byType(PlinthLoader), findsOneWidget);
+
+      await tester.tap(find.byType(PlinthActionIcon));
+      await tester.pump();
+      expect(presses, 0);
+    });
+  });
 }
