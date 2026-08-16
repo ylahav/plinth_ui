@@ -74,12 +74,22 @@ drag label, but no marks. Again the showcase proves it — the **Slider
 with marks** block draws its own row of labels under a slider and
 aligns them by hand.
 
-### 4. `PlinthTooltip` can't be positioned
+### 4. `PlinthTooltip` can't be positioned — **done in 0.19.0, partly**
 `PlinthPopover`, `PlinthMenu` and `PlinthHoverCard` all take
-`position`. `PlinthTooltip` does not — it is always placed the same
-way. Tooltips near a screen edge are exactly where position control
-matters, and the inconsistency is worse than the absence: three of four
-overlays take the prop.
+`position`. `PlinthTooltip` did not — it was always placed the same
+way, with a fixed 400ms delay besides.
+
+It now takes `position`, `offset`, `openDelay` and `color`. **`position`
+has two values, not four**: Flutter's tooltip decides its own horizontal
+placement and exposes only a vertical preference, so `left`/`right`
+would mean re-deriving hover, long-press, focus and dismissal on our own
+overlay — the work the component exists to avoid. Flutter already flips
+to the opposite side when the preferred one won't fit, which was the
+part that actually mattered near a screen edge.
+
+Recorded as a divergence rather than a gap: if a caller genuinely needs
+a tooltip beside its target, `PlinthHoverCard` is the four-sided
+component and takes arbitrary content.
 
 ### 5. Nothing in the select family is clearable
 `clearable`/`onClear` appears on Mantine's Select, MultiSelect,

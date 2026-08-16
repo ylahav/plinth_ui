@@ -4132,6 +4132,23 @@ final List<WidgetbookNode> plinthDirectories = [
                 // use — an md tooltip reads oversized.
                 size: _sizeKnob(context, initial: PlinthSize.sm),
                 radius: _radiusKnob(context),
+                position: context.knobs.object.dropdown(
+                  label: 'position',
+                  options: PlinthTooltipPosition.values,
+                  initialOption: PlinthTooltipPosition.top,
+                  labelBuilder: (p) => p.name,
+                  description: 'Two sides, not four — Flutter picks the '
+                      'horizontal placement itself',
+                ),
+                openDelay: Duration(
+                  milliseconds: context.knobs.int.slider(
+                    label: 'openDelay (ms)',
+                    initialValue: 400,
+                    min: 0,
+                    max: 1500,
+                  ),
+                ),
+                color: _colorKnob(context),
                 child: PlinthButton(
                   variant: PlinthVariant.outline,
                   onPressed: () {},

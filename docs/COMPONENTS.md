@@ -1422,8 +1422,28 @@ while the pointer travels from `target` onto `content` itself, which
 state is managed internally via `MouseRegion`.
 
 ### `PlinthTooltip`
-`message`, `child`, `size`, `radius`. A themed wrapper around Flutter's
-built-in `Tooltip` — shown on hover (desktop/web) or long-press (touch).
+`message`, `child`, `size`, `radius`, `position`
+(`PlinthTooltipPosition`: `top, bottom` — default `top`), `offset`
+(default 24), `openDelay` (default 400ms), `color`. A themed wrapper
+around Flutter's built-in `Tooltip` — shown on hover (desktop/web) or
+long-press (touch).
+
+**`position` is above or below, not left or right**, unlike
+`PlinthPopover`/`PlinthMenu`/`PlinthHoverCard`, which take a
+`PlinthPopoverPosition` with four values. That is the price of the
+wrapper: Flutter's tooltip decides its own horizontal placement and
+exposes only a vertical preference. Adding the other two sides would
+mean re-deriving hover, long-press, focus and dismissal on Plinth's own
+overlay — the work this component exists to avoid — for a case Flutter
+largely covers already, since it flips the tooltip to the opposite side
+when the preferred one doesn't fit on screen.
+
+`color` fills the tooltip from the palette, for the times it carries a
+warning rather than a description; the label then resolves against that
+fill via `contrastingOn` rather than the theme's text color. Without it
+a tooltip is deliberately *inverted* against the surface it floats over
+— dark on a light theme — so it reads as an overlay rather than as more
+page.
 
 ### `PlinthMenu` + `PlinthMenuItem`
 `controller`, `target`, `items` (`List<PlinthMenuItem>`), `position`, `width`.

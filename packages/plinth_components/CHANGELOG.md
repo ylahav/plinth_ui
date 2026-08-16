@@ -72,6 +72,23 @@ which components were missing.
   placement, since only an image shows whether the end labels line up
   with the ends of the track.
 
+- **`PlinthTooltip` takes `position`, `offset`, `openDelay` and
+  `color`.** Three of the four overlay components already took a
+  `position`; this one took none, and its 400ms delay was fixed — too
+  slow for a toolbar of icons, too fast for a tooltip repeating a label
+  you can already see.
+
+  `position` is `PlinthTooltipPosition` (`top`/`bottom`), not the
+  four-sided `PlinthPopoverPosition`. Flutter's tooltip decides its own
+  horizontal placement and exposes only a vertical preference, and
+  offering `left`/`right` would mean re-deriving hover, long-press,
+  focus and dismissal on our own overlay — the work this component
+  exists to avoid. Flutter still flips to the other side when the
+  preferred one doesn't fit, which is the part that mattered.
+
+  `color` fills the tooltip from the palette for warnings, with the
+  label resolved against that fill rather than the theme's text color.
+
 ### Fixed
 
 - **Disabled buttons looked enabled.** `PlinthButton` and

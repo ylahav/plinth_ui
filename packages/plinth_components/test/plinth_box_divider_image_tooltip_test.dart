@@ -334,5 +334,58 @@ void main() {
         'Copied',
       );
     });
+
+    testWidgets('position picks the side, and defaults to above',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthTooltip(message: 'Copied', child: Text('Trigger'))),
+      );
+      expect(tester.widget<Tooltip>(find.byType(Tooltip)).preferBelow, isFalse);
+
+      await tester.pumpWidget(
+        _wrap(const PlinthTooltip(
+          message: 'Copied',
+          position: PlinthTooltipPosition.bottom,
+          child: Text('Trigger'),
+        )),
+      );
+      expect(tester.widget<Tooltip>(find.byType(Tooltip)).preferBelow, isTrue);
+    });
+
+    testWidgets('the open delay is the caller\'s to set', (tester) async {
+      // Fixed at 400ms until 0.19.0: a toolbar of icons wants it
+      // shorter, a tooltip repeating a visible label wants it longer.
+      await tester.pumpWidget(
+        _wrap(const PlinthTooltip(
+          message: 'Copied',
+          openDelay: Duration(milliseconds: 50),
+          child: Text('Trigger'),
+        )),
+      );
+
+      expect(
+        tester.widget<Tooltip>(find.byType(Tooltip)).waitDuration,
+        const Duration(milliseconds: 50),
+      );
+    });
+
+    testWidgets('a colored tooltip reads against its own fill', (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthTooltip(
+          message: 'Deletes everything',
+          color: 'red',
+          child: Text('Trigger'),
+        )),
+      );
+
+      final tooltip = tester.widget<Tooltip>(find.byType(Tooltip));
+      final theme = PlinthTheme.defaultTheme;
+      final fill = theme.shaded('red', 6);
+
+      expect((tooltip.decoration as BoxDecoration).color, fill);
+      // Not the theme's text color: the tooltip is a filled surface
+      // like any other, so its label resolves against the fill.
+      expect(tooltip.textStyle?.color, theme.contrastingOn(fill));
+    });
   });
 }
