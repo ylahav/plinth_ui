@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'slider_marks.dart';
+
+export 'slider_marks.dart' show PlinthSliderMark;
+
 /// A themeable slider matching Mantine's `Slider`.
 ///
 /// Like [PlinthTooltip], this wraps Flutter's built-in [Slider]
@@ -29,6 +33,8 @@ class PlinthSlider extends StatelessWidget {
     this.color,
     this.size = PlinthSize.md,
     this.label,
+    this.marks = const [],
+    this.restrictToMarks = false,
   });
 
   final double value;
@@ -46,6 +52,30 @@ class PlinthSlider extends StatelessWidget {
 
   /// Optional value label shown above the thumb while dragging.
   final String? label;
+
+  /// Named positions along the track, rendered as labels beneath it and
+  /// aligned to where the thumb actually lands.
+  ///
+  /// Labels rather than ticks: the ticks on the track are Flutter's,
+  /// drawn from [divisions], and painting a second set over a slider
+  /// this widget only themes would mean guessing at the track geometry
+  /// of an SDK that is free to change it. Marks name positions;
+  /// `divisions` marks them.
+  final List<PlinthSliderMark> marks;
+
+  /// Snaps every reported value to the nearest mark.
+  ///
+  /// For a scale whose steps aren't evenly spaced — 1, 2, 5, 10 — which
+  /// [divisions] can't express, since it splits the range evenly.
+  final bool restrictToMarks;
+
+  /// The mark nearest [raw], or [raw] itself when there are none.
+  double _snap(double raw) {
+    if (marks.isEmpty) return raw;
+    return marks
+        .map((m) => m.value)
+        .reduce((a, b) => (a - raw).abs() <= (b - raw).abs() ? a : b);
+  }
 
   static const Map<PlinthSize, double> _trackHeights = {
     PlinthSize.xs: 2,
@@ -69,7 +99,7 @@ class PlinthSlider extends StatelessWidget {
     final colorKey = color ?? theme.primaryColor;
     final activeColor = theme.shaded(colorKey, 6);
 
-    return SliderTheme(
+    final slider = SliderTheme(
       data: SliderTheme.of(context).copyWith(
         activeTrackColor: activeColor,
         inactiveTrackColor: theme.shaded(colorKey, 1),
@@ -82,12 +112,32 @@ class PlinthSlider extends StatelessWidget {
       ),
       child: Slider(
         value: value.clamp(min, max),
-        onChanged: onChanged,
+        onChanged: onChanged == null
+            ? null
+            : (v) => onChanged!(restrictToMarks ? _snap(v) : v),
         min: min,
         max: max,
         divisions: divisions,
         label: label,
       ),
+    );
+
+    // Unmarked sliders lay out exactly as they did before marks
+    // existed — no wrapper, no extra height.
+    if (marks.isEmpty) return slider;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        slider,
+        SliderMarkLabels(
+          marks: marks,
+          min: min,
+          max: max,
+          inset: _thumbRadii[size]!,
+          activeValues: [value],
+        ),
+      ],
     );
   }
 }

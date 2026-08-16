@@ -1305,6 +1305,31 @@ final List<WidgetbookNode> plinthDirectories = [
               const PlinthSlider(value: 30, onChanged: null),
             ),
           ),
+          WidgetbookUseCase(
+            name: 'With marks',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 360,
+                child: _Local<double>(
+                  initial: 50,
+                  // Unevenly spaced on purpose, with restrictToMarks:
+                  // this is the case `divisions` can't express, since
+                  // it splits the range into equal steps.
+                  builder: (value, onChanged) => PlinthSlider(
+                    value: value,
+                    onChanged: onChanged,
+                    restrictToMarks: true,
+                    marks: const [
+                      PlinthSliderMark(value: 0, label: 'Off'),
+                      PlinthSliderMark(value: 10, label: 'Low'),
+                      PlinthSliderMark(value: 50, label: 'Mid'),
+                      PlinthSliderMark(value: 100, label: 'Max'),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
       WidgetbookComponent(
@@ -3360,7 +3385,7 @@ final List<WidgetbookNode> plinthDirectories = [
             ),
           ),
           WidgetbookUseCase(
-            name: 'Sections',
+            name: 'Sections (bar)',
             builder: (context) => _themed(
               SizedBox(
                 width: 360,

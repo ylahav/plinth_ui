@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'slider_marks.dart';
+
 /// A dual-thumb range slider matching Mantine's `RangeSlider`.
 ///
 /// Like [PlinthSlider], this wraps Flutter's built-in [RangeSlider]
@@ -27,6 +29,7 @@ class PlinthRangeSlider extends StatelessWidget {
     this.color,
     this.size = PlinthSize.md,
     this.labels,
+    this.marks = const [],
   });
 
   final RangeValues values;
@@ -41,6 +44,10 @@ class PlinthRangeSlider extends StatelessWidget {
 
   /// Optional value labels shown above each thumb while dragging.
   final RangeLabels? labels;
+
+  /// Named positions along the track, as on [PlinthSlider]. Both thumbs
+  /// emphasise the mark they sit on.
+  final List<PlinthSliderMark> marks;
 
   static const Map<PlinthSize, double> _trackHeights = {
     PlinthSize.xs: 2,
@@ -64,7 +71,7 @@ class PlinthRangeSlider extends StatelessWidget {
     final colorKey = color ?? theme.primaryColor;
     final activeColor = theme.shaded(colorKey, 6);
 
-    return SliderTheme(
+    final slider = SliderTheme(
       data: SliderTheme.of(context).copyWith(
         activeTrackColor: activeColor,
         inactiveTrackColor: theme.shaded(colorKey, 1),
@@ -84,6 +91,22 @@ class PlinthRangeSlider extends StatelessWidget {
         divisions: divisions,
         labels: labels,
       ),
+    );
+
+    if (marks.isEmpty) return slider;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        slider,
+        SliderMarkLabels(
+          marks: marks,
+          min: min,
+          max: max,
+          inset: _thumbRadii[size]!,
+          activeValues: [values.start, values.end],
+        ),
+      ],
     );
   }
 }

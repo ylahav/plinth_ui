@@ -105,6 +105,39 @@ void main() {
       );
     });
 
+    testWidgets('slider marks sit over their positions', (tester) async {
+      await tester.pumpWidget(
+        goldenWrap(
+          SizedBox(
+            width: 320,
+            child: PlinthSlider(
+              value: 50,
+              divisions: 4,
+              onChanged: (_) {},
+              marks: const [
+                PlinthSliderMark(value: 0, label: 'Off'),
+                PlinthSliderMark(value: 25, label: 'Low'),
+                PlinthSliderMark(value: 50, label: 'Mid'),
+                PlinthSliderMark(value: 100, label: 'Max'),
+              ],
+            ),
+          ),
+          width: 360,
+          height: 90,
+        ),
+      );
+
+      // Marks are placed by arithmetic against a track this widget
+      // doesn't draw: Flutter's slider insets it by a thumb radius at
+      // each end. A test can assert the centre label's x; only the
+      // image shows whether "Off" and "Max" line up with the ends, and
+      // whether an unevenly spaced mark (100 after 50) lands right.
+      await expectLater(
+        find.byKey(goldenBoundary),
+        matchesGoldenFile('goldens/plinth_slider_marks.png'),
+      );
+    });
+
     testWidgets('overflow list, everything fits', (tester) async {
       await tester.pumpWidget(
         goldenWrap(

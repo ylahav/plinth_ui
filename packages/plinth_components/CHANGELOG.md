@@ -48,6 +48,30 @@ which components were missing.
   block hand-rolled this out of `Row` + `Expanded` + `ClipRRect`. That
   block now uses the component, which is the whole point.
 
+- **`marks` on `PlinthSlider` and `PlinthRangeSlider`**, plus
+  `restrictToMarks` on the former, matching Mantine's `marks` and
+  `restrictToMarks`.
+
+  Each `PlinthSliderMark` names a position in the slider's own units,
+  and its label renders centred on that position — allowing for the
+  thumb radius Flutter insets the track by at each end, which is what
+  hand-spread labels get wrong at exactly the two ends people check.
+  A slider with no marks lays out as before: no wrapper, no extra
+  height.
+
+  Labels rather than ticks: the ticks are Flutter's own, from
+  `divisions`. Painting a second set would mean guessing at the track
+  geometry of a widget this only themes.
+
+  `restrictToMarks` snaps reported values to the nearest mark, for
+  scales whose steps aren't evenly spaced — 1, 2, 5, 10 — which
+  `divisions` can't express.
+
+  The **Slider with marks** showcase block aligned its labels by hand
+  with a `spaceBetween` row, and now doesn't. A golden covers the
+  placement, since only an image shows whether the end labels line up
+  with the ends of the track.
+
 ### Fixed
 
 - **Disabled buttons looked enabled.** `PlinthButton` and

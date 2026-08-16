@@ -211,4 +211,99 @@ void main() {
       }
     });
   });
+
+  group('PlinthSlider marks', () {
+    const marks = [
+      PlinthSliderMark(value: 0, label: 'Off'),
+      PlinthSliderMark(value: 50, label: 'Half'),
+      PlinthSliderMark(value: 100, label: 'Max'),
+    ];
+
+    testWidgets('renders a label per mark', (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthSlider(value: 50, marks: marks, onChanged: (_) {})),
+      );
+
+      expect(find.text('Off'), findsOneWidget);
+      expect(find.text('Half'), findsOneWidget);
+      expect(find.text('Max'), findsOneWidget);
+    });
+
+    testWidgets('a label sits over the position it names', (tester) async {
+      await tester.pumpWidget(
+        _wrap(SizedBox(
+          width: 300,
+          child: PlinthSlider(value: 50, marks: marks, onChanged: (_) {}),
+        )),
+      );
+
+      final slider = tester.getRect(find.byType(Slider));
+      final middle = tester.getCenter(find.text('Half')).dx;
+
+      // Halfway along the *track*, which is inset by a thumb radius at
+      // each end — measuring against the raw width would put this a
+      // few pixels off, and the end labels much further.
+      expect(middle, closeTo(slider.center.dx, 1));
+    });
+
+    testWidgets('an unmarked slider is wrapped in nothing', (tester) async {
+      // Structure rather than height: Flutter's Slider expands to
+      // whatever height it is offered, so a bare one in a Scaffold body
+      // measures 600 and a marked one 67 — the wrapper *shrinks* it,
+      // which makes a height comparison say the opposite of what it
+      // looks like it says.
+      final wrapper = find.descendant(
+        of: find.byType(PlinthSlider),
+        matching: find.byType(Column),
+      );
+
+      await tester.pumpWidget(
+        _wrap(PlinthSlider(value: 50, onChanged: (_) {})),
+      );
+      expect(wrapper, findsNothing);
+
+      await tester.pumpWidget(
+        _wrap(PlinthSlider(value: 50, marks: marks, onChanged: (_) {})),
+      );
+      expect(wrapper, findsOneWidget);
+    });
+
+    testWidgets('restrictToMarks reports the nearest mark', (tester) async {
+      final changes = <double>[];
+      await tester.pumpWidget(
+        _wrap(PlinthSlider(
+          value: 50,
+          marks: const [
+            // Deliberately uneven, which is the case `divisions`
+            // cannot express: it splits the range into equal steps.
+            PlinthSliderMark(value: 0, label: '0'),
+            PlinthSliderMark(value: 10, label: '10'),
+            PlinthSliderMark(value: 100, label: '100'),
+          ],
+          restrictToMarks: true,
+          onChanged: changes.add,
+        )),
+      );
+
+      await tester.drag(find.byType(Slider), const Offset(-120, 0));
+      await tester.pump();
+
+      expect(changes, isNotEmpty);
+      expect(
+          changes.every((v) => const [0.0, 10.0, 100.0].contains(v)), isTrue);
+    });
+
+    testWidgets('a range slider marks both thumbs', (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthRangeSlider(
+          values: const RangeValues(0, 50),
+          marks: marks,
+          onChanged: (_) {},
+        )),
+      );
+
+      expect(find.text('Off'), findsOneWidget);
+      expect(find.text('Max'), findsOneWidget);
+    });
+  });
 }

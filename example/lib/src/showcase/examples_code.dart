@@ -3124,11 +3124,16 @@ const PlinthMarquee(
 PlinthSlider(
   value: _value,
   max: 4,
-  // Discrete rather than continuous: the marks below are the real
-  // scale, so a value between them would be a position no label can
-  // name.
+  // Discrete rather than continuous: the marks are the real scale, so
+  // a value between them would be a position no label can name.
   divisions: 4,
   label: _marks[_value.round()],
+  // Each label lands over the position it names — the track is inset
+  // by a thumb radius at each end, which evenly spread labels miss.
+  marks: [
+    for (var i = 0; i < _marks.length; i++)
+      PlinthSliderMark(value: i.toDouble(), label: _marks[i]),
+  ],
   onChanged: (v) => setState(() => _value = v),
 )
 ''',

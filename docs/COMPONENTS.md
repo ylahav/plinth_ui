@@ -535,18 +535,36 @@ Shares `PlinthTextInput`'s label/description/error chrome; wraps
 `value`, `onChanged` (nullable), `label`, `size`, `color`. Same
 animated-fill pattern as `PlinthCheckbox`, pill-shaped instead of square.
 
-### `PlinthSlider`
+### `PlinthSlider` + `PlinthSliderMark`
 `value`, `onChanged` (nullable), `min`, `max`, `divisions` (omit for
 continuous), `color`, `size`, `label` (shown above the thumb while
-dragging). A themed wrapper around Flutter's built-in `Slider` (via
-`SliderTheme`) — same rationale as `PlinthTooltip`: drag handling,
-keyboard stepping, and accessibility are worth not reimplementing.
+dragging), `marks`, `restrictToMarks`. A themed wrapper around Flutter's
+built-in `Slider` (via `SliderTheme`) — same rationale as
+`PlinthTooltip`: drag handling, keyboard stepping, and accessibility are
+worth not reimplementing.
+
+`marks` names positions along the track. Each `PlinthSliderMark` takes a
+`value` in the slider's own units — not a fraction, so the same list
+survives a change of range — and a `label`. The labels render beneath
+the track, each centred on the point it names, allowing for the thumb
+radius Flutter insets the track by at both ends. A slider with no marks
+lays out exactly as before: no wrapper, no extra height.
+
+**Labels, not ticks.** The ticks on the track are Flutter's own, drawn
+from `divisions`; painting a second set would mean guessing at the track
+geometry of a widget this only themes. Marks *name* positions,
+`divisions` marks them, and the two are usually set together.
+
+`restrictToMarks` snaps every reported value to the nearest mark — for a
+scale whose steps aren't evenly spaced (1, 2, 5, 10), which `divisions`
+can't express since it splits the range evenly.
 
 ### `PlinthRangeSlider`
 `values` (`RangeValues`), `onChanged` (nullable), `min`, `max`,
-`divisions`, `color`, `size`, `labels` (`RangeLabels`). Same wrap-not-
-reimplement rationale as `PlinthSlider`, wrapping Flutter's built-in
-`RangeSlider` for dual-thumb range selection.
+`divisions`, `color`, `size`, `labels` (`RangeLabels`), `marks`. Same
+wrap-not-reimplement rationale as `PlinthSlider`, wrapping Flutter's
+built-in `RangeSlider` for dual-thumb range selection. Marks work as
+they do there, with both thumbs emphasising the mark they sit on.
 
 ### `PlinthMultiSelect<T>` + `PlinthMultiSelectOption<T>`
 `options`, `value` (`List<T>`), `onChanged`, `label`, `description`,

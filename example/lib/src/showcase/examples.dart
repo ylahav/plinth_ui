@@ -3888,27 +3888,23 @@ class _SliderWithMarksExampleState extends State<SliderWithMarksExample> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const PlinthText('Compression', weight: FontWeight.w600),
+            // The labels were a hand-aligned Row of spaceBetween text
+            // until 0.19.0, when PlinthSlider learned marks — which
+            // place each label over the position it names rather than
+            // spreading them evenly and hoping.
             PlinthSlider(
               value: _value,
               max: 4,
-              // Discrete rather than continuous: the marks below are
-              // the real scale, so a value between them would be a
-              // position no label can name.
+              // Discrete rather than continuous: the marks are the real
+              // scale, so a value between them would be a position no
+              // label can name.
               divisions: 4,
               label: _marks[_value.round()],
-              onChanged: (v) => setState(() => _value = v),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              marks: [
                 for (var i = 0; i < _marks.length; i++)
-                  PlinthText(
-                    _marks[i],
-                    size: PlinthSize.xs,
-                    color: i == _value.round() ? null : 'gray',
-                    weight: i == _value.round() ? FontWeight.w700 : null,
-                  ),
+                  PlinthSliderMark(value: i.toDouble(), label: _marks[i]),
               ],
+              onChanged: (v) => setState(() => _value = v),
             ),
           ],
         ),
