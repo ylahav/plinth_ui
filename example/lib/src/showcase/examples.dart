@@ -4165,3 +4165,305 @@ class _ConfirmInlineExampleState extends State<ConfirmInlineExample> {
     );
   }
 }
+
+// ───────────────────────── Page Sections: Heroes (depth) ─────────────────────────
+
+class HeroWithImageExample extends StatelessWidget {
+  const HeroWithImageExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 560,
+      // The photograph is the hero rather than sitting beside it. The
+      // scrim is doing real work here: over the light half of this
+      // image the headline would otherwise disappear.
+      child: PlinthBackgroundImage(
+        src: 'https://picsum.photos/seed/plinth-hero/1200/600',
+        height: 240,
+        scrimOpacity: 0.5,
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: PlinthStack(
+            gap: PlinthSize.sm,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const PlinthTitle('Build it once',
+                  order: 2, textAlign: TextAlign.center),
+              const PlinthText(
+                'A themeable component library for Flutter.',
+                textAlign: TextAlign.center,
+              ),
+              PlinthGroup(
+                gap: PlinthSize.sm,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  PlinthButton(
+                      onPressed: () {}, child: const Text('Get started')),
+                  PlinthButton(
+                    variant: PlinthVariant.outline,
+                    onPressed: () {},
+                    child: const Text('Docs'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class HeroWithSignupExample extends StatelessWidget {
+  const HeroWithSignupExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 520,
+      child: PlinthStack(
+        gap: PlinthSize.sm,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const PlinthTitle('Ship your design system',
+              order: 2, textAlign: TextAlign.center),
+          const PlinthText(
+            'One install, 111 components, no lock-in.',
+            color: 'gray',
+            textAlign: TextAlign.center,
+          ),
+          // The conversion control lives in the hero rather than
+          // behind a button: one fewer step between reading the claim
+          // and acting on it.
+          Row(
+            children: [
+              const Expanded(
+                child: PlinthTextInput(placeholder: 'you@example.com'),
+              ),
+              const SizedBox(width: 8),
+              PlinthButton(onPressed: () {}, child: const Text('Start free')),
+            ],
+          ),
+          const PlinthText(
+            'No card required. Cancel whenever.',
+            size: PlinthSize.xs,
+            color: 'gray',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class HeroWithProofExample extends StatelessWidget {
+  const HeroWithProofExample({super.key});
+
+  static const _proof = [
+    (value: '111', label: 'components'),
+    (value: '82', label: 'blocks'),
+    (value: '160', label: 'pub points'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 520,
+      child: PlinthStack(
+        gap: PlinthSize.md,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const PlinthTitle('Trusted where it counts',
+              order: 2, textAlign: TextAlign.center),
+          PlinthButton(onPressed: () {}, child: const Text('Read the docs')),
+          const PlinthDivider(),
+          // Evidence under the claim rather than a second paragraph
+          // asserting it. Numbers are the part a reader can check.
+          PlinthGroup(
+            gap: PlinthSize.xl,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (final p in _proof)
+                PlinthStack(
+                  gap: PlinthSize.xs,
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    PlinthText(p.value,
+                        size: PlinthSize.xl, weight: FontWeight.w700),
+                    PlinthText(p.label, size: PlinthSize.xs, color: 'gray'),
+                  ],
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ──────────────────────── Page Sections: Features (depth) ────────────────────────
+
+class FeatureWithScreenshotExample extends StatelessWidget {
+  const FeatureWithScreenshotExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 560,
+      // Text and image alternating sides down the page. Showing one
+      // pair is the point: the arrangement is the repeat, not the
+      // single row.
+      child: PlinthStack(
+        gap: PlinthSize.lg,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Expanded(
+                child: PlinthStack(
+                  gap: PlinthSize.xs,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    PlinthBadge('Theming', color: 'violet'),
+                    PlinthTitle('One token, every component', order: 4),
+                    PlinthText(
+                      'Change the primary colour and the whole library '
+                      'follows, dark mode included.',
+                      size: PlinthSize.sm,
+                      color: 'gray',
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: const PlinthImage(
+                    src: 'https://picsum.photos/seed/plinth-f1/600/360',
+                    height: 130,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: const PlinthImage(
+                    src: 'https://picsum.photos/seed/plinth-f2/600/360',
+                    height: 130,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 20),
+              const Expanded(
+                child: PlinthStack(
+                  gap: PlinthSize.xs,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    PlinthBadge('Testing', color: 'teal'),
+                    PlinthTitle('Goldens where they matter', order: 4),
+                    PlinthText(
+                      'Visual coverage for the components that compute '
+                      'their own layout.',
+                      size: PlinthSize.sm,
+                      color: 'gray',
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FeatureComparisonExample extends StatelessWidget {
+  const FeatureComparisonExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: 480,
+      child: PlinthStack(
+        gap: PlinthSize.sm,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PlinthTitle('Compare plans', order: 4),
+          // A matrix rather than three cards: the reader's question is
+          // what differs between plans, and columns answer it directly
+          // where cards make them hold three lists in their head.
+          PlinthTable(
+            columns: ['Feature', 'Free', 'Pro'],
+            rows: [
+              [
+                PlinthText('Components'),
+                PlinthText('All'),
+                PlinthText('All'),
+              ],
+              [
+                PlinthText('Private themes'),
+                Icon(Icons.close, size: 16),
+                Icon(Icons.check, size: 16),
+              ],
+              [
+                PlinthText('Support'),
+                PlinthText('Community'),
+                PlinthBadge('Priority', color: 'violet'),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FeatureLogoStripExample extends StatelessWidget {
+  const FeatureLogoStripExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: 480,
+      child: PlinthStack(
+        gap: PlinthSize.sm,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          PlinthText(
+            'BUILT WITH PLINTH',
+            size: PlinthSize.xs,
+            color: 'gray',
+            weight: FontWeight.w700,
+          ),
+          // A marquee rather than a static row: a logo strip usually
+          // has more names than fit, and this is the arrangement that
+          // shows them all without a second line. It stops under the
+          // pointer and never starts under reduce-motion.
+          PlinthMarquee(
+            speed: 25,
+            child: PlinthGroup(
+              wrap: false,
+              gap: PlinthSize.xl,
+              children: [
+                PlinthText('ACME', weight: FontWeight.w700),
+                PlinthText('GLOBEX', weight: FontWeight.w700),
+                PlinthText('INITECH', weight: FontWeight.w700),
+                PlinthText('UMBRELLA', weight: FontWeight.w700),
+                PlinthText('SOYLENT', weight: FontWeight.w700),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

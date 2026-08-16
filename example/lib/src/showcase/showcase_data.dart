@@ -183,12 +183,24 @@ final List<CategoryData> showcaseCategories = [
             exampleCode['HeroCenteredExample']!),
         ExampleEntry(
             'Split hero', _heroSplit, exampleCode['HeroSplitExample']!),
+        ExampleEntry('Hero with image', _heroWithImage,
+            exampleCode['HeroWithImageExample']!),
+        ExampleEntry('Hero with signup', _heroWithSignup,
+            exampleCode['HeroWithSignupExample']!),
+        ExampleEntry('Hero with proof', _heroWithProof,
+            exampleCode['HeroWithProofExample']!),
       ]),
       SubcategoryData('Feature Sections', Icons.grid_view_outlined, [
         ExampleEntry(
             'Feature grid', _featureGrid, exampleCode['FeatureGridExample']!),
         ExampleEntry(
             'Feature list', _featureList, exampleCode['FeatureListExample']!),
+        ExampleEntry('Alternating screenshots', _featureWithScreenshot,
+            exampleCode['FeatureWithScreenshotExample']!),
+        ExampleEntry('Comparison table', _featureComparison,
+            exampleCode['FeatureComparisonExample']!),
+        ExampleEntry('Logo strip', _featureLogoStrip,
+            exampleCode['FeatureLogoStripExample']!),
       ]),
       SubcategoryData('Authentication', Icons.lock_outline, [
         ExampleEntry('Sign in', _signInForm, exampleCode['SignInFormExample']!),
@@ -374,6 +386,15 @@ Widget _colourControls(BuildContext context) => const ColourControlsExample();
 Widget _splitButton(BuildContext context) => const SplitButtonExample();
 Widget _asyncButton(BuildContext context) => const AsyncButtonExample();
 Widget _confirmInline(BuildContext context) => const ConfirmInlineExample();
+Widget _heroWithImage(BuildContext context) => const HeroWithImageExample();
+Widget _heroWithSignup(BuildContext context) => const HeroWithSignupExample();
+Widget _heroWithProof(BuildContext context) => const HeroWithProofExample();
+Widget _featureWithScreenshot(BuildContext context) =>
+    const FeatureWithScreenshotExample();
+Widget _featureComparison(BuildContext context) =>
+    const FeatureComparisonExample();
+Widget _featureLogoStrip(BuildContext context) =>
+    const FeatureLogoStripExample();
 Widget _horizontalArticleCard(BuildContext context) =>
     const HorizontalArticleCardExample();
 Widget _overlayArticleCard(BuildContext context) =>

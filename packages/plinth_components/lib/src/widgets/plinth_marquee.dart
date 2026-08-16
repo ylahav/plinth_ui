@@ -155,12 +155,18 @@ class _PlinthMarqueeState extends State<PlinthMarquee>
     // Stationary: reduce-motion, or the first frame before the child
     // has been measured. Same tree either way, so measurement still
     // happens and turning motion back on needs no extra frame.
+    //
+    // A non-scrolling scroll view rather than an Align: content wider
+    // than the strip is the *normal* case for a marquee, and an Align
+    // hands the child the viewport's width, so a `Row` inside it
+    // reports an overflow. This gives the child unbounded width, clips
+    // what doesn't fit, and still sizes its own height to the child —
+    // which an OverflowBox could not do before the child is measured.
     if (_reduceMotion || item == null || item.width <= 0) {
-      return ClipRect(
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: KeyedSubtree(key: _itemKey, child: widget.child),
-        ),
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const NeverScrollableScrollPhysics(),
+        child: KeyedSubtree(key: _itemKey, child: widget.child),
       );
     }
 

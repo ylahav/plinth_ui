@@ -2184,6 +2184,136 @@ PlinthStack(
   ],
 )
 ''',
+  'HeroWithImageExample': r'''
+// The photograph is the hero rather than sitting beside it. The scrim
+// is doing real work: over the light half of this image the headline
+// would otherwise disappear.
+PlinthBackgroundImage(
+  src: 'https://picsum.photos/seed/plinth-hero/1200/600',
+  height: 240,
+  scrimOpacity: 0.5,
+  child: PlinthStack(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      const PlinthTitle('Build it once', order: 2),
+      PlinthButton(onPressed: () {}, child: const Text('Get started')),
+    ],
+  ),
+)
+''',
+  'HeroWithSignupExample': r'''
+PlinthStack(
+  crossAxisAlignment: CrossAxisAlignment.center,
+  children: [
+    const PlinthTitle('Ship your design system', order: 2),
+    // The conversion control lives in the hero rather than behind a
+    // button: one fewer step between reading the claim and acting.
+    Row(
+      children: [
+        const Expanded(
+          child: PlinthTextInput(placeholder: 'you@example.com'),
+        ),
+        const SizedBox(width: 8),
+        PlinthButton(onPressed: () {}, child: const Text('Start free')),
+      ],
+    ),
+  ],
+)
+''',
+  'HeroWithProofExample': r'''
+PlinthStack(
+  crossAxisAlignment: CrossAxisAlignment.center,
+  children: [
+    const PlinthTitle('Trusted where it counts', order: 2),
+    const PlinthDivider(),
+    // Evidence under the claim rather than a second paragraph
+    // asserting it. Numbers are the part a reader can check.
+    PlinthGroup(
+      gap: PlinthSize.xl,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (final p in _proof)
+          PlinthStack(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              PlinthText(p.value, size: PlinthSize.xl, weight: FontWeight.w700),
+              PlinthText(p.label, size: PlinthSize.xs, color: 'gray'),
+            ],
+          ),
+      ],
+    ),
+  ],
+)
+''',
+  'FeatureWithScreenshotExample': r'''
+// Text and image alternating sides down the page. Showing one pair is
+// the point: the arrangement is the repeat, not the single row.
+Row(
+  children: [
+    const Expanded(
+      child: PlinthStack(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PlinthBadge('Theming', color: 'violet'),
+          PlinthTitle('One token, every component', order: 4),
+          PlinthText('Change the primary colour and the library follows.',
+              size: PlinthSize.sm, color: 'gray'),
+        ],
+      ),
+    ),
+    const SizedBox(width: 20),
+    Expanded(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: const PlinthImage(
+          src: 'https://picsum.photos/seed/plinth-f1/600/360',
+          height: 130,
+        ),
+      ),
+    ),
+  ],
+)
+''',
+  'FeatureComparisonExample': r'''
+// A matrix rather than three cards: the reader's question is what
+// differs between plans, and columns answer it directly where cards
+// make them hold three lists in their head.
+const PlinthTable(
+  columns: ['Feature', 'Free', 'Pro'],
+  rows: [
+    [PlinthText('Components'), PlinthText('All'), PlinthText('All')],
+    [
+      PlinthText('Private themes'),
+      Icon(Icons.close, size: 16),
+      Icon(Icons.check, size: 16),
+    ],
+    [
+      PlinthText('Support'),
+      PlinthText('Community'),
+      PlinthBadge('Priority', color: 'violet'),
+    ],
+  ],
+)
+''',
+  'FeatureLogoStripExample': r'''
+// A marquee rather than a static row: a logo strip usually has more
+// names than fit, and this shows them all without a second line. It
+// stops under the pointer and never starts under reduce-motion.
+const PlinthMarquee(
+  speed: 25,
+  child: PlinthGroup(
+    wrap: false,
+    gap: PlinthSize.xl,
+    children: [
+      PlinthText('ACME', weight: FontWeight.w700),
+      PlinthText('GLOBEX', weight: FontWeight.w700),
+      PlinthText('INITECH', weight: FontWeight.w700),
+    ],
+  ),
+)
+''',
   'SliderWithMarksExample': r'''
 PlinthSlider(
   value: _value,

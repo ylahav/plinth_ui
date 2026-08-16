@@ -190,6 +190,38 @@ void main() {
       expect(find.byType(OverflowBox), findsNothing);
     });
 
+    testWidgets('content wider than the strip does not overflow at rest', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(
+          const SizedBox(
+            width: 200,
+            // A Row specifically: only a flex *reports* an overflow,
+            // where a lone SizedBox is silently constrained. The
+            // stationary branch used to hand the child the viewport's
+            // width, which is wrong for a marquee — content wider than
+            // the strip is the normal case.
+            child: PlinthMarquee(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(width: 200, height: 20),
+                  SizedBox(width: 200, height: 20),
+                  SizedBox(width: 200, height: 20),
+                ],
+              ),
+            ),
+          ),
+          reduceMotion: true,
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('repeats the child once it knows how wide one copy is', (
       tester,
     ) async {

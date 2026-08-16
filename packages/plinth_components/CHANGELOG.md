@@ -7,6 +7,28 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.16.4
+
+### Fixed
+
+- **`PlinthMarquee` overflowed while stationary.** The still branch —
+  the first frame for everyone, and permanently for anyone with
+  reduce-motion on — wrapped its child in an `Align`, which hands over
+  the strip's own width. Content wider than the strip is the *normal*
+  case for a marquee, so any `Row` inside one reported a
+  `RenderFlex overflowed` error, and under reduce-motion it stayed
+  broken rather than scrolling.
+
+  It now uses a non-scrolling horizontal scroll view: unbounded width
+  for the child, clipping for what doesn't fit, and its own height
+  still derived from the child — which an `OverflowBox` can't do before
+  the child has been measured.
+
+  Found by putting a logo strip in the showcase, which is the arrangement
+  the component exists for. The regression test uses a `Row` rather than
+  a lone `SizedBox` on purpose: only a flex *reports* an overflow, so
+  the obvious version of the test passed against the unfixed widget.
+
 ## 0.16.3
 
 ### Fixed

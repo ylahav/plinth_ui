@@ -29,7 +29,7 @@ code panel will quietly show something the demo no longer does.
 
 ## What exists
 
-82 examples across 3 categories, borrowing Mantine UI's own category
+88 examples across 3 categories, borrowing Mantine UI's own category
 names so the two are directly comparable.
 
 | Category | Subcategory | Examples |
@@ -47,8 +47,8 @@ names so the two are directly comparable.
 | Application UI | Dropzones | File dropzone, Avatar upload |
 | Application UI | Drag'n'Drop | Reorderable list, Kanban columns |
 | Application UI | Footers | Simple footer, Footer with link columns |
-| Page Sections | Hero Sections | Centered hero, Split hero |
-| Page Sections | Feature Sections | Feature grid, Feature list |
+| Page Sections | Hero Sections | Centered hero, Split hero, Hero with image, Hero with signup, Hero with proof |
+| Page Sections | Feature Sections | Feature grid, Feature list, Alternating screenshots, Comparison table, Logo strip |
 | Page Sections | Authentication | Sign in, Sign up, Password reset, Two-factor code, Split sign in |
 | Page Sections | FAQ | FAQ accordion, FAQ with contact |
 | Page Sections | Banners | Announcement, Consent banner |
@@ -61,7 +61,7 @@ names so the two are directly comparable.
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 82. The gap is now depth
+Mantine UI has ~123 blocks against these 88. The gap is now depth
 rather than absence: **every subcategory has something in it except
 Carousels**, which is a deliberate scope call rather than a hole.
 
@@ -94,8 +94,8 @@ here genuinely waiting on one.
 
 | Subcategory | Mantine UI | Plinth | Notes |
 |---|---|---|---|
-| Hero headers | 6 | 2 | |
-| Features section | 5 | 2 | |
+| Hero headers | 6 | 5 | Image-led, signup and social-proof variants added |
+| Features section | 5 | 5 | Complete — alternating screenshots, comparison table and logo strip |
 | Authentication | 4 | 5 | Complete — reset, two-factor and split-screen added |
 | Frequently asked questions | 4 | 2 | |
 | Contact us section | 3 | 2 | |
@@ -119,20 +119,19 @@ what remains is depth rather than coverage — Mantine offers 6–9
 variants where this has 2 or 3. Worth adding where a variant differs
 in *kind* rather than in styling:
 
-1. **Hero sections** and **Feature sections** — 6 and 5 against 2, now
-   the widest real gaps.
-2. **Footers** and **Grids** — 4 and 3 against 2, the last of the
-   small ones.
+1. **FAQ**, **Contact us** and **Banners** — 4, 3 and 3 against 2. The
+   last of the Page Sections gaps, and all small.
+2. **Footers** and **Grids** — 4 and 3 against 2.
 3. **Inputs** — 14 against 3 on paper, the widest number, but the
    softest target: most of Mantine's are styling variations rather
    than different arrangements, so counting them overstates the gap.
 4. **Tables**, **Dropzones**, **Drag'n'Drop** — already at or near
    parity; only worth extending if a specific arrangement is missing.
 
-**Authentication, Error pages, Article cards, Buttons, Sliders,
-Comments and Table of contents are done** — each meets or nearly meets
-Mantine's count. "Done" here means the arrangements are covered, not
-that no variant could ever be added.
+**Nine subcategories are done** — Heroes, Features, Authentication,
+Error pages, Article cards, Buttons, Sliders, Comments and Table of
+contents each meet or nearly meet Mantine's count. "Done" here means
+the arrangements are covered, not that no variant could ever be added.
 
 Every subcategory except Carousels now has at least five examples in
 the areas people actually copy from. Each new variant differs in *kind*
