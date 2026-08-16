@@ -2825,20 +2825,19 @@ PlinthStack(
     // A part-to-whole bar rather than three separate figures: the
     // point here is the proportion, which separate numbers make you
     // compute yourself.
-    ClipRRect(
-      borderRadius: BorderRadius.circular(999),
-      child: SizedBox(
-        height: 8,
-        child: Row(
-          children: [
-            for (final s in _segments)
-              Expanded(
-                flex: s.share,
-                child: ColoredBox(color: theme.shaded(s.color, 6)),
-              ),
-          ],
-        ),
-      ),
+    // Sections are fractions of the whole bar, so the labels are
+    // available to a screen reader too — a bar with no text in it
+    // otherwise reads as nothing at all.
+    PlinthProgress.sections(
+      size: PlinthSize.sm,
+      sections: [
+        for (final s in _segments)
+          PlinthProgressSection(
+            value: s.share / 10,
+            color: s.color,
+            label: s.label,
+          ),
+      ],
     ),
   ],
 )

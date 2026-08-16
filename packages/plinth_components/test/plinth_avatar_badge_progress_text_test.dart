@@ -192,6 +192,74 @@ void main() {
     });
   });
 
+  group('PlinthProgress.sections', () {
+    const parts = [
+      PlinthProgressSection(value: 0.5, color: 'blue', label: 'Direct'),
+      PlinthProgressSection(value: 0.3, color: 'teal', label: 'Search'),
+    ];
+
+    /// The widths the sections actually take inside a known-width bar.
+    List<double> widths(WidgetTester tester) => tester
+        .widgetList<AnimatedContainer>(
+          find.descendant(
+            of: find.byType(PlinthProgress),
+            matching: find.byType(AnimatedContainer),
+          ),
+        )
+        .map((c) => (c.constraints?.maxWidth) ?? double.nan)
+        .toList();
+
+    testWidgets('each part takes its fraction of the whole bar',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(SizedBox(
+          width: 200,
+          child: PlinthProgress.sections(sections: parts),
+        )),
+      );
+      await tester.pumpAndSettle();
+
+      // 0.5 and 0.3 of 200, *not* 5/8 and 3/8 of it: the parts are
+      // fractions of the bar, so the last fifth stays track. Flex
+      // would have normalised them and lost that.
+      expect(widths(tester), [closeTo(100, 0.5), closeTo(60, 0.5)]);
+    });
+
+    testWidgets('parts summing above the whole are rejected', (tester) async {
+      // Scaling raw counts is the caller's job — silently normalising
+      // would turn "these are fractions" into "these are ratios"
+      // depending on the data.
+      expect(
+        () => PlinthProgress.sections(
+          sections: const [
+            PlinthProgressSection(value: 0.8, color: 'blue'),
+            PlinthProgressSection(value: 0.4, color: 'teal'),
+          ],
+        ),
+        throwsAssertionError,
+      );
+    });
+
+    testWidgets('labelled parts are readable to a screen reader',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthProgress.sections(sections: parts)),
+      );
+
+      // A bar with no text in it otherwise reads as nothing at all.
+      expect(find.bySemanticsLabel('Direct: 50%, Search: 30%'), findsOneWidget);
+    });
+
+    testWidgets('a ring takes the same sections', (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthRingProgress.sections(sections: parts)),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.bySemanticsLabel('Direct: 50%, Search: 30%'), findsOneWidget);
+    });
+  });
+
   group('PlinthText', () {
     testWidgets('renders its data', (tester) async {
       await tester.pumpWidget(_wrap(const PlinthText('Hello')));

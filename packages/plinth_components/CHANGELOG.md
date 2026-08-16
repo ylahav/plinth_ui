@@ -30,6 +30,24 @@ which components were missing.
   that fill, which the palette can't name, at the label's line height,
   which isn't a step on the size scale.
 
+- **`PlinthProgress.sections` and `PlinthRingProgress.sections`**, with
+  a shared `PlinthProgressSection` (`value`, `color`, `label`). A
+  part-to-whole bar or donut, matching Mantine's `Progress.Section`.
+
+  Section values are fractions of the whole, not of each other: 0.5,
+  0.3 and 0.1 leave a tenth of the track empty, which is how this kind
+  of bar says "and this much is neither". Widths come from the
+  available width rather than `Expanded` flexes, which would normalise
+  the parts and quietly lose that remainder. Values summing above 1
+  assert instead — scaling raw counts is the caller's job.
+
+  Labelled sections are joined into one semantics label, since a bar
+  with no text in it reads as nothing at all.
+
+  Found by the audit noticing that the **Stat breakdown** showcase
+  block hand-rolled this out of `Row` + `Expanded` + `ClipRRect`. That
+  block now uses the component, which is the whole point.
+
 ### Fixed
 
 - **Disabled buttons looked enabled.** `PlinthButton` and

@@ -3326,20 +3326,20 @@ class StatBreakdownExample extends StatelessWidget {
             // A part-to-whole bar rather than three separate figures:
             // the point of this arrangement is the proportion, which
             // separate numbers make you compute yourself.
-            ClipRRect(
-              borderRadius: BorderRadius.circular(999),
-              child: SizedBox(
-                height: 8,
-                child: Row(
-                  children: [
-                    for (final s in _segments)
-                      Expanded(
-                        flex: s.share,
-                        child: ColoredBox(color: theme.shaded(s.color, 6)),
-                      ),
-                  ],
-                ),
-              ),
+            //
+            // This was a hand-rolled Row of Expandeds until 0.19.0,
+            // when PlinthProgress learned sections — the audit found
+            // the gap by noticing this block routing around it.
+            PlinthProgress.sections(
+              size: PlinthSize.sm,
+              sections: [
+                for (final s in _segments)
+                  PlinthProgressSection(
+                    value: s.share / 10,
+                    color: s.color,
+                    label: s.label,
+                  ),
+              ],
             ),
             PlinthGroup(
               gap: PlinthSize.md,

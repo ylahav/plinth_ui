@@ -854,10 +854,28 @@ uppercase by default, pill-shaped (`borderRadius: 999`).
 (non-null shows a close button), `radius`. Background at shade 0, accent
 (icon/title/border) at shade 6.
 
-### `PlinthProgress`
+### `PlinthProgress` + `PlinthProgressSection`
 `value` (0.0–1.0, asserted in range), `color`, `size` (controls track
 height), `radius`, `trackColor`. Fill animates smoothly on value change
 via an internal `AnimatedFractionallySizedBox` helper.
+
+`PlinthProgress.sections(sections: [...])` draws a part-to-whole bar
+instead — traffic split by source, storage by file type. Each
+`PlinthProgressSection` takes `value`, `color` (a palette key, required:
+sections sharing one colour are a single bar drawn in pieces) and an
+optional `label`.
+
+Section values are fractions **of the whole bar**, not of each other:
+0.5, 0.3 and 0.1 leave a tenth of the track empty, which is how a
+part-to-whole bar says "and this much is neither". Values summing above
+1 assert rather than being normalised — scaling raw counts is the
+caller's job, and normalising silently would change what `value` means
+depending on the data. The labelled sections are joined into one
+semantics label, since a bar with no text in it otherwise reads as
+nothing at all.
+
+The named constructor isn't `const`: checking that the parts fit inside
+the whole means summing them, which a const assert can't do.
 
 ### `PlinthRingProgress`
 `value` (0.0–1.0, asserted in range), `color`, `size` (outer diameter,
@@ -865,6 +883,12 @@ default 80), `thickness` (default 8), `trackColor`, `label` (optional
 centered content, e.g. a percentage). Circular companion to
 `PlinthProgress` — built on `CustomPaint`, sweeping clockwise from 12
 o'clock.
+
+`PlinthRingProgress.sections(sections: [...])` takes the same
+`PlinthProgressSection` list — a donut rather than a gauge. Its arcs use
+butt caps rather than the single-value ring's round ones: rounded ends
+on consecutive arcs overlap, so each section would eat a little of the
+one before it.
 
 ### `PlinthSemiCircleProgress`
 `value` (0.0–1.0, asserted in range), `color`, `size` (diameter of the

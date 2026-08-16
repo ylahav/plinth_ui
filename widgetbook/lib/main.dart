@@ -3359,6 +3359,27 @@ final List<WidgetbookNode> plinthDirectories = [
               ),
             ),
           ),
+          WidgetbookUseCase(
+            name: 'Sections',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 360,
+                // The parts sum to 0.9 on purpose: the last tenth
+                // stays track, which is the behaviour that separates
+                // fractions of the whole from ratios between parts.
+                child: PlinthProgress.sections(
+                  sections: const [
+                    PlinthProgressSection(
+                        value: 0.5, color: 'blue', label: 'Direct'),
+                    PlinthProgressSection(
+                        value: 0.3, color: 'teal', label: 'Search'),
+                    PlinthProgressSection(
+                        value: 0.1, color: 'grape', label: 'Social'),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
       WidgetbookComponent(
@@ -3768,6 +3789,25 @@ final List<WidgetbookNode> plinthDirectories = [
                 ),
               );
             },
+          ),
+          WidgetbookUseCase(
+            name: 'Sections',
+            builder: (context) => _themed(
+              PlinthRingProgress.sections(
+                size: 120,
+                thickness: 14,
+                sections: const [
+                  PlinthProgressSection(
+                      value: 0.45, color: 'blue', label: 'Docs'),
+                  PlinthProgressSection(
+                      value: 0.3, color: 'teal', label: 'Media'),
+                  PlinthProgressSection(
+                      value: 0.15, color: 'grape', label: 'Other'),
+                ],
+                label: const PlinthText('90%',
+                    size: PlinthSize.sm, weight: FontWeight.w700),
+              ),
+            ),
           ),
         ],
       ),
