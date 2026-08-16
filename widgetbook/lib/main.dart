@@ -6127,6 +6127,72 @@ final List<WidgetbookNode> plinthDirectories = [
         ],
       ),
       WidgetbookComponent(
+        name: 'PlinthCarousel',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 420,
+                child: PlinthCarousel(
+                  height: context.knobs.double.slider(
+                    label: 'height',
+                    initialValue: 200,
+                    min: 120,
+                    max: 320,
+                  ),
+                  // Below 1 the neighbours peek in, which is the knob
+                  // worth playing with: it is what tells a reader
+                  // there is more to swipe to.
+                  slideSize: context.knobs.double.slider(
+                    label: 'slideSize',
+                    initialValue: 1,
+                    min: 0.4,
+                    max: 1,
+                  ),
+                  loop: context.knobs.boolean(label: 'loop'),
+                  withControls: context.knobs
+                      .boolean(label: 'withControls', initialValue: true),
+                  withIndicators: context.knobs
+                      .boolean(label: 'withIndicators', initialValue: true),
+                  color: _colorKnob(context),
+                  slides: [
+                    for (var i = 1; i <= 4; i++)
+                      PlinthPaper(
+                        withBorder: true,
+                        p: PlinthSize.lg,
+                        child: Center(child: PlinthText('Slide $i')),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          WidgetbookUseCase(
+            name: 'Peeking slides',
+            builder: (context) => _themed(
+              SizedBox(
+                width: 420,
+                child: PlinthCarousel(
+                  height: 160,
+                  slideSize: 0.7,
+                  loop: true,
+                  withIndicators: true,
+                  slides: [
+                    for (final id in [1015, 1016, 1018, 1020])
+                      PlinthImage(
+                        src: 'https://picsum.photos/id/$id/480/320',
+                        fit: BoxFit.cover,
+                        radius: PlinthSize.sm,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
         name: 'PlinthBackgroundImage',
         useCases: [
           WidgetbookUseCase(

@@ -29,7 +29,7 @@ code panel will quietly show something the demo no longer does.
 
 ## What exists
 
-108 examples across 3 categories, borrowing Mantine UI's own category
+110 examples across 3 categories, borrowing Mantine UI's own category
 names so the two are directly comparable.
 
 | Category | Subcategory | Examples |
@@ -46,6 +46,7 @@ names so the two are directly comparable.
 | Application UI | Tables | Member table, Invoice table, Sortable table |
 | Application UI | Dropzones | File dropzone, Avatar upload |
 | Application UI | Drag'n'Drop | Reorderable list, Kanban columns |
+| Application UI | Carousels | Image carousel, Product shelf |
 | Application UI | Footers | Simple footer, Footer with link columns, Footer with newsletter, Minimal status footer |
 | Page Sections | Hero Sections | Centered hero, Split hero, Hero with image, Hero with signup, Hero with proof |
 | Page Sections | Feature Sections | Feature grid, Feature list, Alternating screenshots, Comparison table, Logo strip |
@@ -61,15 +62,15 @@ names so the two are directly comparable.
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 108. The gap is now depth
-rather than absence: **every subcategory has something in it except
-Carousels**, which is a deliberate scope call rather than a hole.
+Mantine UI has ~123 blocks against these 110. The gap is now depth
+rather than absence: **every subcategory has something in it.**
 
-The point still holds — almost none of it was ever blocked on missing
-components. The three subcategories that were empty are done: Dropzones
-and Drag'n'Drop from components that had shipped, and Table of Contents
-once `PlinthTableOfContents` landed in 0.14.0, which was the only entry
-here genuinely waiting on one.
+Almost none of it was ever blocked on missing components. The four
+subcategories that were empty are done: Dropzones and Drag'n'Drop from
+components that had shipped, Table of Contents once
+`PlinthTableOfContents` landed in 0.14.0, and Carousels once
+`PlinthCarousel` landed in 0.18.0 — the two entries here that were
+genuinely waiting on one.
 
 ### Application UI
 
@@ -88,7 +89,7 @@ here genuinely waiting on one.
 | Tables | 4 | 3 | Sorting and filtering landed in 0.14.0 |
 | Dropzones | 1 | 2 | Done — `PlinthFileInput` and `PlinthFileButton` |
 | Drag'n'Drop | 3 | 2 | Built on Flutter's own `Draggable`/`DragTarget` |
-| Carousels | 2 | **0** | Mantine's is a separate package; same call applies here |
+| Carousels | 2 | 2 | Complete — `PlinthCarousel` shipped in 0.18.0 |
 
 ### Page Sections
 
@@ -114,10 +115,9 @@ here genuinely waiting on one.
 
 Ordered by value against effort, given what already ships:
 
-No subcategory is more than two behind Mantine any more, Inputs and
-Carousels aside, so what's left is the thin end of depth rather than
-coverage. Worth adding only where a variant differs in *kind* rather
-than in styling:
+No subcategory is more than two behind Mantine any more, Inputs aside,
+so what's left is the thin end of depth rather than coverage. Worth
+adding only where a variant differs in *kind* rather than in styling:
 
 1. **Inputs** — 14 against 7, the one remaining wide number, and the
    softest: most of Mantine's remainder are styling variations on
@@ -162,9 +162,11 @@ width is bounded rather than unbounded, which is what keeps `Expanded`
 and `Spacer` working inside it. The home page is the responsive part —
 its tile grid is `columns: 1, columnsXs: 2, columnsMd: 3`.
 
-**Nothing here is blocked on a missing component any more.** Carousels
-is the one subcategory still empty, and deliberately: Mantine ships its
-carousel as a separate package, and the same call applies here.
+**Nothing here is blocked on a missing component any more**, and no
+subcategory is empty. Carousels was the last one, left out on the
+grounds that Mantine ships its carousel as a separate package —
+`PlinthCarousel` in 0.18.0 closed it, since Flutter's `PageView`
+already provides what Mantine needed a third-party engine for.
 
 ## Adding an example
 

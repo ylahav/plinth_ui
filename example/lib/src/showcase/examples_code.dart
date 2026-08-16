@@ -2491,6 +2491,91 @@ PlinthStack(
   ],
 )
 ''',
+  'ImageCarouselExample': r'''
+return PlinthPaper(
+  withBorder: true,
+  p: PlinthSize.sm,
+  child: PlinthStack(
+    gap: PlinthSize.xs,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      PlinthCarousel(
+        height: 240,
+        loop: true,
+        withIndicators: true,
+        // The caption lives outside the carousel and follows it,
+        // rather than being baked into each slide: text over a
+        // photograph is the arrangement that goes wrong on a light
+        // image, and this one can't.
+        onSlideChanged: (i) => setState(() => _index = i),
+        slides: [
+          for (final photo in _photos)
+            PlinthImage(
+              src: 'https://picsum.photos/id/${photo.id}/720/480',
+              fit: BoxFit.cover,
+              radius: PlinthSize.sm,
+            ),
+        ],
+      ),
+      PlinthText(
+        '${_photos[_index].caption} · ${_index + 1} of ${_photos.length}',
+        size: PlinthSize.sm,
+        color: 'gray',
+      ),
+    ],
+  ),
+);
+''',
+  'ProductCarouselExample': r'''
+// A row of cards that runs past the edge rather than a grid that
+// wraps: this is a shelf you browse sideways, and slideSize below 1
+// leaves the next card half-visible so it reads as one.
+return PlinthCarousel(
+  // Tall enough for the card's own padding as well as its content: a
+  // slide clips rather than growing to fit.
+  height: 224,
+  slideSize: 0.38,
+  withIndicators: false,
+  slides: [
+    for (final product in _products)
+      PlinthCard(
+        withBorder: true,
+        // A fixed thumbnail height rather than a Spacer: a slide
+        // shrink-wraps its content, so a flex child inside one has no
+        // remaining space to claim and throws.
+        child: PlinthStack(
+          gap: PlinthSize.xs,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                PlinthImage(
+                  src: 'https://picsum.photos/id/${product.id}/240/240',
+                  height: 96,
+                  fit: BoxFit.cover,
+                  radius: PlinthSize.xs,
+                ),
+                if (product.badge != null)
+                  Positioned(
+                    top: 6,
+                    left: 6,
+                    child: PlinthBadge(
+                      product.badge!,
+                      color: product.badge == 'Sale' ? 'red' : 'blue',
+                    ),
+                  ),
+              ],
+            ),
+            PlinthText(product.name,
+                size: PlinthSize.sm, weight: FontWeight.w600),
+            PlinthText(product.price, size: PlinthSize.sm, color: 'gray'),
+          ],
+        ),
+      ),
+  ],
+);
+''',
   'AccountSwitcherExample': r'''
 // Every account stays listed with the current one marked, rather than
 // one row you press to cycle: switching identity is worth seeing

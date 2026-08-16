@@ -2195,6 +2195,23 @@ class _ShowcasePageState extends State<ShowcasePage> {
                         child: PlinthTitle('Ships tomorrow', order: 3),
                       ),
                       _gap(),
+                      _sectionTitle('Carousel'),
+                      _gap(12),
+                      PlinthCarousel(
+                        height: 160,
+                        slideSize: 0.8,
+                        loop: true,
+                        withIndicators: true,
+                        slides: [
+                          for (final id in [1015, 1016, 1018, 1020])
+                            PlinthImage(
+                              src: 'https://picsum.photos/id/$id/480/320',
+                              fit: BoxFit.cover,
+                              radius: PlinthSize.sm,
+                            ),
+                        ],
+                      ),
+                      _gap(),
                       _sectionTitle('Loader'),
                       _gap(12),
                       const PlinthGroup(
@@ -2443,6 +2460,7 @@ const List<String> componentSectionOrder = [
   'Floating Window',
   'Scroller',
   'Background Image',
+  'Carousel',
   'Loader',
   'Close Button',
   'Number Formatter',

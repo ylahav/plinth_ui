@@ -187,6 +187,12 @@ final List<CategoryData> showcaseCategories = [
         ExampleEntry(
             'Kanban columns', _kanbanDrop, exampleCode['KanbanDropExample']!),
       ]),
+      SubcategoryData('Carousels', Icons.view_carousel_outlined, [
+        ExampleEntry('Image carousel', _imageCarousel,
+            exampleCode['ImageCarouselExample']!),
+        ExampleEntry('Product shelf', _productCarousel,
+            exampleCode['ProductCarouselExample']!),
+      ]),
       SubcategoryData('Footers', Icons.horizontal_rule, [
         ExampleEntry('Simple footer', _simpleFooter,
             exampleCode['SimpleFooterExample']!),
@@ -372,6 +378,8 @@ Widget _navbarWithFooterUser(BuildContext context) =>
 Widget _statWithSparkline(BuildContext context) =>
     const StatWithSparklineExample();
 Widget _statLeaderboard(BuildContext context) => const StatLeaderboardExample();
+Widget _imageCarousel(BuildContext context) => const ImageCarouselExample();
+Widget _productCarousel(BuildContext context) => const ProductCarouselExample();
 Widget _accountSwitcher(BuildContext context) => const AccountSwitcherExample();
 Widget _userContactCard(BuildContext context) => const UserContactCardExample();
 Widget _passwordStrength(BuildContext context) =>

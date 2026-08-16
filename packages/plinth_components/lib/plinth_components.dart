@@ -24,6 +24,7 @@ export 'src/widgets/plinth_burger.dart';
 export 'src/widgets/plinth_button.dart';
 export 'src/widgets/plinth_button_group.dart';
 export 'src/widgets/plinth_card.dart';
+export 'src/widgets/plinth_carousel.dart';
 export 'src/widgets/plinth_cascader.dart';
 export 'src/widgets/plinth_center.dart';
 export 'src/widgets/plinth_checkbox.dart';

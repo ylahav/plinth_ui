@@ -138,7 +138,7 @@ pixel values, so `spacing`, `radius`, and `fontSizes` can be retuned in
 one place.
 
 **[docs/COMPONENTS.md](docs/COMPONENTS.md)** is the full prop reference
-for all 111 components, and the theme-token table there explains which
+for all 112 components, and the theme-token table there explains which
 color method to reach for (`shaded`, `contrastingOn`, `readableOn`)
 when you build your own widget on the same foundation.
 
@@ -266,7 +266,7 @@ the sidebar.
   shared between them (a blue button is the same blue either way); only
   the chrome inverts. See
   **[docs/COMPONENTS.md § Theme tokens](docs/COMPONENTS.md#theme-tokens)**.
-- **111 components** across Primitives, Forms, Feedback, Data Display,
+- **112 components** across Primitives, Forms, Feedback, Data Display,
   Navigation, Surfaces, and Overlays — full list with props in
   **[docs/COMPONENTS.md](docs/COMPONENTS.md)**, kept current every round
   rather than duplicated here. A few architectural patterns worth
@@ -287,7 +287,7 @@ the sidebar.
     caller rather than managing it internally.
 - **Widgetbook gallery** (`widgetbook/`) — manual (non-codegen)
   registration of every component's key states as browsable use cases,
-  with a knob-driven **Playground** for 106 of the 111 components
+  with a knob-driven **Playground** for 107 of the 112 components
   alongside the static variant grids (the two answer different
   questions: a playground explores combinations, a grid compares
   options side by side). A smoke test builds all 225 use cases in CI,
@@ -391,14 +391,13 @@ intentional rather than bugs:
   (fine) but blue toward cyan (worse). Doing it properly needs per-hue
   drift tables rather than a formula. Contrast wasn't the blocker —
   the WCAG suite passed throughout. See `_generateShades`.
-- Extend the composed-blocks showcase — 108 examples against Mantine
-  UI's ~123. **Page Sections is complete**; fourteen of the twenty-four
-  subcategories are done, and no subcategory is more than two behind
-  except Inputs and the deliberately-empty Carousels. Nothing is
-  blocked on a missing component. See
+- Extend the composed-blocks showcase — 110 examples against Mantine
+  UI's ~123. **Page Sections is complete**, no subcategory is empty
+  since `PlinthCarousel` closed Carousels, and none is more than two
+  behind except Inputs. Nothing is blocked on a missing component. See
   **[docs/SHOWCASE.md](docs/SHOWCASE.md)**.
 - ~~Bring the example app's component tour up to date~~ — done. All
-  111 components have a section, and `example/test/section_coverage_test.dart`
+  112 components have a section, and `example/test/section_coverage_test.dart`
   now holds the section list against the snippet map so the two can't
   drift apart silently.
 - ~~Make a local `flutter test` quiet again~~ — done. The golden tests

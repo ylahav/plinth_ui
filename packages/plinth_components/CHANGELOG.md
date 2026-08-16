@@ -7,6 +7,36 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.18.0
+
+### Added
+
+- **`PlinthCarousel` + `PlinthCarouselController`.** Swipeable slides
+  with arrows, dot indicators, looping, and `slideSize` for letting the
+  neighbouring slides peek in — matching Mantine's `Carousel`.
+
+  Mantine ships its carousel as a separate package because it wraps
+  Embla, a whole scrolling engine. Flutter already has that in
+  `PageView`, so this is a themed arrangement over it rather than a
+  library in disguise, and it belongs in `plinth_components`.
+
+  Position is presentation-local, so it manages the index internally
+  like `PlinthAccordion` rather than demanding a `value`/`onChanged`
+  pair like `PlinthTabs`; `onSlideChanged` reports it, and the
+  controller drives it from elsewhere on the page. Looping is an
+  endless page list mapped back onto the slides by remainder — the
+  origin is rounded to a whole number of laps, without which a
+  three-slide carousel opens on its second slide.
+
+  Arrow keys work once it has focus, controls disable at each end when
+  not looping, and a single-slide carousel renders neither arrows nor
+  dots.
+
+  **No autoplay**, deliberately: slides that move on their own take
+  content away from a slow reader, and doing it properly means pausing
+  on hover, on focus, on `MediaQuery.disableAnimations`, and while the
+  tab is hidden. Mantine's is a plugin for the same reason.
+
 ## 0.17.0
 
 ### Added

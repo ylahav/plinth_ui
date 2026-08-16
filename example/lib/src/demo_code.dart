@@ -1362,6 +1362,24 @@ const PlinthBackgroundImage(
   child: PlinthTitle('Ships tomorrow', order: 3),
 )
 ''',
+  'Carousel': r'''
+PlinthCarousel(
+  height: 160,
+  // Below 1 the neighbours peek in, which is what tells a reader
+  // there is more to swipe to.
+  slideSize: 0.8,
+  loop: true,
+  withIndicators: true,
+  slides: [
+    for (final id in [1015, 1016, 1018, 1020])
+      PlinthImage(
+        src: 'https://picsum.photos/id/$id/480/320',
+        fit: BoxFit.cover,
+        radius: PlinthSize.sm,
+      ),
+  ],
+)
+''',
   'Loader': r'''
 const PlinthGroup(
   children: [

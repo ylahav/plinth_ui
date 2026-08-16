@@ -997,6 +997,35 @@ as red/attention regardless of brand color), `position`
 Anchors a small badge/dot to a corner of `child` via `Stack` +
 `FractionalTranslation`.
 
+### `PlinthCarousel` + `PlinthCarouselController`
+`slides`, `height` (default `240`), `slideSize` (default `1.0`), `gap`
+(default `sm`), `loop`, `withControls` (default `true`),
+`withIndicators`, `initialSlide`, `onSlideChanged`, `controller`,
+`color`. Swipeable slides with arrows, dot indicators, and looping.
+
+Position is presentation-local, so this manages it internally the way
+`PlinthAccordion` manages expansion, rather than taking a
+`value`/`onChanged` pair like `PlinthTabs`. `onSlideChanged` reports
+each new index — enough to drive a caption beside it — and
+`PlinthCarouselController` (`next`, `previous`, `jumpTo`, `index`)
+drives it from a button elsewhere on the page.
+
+`slideSize` is a fraction of the viewport, matching Mantine's: below 1
+the neighbouring slides peek in, which is what tells a reader there is
+more to swipe to. `height` bounds the slide area, since a `PageView`
+inheriting an unbounded height is a layout exception rather than a
+carousel; indicators sit below that area. Arrow keys work once it has
+focus, arrows disable at each end unless `loop` is set, and a
+single-slide carousel renders neither arrows nor dots.
+
+Looping is an endless page list mapped back onto the slides by
+remainder, so there is no seam to cross at either end.
+
+**No autoplay**, deliberately. Mantine ships its own as a plugin, and
+the reason carries: slides that move on their own take content away
+from a slow reader, and doing it properly means pausing on hover, on
+focus, on `MediaQuery.disableAnimations`, and while the tab is hidden.
+
 ### `PlinthColorSwatch`
 `color` (a theme palette key, e.g. `'blue'`), `selected`, `onTap`, `size`.
 Standalone selectable color square — for a picker, lay out several with
@@ -1407,8 +1436,14 @@ way of:
   dependency graph of every app using this library isn't worth a
   thousands separator. Format with it and render the result.
 
-Mantine's separate packages — Carousel, Dropzone, Spotlight, Dates,
-Charts, RichTextEditor, Notifications — are a different scope question,
-not simply missing components. Each is a substantial library in its own
+Mantine's separate packages — Dropzone, Spotlight, Dates, Charts,
+RichTextEditor, Notifications — are a different scope question, not
+simply missing components. Each is a substantial library in its own
 right and would belong in its own package here too, rather than in
 `plinth_components`.
+
+**Carousel is the exception, and ships here.** Mantine's is separate
+because it wraps Embla, a whole third-party engine; Flutter's
+`PageView` already does the scrolling and snapping, so
+`PlinthCarousel` is a themed arrangement over it rather than a library
+in disguise. Autoplay stayed out for the reasons in its entry above.
