@@ -29,7 +29,7 @@ code panel will quietly show something the demo no longer does.
 
 ## What exists
 
-94 examples across 3 categories, borrowing Mantine UI's own category
+98 examples across 3 categories, borrowing Mantine UI's own category
 names so the two are directly comparable.
 
 | Category | Subcategory | Examples |
@@ -42,11 +42,11 @@ names so the two are directly comparable.
 | Application UI | Inputs | Search bar, Filter fields, Formatted fields |
 | Application UI | Buttons | Toolbar actions, Destructive actions, Split button, Async button, Inline confirm |
 | Application UI | Sliders | Price range filter, Setting sliders, Slider with marks, Budget slider, Colour controls |
-| Application UI | Grids | Dashboard grid, Card gallery |
+| Application UI | Grids | Dashboard grid, Card gallery, Asymmetric grid, Image gallery |
 | Application UI | Tables | Member table, Invoice table, Sortable table |
 | Application UI | Dropzones | File dropzone, Avatar upload |
 | Application UI | Drag'n'Drop | Reorderable list, Kanban columns |
-| Application UI | Footers | Simple footer, Footer with link columns |
+| Application UI | Footers | Simple footer, Footer with link columns, Footer with newsletter, Minimal status footer |
 | Page Sections | Hero Sections | Centered hero, Split hero, Hero with image, Hero with signup, Hero with proof |
 | Page Sections | Feature Sections | Feature grid, Feature list, Alternating screenshots, Comparison table, Logo strip |
 | Page Sections | Authentication | Sign in, Sign up, Password reset, Two-factor code, Split sign in |
@@ -61,7 +61,7 @@ names so the two are directly comparable.
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 94. The gap is now depth
+Mantine UI has ~123 blocks against these 98. The gap is now depth
 rather than absence: **every subcategory has something in it except
 Carousels**, which is a deliberate scope call rather than a hole.
 
@@ -77,8 +77,8 @@ here genuinely waiting on one.
 |---|---|---|---|
 | Navbars | 9 | 5 | Collapsible, sectioned and search variants added |
 | Headers | 6 | 5 | Tabs, filters and a sticky variant added |
-| Footers | 4 | 2 | |
-| Grids | 3 | 2 | |
+| Footers | 4 | 4 | Complete — newsletter signup and a one-line app footer added |
+| Grids | 3 | 4 | Complete — twelve-column spans and a fixed-ratio gallery added |
 | User info and controls | 8 | 5 | Menu, member list and presence variants added |
 | Inputs | 14 | 3 | Composed field arrangements, not new inputs |
 | Buttons | 6 | 5 | Split, async and inline-confirm variants added |
@@ -119,21 +119,19 @@ what remains is depth rather than coverage — Mantine offers 6–9
 variants where this has 2 or 3. Worth adding where a variant differs
 in *kind* rather than in styling:
 
-1. **Footers** and **Grids** — 4 and 3 against 2, the last of the
-   small gaps.
-2. **Inputs** — 14 against 3 on paper, the widest number, but the
+1. **Inputs** — 14 against 3 on paper, the widest number, but the
    softest target: most of Mantine's are styling variations rather
    than different arrangements, so counting them overstates the gap.
-3. **Navbars**, **User info** and **Stats** — 9, 8 and 9 against 5, 5
+2. **Navbars**, **User info** and **Stats** — 9, 8 and 9 against 5, 5
    and 6. Real gaps by count, but the obvious arrangements are taken;
    what's left needs a variant that differs in kind, not a sixth one.
-4. **Tables**, **Dropzones**, **Drag'n'Drop** — already at or near
+3. **Tables**, **Dropzones**, **Drag'n'Drop** — already at or near
    parity; only worth extending if a specific arrangement is missing.
 
 **Page Sections is complete** — all seven subcategories meet or exceed
-Mantine's count. Twelve subcategories overall are done. "Done" here
-means the arrangements are covered, not that no variant could ever be
-added.
+Mantine's count. Fourteen subcategories overall are done, Footers and
+Grids as of this batch. "Done" here means the arrangements are covered,
+not that no variant could ever be added.
 
 Every subcategory except Carousels now has at least five examples in
 the areas people actually copy from. Each new variant differs in *kind*

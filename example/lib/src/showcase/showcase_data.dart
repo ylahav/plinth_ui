@@ -142,6 +142,10 @@ final List<CategoryData> showcaseCategories = [
             exampleCode['DashboardGridExample']!),
         ExampleEntry('Card gallery', _cardGalleryGrid,
             exampleCode['CardGalleryGridExample']!),
+        ExampleEntry('Asymmetric grid', _asymmetricGrid,
+            exampleCode['AsymmetricGridExample']!),
+        ExampleEntry('Image gallery', _imageGalleryGrid,
+            exampleCode['ImageGalleryGridExample']!),
       ]),
       SubcategoryData('Tables', Icons.table_rows_outlined, [
         ExampleEntry(
@@ -171,6 +175,10 @@ final List<CategoryData> showcaseCategories = [
           _footerWithLinkColumns,
           exampleCode['FooterWithLinkColumnsExample']!,
         ),
+        ExampleEntry('Footer with newsletter', _footerWithNewsletter,
+            exampleCode['FooterWithNewsletterExample']!),
+        ExampleEntry('Minimal status footer', _footerMinimal,
+            exampleCode['FooterMinimalExample']!),
       ]),
     ],
   ),
@@ -331,6 +339,12 @@ Widget _serverErrorPage(BuildContext context) => const ServerErrorPageExample();
 Widget _simpleFooter(BuildContext context) => const SimpleFooterExample();
 Widget _footerWithLinkColumns(BuildContext context) =>
     const FooterWithLinkColumnsExample();
+Widget _footerWithNewsletter(BuildContext context) =>
+    const FooterWithNewsletterExample();
+Widget _footerMinimal(BuildContext context) => const FooterMinimalExample();
+Widget _asymmetricGrid(BuildContext context) => const AsymmetricGridExample();
+Widget _imageGalleryGrid(BuildContext context) =>
+    const ImageGalleryGridExample();
 Widget _faqAccordion(BuildContext context) => const FaqAccordionExample();
 Widget _faqWithContact(BuildContext context) => const FaqWithContactExample();
 Widget _userButton(BuildContext context) => const UserButtonExample();

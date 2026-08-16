@@ -614,6 +614,170 @@ return SizedBox(
   ),
 );
 ''',
+  'FooterWithNewsletterExample': r'''
+return SizedBox(
+  width: 560,
+  child: PlinthStack(
+    gap: PlinthSize.md,
+    children: [
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Expanded(
+            child: PlinthStack(
+              gap: PlinthSize.xs,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PlinthText('Plinth UI', weight: FontWeight.w700),
+                PlinthText(
+                  'A themeable component library for Flutter.',
+                  size: PlinthSize.sm,
+                  color: 'gray',
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 32),
+          Expanded(
+            child: PlinthStack(
+              gap: PlinthSize.xs,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const PlinthText('Release notes by email',
+                    size: PlinthSize.sm, weight: FontWeight.w600),
+                Row(
+                  children: [
+                    const Expanded(
+                      child: PlinthTextInput(
+                        placeholder: 'you@example.com',
+                        size: PlinthSize.sm,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    PlinthButton(
+                      size: PlinthSize.sm,
+                      onPressed: () {},
+                      child: const Text('Subscribe'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      Divider(height: 1, color: theme.surfaceSunken),
+      Row(
+        children: [
+          const Expanded(
+            child: PlinthText('© 2026 Plinth',
+                size: PlinthSize.xs, color: 'gray'),
+          ),
+          PlinthGroup(
+            gap: PlinthSize.xs,
+            children: [
+              for (final icon in [
+                Icons.code,
+                Icons.chat_bubble_outline,
+                Icons.alternate_email,
+              ])
+                PlinthActionIcon(
+                  icon: Icon(icon, size: 16),
+                  variant: PlinthVariant.subtle,
+                  onPressed: () {},
+                ),
+            ],
+          ),
+        ],
+      ),
+    ],
+  ),
+);
+''',
+  'FooterMinimalExample': r'''
+// One line, for an app rather than a marketing page.
+return Container(
+  padding: EdgeInsets.symmetric(
+    horizontal: theme.spacing[PlinthSize.md]!,
+    vertical: theme.spacing[PlinthSize.xs]!,
+  ),
+  decoration: BoxDecoration(
+    border: Border(top: BorderSide(color: theme.surfaceSunken)),
+  ),
+  child: Row(
+    children: [
+      PlinthIndicator(
+        color: 'green',
+        child: const SizedBox(width: 8, height: 8),
+      ),
+      const SizedBox(width: 12),
+      const PlinthText('All systems normal',
+          size: PlinthSize.xs, color: 'gray'),
+      const Spacer(),
+      PlinthGroup(
+        gap: PlinthSize.md,
+        children: [
+          PlinthAnchor('Privacy', onTap: () {}),
+          PlinthAnchor('Terms', onTap: () {}),
+          PlinthAnchor('Status', onTap: () {}),
+        ],
+      ),
+    ],
+  ),
+);
+''',
+  'AsymmetricGridExample': r'''
+// PlinthGrid, not PlinthSimpleGrid: cells take different widths.
+return const PlinthGrid(
+  gutter: PlinthSize.sm,
+  children: [
+    PlinthGridCol(
+      span: 8,
+      child: PlinthPaper(
+        p: PlinthSize.md,
+        withBorder: true,
+        child: PlinthText('Main content · span 8'),
+      ),
+    ),
+    PlinthGridCol(
+      span: 4,
+      child: PlinthPaper(
+        p: PlinthSize.md,
+        withBorder: true,
+        child: PlinthText('Sidebar · 4'),
+      ),
+    ),
+    PlinthGridCol(
+      span: 12,
+      child: PlinthPaper(
+        p: PlinthSize.md,
+        withBorder: true,
+        child: PlinthText('Full width · span 12'),
+      ),
+    ),
+  ],
+);
+''',
+  'ImageGalleryGridExample': r'''
+// Fixed ratios rather than fixed heights: images arrive at whatever
+// size the server sends, and mismatched heights are the usual result.
+return PlinthSimpleGrid(
+  columns: 4,
+  children: [
+    for (var i = 1; i <= 8; i++)
+      PlinthAspectRatio(
+        ratio: 1,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: PlinthImage(
+            src: 'https://picsum.photos/seed/plinth-g$i/240/240',
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+  ],
+);
+''',
   'FooterWithLinkColumnsExample': r'''
 return SizedBox(
   width: 560,

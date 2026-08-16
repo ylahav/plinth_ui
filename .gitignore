@@ -47,6 +47,3 @@ widgetbook/test/failures/
 # committed, not build output. Only build/web/ (already covered by
 # the top-level build/ rule above) is generated.
 
-# Local reference material, not part of the project.
-llms-full.txt
-
