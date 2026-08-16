@@ -58,6 +58,7 @@ class PlinthCascader extends StatelessWidget {
     this.height = 200,
     this.size = PlinthSize.md,
     this.color,
+    this.radius,
   });
 
   final List<PlinthCascaderOption> options;
@@ -72,6 +73,10 @@ class PlinthCascader extends StatelessWidget {
   final double columnWidth;
   final double height;
   final PlinthSize size;
+
+  /// Overrides the theme's default radius for this one instance.
+  final PlinthSize? radius;
+
   final String? color;
 
   static PlinthCascaderOption? _findIn(
@@ -150,7 +155,8 @@ class PlinthCascader extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         border: Border.all(color: theme.border),
-        borderRadius: BorderRadius.circular(theme.radius[theme.defaultRadius]!),
+        borderRadius:
+            BorderRadius.circular(theme.radius[radius ?? theme.defaultRadius]!),
       ),
       clipBehavior: Clip.antiAlias,
       child: LayoutBuilder(

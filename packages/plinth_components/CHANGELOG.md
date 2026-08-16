@@ -112,6 +112,24 @@ which components were missing.
   there is no such thing as no colour, and a clear button would have to
   invent one.
 
+- **`radius` on thirteen more components**: Badge, Chip, ColorSwatch,
+  Indicator, Pagination, PinInput, Stepper, Switch, Popover, HoverCard,
+  Combobox, Cascader and Menubar.
+
+  The theme has a radius scale and a `defaultRadius`, so a component
+  that took neither wasn't unstyled — it was un-overridable, and which
+  ones those were had no pattern to it. Twenty-six components round
+  their corners; these are the ones where Mantine also offers the prop
+  or where a bordered surface is the component's own chrome. The rest
+  are shapes rather than surfaces (a burger's bars, a loader's dots) and
+  are left alone deliberately.
+
+  **Every default is unchanged.** The pill-shaped ones stay pills unless
+  given a radius, `PlinthColorSwatch` keeps its squarer 6px, and the
+  ones that already followed `defaultRadius` still do. That's what makes
+  this additive rather than a restyle, and it's what the new tests
+  check — both directions, per component.
+
 ### Fixed
 
 - **Disabled buttons looked enabled.** `PlinthButton` and

@@ -98,15 +98,24 @@ it on none of them. "I picked a value and now want none" is a normal
 thing to want, and the caller currently has to build the clear affordance
 outside the field.
 
-### 6. `radius` and `size` cover only part of the library
-`radius` is accepted by 41 of ~112 components. The theme defines a
-radius scale and `defaultRadius`, so the ones that don't take it aren't
-unstyled — they're just not overridable, with no pattern to what is and
-isn't. `size` is the same story on a smaller scale (`PlinthDivider`,
-`PlinthIndicator`, `PlinthStepper`, the colour sliders).
+### 6. `radius` and `size` cover only part of the library — **radius done in 0.19.0**
+`radius` was accepted by 41 of ~112 components. The theme defines a
+radius scale and `defaultRadius`, so the ones that didn't take it
+weren't unstyled — they were un-overridable, with no pattern to what
+was and wasn't.
 
-This is the one finding here that is purely mechanical, and it's the
-kind of inconsistency people notice in the first hour.
+Thirteen more now take it: Badge, Chip, ColorSwatch, Indicator,
+Pagination, PinInput, Stepper, Switch, Popover, HoverCard, Combobox,
+Cascader and Menubar. Twenty-six components round their corners; the
+other thirteen are shapes rather than surfaces — a burger's bars, a
+loader's dots, a splitter's handle — and adding the prop there would be
+answering a question nobody asks. Every default is unchanged, which is
+what the tests pin in both directions.
+
+**`size` is still open**, on a smaller scale: `PlinthDivider` (thickness),
+`PlinthIndicator`, `PlinthStepper`, and the colour sliders, which spell
+it `height`. Left for the naming pass, since two of those are really the
+naming question in disguise.
 
 ## Tier 2 — worth doing, in rough order
 

@@ -34,6 +34,7 @@ class PlinthHoverCard extends StatefulWidget {
     required this.content,
     this.position = PlinthPopoverPosition.bottom,
     this.width,
+    this.radius,
     this.closeDelay = const Duration(milliseconds: 100),
   });
 
@@ -43,6 +44,9 @@ class PlinthHoverCard extends StatefulWidget {
 
   /// Fixed content width. Omit to size to content.
   final double? width;
+
+  /// Overrides the theme's default radius for this one instance.
+  final PlinthSize? radius;
 
   final Duration closeDelay;
 
@@ -121,7 +125,7 @@ class _PlinthHoverCardState extends State<PlinthHoverCard> {
     if (_entry != null) return;
     final overlay = Overlay.of(context);
     final theme = context.plinth;
-    final resolvedRadius = theme.radius[theme.defaultRadius]!;
+    final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
 
     _entry = OverlayEntry(
       builder: (overlayContext) => CompositedTransformFollower(

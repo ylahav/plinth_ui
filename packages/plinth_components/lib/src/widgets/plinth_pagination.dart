@@ -24,6 +24,7 @@ class PlinthPagination extends StatelessWidget {
     this.color,
     this.size = PlinthSize.md,
     this.siblingCount = 1,
+    this.radius,
   });
 
   /// Current page, 1-based.
@@ -35,6 +36,9 @@ class PlinthPagination extends StatelessWidget {
   final ValueChanged<int> onChanged;
   final String? color;
   final PlinthSize size;
+
+  /// Overrides the theme's default radius for this one instance.
+  final PlinthSize? radius;
 
   /// How many page numbers to show on either side of [page] before
   /// collapsing into an ellipsis.

@@ -27,6 +27,7 @@ class PlinthColorSwatch extends StatelessWidget {
     this.selected = false,
     this.onTap,
     this.size = PlinthSize.md,
+    this.radius,
   });
 
   /// Color key into the active theme's palette (e.g. `'blue'`).
@@ -35,6 +36,9 @@ class PlinthColorSwatch extends StatelessWidget {
   final bool selected;
   final VoidCallback? onTap;
   final PlinthSize size;
+
+  /// Overrides the theme's default radius for this one instance.
+  final PlinthSize? radius;
 
   static const Map<PlinthSize, double> _dimensions = {
     PlinthSize.xs: 20,
@@ -47,6 +51,9 @@ class PlinthColorSwatch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
+    // 6 rather than the theme default when unset: a swatch is a
+    // sample of colour, and squarer corners show more of it.
+    final resolvedRadius = radius == null ? 6.0 : theme.radius[radius!]!;
     final fillColor = theme.shaded(color, 6);
     final dimension = _dimensions[size]!;
 
@@ -55,14 +62,14 @@ class PlinthColorSwatch extends StatelessWidget {
       selected: selected,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(resolvedRadius),
         child: Container(
           width: dimension,
           height: dimension,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: fillColor,
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(resolvedRadius),
             border: selected ? Border.all(color: theme.text, width: 2) : null,
           ),
           child: selected

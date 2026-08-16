@@ -40,10 +40,15 @@ class PlinthMenubar extends StatefulWidget {
     required this.menus,
     this.size = PlinthSize.sm,
     this.color,
+    this.radius,
   });
 
   final List<PlinthMenubarMenu> menus;
   final PlinthSize size;
+
+  /// Overrides the theme's default radius for this one instance.
+  final PlinthSize? radius;
+
   final String? color;
 
   @override
@@ -128,8 +133,8 @@ class _PlinthMenubarState extends State<PlinthMenubar> {
                 ),
                 decoration: BoxDecoration(
                   color: _open == i ? theme.shaded(colorKey, 0) : null,
-                  borderRadius:
-                      BorderRadius.circular(theme.radius[PlinthSize.xs]!),
+                  borderRadius: BorderRadius.circular(
+                      theme.radius[widget.radius ?? PlinthSize.xs]!),
                 ),
                 child: PlinthText(
                   widget.menus[i].label,

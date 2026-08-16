@@ -22,6 +22,7 @@ class PlinthSwitch extends StatelessWidget {
     this.label,
     this.size = PlinthSize.md,
     this.color,
+    this.radius,
   });
 
   final bool value;
@@ -31,6 +32,10 @@ class PlinthSwitch extends StatelessWidget {
   final String? label;
   final PlinthSize size;
   final String? color;
+
+  /// Squares off the fully rounded default. Omit unless it has to
+  /// match squarer chrome around it.
+  final PlinthSize? radius;
 
   static const Map<PlinthSize, Size> _trackSizes = {
     PlinthSize.xs: Size(28, 16),
@@ -48,6 +53,10 @@ class PlinthSwitch extends StatelessWidget {
     final trackSize = _trackSizes[size]!;
     final enabled = onChanged != null;
     final thumbDiameter = trackSize.height - 4;
+    // Half the track height is a capsule, which is what a switch is
+    // unless a caller squares it off to match its surroundings.
+    final resolvedRadius =
+        radius == null ? trackSize.height / 2 : theme.radius[radius!]!;
 
     final track = AnimatedContainer(
       duration: const Duration(milliseconds: 150),
@@ -58,7 +67,7 @@ class PlinthSwitch extends StatelessWidget {
         color: value
             ? (enabled ? baseColor : baseColor.withValues(alpha: 0.5))
             : theme.border,
-        borderRadius: BorderRadius.circular(trackSize.height / 2),
+        borderRadius: BorderRadius.circular(resolvedRadius),
       ),
       child: AnimatedAlign(
         duration: const Duration(milliseconds: 150),
@@ -88,7 +97,7 @@ class PlinthSwitch extends StatelessWidget {
       enabled: enabled,
       child: InkWell(
         onTap: enabled ? () => onChanged!(!value) : null,
-        borderRadius: BorderRadius.circular(trackSize.height / 2),
+        borderRadius: BorderRadius.circular(resolvedRadius),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Row(

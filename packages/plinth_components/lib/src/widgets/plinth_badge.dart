@@ -17,11 +17,17 @@ class PlinthBadge extends StatelessWidget {
     this.size = PlinthSize.sm,
     this.color,
     this.leadingIcon,
+    this.radius,
   });
 
   final String label;
   final PlinthVariant variant;
   final PlinthSize size;
+
+  /// Squares off the pill. Omit for the fully rounded default, which
+  /// is what this shape normally wants; pass one when it has to match
+  /// squarer chrome around it.
+  final PlinthSize? radius;
   final String? color;
   final Widget? leadingIcon;
 
@@ -92,7 +98,8 @@ class PlinthBadge extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: background,
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(
+            radius == null ? 999 : theme.radius[radius!]!),
         border: border != null ? Border.all(color: border) : null,
       ),
       child: Row(

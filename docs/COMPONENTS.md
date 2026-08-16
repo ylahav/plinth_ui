@@ -189,7 +189,8 @@ wrapped in an `IgnorePointer`: an invisible button that still takes
 taps is worse than no button.
 
 ### `PlinthMenubar` + `PlinthMenubarMenu`
-`menus`, `size`, `color`. A horizontal bar of menus, desktop-style.
+`menus`, `size`, `color`, `radius`. A horizontal bar of menus,
+desktop-style.
 
 The behaviour that makes it a menubar rather than a row of
 `PlinthMenu`s: **once one menu is open, moving the pointer across the
@@ -458,7 +459,7 @@ flag.
 ### `PlinthPinInput`
 `length` (default `4`), `value`, `onChanged`, `onCompleted` (fires once
 when the value reaches `length` characters), `obscureText`, `numbersOnly`
-(default `true`), `size`, `color`, `error`. One box per character, with
+(default `true`), `size`, `color`, `radius`, `error`. One box per character, with
 auto-advancing focus as each digit is typed and auto-retreating focus on
 backspace from an already-empty box.
 
@@ -538,7 +539,7 @@ slot, since that slot is inside the dropdown's own hit area and a tap
 there would open the menu it is supposed to be clearing.
 
 ### `PlinthSwitch`
-`value`, `onChanged` (nullable), `label`, `size`, `color`. Same
+`value`, `onChanged` (nullable), `label`, `size`, `color`, `radius`. Same
 animated-fill pattern as `PlinthCheckbox`, pill-shaped instead of square.
 
 ### `PlinthSlider` + `PlinthSliderMark`
@@ -598,7 +599,7 @@ directly is also supported and clamped the same way.
 
 ### `PlinthChip`
 `label`, `selected`, `onSelected` (nullable — null disables), `color`,
-`size`. Standalone toggle — for a group, manage a `Set`/value in your own
+`size`, `radius`. Standalone toggle — for a group, manage a `Set`/value in your own
 state and pass `selected` per chip, same controlled-component pattern as
 `PlinthCheckbox`/`PlinthRadio`.
 
@@ -718,7 +719,7 @@ the border, the same order `PlinthTextInput` uses.
 
 ### `PlinthCombobox` + `PlinthComboboxOption`
 `controller`, `target`, `options`, `onSelected`, `selected`, `width`,
-`maxHeight`, `empty`, `size`, `color`, `closeOnSelect`. The option-list
+`maxHeight`, `empty`, `size`, `color`, `radius`, `closeOnSelect`. The option-list
 primitive behind a select-shaped control.
 
 This is the part that is genuinely fiddly and genuinely shared: an
@@ -767,7 +768,7 @@ for when only leaves are real choices.
 
 ### `PlinthCascader` + `PlinthCascaderOption`
 `options`, `value` (the path), `onChanged`, `columnWidth`, `height`,
-`size`, `color`. Column-by-column selection through a hierarchy.
+`size`, `color`, `radius`. Column-by-column selection through a hierarchy.
 
 The same data `PlinthTreeSelect` shows, arranged for a different
 question. A tree is for *finding* one item in a structure you have to
@@ -871,7 +872,8 @@ twice and left half-done in one of them.
 ## Feedback
 
 ### `PlinthBadge`
-`label` (positional), `variant`, `size`, `color`, `leadingIcon`. Renders
+`label` (positional), `variant`, `size`, `color`, `leadingIcon`,
+`radius`. Renders
 uppercase by default, pill-shaped (`borderRadius: 999`).
 
 ### `PlinthAlert`
@@ -1066,7 +1068,8 @@ tappable (`ThemeIcon` is decorative, `ActionIcon` is interactive).
 not the theme's primary color — a notification dot conventionally reads
 as red/attention regardless of brand color), `position`
 (`PlinthIndicatorPosition`: `topStart, topEnd, bottomStart, bottomEnd`),
-`disabled` (hides the indicator without removing `child` from the tree).
+`disabled` (hides the indicator without removing `child` from the tree),
+`radius` (squares off the dot; omit for the round default).
 Anchors a small badge/dot to a corner of `child` via `Stack` +
 `FractionalTranslation`.
 
@@ -1100,7 +1103,9 @@ from a slow reader, and doing it properly means pausing on hover, on
 focus, on `MediaQuery.disableAnimations`, and while the tab is hidden.
 
 ### `PlinthColorSwatch`
-`color` (a theme palette key, e.g. `'blue'`), `selected`, `onTap`, `size`.
+`color` (a theme palette key, e.g. `'blue'`), `selected`, `onTap`, `size`,
+`radius` (defaults to a squarer 6px rather than the theme radius — a
+swatch is a sample of colour, and squarer corners show more of it).
 Standalone selectable color square — for a picker, lay out several with
 your own selected-color state, same controlled-component pattern as
 `PlinthChip`.
@@ -1248,7 +1253,7 @@ controller, since expanded state is presentation-local to the widget.
 
 ### `PlinthStepper` + `PlinthStep`
 `steps` (`List<PlinthStep>`), `currentStep` (zero-based index), `onStepTapped`,
-`color`. Each `PlinthStep` has `label` and optional `description`. Purely
+`color`, `radius`. Each `PlinthStep` has `label` and optional `description`. Purely
 a visual progress indicator — like `PlinthTabs`/`PlinthTabView`, it doesn't
 manage step *content*; pair with your own conditional rendering driven by
 the same `currentStep` you pass in. Tapping a step calls `onStepTapped`
@@ -1263,7 +1268,8 @@ whether it has an `onTap` — matching the convention that the current page
 isn't itself a link.
 
 ### `PlinthPagination`
-`page` (1-based), `total`, `onChanged`, `color`, `size`, `siblingCount`
+`page` (1-based), `total`, `onChanged`, `color`, `size`, `radius`,
+`siblingCount`
 (default `1` — how many page numbers show on either side of `page` before
 collapsing into an ellipsis). For large `total`, always shows the first
 page, the last page, and `page`'s immediate neighbors; everything else
@@ -1410,7 +1416,7 @@ trap.
 
 ### `PlinthPopover`
 `controller`, `target`, `content`, `position` (`PlinthPopoverPosition`:
-`top, bottom, left, right`), `width`, `closeOnOutsideTap`. Unlike
+`top, bottom, left, right`), `width`, `radius`, `closeOnOutsideTap`. Unlike
 Modal/Drawer, **not** route-based — built on
 `CompositedTransformTarget`/`CompositedTransformFollower` + a manual
 `OverlayEntry`, so it tracks its target's actual on-screen position
@@ -1419,7 +1425,8 @@ directly; no separate host widget needed since the popover wraps its
 own trigger.
 
 ### `PlinthHoverCard`
-`target`, `content`, `position`, `width`, `closeDelay` (default 100ms).
+`target`, `content`, `position`, `width`, `radius`, `closeDelay`
+(default 100ms).
 Hover-triggered — desktop/web-oriented, effectively inert on touch
 devices (see `PlinthPopover` for a tap-triggered equivalent that works
 everywhere). Not built by composing `PlinthPopover` — its trigger is

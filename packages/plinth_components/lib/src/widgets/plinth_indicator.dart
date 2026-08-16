@@ -26,6 +26,7 @@ class PlinthIndicator extends StatelessWidget {
     this.color,
     this.position = PlinthIndicatorPosition.topEnd,
     this.disabled = false,
+    this.radius,
   });
 
   final Widget child;
@@ -41,6 +42,10 @@ class PlinthIndicator extends StatelessWidget {
   /// [child] from the tree — useful for a "has unread" state that
   /// toggles on/off without restructuring your widget tree.
   final bool disabled;
+
+  /// Squares off the fully rounded default. Omit unless it has to
+  /// match squarer chrome around it.
+  final PlinthSize? radius;
 
   static const Map<PlinthIndicatorPosition, Alignment> _alignments = {
     PlinthIndicatorPosition.topStart: Alignment.topLeft,
@@ -76,7 +81,9 @@ class PlinthIndicator extends StatelessWidget {
       constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-          color: fillColor, borderRadius: BorderRadius.circular(999)),
+          color: fillColor,
+          borderRadius: BorderRadius.circular(
+              radius == null ? 999 : theme.radius[radius!]!)),
       child: hasLabel
           ? Text(
               label!,

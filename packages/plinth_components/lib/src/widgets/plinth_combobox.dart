@@ -61,6 +61,7 @@ class PlinthCombobox<T> extends StatefulWidget {
     this.empty,
     this.size = PlinthSize.md,
     this.color,
+    this.radius,
     this.closeOnSelect = true,
   });
 
@@ -91,6 +92,9 @@ class PlinthCombobox<T> extends StatefulWidget {
 
   final PlinthSize size;
   final String? color;
+
+  /// Overrides the theme's default radius for this one instance.
+  final PlinthSize? radius;
 
   final bool closeOnSelect;
 
@@ -245,7 +249,7 @@ class _PlinthComboboxState<T> extends State<PlinthCombobox<T>> {
 
   Widget _buildPanel(BuildContext overlayContext) {
     final theme = context.plinth;
-    final radius = theme.radius[theme.defaultRadius]!;
+    final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
     final colorKey = widget.color ?? theme.primaryColor;
 
     if (widget.options.isEmpty && widget.empty == null) {
@@ -281,7 +285,7 @@ class _PlinthComboboxState<T> extends State<PlinthCombobox<T>> {
                 constraints: BoxConstraints(maxHeight: widget.maxHeight),
                 decoration: BoxDecoration(
                   color: theme.surface,
-                  borderRadius: BorderRadius.circular(radius),
+                  borderRadius: BorderRadius.circular(resolvedRadius),
                   border: Border.all(color: theme.border),
                   boxShadow: [
                     BoxShadow(

@@ -32,6 +32,7 @@ class PlinthChip extends StatelessWidget {
     required this.onSelected,
     this.color,
     this.size = PlinthSize.md,
+    this.radius,
   });
 
   final String label;
@@ -42,6 +43,11 @@ class PlinthChip extends StatelessWidget {
 
   final String? color;
   final PlinthSize size;
+
+  /// Squares off the pill. Omit for the fully rounded default, which
+  /// is what this shape normally wants; pass one when it has to match
+  /// squarer chrome around it.
+  final PlinthSize? radius;
 
   static const Map<PlinthSize, double> _fontSizes = {
     PlinthSize.xs: 11,
@@ -73,6 +79,7 @@ class PlinthChip extends StatelessWidget {
     final colorKey = color ?? theme.primaryColor;
     final baseColor = theme.shaded(colorKey, 6);
     final enabled = onSelected != null;
+    final resolvedRadius = radius == null ? 999.0 : theme.radius[radius!]!;
 
     return Semantics(
       button: true,
@@ -80,7 +87,7 @@ class PlinthChip extends StatelessWidget {
       enabled: enabled,
       child: InkWell(
         onTap: enabled ? () => onSelected!(!selected) : null,
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(resolvedRadius),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           padding: EdgeInsets.symmetric(
@@ -89,7 +96,7 @@ class PlinthChip extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: selected ? baseColor : theme.surface,
-            borderRadius: BorderRadius.circular(999),
+            borderRadius: BorderRadius.circular(resolvedRadius),
             border: Border.all(
               color: selected ? baseColor : theme.border,
             ),

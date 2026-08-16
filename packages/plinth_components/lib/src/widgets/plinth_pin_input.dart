@@ -26,6 +26,7 @@ class PlinthPinInput extends StatefulWidget {
     this.size = PlinthSize.md,
     this.color,
     this.error = false,
+    this.radius,
   });
 
   final int length;
@@ -43,6 +44,9 @@ class PlinthPinInput extends StatefulWidget {
   final PlinthSize size;
   final String? color;
   final bool error;
+
+  /// Overrides the theme's default radius for this one instance.
+  final PlinthSize? radius;
 
   @override
   State<PlinthPinInput> createState() => _PlinthPinInputState();
@@ -130,7 +134,7 @@ class _PlinthPinInputState extends State<PlinthPinInput> {
     final theme = context.plinth;
     final colorKey = widget.color ?? theme.primaryColor;
     final boxSize = _boxSizes[widget.size]!;
-    final resolvedRadius = theme.radius[theme.defaultRadius]!;
+    final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
 
     // A single non-focusable Focus wrapper around the whole row,
     // rather than a per-box KeyboardListener sharing the TextField's

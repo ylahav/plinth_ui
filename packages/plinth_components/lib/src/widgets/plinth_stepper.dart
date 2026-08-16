@@ -39,6 +39,7 @@ class PlinthStepper extends StatelessWidget {
     required this.currentStep,
     this.onStepTapped,
     this.color,
+    this.radius,
   });
 
   final List<PlinthStep> steps;
@@ -51,6 +52,10 @@ class PlinthStepper extends StatelessWidget {
   final ValueChanged<int>? onStepTapped;
   final String? color;
 
+  /// Squares off the fully rounded default. Omit unless it has to
+  /// match squarer chrome around it.
+  final PlinthSize? radius;
+
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
@@ -62,6 +67,7 @@ class PlinthStepper extends StatelessWidget {
         for (var i = 0; i < steps.length; i++) ...[
           Expanded(
             child: _StepCircleAndLabel(
+              radius: radius,
               step: steps[i],
               index: i,
               state: i < currentStep
@@ -96,6 +102,7 @@ class _StepCircleAndLabel extends StatelessWidget {
     required this.state,
     required this.activeColor,
     required this.onTap,
+    required this.radius,
   });
 
   final PlinthStep step;
@@ -103,6 +110,9 @@ class _StepCircleAndLabel extends StatelessWidget {
   final _StepState state;
   final Color activeColor;
   final VoidCallback? onTap;
+
+  /// Null keeps the circular default, which is what a step marker is.
+  final PlinthSize? radius;
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +122,8 @@ class _StepCircleAndLabel extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(999),
+      borderRadius:
+          BorderRadius.circular(radius == null ? 999 : theme.radius[radius!]!),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

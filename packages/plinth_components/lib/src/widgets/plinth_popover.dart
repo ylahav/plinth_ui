@@ -32,6 +32,7 @@ class PlinthPopover extends StatefulWidget {
     required this.content,
     this.position = PlinthPopoverPosition.bottom,
     this.width,
+    this.radius,
     this.closeOnOutsideTap = true,
   });
 
@@ -47,6 +48,9 @@ class PlinthPopover extends StatefulWidget {
 
   /// Fixed content width. Omit to size to content.
   final double? width;
+
+  /// Overrides the theme's default radius for this one instance.
+  final PlinthSize? radius;
 
   final bool closeOnOutsideTap;
 
@@ -143,7 +147,7 @@ class _PlinthPopoverState extends State<PlinthPopover> {
     // the app's Theme, unlike the OverlayEntry builder's own context
     // which depends on where the enclosing Overlay/Navigator lives).
     final theme = context.plinth;
-    final resolvedRadius = theme.radius[theme.defaultRadius]!;
+    final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
 
     _entry = OverlayEntry(
       builder: (overlayContext) => Stack(
