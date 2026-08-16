@@ -328,6 +328,56 @@ void main() {
 
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('panels wider than the box scroll instead of overflowing',
+        (tester) async {
+      // Three levels at the default 160 per panel needs 482; a phone
+      // offers rather less, and drilling in only adds panels.
+      await tester.pumpWidget(
+        _wrap(
+          const SizedBox(
+            width: 260,
+            child: PlinthCascader(
+              options: options,
+              value: ['eu', 'fr'],
+              onChanged: null,
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Paris'), findsOneWidget);
+    });
+
+    testWidgets('a box wider than the panels still shrink-wraps them',
+        (tester) async {
+      // The scroll viewport fills whatever width it is offered, so
+      // reaching for one unconditionally would stretch the border
+      // across the empty space to the right of the last panel.
+      // Aligned rather than sized: a `SizedBox` hands down a *tight*
+      // width, which any row fills regardless of its mainAxisSize, so
+      // it could not tell the two behaviours apart.
+      await tester.pumpWidget(
+        _wrap(
+          const Align(
+            alignment: Alignment.topLeft,
+            child: PlinthCascader(
+              options: options,
+              value: ['eu'],
+              onChanged: null,
+            ),
+          ),
+        ),
+      );
+
+      // Two panels at 160, the divider between them, and a pixel of
+      // border on each side.
+      expect(
+        tester.getSize(find.byType(PlinthCascader)).width,
+        closeTo(323, 1),
+      );
+    });
   });
 
   group('PlinthTableOfContents', () {

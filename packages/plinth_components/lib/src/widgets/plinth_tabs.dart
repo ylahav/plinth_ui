@@ -66,56 +66,75 @@ class PlinthTabs<T> extends StatelessWidget {
     final verticalPadding = theme.spacing[size]! * 0.5;
     final horizontalPadding = theme.spacing[size]!;
 
+    final strip = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (final tab in tabs)
+          InkWell(
+            onTap: () => onChanged(tab.value),
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: verticalPadding,
+              ),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color:
+                        tab.value == value ? activeColor : Colors.transparent,
+                    width: 2,
+                  ),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (tab.icon != null) ...[
+                    IconTheme(
+                      data: IconThemeData(
+                        size: 16,
+                        color: tab.value == value ? activeColor : Colors.grey,
+                      ),
+                      child: tab.icon!,
+                    ),
+                    SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
+                  ],
+                  PlinthText(
+                    tab.label,
+                    size: size,
+                    weight:
+                        tab.value == value ? FontWeight.w600 : FontWeight.w400,
+                    color: tab.value == value ? colorKey : null,
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+
     return DecoratedBox(
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: theme.surfaceSunken)),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (final tab in tabs)
-            InkWell(
-              onTap: () => onChanged(tab.value),
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: horizontalPadding,
-                  vertical: verticalPadding,
-                ),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color:
-                          tab.value == value ? activeColor : Colors.transparent,
-                      width: 2,
-                    ),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (tab.icon != null) ...[
-                      IconTheme(
-                        data: IconThemeData(
-                          size: 16,
-                          color: tab.value == value ? activeColor : Colors.grey,
-                        ),
-                        child: tab.icon!,
-                      ),
-                      SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
-                    ],
-                    PlinthText(
-                      tab.label,
-                      size: size,
-                      weight: tab.value == value
-                          ? FontWeight.w600
-                          : FontWeight.w400,
-                      color: tab.value == value ? colorKey : null,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-        ],
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Nothing can overflow without a width to overflow — and a
+          // scroll view needs a bounded one, so a tab bar sitting in a
+          // `Row` without an `Expanded` keeps the plain strip.
+          if (!constraints.hasBoundedWidth) return strip;
+
+          // More tabs than fit is the ordinary case on a phone, and
+          // the platform answer to it is a strip that pans rather than
+          // one that clips or wraps. The viewport fills the width it is
+          // given, so the underline runs the width of the container the
+          // way Mantine's list does, rather than stopping at the last
+          // tab.
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: strip,
+          );
+        },
       ),
     );
   }

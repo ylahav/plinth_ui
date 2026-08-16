@@ -408,10 +408,15 @@ class _ShowcasePageState extends State<ShowcasePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          // A Wrap rather than a Row: 34pt lettering beside the mark
+          // is wider than a phone, and the title dropping below the
+          // mark is better than a clipped one.
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 16,
+            runSpacing: 8,
             children: [
               _plinthMark(scale: 1.4),
-              const SizedBox(width: 16),
               const Text(
                 'Plinth UI',
                 style: TextStyle(fontSize: 34, fontWeight: FontWeight.w800),
@@ -575,7 +580,10 @@ class _ShowcasePageState extends State<ShowcasePage> {
           body: Builder(
             builder: (context) {
               final content = Padding(
-                padding: const EdgeInsets.all(24),
+                // 24 on each side of a phone is 12% of the screen
+                // spent on nothing.
+                padding: EdgeInsets.all(
+                    MediaQuery.sizeOf(context).width < 600 ? 16 : 24),
                 // SingleChildScrollView + Column rather than
                 // ListView: ListView is virtualized by Flutter's
                 // Sliver system even when given a fixed children
@@ -1483,8 +1491,13 @@ class _ShowcasePageState extends State<ShowcasePage> {
                         children: [
                           PlinthText('Left', size: PlinthSize.sm),
                           PlinthSpace(w: PlinthSize.xl),
-                          PlinthText('Right (spaced apart)',
-                              size: PlinthSize.sm),
+                          // Flexible so the label wraps on a phone
+                          // instead of pushing the row off the screen;
+                          // the gap being demonstrated is unaffected.
+                          Flexible(
+                            child: PlinthText('Right (spaced apart)',
+                                size: PlinthSize.sm),
+                          ),
                         ],
                       ),
                       _gap(),
@@ -1503,8 +1516,10 @@ class _ShowcasePageState extends State<ShowcasePage> {
                             children: [
                               Icon(Icons.star_border, size: 18),
                               SizedBox(width: 8),
-                              PlinthText('Fully custom tap target',
-                                  size: PlinthSize.sm),
+                              Flexible(
+                                child: PlinthText('Fully custom tap target',
+                                    size: PlinthSize.sm),
+                              ),
                             ],
                           ),
                         ),

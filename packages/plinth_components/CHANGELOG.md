@@ -26,6 +26,32 @@ breaking changes without a major version bump.
   Existing callers are unaffected: with no breakpoint set, `columns: 3`
   still means three at every width, which a test now pins.
 
+### Fixed
+
+- **`PlinthTabs` overflowed when the tabs were wider than the box.**
+  Four tabs is more than a phone fits, and the strip was a plain `Row`,
+  so it reported a `RenderFlex overflowed` error and clipped the last
+  tab out of reach. It now scrolls horizontally — the platform answer
+  to more tabs than fit, and the one Material's `TabBar` uses.
+
+  The strip fills the width it is given now rather than shrink-wrapping
+  to the tabs, so the underline runs the full width of its container,
+  which is what Mantine's `Tabs.List` does. A tab bar in a `Row`
+  without an `Expanded` gets unbounded width, which no scroll view can
+  take — that case keeps the plain strip, since nothing can overflow a
+  width that isn't there.
+
+- **`PlinthCascader` overflowed once its panels outgrew the box.**
+  Three levels at the default panel width needs 482 logical pixels, and
+  drilling in only adds more, so a phone hit this on the second level.
+  The panels now pan sideways, the way every column browser handles
+  the same problem.
+
+  Only when they don't fit: a scroll viewport fills whatever width it
+  is offered, which would have stretched the border past the last panel
+  on a wide screen. What the panels need is arithmetic — fixed widths
+  and single-pixel dividers — so this needs no measuring pass.
+
 ## 0.16.4
 
 ### Fixed

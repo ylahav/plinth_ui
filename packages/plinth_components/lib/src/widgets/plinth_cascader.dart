@@ -112,6 +112,40 @@ class PlinthCascader extends StatelessWidget {
     final colorKey = color ?? theme.primaryColor;
     final columns = _columns();
 
+    final panels = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var c = 0; c < columns.length; c++) ...[
+          if (c > 0) VerticalDivider(width: 1, color: theme.surfaceSunken),
+          SizedBox(
+            width: columnWidth,
+            child: PlinthScrollArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (final option in columns[c])
+                    _Option(
+                      option: option,
+                      selected: c < value.length && value[c] == option.value,
+                      size: size,
+                      colorKey: colorKey,
+                      onTap:
+                          onChanged == null ? null : () => _select(c, option),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+
+    // Each panel is a fixed width and each divider a single pixel, so
+    // what the row needs is arithmetic rather than a measurement.
+    final contentWidth = columnWidth * columns.length +
+        (columns.isEmpty ? 0 : columns.length - 1);
+
     return Container(
       height: height,
       decoration: BoxDecoration(
@@ -119,33 +153,26 @@ class PlinthCascader extends StatelessWidget {
         borderRadius: BorderRadius.circular(theme.radius[theme.defaultRadius]!),
       ),
       clipBehavior: Clip.antiAlias,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (var c = 0; c < columns.length; c++) ...[
-            if (c > 0) VerticalDivider(width: 1, color: theme.surfaceSunken),
-            SizedBox(
-              width: columnWidth,
-              child: PlinthScrollArea(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    for (final option in columns[c])
-                      _Option(
-                        option: option,
-                        selected: c < value.length && value[c] == option.value,
-                        size: size,
-                        colorKey: colorKey,
-                        onTap:
-                            onChanged == null ? null : () => _select(c, option),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ],
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Drilling in adds a panel, so a cascader outgrows a phone
+          // after two levels. Panning to the level you are choosing at
+          // is how every column browser handles that; shrinking the
+          // panels would cost the labels instead.
+          //
+          // Only when it doesn't fit: a scroll viewport fills the width
+          // it is offered, which would stretch the border past the
+          // panels on a wide screen where the row shrink-wraps today.
+          if (!constraints.hasBoundedWidth ||
+              contentWidth <= constraints.maxWidth) {
+            return panels;
+          }
+
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: panels,
+          );
+        },
       ),
     );
   }

@@ -741,6 +741,12 @@ yet choosing its subcategory is a normal intermediate state rather than
 an error. Choosing at a shallower level truncates the path, since
 everything to its right is no longer reachable.
 
+Panels wider than the available width pan sideways rather than
+overflowing — three levels at the default `columnWidth` already needs
+more than a phone has. When they fit, the box still shrink-wraps to
+them, so its border stops at the last panel rather than stretching
+across a wide screen.
+
 Renders inline. Wrap it in a `PlinthPopover` for the dropdown form —
 the columns are the part worth having, and keeping the trigger out
 means it composes into a filter bar or a settings panel just as easily.
@@ -1220,6 +1226,13 @@ tints the background and label in the theme color.
 per-tab underline rather than a measured sliding indicator (the kind
 needing `GlobalKey`/`RenderBox` size lookups), to keep the implementation
 simple and reliable.
+
+More tabs than fit scroll horizontally rather than overflowing, so the
+strip fills the width it is given and its underline runs the width of
+the container. Given *unbounded* width — a tab bar in a `Row` with no
+`Expanded` — it falls back to shrink-wrapping, since a scroll view
+needs a bounded main axis and nothing can overflow a width that isn't
+there.
 
 `PlinthTabView`: `value`, `children` (`Map<T, Widget>`). Fades between
 entries keyed by the same `value`/type as `PlinthTabs`. Renders nothing
