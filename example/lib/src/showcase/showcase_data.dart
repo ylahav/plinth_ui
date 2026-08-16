@@ -53,6 +53,10 @@ final List<CategoryData> showcaseCategories = [
             exampleCode['SectionedNavbarExample']!),
         ExampleEntry('Navbar with search', _navbarWithSearch,
             exampleCode['NavbarWithSearchExample']!),
+        ExampleEntry('Navbar with sublevels', _navbarWithSublevels,
+            exampleCode['NavbarWithSublevelsExample']!),
+        ExampleEntry('Navbar with user footer', _navbarWithFooterUser,
+            exampleCode['NavbarWithFooterUserExample']!),
       ]),
       SubcategoryData('Headers', Icons.view_headline, [
         ExampleEntry('Centered header', _centeredHeader,
@@ -82,6 +86,10 @@ final List<CategoryData> showcaseCategories = [
             exampleCode['StatBreakdownExample']!),
         ExampleEntry(
             'Goal rings', _statGoalRings, exampleCode['StatGoalRingsExample']!),
+        ExampleEntry('Stat with sparkline', _statWithSparkline,
+            exampleCode['StatWithSparklineExample']!),
+        ExampleEntry('Top pages leaderboard', _statLeaderboard,
+            exampleCode['StatLeaderboardExample']!),
       ]),
       SubcategoryData('User Info & Controls', Icons.account_circle_outlined, [
         ExampleEntry(
@@ -93,6 +101,10 @@ final List<CategoryData> showcaseCategories = [
             'Member list', _memberList, exampleCode['MemberListExample']!),
         ExampleEntry(
             'Presence status', _userStatus, exampleCode['UserStatusExample']!),
+        ExampleEntry('Account switcher', _accountSwitcher,
+            exampleCode['AccountSwitcherExample']!),
+        ExampleEntry('Contact card', _userContactCard,
+            exampleCode['UserContactCardExample']!),
       ]),
       SubcategoryData('Application Cards', Icons.dashboard_outlined, [
         ExampleEntry(
@@ -353,6 +365,15 @@ Widget _footerMinimal(BuildContext context) => const FooterMinimalExample();
 Widget _asymmetricGrid(BuildContext context) => const AsymmetricGridExample();
 Widget _imageGalleryGrid(BuildContext context) =>
     const ImageGalleryGridExample();
+Widget _navbarWithSublevels(BuildContext context) =>
+    const NavbarWithSublevelsExample();
+Widget _navbarWithFooterUser(BuildContext context) =>
+    const NavbarWithFooterUserExample();
+Widget _statWithSparkline(BuildContext context) =>
+    const StatWithSparklineExample();
+Widget _statLeaderboard(BuildContext context) => const StatLeaderboardExample();
+Widget _accountSwitcher(BuildContext context) => const AccountSwitcherExample();
+Widget _userContactCard(BuildContext context) => const UserContactCardExample();
 Widget _passwordStrength(BuildContext context) =>
     const PasswordStrengthExample();
 Widget _verificationCode(BuildContext context) =>

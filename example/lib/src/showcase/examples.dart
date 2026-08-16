@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:plinth_components/plinth_components.dart';
 
@@ -5289,6 +5291,528 @@ class _AddressFormExampleState extends State<AddressFormExample> {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ───────────── Application UI: Navbars, Stats, User info (depth) ─────────────
+
+class NavbarWithSublevelsExample extends StatefulWidget {
+  const NavbarWithSublevelsExample({super.key});
+
+  @override
+  State<NavbarWithSublevelsExample> createState() =>
+      _NavbarWithSublevelsExampleState();
+}
+
+class _NavbarWithSublevelsExampleState
+    extends State<NavbarWithSublevelsExample> {
+  static const _sections = [
+    (
+      label: 'Analytics',
+      icon: Icons.insights_outlined,
+      children: ['Traffic', 'Conversions', 'Retention'],
+    ),
+    (
+      label: 'Content',
+      icon: Icons.article_outlined,
+      children: ['Posts', 'Pages', 'Media'],
+    ),
+  ];
+
+  String _open = 'Analytics';
+  String _active = 'Conversions';
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 240,
+      child: PlinthPaper(
+        p: PlinthSize.sm,
+        withBorder: true,
+        child: PlinthStack(
+          gap: PlinthSize.xs,
+          children: [
+            // A hierarchy you navigate *into*, where the sectioned
+            // navbar's headings are flat destinations that merely
+            // group. The difference shows in the state: only one
+            // branch is open at a time, and the parent is not itself
+            // a place you can be.
+            for (final section in _sections) ...[
+              PlinthNavLink(
+                label: section.label,
+                icon: Icon(section.icon, size: 18),
+                trailing: Icon(
+                  _open == section.label
+                      ? Icons.expand_less
+                      : Icons.expand_more,
+                  size: 16,
+                ),
+                onTap: () => setState(
+                  () => _open = _open == section.label ? '' : section.label,
+                ),
+              ),
+              PlinthCollapse(
+                opened: _open == section.label,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: PlinthStack(
+                    gap: PlinthSize.xs,
+                    children: [
+                      for (final child in section.children)
+                        PlinthNavLink(
+                          label: child,
+                          active: _active == child,
+                          onTap: () => setState(() => _active = child),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class NavbarWithFooterUserExample extends StatelessWidget {
+  const NavbarWithFooterUserExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.plinth;
+
+    return SizedBox(
+      width: 240,
+      // A real height rather than shrink-wrapping: the arrangement
+      // being shown is what a navbar does with the space *between*
+      // its two ends, which a card sized to its content can't show.
+      height: 340,
+      child: PlinthPaper(
+        p: PlinthSize.sm,
+        withBorder: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Workspace at the top, account at the bottom, links in
+            // between: the two things you switch rarely bracket the
+            // one you use constantly.
+            PlinthUnstyledButton(
+              onPressed: () {},
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: theme.surfaceSunken,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Row(
+                  children: [
+                    PlinthAvatar(initials: 'AC', size: PlinthSize.sm),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: PlinthText('Acme Corp',
+                          size: PlinthSize.sm, weight: FontWeight.w600),
+                    ),
+                    Icon(Icons.unfold_more, size: 16),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            PlinthNavLink(
+              label: 'Overview',
+              icon: const Icon(Icons.dashboard_outlined, size: 18),
+              active: true,
+              onTap: () {},
+            ),
+            PlinthNavLink(
+              label: 'Inbox',
+              icon: const Icon(Icons.inbox_outlined, size: 18),
+              trailing: const PlinthBadge('12', color: 'red'),
+              onTap: () {},
+            ),
+            PlinthNavLink(
+              label: 'Projects',
+              icon: const Icon(Icons.folder_outlined, size: 18),
+              onTap: () {},
+            ),
+            const Spacer(),
+            Divider(height: 17, color: theme.surfaceSunken),
+            Row(
+              children: [
+                const PlinthAvatar(initials: 'YL', size: PlinthSize.sm),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: PlinthStack(
+                    gap: PlinthSize.xs,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PlinthText('Yair Lahav',
+                          size: PlinthSize.sm, weight: FontWeight.w600),
+                      PlinthText('yair@example.com',
+                          size: PlinthSize.xs, color: 'gray'),
+                    ],
+                  ),
+                ),
+                PlinthActionIcon(
+                  icon: const Icon(Icons.logout, size: 16),
+                  variant: PlinthVariant.subtle,
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Draws [values] as a single trend line with a soft fill beneath it.
+///
+/// Deliberately not a chart: no axes, no ticks, no labels. A sparkline
+/// answers "which way, and how steadily" beside a number that already
+/// answers "how much" — anything more turns the card into a report.
+class _SparklinePainter extends CustomPainter {
+  const _SparklinePainter({required this.values, required this.color});
+
+  final List<double> values;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (values.length < 2) return;
+
+    final min = values.reduce(math.min);
+    final max = values.reduce(math.max);
+    // A flat series would divide by zero; drawing it down the middle
+    // is the honest answer rather than a line at the top or bottom.
+    final span = max - min;
+    final stepX = size.width / (values.length - 1);
+
+    Offset pointAt(int i) {
+      final t = span == 0 ? 0.5 : (values[i] - min) / span;
+      return Offset(stepX * i, size.height - t * size.height);
+    }
+
+    final line = Path()..moveTo(pointAt(0).dx, pointAt(0).dy);
+    for (var i = 1; i < values.length; i++) {
+      line.lineTo(pointAt(i).dx, pointAt(i).dy);
+    }
+
+    final fill = Path.from(line)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+
+    canvas.drawPath(fill, Paint()..color = color.withValues(alpha: 0.12));
+    canvas.drawPath(
+      line,
+      Paint()
+        ..color = color
+        ..strokeWidth = 2
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round
+        ..style = PaintingStyle.stroke,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_SparklinePainter old) =>
+      old.values != values || old.color != color;
+}
+
+class StatWithSparklineExample extends StatelessWidget {
+  const StatWithSparklineExample({super.key});
+
+  static const _series = <double>[
+    12,
+    15,
+    14,
+    19,
+    18,
+    24,
+    22,
+    28,
+    31,
+    29,
+    35,
+    38,
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.plinth;
+
+    return SizedBox(
+      width: 360,
+      child: PlinthPaper(
+        withBorder: true,
+        p: PlinthSize.md,
+        child: PlinthStack(
+          gap: PlinthSize.xs,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const PlinthText('Monthly revenue',
+                size: PlinthSize.sm, color: 'gray'),
+            const Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                PlinthNumberFormatter(
+                  value: 38400,
+                  prefix: r'$',
+                  size: PlinthSize.xl,
+                  weight: FontWeight.w700,
+                ),
+                SizedBox(width: 8),
+                PlinthBadge('+9%',
+                    color: 'green', variant: PlinthVariant.light),
+              ],
+            ),
+            const SizedBox(height: 4),
+            // The shape carries what the percentage can't: whether the
+            // rise was steady or one good month with a dip either side.
+            SizedBox(
+              height: 48,
+              width: double.infinity,
+              child: CustomPaint(
+                painter: _SparklinePainter(
+                  values: _series,
+                  color: theme.shaded('teal', 6),
+                ),
+              ),
+            ),
+            const PlinthText('Last 12 months',
+                size: PlinthSize.xs, color: 'gray'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class StatLeaderboardExample extends StatelessWidget {
+  const StatLeaderboardExample({super.key});
+
+  static const _rows = [
+    (label: '/docs/getting-started', views: 8420),
+    (label: '/components/button', views: 5310),
+    (label: '/blog/0-17-0', views: 3980),
+    (label: '/pricing', views: 1240),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    // Shares are measured against the leader, not the total: the
+    // question a ranking answers is "how far behind is second", and
+    // dividing by a total nobody sees makes every bar look small.
+    final top = _rows.first.views;
+
+    return SizedBox(
+      width: 420,
+      child: PlinthPaper(
+        withBorder: true,
+        p: PlinthSize.md,
+        child: PlinthStack(
+          gap: PlinthSize.sm,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const PlinthText('Top pages', weight: FontWeight.w700),
+            for (final row in _rows)
+              PlinthStack(
+                gap: PlinthSize.xs,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: PlinthText(
+                          row.label,
+                          size: PlinthSize.sm,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      PlinthNumberFormatter(
+                        value: row.views.toDouble(),
+                        size: PlinthSize.sm,
+                        weight: FontWeight.w600,
+                      ),
+                    ],
+                  ),
+                  PlinthProgress(
+                    value: row.views / top,
+                    size: PlinthSize.xs,
+                    color: 'blue',
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class AccountSwitcherExample extends StatefulWidget {
+  const AccountSwitcherExample({super.key});
+
+  @override
+  State<AccountSwitcherExample> createState() => _AccountSwitcherExampleState();
+}
+
+class _AccountSwitcherExampleState extends State<AccountSwitcherExample> {
+  static const _accounts = [
+    (initials: 'YL', name: 'Yair Lahav', detail: 'yair@example.com'),
+    (initials: 'AC', name: 'Acme Support', detail: 'support@acme.test'),
+    (initials: 'PB', name: 'Plinth Bot', detail: 'bot@plinth.dev'),
+  ];
+
+  String _current = 'Yair Lahav';
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.plinth;
+
+    return SizedBox(
+      width: 320,
+      child: PlinthPaper(
+        withBorder: true,
+        p: PlinthSize.sm,
+        child: PlinthStack(
+          gap: PlinthSize.xs,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Every account stays listed, the current one marked,
+            // rather than one row you press to cycle: switching
+            // identity is the kind of action worth seeing before you
+            // commit to it.
+            for (final account in _accounts)
+              PlinthUnstyledButton(
+                onPressed: () => setState(() => _current = account.name),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: _current == account.name
+                        ? theme.surfaceSunken
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Row(
+                    children: [
+                      PlinthAvatar(
+                          initials: account.initials, size: PlinthSize.sm),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: PlinthStack(
+                          gap: PlinthSize.xs,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            PlinthText(account.name,
+                                size: PlinthSize.sm, weight: FontWeight.w600),
+                            PlinthText(account.detail,
+                                size: PlinthSize.xs, color: 'gray'),
+                          ],
+                        ),
+                      ),
+                      if (_current == account.name)
+                        Icon(Icons.check,
+                            size: 16, color: theme.shaded('blue', 6)),
+                    ],
+                  ),
+                ),
+              ),
+            const PlinthDivider(),
+            PlinthButton(
+              fullWidth: true,
+              variant: PlinthVariant.subtle,
+              size: PlinthSize.sm,
+              leadingIcon: const Icon(Icons.add, size: 16),
+              onPressed: () {},
+              child: const Text('Add another account'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class UserContactCardExample extends StatelessWidget {
+  const UserContactCardExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: 340,
+      child: PlinthPaper(
+        withBorder: true,
+        p: PlinthSize.md,
+        child: PlinthStack(
+          gap: PlinthSize.sm,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                PlinthAvatar(initials: 'CD', size: PlinthSize.lg),
+                SizedBox(width: 12),
+                Expanded(
+                  child: PlinthStack(
+                    gap: PlinthSize.xs,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PlinthText('Cara Diaz', weight: FontWeight.w700),
+                      PlinthText('Field engineer · Lisbon',
+                          size: PlinthSize.xs, color: 'gray'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            PlinthDivider(),
+            // A person as a set of facts you need to *use*, rather
+            // than a profile you look at — so each row carries the
+            // action that goes with it instead of being plain text.
+            _ContactRow(
+              icon: Icons.alternate_email,
+              value: 'cara@example.com',
+            ),
+            _ContactRow(icon: Icons.phone_outlined, value: '+351 912 345 678'),
+            _ContactRow(icon: Icons.schedule, value: 'WEST · 2 hours ahead'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ContactRow extends StatelessWidget {
+  const _ContactRow({required this.icon, required this.value});
+
+  final IconData icon;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: Colors.grey),
+        const SizedBox(width: 8),
+        Expanded(
+          child: PlinthText(value,
+              size: PlinthSize.sm,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis),
+        ),
+        PlinthCopyButton(value: value, size: PlinthSize.sm),
+      ],
     );
   }
 }

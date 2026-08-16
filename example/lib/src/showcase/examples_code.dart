@@ -2186,6 +2186,131 @@ SizedBox(
   ),
 )
 ''',
+  'NavbarWithSublevelsExample': r'''
+// A hierarchy you navigate *into*, where the sectioned navbar's
+// headings are flat destinations that merely group. The difference
+// shows in the state: one branch open at a time, and the parent is
+// not itself a place you can be.
+return PlinthPaper(
+  p: PlinthSize.sm,
+  withBorder: true,
+  child: PlinthStack(
+    gap: PlinthSize.xs,
+    children: [
+      for (final section in _sections) ...[
+        PlinthNavLink(
+          label: section.label,
+          icon: Icon(section.icon, size: 18),
+          trailing: Icon(
+            _open == section.label ? Icons.expand_less : Icons.expand_more,
+            size: 16,
+          ),
+          onTap: () => setState(
+            () => _open = _open == section.label ? '' : section.label,
+          ),
+        ),
+        PlinthCollapse(
+          opened: _open == section.label,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: PlinthStack(
+              gap: PlinthSize.xs,
+              children: [
+                for (final child in section.children)
+                  PlinthNavLink(
+                    label: child,
+                    active: _active == child,
+                    onTap: () => setState(() => _active = child),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ],
+  ),
+);
+''',
+  'NavbarWithFooterUserExample': r'''
+// A real height rather than shrink-wrapping: the arrangement is what
+// a navbar does with the space *between* its two ends.
+return SizedBox(
+  width: 240,
+  height: 340,
+  child: PlinthPaper(
+    p: PlinthSize.sm,
+    withBorder: true,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Workspace at the top, account at the bottom, links between:
+        // the two things you switch rarely bracket the one you use
+        // constantly.
+        PlinthUnstyledButton(
+          onPressed: () {},
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: theme.surfaceSunken,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: const Row(
+              children: [
+                PlinthAvatar(initials: 'AC', size: PlinthSize.sm),
+                SizedBox(width: 8),
+                Expanded(
+                  child: PlinthText('Acme Corp',
+                      size: PlinthSize.sm, weight: FontWeight.w600),
+                ),
+                Icon(Icons.unfold_more, size: 16),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        PlinthNavLink(
+          label: 'Overview',
+          icon: const Icon(Icons.dashboard_outlined, size: 18),
+          active: true,
+          onTap: () {},
+        ),
+        PlinthNavLink(
+          label: 'Inbox',
+          icon: const Icon(Icons.inbox_outlined, size: 18),
+          trailing: const PlinthBadge('12', color: 'red'),
+          onTap: () {},
+        ),
+        const Spacer(),
+        Divider(height: 17, color: theme.surfaceSunken),
+        Row(
+          children: [
+            const PlinthAvatar(initials: 'YL', size: PlinthSize.sm),
+            const SizedBox(width: 8),
+            const Expanded(
+              child: PlinthStack(
+                gap: PlinthSize.xs,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  PlinthText('Yair Lahav',
+                      size: PlinthSize.sm, weight: FontWeight.w600),
+                  PlinthText('yair@example.com',
+                      size: PlinthSize.xs, color: 'gray'),
+                ],
+              ),
+            ),
+            PlinthActionIcon(
+              icon: const Icon(Icons.logout, size: 16),
+              variant: PlinthVariant.subtle,
+              onPressed: () {},
+            ),
+          ],
+        ),
+      ],
+    ),
+  ),
+);
+''',
   'SectionedNavbarExample': r'''
 PlinthStack(
   gap: PlinthSize.xs,
@@ -2365,6 +2490,98 @@ PlinthStack(
       ),
   ],
 )
+''',
+  'AccountSwitcherExample': r'''
+// Every account stays listed with the current one marked, rather than
+// one row you press to cycle: switching identity is worth seeing
+// before you commit to it.
+return PlinthPaper(
+  withBorder: true,
+  p: PlinthSize.sm,
+  child: PlinthStack(
+    gap: PlinthSize.xs,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      for (final account in _accounts)
+        PlinthUnstyledButton(
+          onPressed: () => setState(() => _current = account.name),
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: _current == account.name
+                  ? theme.surfaceSunken
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Row(
+              children: [
+                PlinthAvatar(initials: account.initials, size: PlinthSize.sm),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: PlinthStack(
+                    gap: PlinthSize.xs,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PlinthText(account.name,
+                          size: PlinthSize.sm, weight: FontWeight.w600),
+                      PlinthText(account.detail,
+                          size: PlinthSize.xs, color: 'gray'),
+                    ],
+                  ),
+                ),
+                if (_current == account.name)
+                  Icon(Icons.check, size: 16, color: theme.shaded('blue', 6)),
+              ],
+            ),
+          ),
+        ),
+      const PlinthDivider(),
+      PlinthButton(
+        fullWidth: true,
+        variant: PlinthVariant.subtle,
+        size: PlinthSize.sm,
+        leadingIcon: const Icon(Icons.add, size: 16),
+        onPressed: () {},
+        child: const Text('Add another account'),
+      ),
+    ],
+  ),
+);
+''',
+  'UserContactCardExample': r'''
+// A person as a set of facts you need to *use*, rather than a profile
+// you look at — so each row carries the action that goes with it
+// instead of being plain text.
+class _ContactRow extends StatelessWidget {
+  const _ContactRow({required this.icon, required this.value});
+
+  final IconData icon;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: Colors.grey),
+        const SizedBox(width: 8),
+        Expanded(
+          child: PlinthText(value,
+              size: PlinthSize.sm,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis),
+        ),
+        PlinthCopyButton(value: value, size: PlinthSize.sm),
+      ],
+    );
+  }
+}
+
+// …used beneath the identity block:
+const PlinthDivider(),
+_ContactRow(icon: Icons.alternate_email, value: 'cara@example.com'),
+_ContactRow(icon: Icons.phone_outlined, value: '+351 912 345 678'),
+_ContactRow(icon: Icons.schedule, value: 'WEST · 2 hours ahead'),
 ''',
   'UserStatusExample': r'''
 PlinthStack(
@@ -3187,6 +3404,119 @@ PlinthStack(
     ),
   ],
 )
+''',
+  'StatWithSparklineExample': r'''
+/// No axes, no ticks, no labels. A sparkline answers "which way, and
+/// how steadily" beside a number that already answers "how much" —
+/// anything more turns the card into a report.
+class _SparklinePainter extends CustomPainter {
+  const _SparklinePainter({required this.values, required this.color});
+
+  final List<double> values;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (values.length < 2) return;
+
+    final min = values.reduce(math.min);
+    final max = values.reduce(math.max);
+    // A flat series would divide by zero; drawing it down the middle
+    // is the honest answer rather than a line at the top or bottom.
+    final span = max - min;
+    final stepX = size.width / (values.length - 1);
+
+    Offset pointAt(int i) {
+      final t = span == 0 ? 0.5 : (values[i] - min) / span;
+      return Offset(stepX * i, size.height - t * size.height);
+    }
+
+    final line = Path()..moveTo(pointAt(0).dx, pointAt(0).dy);
+    for (var i = 1; i < values.length; i++) {
+      line.lineTo(pointAt(i).dx, pointAt(i).dy);
+    }
+
+    final fill = Path.from(line)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+
+    canvas.drawPath(fill, Paint()..color = color.withValues(alpha: 0.12));
+    canvas.drawPath(
+      line,
+      Paint()
+        ..color = color
+        ..strokeWidth = 2
+        ..strokeCap = StrokeCap.round
+        ..style = PaintingStyle.stroke,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_SparklinePainter old) =>
+      old.values != values || old.color != color;
+}
+
+// …and in the card, beneath the figure:
+SizedBox(
+  height: 48,
+  width: double.infinity,
+  child: CustomPaint(
+    painter: _SparklinePainter(
+      values: _series,
+      color: theme.shaded('teal', 6),
+    ),
+  ),
+),
+''',
+  'StatLeaderboardExample': r'''
+// Shares are measured against the leader, not the total: the question
+// a ranking answers is "how far behind is second", and dividing by a
+// total nobody sees makes every bar look small.
+final top = _rows.first.views;
+
+return PlinthPaper(
+  withBorder: true,
+  p: PlinthSize.md,
+  child: PlinthStack(
+    gap: PlinthSize.sm,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const PlinthText('Top pages', weight: FontWeight.w700),
+      for (final row in _rows)
+        PlinthStack(
+          gap: PlinthSize.xs,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: PlinthText(
+                    row.label,
+                    size: PlinthSize.sm,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                PlinthNumberFormatter(
+                  value: row.views.toDouble(),
+                  size: PlinthSize.sm,
+                  weight: FontWeight.w600,
+                ),
+              ],
+            ),
+            PlinthProgress(
+              value: row.views / top,
+              size: PlinthSize.xs,
+              color: 'blue',
+            ),
+          ],
+        ),
+    ],
+  ),
+);
 ''',
   'StatGoalRingsExample': r'''
 PlinthGroup(
