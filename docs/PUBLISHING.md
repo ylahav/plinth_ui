@@ -197,11 +197,24 @@ A green dry run in the workspace is therefore **not evidence** that the
 package a consumer downloads will resolve. It is the 0.6.0 failure with
 the alarm already ringing.
 
-One thing the beta cannot prove until step 3 runs for real: that
-`^1.0.0-beta.1` resolves the way it reads (`>=1.0.0-beta.1 <2.0.0`) and
-carries through to `1.0.0` final without another constraint edit. That
-is the expected pub_semver behaviour, and step 3 is where it stops
-being expected and starts being known.
+**Verified in the beta:** `^1.0.0-beta.1` does resolve, and picks the
+prerelease — a caret whose lower bound is a prerelease of the same
+version matches that prerelease, so the constraint carries through to
+`1.0.0` final without another edit.
+
+**And a second lesson, which cost more than it should have.** Right
+after publishing a version, pub.dev's listing takes a while to
+propagate, and during that window a resolve fails with
+*"which doesn't match any versions"* — the same message an
+unpublished dependency gives. Clearing the local cache does **not**
+fix it; only waiting does. It flaps rather than failing cleanly, so
+the same command can fail, succeed, and fail again within a minute.
+
+Do not conclude anything from a single failed resolve in that window.
+Re-run it until two consecutive runs agree, then believe them. The
+check is worth running anyway — it is the only one that sees what a
+consumer sees — but it needs a moment after publishing before its
+answer means anything.
 
 ### The 1.0.0 release sequence
 
