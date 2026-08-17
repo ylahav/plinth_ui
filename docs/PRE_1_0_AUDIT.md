@@ -245,13 +245,41 @@ prop with no implementation. It is tested in both directions now.
   separate `PlinthAutocomplete`. Defensible, but it means a searchable
   *multi* select isn't reachable at all.
 
-## Tier 3 — noted, not urgent
+## Tier 3 — triaged and closed in 0.24.0
 
-`Avatar.name` (initials derived from a name, colour derived from the
-string), `Blockquote.cite`, `Code.block`, `Container.fluid`,
-`Marquee.fadeEdges`, `Spoiler` expand control refs, `Tabs.loop`,
-`Menu.trigger: hover`, `Group.grow`, `SimpleGrid.minColWidth` (its
-container-query mode), `Table.layout`, `Timeline.align`.
+Twelve one-line entries, each now built or declined with a reason. The
+first thing re-reading them against the source turned up: **one was
+already done**, which is the same lesson Carousel taught — a written-down
+absence is only useful if it gets re-read.
+
+| Item | Call | Why |
+|---|---|---|
+| `Blockquote.cite` | **Already shipped** | It has been there all along, spelled `citation`. The list was never checked against the source after it was written |
+| `Avatar.name` | **Built** | Initials from the first and last word, and the palette key derived from the name when no `color` is given. The derivation is a sum of code units rather than `hashCode`, because Dart randomises string hashes per isolate — a person would have changed colour between launches |
+| `Code.block` | **Built** | `PlinthCode.block`, a named constructor like `PlinthTable.text`. Lines are not wrapped and the block scrolls sideways instead: a wrapped line of code is a line that has been silently rewritten |
+| `Container.fluid` | **Built** | Drops the max width, keeps the padding — the full-bleed section a page puts between its constrained ones |
+| `Group.grow` | **Built** | Asserts on `wrap: true`, because a `Wrap` lays each run out at its children's widths and has no leftover space to divide |
+| `SimpleGrid.minColWidth` | **Built** | The container-query mode, and genuinely a different question from the breakpoint props: those measure the *screen*, this measures the space the grid was handed. A grid in a sidebar gets narrow cells from one and desktop cells from the other |
+| `Marquee.fadeEdges` | **Built** | A `dstIn` shader mask rather than a gradient overlay — an overlay would have to know the page colour behind the strip and be wrong on any other |
+| `Timeline.align` | **Built** | `PlinthTimelineAlign.start`/`.end` rather than left/right, so an RTL locale isn't the one place this component ignores direction |
+| `Spoiler` expand control refs | **Declined** | A React ref for imperative expansion. The Plinth equivalent would be a controller, and this library already decided that case: `PlinthAccordion` "manages its own open/closed state internally — there's no external controller, since expanded state is presentation-local". Spoiler is the same shape |
+| `Tabs.loop` | **Declined, and it hides a real gap** | `loop` governs whether arrow-key navigation wraps around. `PlinthTabs` has **no keyboard navigation at all** — not one `Focus`, `Shortcuts` or key handler. Shipping `loop` would add a prop that does nothing to an absence nobody had noticed. See below |
+| `Menu.trigger: hover` | **Declined** | `PlinthHoverCard` is the hover-triggered floating panel, the same split this library already made for `PlinthTooltip`. A hover-only menu is also unreachable on touch |
+| `Table.layout` | **Declined** | `layout: auto` means intrinsic column widths, and 0.22.0's sticky header works *because* every column is an equal-flex share — that is what lets the header and body be two tables that cannot drift. `auto` would break it silently whenever `maxHeight` was set. Per-column widths are the honest version of this request, if anyone asks |
+
+### The gap `Tabs.loop` was standing in front of
+
+`PlinthTabs` cannot be operated from a keyboard. Tabs are one of the
+few components where that is a real accessibility failure rather than a
+convenience — the WAI-ARIA tabs pattern is arrow-keys-to-move,
+Tab-to-leave, and a tab strip that only responds to taps locks out
+anyone not using a pointer.
+
+This is deliberately **not** filed as a Tier 3 item, because it isn't
+one. It is larger than the twelve above put together, it belongs with
+whatever review decides `PlinthSegmentedControl` and `PlinthStepper`
+have the same problem, and a 1.0 that ships without it should say so on
+purpose rather than by omission.
 
 ## Cross-cutting: three names for one idea — **done in 0.20.0**
 
@@ -311,10 +339,16 @@ A proposal, not a decision:
    rather than a crop, and therefore also makes the page something the
    helper has to paint.
 
-**With that, every item on this list is closed.** What remains before
-1.0 is Tier 3 — twelve small additions, none of them gaps — and a
-decision recorded in [PUBLISHING.md](PUBLISHING.md) about whether the
-two leaf packages move onto a matching version line.
+**With that, every item on this list is closed** — and Tier 3 followed
+in 0.24.0, so all three tiers are now triaged. What remains before 1.0
+is not a gap list:
+
+1. **Keyboard navigation on `PlinthTabs`** (and probably
+   `PlinthSegmentedControl` and `PlinthStepper`), which Tier 3's
+   `Tabs.loop` turned out to be standing in front of. The one genuine
+   accessibility hole this audit has found.
+2. **A decision** recorded in [PUBLISHING.md](PUBLISHING.md) about
+   whether the two leaf packages move onto a matching version line.
 
 Beta, by contrast, is where the library is now: the API is stable
 enough to build against, and the remaining changes are additive except
@@ -333,12 +367,14 @@ full size), and none was caught by a unit test.
 
 Two things the images turned up immediately, neither a bug:
 
-- **`PlinthPopover` does not flip near an edge.** Its anchors are
-  fixed, so a `bottom` popover on a target near the bottom of the
-  screen renders off it. `PlinthTooltip` *does* flip, because Flutter's
-  own tooltip does it — which is the note in the Tier 1 section above,
-  read from the other side. Worth a decision before 1.0; not filed as a
-  gap yet because nobody has hit it.
+- **`PlinthPopover` did not flip near an edge** — fixed in 0.24.0. Its
+  anchors were fixed, so a `bottom` popover on a target near the bottom
+  of the screen rendered off it, and every assertion about it still
+  passed. `PlinthTooltip` had flipped all along because Flutter's own
+  tooltip does, which is the Tier 1 tooltip note read from the other
+  side: the same behaviour was recorded as handled in one component
+  while missing in its sibling. The image is what put the two side by
+  side.
 - **The hard black band on the drawer's edge is `debugDisableShadows`**,
   which `flutter_test` sets, painting an elevation as a solid rectangle
   rather than a blurred one. Confirmed by rendering with shadows on.

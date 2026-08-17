@@ -128,6 +128,40 @@ void main() {
       }
     });
 
+    testWidgets('popover, flipped away from the bottom edge', (tester) async {
+      useGoldenSurface(tester, width: 360, height: 200);
+      final controller = await opened(tester);
+
+      await tester.pumpWidget(
+        overlayGoldenWrap(
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: PlinthPopover(
+                controller: controller,
+                // Asked for below, where there is no room. The panel
+                // belongs above the anchor in this image; below it, or
+                // off the bottom of the frame, is the regression.
+                position: PlinthPopoverPosition.bottom,
+                width: 100,
+                target: const PlinthBadge('Anchor'),
+                content: const Text('Panel'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      controller.open();
+      await tester.pumpAndSettle();
+
+      await expectLater(
+        find.byKey(goldenBoundary),
+        matchesGoldenFile('goldens/plinth_popover_flipped.png'),
+      );
+    });
+
     testWidgets('drawer, open from the right over its scrim', (tester) async {
       useGoldenSurface(tester, width: 400, height: 260);
       final controller = await opened(tester);

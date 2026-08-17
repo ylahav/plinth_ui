@@ -435,4 +435,189 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   });
+
+  group('PlinthPopover flips away from a screen edge', () {
+    /// A popover whose target sits [fromTop] down and [fromLeft] across
+    /// a 400x400 screen, so each test can put it near whichever edge it
+    /// is about.
+    Widget at({
+      required double fromTop,
+      required double fromLeft,
+      required PlinthPopoverPosition position,
+    }) {
+      return _wrap(
+        Stack(
+          children: [
+            Positioned(
+              top: fromTop,
+              left: fromLeft,
+              child: _Host(
+                builder: (controller) => PlinthPopover(
+                  controller: controller,
+                  position: position,
+                  target: const SizedBox(
+                    width: 40,
+                    height: 20,
+                    child: Text('Trigger'),
+                  ),
+                  content: const SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: Text('Popover body'),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Future<void> openOn(WidgetTester tester, Widget app) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(400, 400);
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(app);
+      _controllerOf(tester).open();
+      await tester.pumpAndSettle();
+    }
+
+    Rect panelRect(WidgetTester tester) =>
+        tester.getRect(find.text('Popover body'));
+
+    Rect targetRect(WidgetTester tester) =>
+        tester.getRect(find.text('Trigger'));
+
+    testWidgets('a bottom popover with room below stays below', (tester) async {
+      await openOn(
+        tester,
+        at(fromTop: 40, fromLeft: 40, position: PlinthPopoverPosition.bottom),
+      );
+
+      expect(panelRect(tester).top, greaterThan(targetRect(tester).bottom));
+    });
+
+    testWidgets('a bottom popover near the bottom edge opens upward',
+        (tester) async {
+      // 340 down a 400-tall screen leaves 40px below the target, and
+      // the panel needs 100. Before this flipped, it rendered off the
+      // screen and every assertion about it still passed.
+      await openOn(
+        tester,
+        at(fromTop: 340, fromLeft: 40, position: PlinthPopoverPosition.bottom),
+      );
+
+      final panel = panelRect(tester);
+      expect(panel.bottom, lessThan(targetRect(tester).top));
+      expect(panel.top, greaterThanOrEqualTo(0));
+    });
+
+    testWidgets('a top popover near the top edge opens downward',
+        (tester) async {
+      await openOn(
+        tester,
+        at(fromTop: 10, fromLeft: 40, position: PlinthPopoverPosition.top),
+      );
+
+      final panel = panelRect(tester);
+      expect(panel.top, greaterThan(targetRect(tester).bottom));
+      expect(panel.bottom, lessThanOrEqualTo(400));
+    });
+
+    testWidgets('a left popover near the left edge opens rightward',
+        (tester) async {
+      await openOn(
+        tester,
+        at(fromTop: 150, fromLeft: 10, position: PlinthPopoverPosition.left),
+      );
+
+      final panel = panelRect(tester);
+      expect(panel.left, greaterThan(targetRect(tester).right));
+      expect(panel.right, lessThanOrEqualTo(400));
+    });
+
+    testWidgets('a right popover near the right edge opens leftward',
+        (tester) async {
+      await openOn(
+        tester,
+        at(fromTop: 150, fromLeft: 340, position: PlinthPopoverPosition.right),
+      );
+
+      final panel = panelRect(tester);
+      expect(panel.right, lessThan(targetRect(tester).left));
+      expect(panel.left, greaterThanOrEqualTo(0));
+    });
+
+    testWidgets('flips only across the axis it was asked for', (tester) async {
+      // Bottom-right corner: neither below nor above is roomy, but the
+      // flip must not wander onto the horizontal axis looking for one.
+      await openOn(
+        tester,
+        at(fromTop: 340, fromLeft: 340, position: PlinthPopoverPosition.bottom),
+      );
+
+      final panel = panelRect(tester);
+      final target = targetRect(tester);
+      expect(
+        panel.center.dy,
+        isNot(closeTo(target.center.dy, 1)),
+        reason: 'should still be on the vertical axis',
+      );
+    });
+
+    testWidgets('keeps the requested side when neither fits', (tester) async {
+      // A panel taller than the screen fits nowhere. Honouring the
+      // request beats moving it somewhere equally impossible.
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(400, 200);
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        _wrap(
+          Center(
+            child: _Host(
+              builder: (controller) => PlinthPopover(
+                controller: controller,
+                position: PlinthPopoverPosition.bottom,
+                target: const Text('Trigger'),
+                content: const SizedBox(
+                  width: 100,
+                  height: 300,
+                  child: Text('Popover body'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      _controllerOf(tester).open();
+      await tester.pumpAndSettle();
+
+      expect(panelRect(tester).top, greaterThan(targetRect(tester).top));
+    });
+
+    testWidgets('re-measures on a later open rather than reusing the last side',
+        (tester) async {
+      await openOn(
+        tester,
+        at(fromTop: 340, fromLeft: 40, position: PlinthPopoverPosition.bottom),
+      );
+      expect(panelRect(tester).bottom, lessThan(targetRect(tester).top));
+
+      final controller = _controllerOf(tester);
+      controller.close();
+      await tester.pumpAndSettle();
+
+      // Same widget, roomy position this time: a cached "flipped"
+      // answer would keep opening upward for the rest of its life.
+      await tester.pumpWidget(
+        at(fromTop: 40, fromLeft: 40, position: PlinthPopoverPosition.bottom),
+      );
+      _controllerOf(tester).open();
+      await tester.pumpAndSettle();
+
+      expect(panelRect(tester).top, greaterThan(targetRect(tester).bottom));
+    });
+  });
 }

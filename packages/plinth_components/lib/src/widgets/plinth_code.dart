@@ -12,13 +12,34 @@ import 'package:plinth_core/plinth_core.dart';
 ///   const TextSpan(text: ' first.'),
 /// ]))
 /// ```
+///
+/// [PlinthCode.block] is the multi-line form — a snippet that stands on
+/// its own rather than sitting inside a sentence:
+///
+/// ```dart
+/// PlinthCode.block('flutter pub get\nflutter run')
+/// ```
 class PlinthCode extends StatelessWidget {
   const PlinthCode(this.label,
-      {super.key, this.color, this.size = PlinthSize.md});
+      {super.key, this.color, this.size = PlinthSize.md})
+      : block = false;
+
+  /// A standalone block: full width, roomier padding, and every line
+  /// of [label] kept rather than collapsed onto one.
+  ///
+  /// Lines are not wrapped — a wrapped line of code is a line of code
+  /// that has been silently rewritten — so a block scrolls sideways
+  /// when a line is too long for it, the way every code viewer does.
+  const PlinthCode.block(this.label,
+      {super.key, this.color, this.size = PlinthSize.md})
+      : block = true;
 
   final String label;
   final String? color;
   final PlinthSize size;
+
+  /// Whether this is the standalone multi-line form.
+  final bool block;
 
   static const Map<PlinthSize, double> _fontSizes = {
     PlinthSize.xs: 11,
@@ -35,20 +56,34 @@ class PlinthCode extends StatelessWidget {
     final background = theme.shaded(colorKey, 1);
     final foreground = theme.shaded(colorKey, 8);
 
+    final text = Text(
+      label,
+      softWrap: !block,
+      style: TextStyle(
+        fontFamily: 'monospace',
+        fontSize: _fontSizes[size],
+        color: foreground,
+        // Lines of code sit closer together than prose does, and the
+        // default leading is tuned for prose.
+        height: block ? 1.45 : null,
+      ),
+    );
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+      width: block ? double.infinity : null,
+      padding: block
+          ? EdgeInsets.all(theme.spacing[PlinthSize.sm]!)
+          : const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontFamily: 'monospace',
-          fontSize: _fontSizes[size],
-          color: foreground,
-        ),
-      ),
+      child: block
+          ? SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: text,
+            )
+          : text,
     );
   }
 }

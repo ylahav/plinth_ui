@@ -7,6 +7,93 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.24.0
+
+Closes the [pre-1.0 audit](../../docs/PRE_1_0_AUDIT.md)'s Tier 3, and
+with it the last of the three tiers. All additive; no migration.
+
+### Fixed
+
+- **`PlinthPopover` now flips away from a screen edge.** Its anchors
+  were fixed, so a `bottom` popover on a target near the bottom of the
+  viewport rendered off it — and every assertion about it still passed,
+  because a behaviour test can only ask whether the panel is in the
+  tree. `PlinthTooltip` had flipped all along, because Flutter's own
+  tooltip does; the two are consistent now.
+
+  `position` is therefore a preference rather than an instruction. Only
+  the requested axis flips — `bottom` becomes `top`, never `left` — and
+  if neither side fits, the requested one wins.
+
+  It costs one frame: the panel's height isn't knowable until it has
+  been laid out, and which side fits depends on that height, so the
+  first frame after opening lays it out invisibly to measure and the
+  second shows it in the resolved place. The alternative is placing it
+  visibly and then moving it, which is the jump this avoids.
+
+### Added
+
+- **`PlinthAvatar.name`** — initials from the first and last word, so
+  "Ada Lovelace" reads AL and "Prince" reads P. Explicit `initials`
+  still win.
+
+  With no `color` either, the palette key is derived from the name, so
+  a list of people comes out varied without anyone assigning colours.
+  The derivation is a sum of code units rather than `hashCode`: Dart
+  randomises string hashes per isolate, so a hash would have changed
+  someone's colour between launches of the same app.
+
+- **`PlinthCode.block`** — the multi-line form, full width with roomier
+  padding. Lines are deliberately not wrapped, since a wrapped line of
+  code is a line that has been silently rewritten; a block scrolls
+  sideways instead, the way every code viewer does.
+
+- **`PlinthContainer.fluid`** — drops the max width, keeps the padding,
+  for the full-bleed sections a page puts between its constrained ones.
+
+- **`PlinthGroup.grow`** — divides the leftover width equally between
+  the children. Asserts on `wrap: true`, because a `Wrap` lays each run
+  out at the widths its children ask for and has no leftover space to
+  divide.
+
+- **`PlinthSimpleGrid.minColWidth`** — fits as many columns as will
+  hold a cell that wide. A different question from the breakpoint
+  props, not a shorthand: those measure the screen, this measures the
+  space the grid was handed, so a grid in a sidebar gets narrow cells
+  from one and desktop cells from the other. Gaps are counted.
+
+- **`PlinthMarquee.fadeEdges`** — fades the strip out at both ends
+  rather than cutting it off. Off by default because it costs a
+  `saveLayer`. Masks with `dstIn` rather than painting a gradient
+  overlay, which would have to know the page colour behind the strip.
+
+- **`PlinthTimeline.align`** — `PlinthTimelineAlign.start`/`.end` picks
+  which side the rail of dots runs down. Directional rather than
+  left/right, so an RTL locale isn't the one place this component
+  ignores direction.
+
+### Declined
+
+Recorded in the audit with reasons: `Spoiler` expand refs (this library
+already decided that expanded state is presentation-local, for
+`PlinthAccordion`), `Menu.trigger: hover` (`PlinthHoverCard` is the
+hover-triggered panel, and a hover-only menu is unreachable on touch),
+and `Table.layout` (`auto` means intrinsic column widths, and 0.22.0's
+sticky header works *because* every column is an equal-flex share).
+
+`Blockquote.cite` turned out to be **already shipped**, spelled
+`citation` — the list had never been re-read against the source.
+
+### Known gap, newly named
+
+`Tabs.loop` was declined because it governs arrow-key navigation that
+**does not exist**: `PlinthTabs` has no keyboard handling at all.
+Shipping `loop` would have added a prop that does nothing to an absence
+nobody had noticed. Keyboard navigation for the tab strip is now
+recorded in the audit as the one real accessibility hole it has found,
+deliberately not filed as a Tier 3 item because it is larger than all
+twelve of them together.
+
 ## 0.23.0
 
 Closes the last open item in the [pre-1.0 audit](../../docs/PRE_1_0_AUDIT.md)'s

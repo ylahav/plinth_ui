@@ -17,10 +17,19 @@ class PlinthContainer extends StatelessWidget {
     required this.child,
     this.size = PlinthContainerSize.md,
     this.padding = PlinthSize.md,
+    this.fluid = false,
   });
 
   final Widget child;
+
+  /// Ignored when [fluid] is set.
   final PlinthContainerSize size;
+
+  /// Drops the maximum width and fills whatever it is given, keeping
+  /// the horizontal [padding]. For the full-bleed sections a page puts
+  /// between its constrained ones — a hero, a banner, a wide table —
+  /// where the padding is still wanted and the ceiling is not.
+  final bool fluid;
 
   /// Horizontal padding applied inside the max-width constraint.
   final PlinthSize padding;
@@ -38,7 +47,9 @@ class PlinthContainer extends StatelessWidget {
     final theme = context.plinth;
     return Center(
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: _maxWidths[size]!),
+        constraints: BoxConstraints(
+          maxWidth: fluid ? double.infinity : _maxWidths[size]!,
+        ),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: theme.spacing[padding]!),
           child: child,

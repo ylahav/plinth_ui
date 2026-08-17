@@ -24,6 +24,25 @@ enum PlinthPopoverPosition { top, bottom, left, right }
 ///   content: const Text('Extra details shown in a floating panel.'),
 /// )
 /// ```
+///
+/// ## [position] is a preference, not an instruction
+///
+/// A panel that would run off the screen on its requested side is put
+/// on the opposite one instead — a `bottom` popover near the bottom of
+/// the viewport opens upward. Only the requested axis flips: `bottom`
+/// becomes `top`, never `left`. If neither side fits, the requested one
+/// wins, on the grounds that a caller who asked for `bottom` and cannot
+/// have it is better served by the side they named than by a surprise.
+///
+/// This costs one frame. The panel's height isn't knowable until it has
+/// been laid out, and which side fits depends on that height, so the
+/// first frame after opening lays it out invisibly to measure it and
+/// the second shows it in the resolved place. The alternative — placing
+/// it visibly and then moving it — is the jump this avoids.
+///
+/// [PlinthTooltip] gets the same behaviour from Flutter's own tooltip,
+/// which is why the pre-1.0 audit could record it as already handled
+/// there while it was missing here.
 class PlinthPopover extends StatefulWidget {
   const PlinthPopover({
     super.key,
@@ -60,9 +79,19 @@ class PlinthPopover extends StatefulWidget {
 
 class _PlinthPopoverState extends State<PlinthPopover> {
   final _layerLink = LayerLink();
+  final _panelKey = GlobalKey();
   OverlayEntry? _entry;
 
   static const double _gap = 8;
+
+  /// The side actually used. Starts as the requested one and is
+  /// replaced once the panel has a measured size to judge by.
+  late PlinthPopoverPosition _resolved = widget.position;
+
+  /// Whether [_resolved] has been decided against a real panel size.
+  /// The panel stays invisible and untappable until it has, so it is
+  /// never seen in a place it is about to leave.
+  bool _measured = false;
 
   @override
   void initState() {
@@ -90,6 +119,9 @@ class _PlinthPopoverState extends State<PlinthPopover> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _entry?.markNeedsBuild();
       });
+      // New content can be a new size, which can change which side it
+      // fits on. Re-resolving is a no-op when the answer is unchanged.
+      _scheduleResolve();
     }
   }
 
@@ -102,7 +134,7 @@ class _PlinthPopoverState extends State<PlinthPopover> {
   }
 
   Alignment get _targetAnchor {
-    switch (widget.position) {
+    switch (_resolved) {
       case PlinthPopoverPosition.top:
         return Alignment.topCenter;
       case PlinthPopoverPosition.bottom:
@@ -115,7 +147,7 @@ class _PlinthPopoverState extends State<PlinthPopover> {
   }
 
   Alignment get _followerAnchor {
-    switch (widget.position) {
+    switch (_resolved) {
       case PlinthPopoverPosition.top:
         return Alignment.bottomCenter;
       case PlinthPopoverPosition.bottom:
@@ -128,7 +160,7 @@ class _PlinthPopoverState extends State<PlinthPopover> {
   }
 
   Offset get _offset {
-    switch (widget.position) {
+    switch (_resolved) {
       case PlinthPopoverPosition.top:
         return Offset(0, -_gap);
       case PlinthPopoverPosition.bottom:
@@ -165,17 +197,26 @@ class _PlinthPopoverState extends State<PlinthPopover> {
             targetAnchor: _targetAnchor,
             followerAnchor: _followerAnchor,
             offset: _offset,
-            child: Material(
-              elevation: 4,
-              borderRadius: BorderRadius.circular(resolvedRadius),
-              child: Container(
-                width: widget.width,
-                padding: EdgeInsets.all(theme.spacing[PlinthSize.sm]!),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
+            // Laid out on the first frame so it can be measured, but
+            // neither drawn nor tappable until the side is settled.
+            child: IgnorePointer(
+              ignoring: !_measured,
+              child: Opacity(
+                opacity: _measured ? 1 : 0,
+                child: Material(
+                  key: _panelKey,
+                  elevation: 4,
                   borderRadius: BorderRadius.circular(resolvedRadius),
+                  child: Container(
+                    width: widget.width,
+                    padding: EdgeInsets.all(theme.spacing[PlinthSize.sm]!),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(resolvedRadius),
+                    ),
+                    child: widget.content,
+                  ),
                 ),
-                child: widget.content,
               ),
             ),
           ),
@@ -183,11 +224,80 @@ class _PlinthPopoverState extends State<PlinthPopover> {
       ),
     );
     overlay.insert(_entry!);
+    _scheduleResolve();
+  }
+
+  /// The opposite side on the same axis. A popover that won't fit
+  /// below belongs above, never beside — flipping across axes would
+  /// move it somewhere the caller never pointed at.
+  static PlinthPopoverPosition _opposite(PlinthPopoverPosition p) {
+    switch (p) {
+      case PlinthPopoverPosition.top:
+        return PlinthPopoverPosition.bottom;
+      case PlinthPopoverPosition.bottom:
+        return PlinthPopoverPosition.top;
+      case PlinthPopoverPosition.left:
+        return PlinthPopoverPosition.right;
+      case PlinthPopoverPosition.right:
+        return PlinthPopoverPosition.left;
+    }
+  }
+
+  /// The target's rectangle in global coordinates. This State's own
+  /// render object *is* the target's, since [build] wraps nothing else
+  /// around it.
+  Rect? _targetRect() {
+    final box = context.findRenderObject() as RenderBox?;
+    if (box == null || !box.hasSize) return null;
+    return box.localToGlobal(Offset.zero) & box.size;
+  }
+
+  bool _fits(PlinthPopoverPosition side, Rect target, Size screen, Size panel) {
+    switch (side) {
+      case PlinthPopoverPosition.top:
+        return target.top - _gap - panel.height >= 0;
+      case PlinthPopoverPosition.bottom:
+        return target.bottom + _gap + panel.height <= screen.height;
+      case PlinthPopoverPosition.left:
+        return target.left - _gap - panel.width >= 0;
+      case PlinthPopoverPosition.right:
+        return target.right + _gap + panel.width <= screen.width;
+    }
+  }
+
+  /// Measures the panel once it has been laid out, picks the side, and
+  /// rebuilds the entry if that changed anything — including the first
+  /// pass, which is what reveals the panel.
+  void _scheduleResolve() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _entry == null) return;
+
+      final panel = _panelKey.currentContext?.findRenderObject() as RenderBox?;
+      final target = _targetRect();
+      if (panel == null || !panel.hasSize || target == null) return;
+
+      final screen = MediaQuery.sizeOf(context);
+      var side = widget.position;
+      if (!_fits(side, target, screen, panel.size)) {
+        final other = _opposite(side);
+        // Neither side fits: keep the one that was asked for.
+        if (_fits(other, target, screen, panel.size)) side = other;
+      }
+
+      if (_measured && side == _resolved) return;
+      _resolved = side;
+      _measured = true;
+      _entry?.markNeedsBuild();
+    });
   }
 
   void _hide() {
     _entry?.remove();
     _entry = null;
+    // The next open re-measures from scratch: the content may have
+    // changed size, and the target may have moved.
+    _measured = false;
+    _resolved = widget.position;
   }
 
   @override

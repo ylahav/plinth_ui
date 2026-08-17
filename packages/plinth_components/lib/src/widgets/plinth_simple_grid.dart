@@ -42,7 +42,12 @@ class PlinthSimpleGrid extends StatelessWidget {
     this.columnsLg,
     this.columnsXl,
     this.spacing = PlinthSize.md,
-  }) : assert(columns > 0, 'columns must be at least 1');
+    this.minColWidth,
+  })  : assert(columns > 0, 'columns must be at least 1'),
+        assert(
+          minColWidth == null || minColWidth > 0,
+          'minColWidth must be positive',
+        );
 
   final List<Widget> children;
   final int columns;
@@ -53,9 +58,33 @@ class PlinthSimpleGrid extends StatelessWidget {
   final int? columnsXl;
   final PlinthSize spacing;
 
+  /// Fits as many columns as will hold a cell this wide, instead of
+  /// counting them.
+  ///
+  /// This is Mantine's container-query mode, and the difference from
+  /// the breakpoint props is which width is being asked about: those
+  /// measure the *screen*, this measures the space the grid was
+  /// actually given. A grid inside a sidebar gets narrow cells from
+  /// this and desktop-sized ones from the breakpoints, because the
+  /// screen is still wide.
+  ///
+  /// Overrides [columns] and every breakpoint when set.
+  final double? minColWidth;
+
   /// The column count that applies at [width], taking the largest
   /// breakpoint at or below it that defines one.
+  ///
+  /// [minColWidth] short-circuits all of it — see its own note on why
+  /// the two are different questions.
   int columnsFor(double width) {
+    final min = minColWidth;
+    if (min != null) {
+      // Solving `n * min + (n - 1) * gap <= width` needs the gap,
+      // which `columnsFor` does not have; the caller-facing answer is
+      // close enough without it, and `build` does the exact sum.
+      return (width / min).floor().clamp(1, 1 << 20);
+    }
+
     final candidates = <PlinthSize, int?>{
       PlinthSize.xl: columnsXl,
       PlinthSize.lg: columnsLg,
@@ -81,7 +110,17 @@ class PlinthSimpleGrid extends StatelessWidget {
         // A count below 1 would compute a negative cell width, and the
         // per-breakpoint values are caller-supplied rather than
         // asserted at construction.
-        final count = columnsFor(constraints.maxWidth).clamp(1, 1 << 20);
+        var count = columnsFor(constraints.maxWidth).clamp(1, 1 << 20);
+        final min = minColWidth;
+        if (min != null) {
+          // Gaps eat into the width the cells have to share, so the
+          // count from `columnsFor` can be one too many. Step down
+          // until the cells actually clear `min`, never below one.
+          while (count > 1 &&
+              (constraints.maxWidth - gap * (count - 1)) / count < min) {
+            count--;
+          }
+        }
         final totalGap = gap * (count - 1);
         final cellWidth = (constraints.maxWidth - totalGap) / count;
 

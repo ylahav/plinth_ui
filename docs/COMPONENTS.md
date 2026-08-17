@@ -159,12 +159,18 @@ layout doesn't jump.
 
 ### `PlinthGroup`
 `children`, `gap` (default `PlinthSize.md`), `mainAxisAlignment`,
-`crossAxisAlignment`, `wrap` (default `true`). Horizontal layout with a
+`crossAxisAlignment`, `wrap` (default `true`), `grow`. Horizontal layout with a
 consistent gap between children. Unlike a plain `Row`, wraps onto a new
 line by default when children overflow the available width (via
 `Wrap` under the hood) — the common "row of chips/buttons/tags" need
 that a bare `Row` would just overflow on. Set `wrap: false` to opt back
 into `Row`'s clip-and-overflow behavior.
+
+`grow` divides the leftover width equally between the children instead
+of letting each take its own — a row of buttons that fills its
+container rather than huddling at one end. It asserts on `wrap: true`,
+because a `Wrap` lays each run out at the widths its children ask for
+and has no leftover space to divide.
 
 ### `PlinthStack`
 `children`, `gap` (default `PlinthSize.md`), `crossAxisAlignment`
@@ -237,10 +243,17 @@ area it should float over.
 
 ### `PlinthMarquee`
 `child`, `speed` (logical pixels per second, default `40`), `gap`
-(default `xl`), `pauseOnHover` (default `true`), `reverse`. Content
+(default `xl`), `pauseOnHover` (default `true`), `reverse`,
+`fadeEdges`. Content
 that scrolls past continuously — a logo strip, a headline ticker. The
 child is repeated as many times as the width needs, so the loop has no
 visible seam.
+
+`fadeEdges` fades the strip out at both ends instead of cutting it off.
+Off by default because it costs a `saveLayer`: the effect needs the
+strip composited before it can be masked. It masks with `dstIn` rather
+than painting a gradient overlay — an overlay would have to know the
+page colour behind the strip and would be wrong on any other.
 
 **Motion here is an accessibility question, not just a style one.**
 WCAG asks that movement lasting more than five seconds can be paused,
@@ -265,9 +278,14 @@ bullet/numbering.
 
 ### `PlinthContainer`
 `child`, `size` (`PlinthContainerSize`: `xs, sm, md, lg, xl` — default
-`md`), `padding` (default `PlinthSize.md`). Constrains `child` to a
-max width and centers it — the standard "page content shouldn't get
-absurdly wide on a big monitor" wrapper.
+`md`), `padding` (default `PlinthSize.md`), `fluid`. Constrains `child`
+to a max width and centers it — the standard "page content shouldn't
+get absurdly wide on a big monitor" wrapper.
+
+`fluid` drops the maximum and fills whatever it is given, keeping the
+horizontal padding — for the full-bleed sections a page puts between
+its constrained ones, where the padding is still wanted and the ceiling
+is not. It ignores `size`.
 
 ### `PlinthSpace`
 `w`, `h` (both nullable `PlinthSize`). A fixed-size spacer resolved
@@ -323,7 +341,8 @@ than overflowing its row. Like SimpleGrid it is neither scrollable nor
 virtualized and needs a bounded width.
 
 ### `PlinthSimpleGrid`
-`children`, `columns`, `spacing` (default `PlinthSize.md`), plus
+`children`, `columns`, `spacing` (default `PlinthSize.md`),
+`minColWidth`, plus
 `columnsXs`/`columnsSm`/`columnsMd`/`columnsLg`/`columnsXl`. A grid with
 the same number of equal-width columns per row and consistent spacing.
 The per-breakpoint counts work exactly like `PlinthGridCol`'s spans —
@@ -335,6 +354,16 @@ content and expects a bounded-width ancestor (uses `LayoutBuilder`
 internally to compute cell width; an unbounded-width parent, like a
 horizontal `ListView`, will throw). For a large or unbounded item
 list, use `GridView.builder` directly instead.
+
+**`minColWidth` fits as many columns as will hold a cell that wide**,
+instead of counting them, and overrides `columns` and every breakpoint
+when set. It is genuinely a different question from the breakpoint
+props, not a shorthand for them: those measure the *screen*, this
+measures the space the grid was actually handed. A grid inside a
+sidebar gets narrow cells from this and desktop-sized ones from the
+breakpoints, because the screen is still wide. The gaps are counted, so
+`minColWidth: 200` in 600 logical pixels gives three columns rather
+than the naive `600 / 200`.
 
 ### `PlinthFlex`
 `children`, `direction` (`Axis` — default `horizontal`), `gap` (default
@@ -405,6 +434,13 @@ shortcuts, e.g. `PlinthKbd('Ctrl')` + `PlinthKbd('K')`.
 `label` (positional), `color` (default `'gray'`), `size`. Inline monospace
 snippet on a tinted background — for referencing identifiers, commands,
 or file names within a sentence (typically inside a `WidgetSpan`).
+
+**`PlinthCode.block`** is the multi-line form: full width, roomier
+padding, tighter line height, and every line of `label` kept. Lines are
+deliberately **not** wrapped — a wrapped line of code is a line that has
+been silently rewritten — so a block scrolls sideways when a line is too
+long, the way every code viewer does. A named constructor rather than a
+flag, the same split as `PlinthTable.text`.
 
 ### `PlinthHighlight`
 `data` (positional), `highlight` (`List<String>` of terms), `color`
@@ -1102,9 +1138,21 @@ its content appears.
 ## Data Display
 
 ### `PlinthAvatar`
-`imageUrl`, `initials`, `color`, `size`, `radius` (omit for fully circular).
+`imageUrl`, `initials`, `name`, `color`, `size`, `radius` (omit for fully
+circular).
 Fallback chain: `imageUrl` -> `initials` on a tinted background -> generic
 person icon.
+
+`name` derives the initials for you — first letter of the first word and
+of the last, so "Ada Lovelace" reads AL and "Prince" reads P. Explicit
+`initials` win when both are given.
+
+When `color` is omitted too, the palette key is derived from the name,
+so a list of people comes out varied without anyone assigning colours
+and each person keeps the same colour everywhere they appear. The
+derivation is a sum of code units rather than `hashCode`: Dart
+randomises string hashes per isolate, so a hash would have changed
+someone's colour between launches of the same app.
 
 ### `PlinthThemeIcon`
 `icon`, `variant`, `size`, `color`, `radius`, `circle`. A colored icon
@@ -1394,11 +1442,18 @@ They earn their space once the range collapses: jumping from page 14 of
 has usually hidden.
 
 ### `PlinthTimeline` + `PlinthTimelineItem`
-`items` (`List<PlinthTimelineItem>`), `color`. Each `PlinthTimelineItem`
+`items` (`List<PlinthTimelineItem>`), `color`, `align`. Each `PlinthTimelineItem`
 has `title`, optional `description`/`icon`, and `active` (highlights the
 dot in the theme color — use for the current/most-recent event). Dots are
 connected by a line via `IntrinsicHeight` + `Expanded`, a standard Flutter
 pattern for "match this column's height to its sibling."
+
+`align` (`PlinthTimelineAlign.start`/`.end`) picks which side the rail
+of dots runs down; `end` puts it on the trailing edge with the text
+right-aligned against it, which is what a timeline in a right-hand
+column wants — the rail sits against the content rather than against
+the page edge. Directional rather than left/right, so an RTL locale
+isn't the one place this component ignores direction.
 
 ### `PlinthTree` + `PlinthTreeNode`
 `nodes`, `expanded` (`Set<String>`), `onExpandedChanged`, `selected`,
@@ -1568,6 +1623,21 @@ Modal/Drawer, **not** route-based — built on
 (including through scrolling). Tapping `target` toggles the controller
 directly; no separate host widget needed since the popover wraps its
 own trigger.
+
+**`position` is a preference, not an instruction.** A panel that would
+run off the screen on its requested side is put on the opposite one — a
+`bottom` popover near the bottom of the viewport opens upward. Only the
+requested axis flips: `bottom` becomes `top`, never `left`. If neither
+side fits, the requested one wins, on the grounds that a caller who
+asked for `bottom` and can't have it is better served by the side they
+named than by a surprise.
+
+This costs one frame. The panel's height isn't knowable until it has
+been laid out, and which side fits depends on that height, so the first
+frame after opening lays it out invisibly to measure it and the second
+shows it in the resolved place. `PlinthTooltip` has always flipped,
+because Flutter's own tooltip does it; this closes the gap between the
+two.
 
 ### `PlinthHoverCard`
 `target`, `content`, `position`, `width`, `radius`, `closeDelay`

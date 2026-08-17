@@ -32,6 +32,7 @@ class PlinthMarquee extends StatefulWidget {
     this.gap = PlinthSize.xl,
     this.pauseOnHover = true,
     this.reverse = false,
+    this.fadeEdges = false,
   });
 
   final Widget child;
@@ -50,6 +51,17 @@ class PlinthMarquee extends StatefulWidget {
 
   /// Scroll left-to-right instead of right-to-left.
   final bool reverse;
+
+  /// Fades the strip out at both ends instead of cutting it off, so
+  /// content arrives and leaves rather than appearing at a hard edge.
+  ///
+  /// Costs a saveLayer, which is why it is off by default: the effect
+  /// needs the strip composited before it can be masked. Worth it on a
+  /// logo band, wasted on a strip that already ends at a page edge.
+  final bool fadeEdges;
+
+  /// How much of the width each end fades across.
+  static const double _fadeExtent = 32;
 
   @override
   State<PlinthMarquee> createState() => _PlinthMarqueeState();
@@ -163,16 +175,18 @@ class _PlinthMarqueeState extends State<PlinthMarquee>
     // what doesn't fit, and still sizes its own height to the child —
     // which an OverflowBox could not do before the child is measured.
     if (_reduceMotion || item == null || item.width <= 0) {
-      return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        physics: const NeverScrollableScrollPhysics(),
-        child: KeyedSubtree(key: _itemKey, child: widget.child),
+      return _fade(
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const NeverScrollableScrollPhysics(),
+          child: KeyedSubtree(key: _itemKey, child: widget.child),
+        ),
       );
     }
 
     final period = item.width + gap;
 
-    return MouseRegion(
+    return _fade(MouseRegion(
       onEnter: widget.pauseOnHover ? (_) => _hovered = true : null,
       onExit: widget.pauseOnHover ? (_) => _hovered = false : null,
       child: SizedBox(
@@ -223,6 +237,38 @@ class _PlinthMarqueeState extends State<PlinthMarquee>
           ),
         ),
       ),
+    ));
+  }
+
+  /// Masks [child] with a transparent-to-opaque-to-transparent ramp
+  /// across its width.
+  ///
+  /// `dstIn` rather than a gradient overlay: an overlay would have to
+  /// know the page colour behind the strip, and would be wrong the
+  /// moment the marquee sat on anything but that colour. Fading the
+  /// content's own alpha is correct on any background.
+  Widget _fade(Widget child) {
+    if (!widget.fadeEdges) return child;
+
+    return ShaderMask(
+      blendMode: BlendMode.dstIn,
+      shaderCallback: (bounds) {
+        // A narrow strip would otherwise be fade all the way across,
+        // leaving nothing at full opacity in the middle.
+        final stop = (PlinthMarquee._fadeExtent / bounds.width).clamp(0.0, 0.5);
+        return LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: const [
+            Color(0x00000000),
+            Color(0xFF000000),
+            Color(0xFF000000),
+            Color(0x00000000),
+          ],
+          stops: [0, stop, 1 - stop, 1],
+        ).createShader(bounds);
+      },
+      child: child,
     );
   }
 }

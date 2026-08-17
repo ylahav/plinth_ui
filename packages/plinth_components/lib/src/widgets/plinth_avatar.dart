@@ -8,6 +8,10 @@ import 'package:plinth_core/plinth_core.dart';
 /// ```dart
 /// PlinthAvatar(initials: 'YR', color: 'blue');
 /// PlinthAvatar(imageUrl: 'https://example.com/photo.jpg', size: PlinthSize.lg);
+///
+/// // Initials and a colour derived from the name itself, so a list of
+/// // people comes out varied without anyone assigning colours.
+/// PlinthAvatar(name: 'Ada Lovelace');
 /// ```
 class PlinthAvatar extends StatelessWidget {
   const PlinthAvatar({
@@ -17,13 +21,27 @@ class PlinthAvatar extends StatelessWidget {
     this.color,
     this.size = PlinthSize.md,
     this.radius,
+    this.name,
   });
 
   final String? imageUrl;
+
+  /// Explicit initials. Wins over [name] when both are given.
   final String? initials;
 
+  /// A person's full name, from which initials are derived — first
+  /// letter of the first word and of the last, so "Ada Lovelace"
+  /// reads AL and "Prince" reads P.
+  ///
+  /// When [color] is omitted the palette key is derived from the name
+  /// too, so a list of people comes out varied and each person keeps
+  /// the same colour everywhere they appear. That is the whole point
+  /// of deriving it rather than picking at random.
+  final String? name;
+
   /// Background color key for the initials/icon fallback. Ignored
-  /// when [imageUrl] loads successfully.
+  /// when [imageUrl] loads successfully, and derived from [name] when
+  /// both this and [imageUrl] are absent.
   final String? color;
 
   final PlinthSize size;
@@ -48,11 +66,39 @@ class PlinthAvatar extends StatelessWidget {
     PlinthSize.xl: 28,
   };
 
+  /// First letter of the first word and of the last.
+  static String? initialsFrom(String? name) {
+    if (name == null) return null;
+    final words = name.trim().split(RegExp(r'\s+'))
+      ..removeWhere((w) => w.isEmpty);
+    if (words.isEmpty) return null;
+    if (words.length == 1) return words.first.characters.first;
+    return words.first.characters.first + words.last.characters.first;
+  }
+
+  /// A stable palette key for [name].
+  ///
+  /// Deliberately a sum of code units rather than [Object.hashCode]:
+  /// Dart's string hash is randomised per isolate, so the same person
+  /// would change colour between runs of the same app.
+  static String colorFor(String name, List<String> palette) {
+    var sum = 0;
+    for (final unit in name.codeUnits) {
+      sum = (sum + unit) % palette.length;
+    }
+    return palette[sum];
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final diameter = _diameters[size]!;
-    final colorKey = color ?? theme.primaryColor;
+    final derived = initials ?? initialsFrom(name);
+    final palette = theme.colors.keys.toList()..sort();
+    final colorKey = color ??
+        (name != null && palette.isNotEmpty
+            ? colorFor(name!, palette)
+            : theme.primaryColor);
     final backgroundColor = theme.shaded(colorKey, 1);
     final foregroundColor = theme.shaded(colorKey, 7);
     final borderRadius = radius != null
@@ -60,10 +106,10 @@ class PlinthAvatar extends StatelessWidget {
         : BorderRadius.circular(diameter / 2);
 
     Widget fallback() {
-      if (initials != null && initials!.isNotEmpty) {
+      if (derived != null && derived.isNotEmpty) {
         return Center(
           child: Text(
-            initials!.toUpperCase(),
+            derived.toUpperCase(),
             style: TextStyle(
               color: foregroundColor,
               fontWeight: FontWeight.w600,

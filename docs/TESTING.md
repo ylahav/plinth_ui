@@ -189,7 +189,7 @@ border/background logic, like `PlinthTextInput`'s focus/error states or
 `PlinthAlert`'s color tinting) over ones that are mostly just text
 (`PlinthText`, `PlinthBadge`'s label).
 
-**42 images across eight files**, of which five are worth knowing about
+**43 images across eight files**, of which five are worth knowing about
 because they cover a *kind* of failure rather than a component:
 
 | File | What it pins |
@@ -218,9 +218,9 @@ band along the drawer's edge is not a bug**: `flutter_test` sets
 rectangle instead of a blurred one, and the drawer is the only overlay
 here with one (`elevation: 8`). It is left at the default deliberately,
 since a blurred shadow is exactly the kind of antialiasing these images
-should not be pinned to. And **`PlinthPopover` does not flip near a
-screen edge** — its anchors are fixed — so a fixture that puts a panel
-past the frame is a fixture problem, not a finding.
+should not be pinned to. And **`PlinthPopover` flips away from a screen edge** as of 0.24.0 —
+which these images are what found. `plinth_popover_flipped.png` is the
+picture of it: a panel that asked for `bottom` and opened upward.
 
 The orientation file earned its place before it was even committed. A
 throwaway local render of the vertical stepper showed its connectors

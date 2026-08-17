@@ -28,13 +28,26 @@ class PlinthGroup extends StatelessWidget {
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.center,
     this.wrap = true,
-  });
+    this.grow = false,
+  }) : assert(
+          !grow || !wrap,
+          'PlinthGroup.grow needs wrap: false. A Wrap lays each run out '
+          'at the widths its children ask for and has no leftover space '
+          'to divide, so growing inside one cannot happen.',
+        );
 
   final List<Widget> children;
   final PlinthSize gap;
   final MainAxisAlignment mainAxisAlignment;
   final CrossAxisAlignment crossAxisAlignment;
   final bool wrap;
+
+  /// Divides the leftover width equally between [children] instead of
+  /// letting each take its own — a row of buttons that fills its
+  /// container rather than huddling at one end.
+  ///
+  /// Requires `wrap: false`, which the assert above explains.
+  final bool grow;
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +71,13 @@ class PlinthGroup extends StatelessWidget {
     return Row(
       mainAxisAlignment: mainAxisAlignment,
       crossAxisAlignment: crossAxisAlignment,
-      mainAxisSize: MainAxisSize.min,
+      // Growing means filling the width, so the row has to ask for all
+      // of it rather than shrink-wrapping its children.
+      mainAxisSize: grow ? MainAxisSize.max : MainAxisSize.min,
       children: [
         for (var i = 0; i < children.length; i++) ...[
           if (i > 0) SizedBox(width: spacing),
-          children[i],
+          if (grow) Expanded(child: children[i]) else children[i],
         ],
       ],
     );
