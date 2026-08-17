@@ -117,7 +117,31 @@ what the tests pin in both directions.
 it `height`. Left for the naming pass, since two of those are really the
 naming question in disguise.
 
-## Tier 2 — worth doing, in rough order
+## Tier 2 — triaged
+
+Each item is now **built** or **declined**, with the reason. That is
+what triage means here: the point isn't to build everything, it's that
+nothing is left as an unexplained absence. Carousel is the precedent —
+it sat as a written-down exclusion until the reasoning was re-read and
+turned out to be wrong, which is only possible if the reasoning was
+written down at all.
+
+| Item | Call | Why |
+|---|---|---|
+| `description`/`error` on Checkbox, Radio, Switch | **Built** (0.21.0) | Every text input had them from the start; a consent checkbox needs the explaining sentence more than most fields do |
+| `indeterminate` on Checkbox | **Built** (0.21.0) | A parent checkbox over a list of children has no other way to say "some" |
+| Sticky table header | **Planned** | Real, and the complaint that follows any long table. Wants `PlinthTable` to own a scroll view, which is a structural change rather than a prop |
+| `highlightOnHover` on Table | **Planned** | Cheap, and pairs with the above |
+| Vertical Tabs and Stepper | **Planned** | The two people actually ask for. Progress, Slider and SegmentedControl can wait for someone to ask |
+| `PlinthNavLink` children | **Planned** | The showcase builds it by hand out of `PlinthCollapse`, which is the same signal that found three Tier 1 items |
+| `withEdges` on Pagination | **Planned** | First/last controls, one evening's work |
+| `fractions` on Rating | **Planned** | It already renders halves; only selecting them is missing |
+| `processing` on Indicator | **Declined** | A pulsing dot is an animation with no off-switch for reduce-motion unless it takes one, and the same effect is a `PlinthLoader` beside the thing |
+| `labelPosition` on the boolean controls | **Declined** | A `Row` with the children swapped is three lines at the call site, and the prop would double the layout branches inside four components |
+| Searchable `PlinthSelect` | **Declined** | `PlinthAutocomplete` is the searchable one. A searchable *multi* select is the real gap, and that's a new component rather than a prop |
+| Mantine's remaining Input props | **Declined** | `inputContainer`, `inputWrapperOrder`, `*Props` pass-throughs and the rest exist because React composes by spreading props onto inner DOM nodes. A Flutter caller composes with widgets |
+
+### The original Tier 2 list, for reference
 
 - **Vertical orientation.** Mantine offers it on Tabs, Stepper,
   Progress, Slider, SegmentedControl, ScrollArea, Collapse and Marquee.

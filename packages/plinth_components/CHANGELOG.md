@@ -7,6 +7,32 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.21.0
+
+Start of the [pre-1.0 audit](../../docs/PRE_1_0_AUDIT.md)'s Tier 2,
+which is now triaged: every remaining item in that list is either built
+or declined with a reason, so nothing is left as an unexplained
+absence.
+
+### Added
+
+- **`description` and `error` on `PlinthCheckbox`, `PlinthRadio` and
+  `PlinthSwitch`.** Every text input has had both from the start; the
+  boolean controls took a bare `label`. A consent checkbox needs the
+  explaining sentence more than most fields do, and an error under the
+  one control a form rejected is the whole point of field-level errors.
+
+- **`indeterminate` on `PlinthCheckbox`**, for the "some of the
+  children are selected" state a parent checkbox has no other way to
+  say.
+
+  It draws filled with a dash rather than empty — an empty box would
+  claim "none of them", which is the one thing this state exists to
+  deny — and reports `CheckedState.mixed` to assistive technology,
+  which has its own word for it. What a *tap* reports still comes from
+  `value`, so the caller decides what resolving the mixed state means
+  for their tree.
+
 ## 0.20.0
 
 The naming pass from the [pre-1.0 audit](../../docs/PRE_1_0_AUDIT.md).

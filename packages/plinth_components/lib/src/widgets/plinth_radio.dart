@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_stack.dart';
 import 'plinth_text.dart';
 
 /// A single themeable radio button, matching Mantine's `Radio`. Used
@@ -25,6 +26,8 @@ class PlinthRadio<T> extends StatelessWidget {
     required this.groupValue,
     required this.onChanged,
     this.label,
+    this.description,
+    this.error,
     this.size = PlinthSize.md,
     this.color,
   });
@@ -33,6 +36,14 @@ class PlinthRadio<T> extends StatelessWidget {
   final T? groupValue;
   final ValueChanged<T>? onChanged;
   final String? label;
+
+  /// Secondary line under the label, for the sentence that explains
+  /// what this actually does. The text inputs had it from the start;
+  /// the boolean controls did not until 0.21.0.
+  final String? description;
+
+  /// Error message shown below the label.
+  final String? error;
   final PlinthSize size;
   final String? color;
 
@@ -86,7 +97,21 @@ class PlinthRadio<T> extends StatelessWidget {
                 // overflowing when the row is width-constrained by its
                 // parent — a consent checkbox in a narrow form is the
                 // usual case.
-                Flexible(child: PlinthText(label!, size: size)),
+                Flexible(
+                  child: PlinthStack(
+                    gap: PlinthSize.xs,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PlinthText(label!, size: size),
+                      if (description != null)
+                        PlinthText(description!,
+                            size: PlinthSize.xs, color: 'gray'),
+                      if (error != null && error!.isNotEmpty)
+                        PlinthText(error!, size: PlinthSize.xs, color: 'red'),
+                    ],
+                  ),
+                ),
               ],
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_stack.dart';
 import 'plinth_text.dart';
 
 /// A themeable toggle switch matching Mantine's `Switch`: a pill-shaped
@@ -20,6 +21,8 @@ class PlinthSwitch extends StatelessWidget {
     required this.value,
     required this.onChanged,
     this.label,
+    this.description,
+    this.error,
     this.size = PlinthSize.md,
     this.color,
     this.radius,
@@ -30,6 +33,14 @@ class PlinthSwitch extends StatelessWidget {
   /// Null disables the switch (matches Flutter's `Switch` convention).
   final ValueChanged<bool>? onChanged;
   final String? label;
+
+  /// Secondary line under the label, for the sentence that explains
+  /// what this actually does. The text inputs had it from the start;
+  /// the boolean controls did not until 0.21.0.
+  final String? description;
+
+  /// Error message shown below the label.
+  final String? error;
   final PlinthSize size;
   final String? color;
 
@@ -110,7 +121,21 @@ class PlinthSwitch extends StatelessWidget {
                 // overflowing when the row is width-constrained by its
                 // parent — a consent checkbox in a narrow form is the
                 // usual case.
-                Flexible(child: PlinthText(label!, size: size)),
+                Flexible(
+                  child: PlinthStack(
+                    gap: PlinthSize.xs,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PlinthText(label!, size: size),
+                      if (description != null)
+                        PlinthText(description!,
+                            size: PlinthSize.xs, color: 'gray'),
+                      if (error != null && error!.isNotEmpty)
+                        PlinthText(error!, size: PlinthSize.xs, color: 'red'),
+                    ],
+                  ),
+                ),
               ],
             ],
           ),

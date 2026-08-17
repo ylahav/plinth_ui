@@ -306,4 +306,88 @@ void main() {
       expect(find.text('Max'), findsOneWidget);
     });
   });
+
+  group('description, error and indeterminate', () {
+    testWidgets('a checkbox shows its description and error', (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthCheckbox(
+          label: 'Email me',
+          description: 'About once a month, never about anything else',
+          error: 'Pick at least one channel',
+          value: false,
+          onChanged: (_) {},
+        )),
+      );
+
+      // The chrome the text inputs have had from the start, which the
+      // boolean controls were missing.
+      expect(find.text('About once a month, never about anything else'),
+          findsOneWidget);
+      expect(find.text('Pick at least one channel'), findsOneWidget);
+    });
+
+    testWidgets('a switch and a radio take the same two', (tester) async {
+      await tester.pumpWidget(
+        _wrap(Column(
+          children: [
+            PlinthSwitch(
+              label: 'Dark mode',
+              description: 'Follows the system by default',
+              value: false,
+              onChanged: (_) {},
+            ),
+            PlinthRadio<String>(
+              label: 'Standard',
+              description: 'Three to five working days',
+              value: 'standard',
+              groupValue: 'express',
+              onChanged: (_) {},
+            ),
+          ],
+        )),
+      );
+
+      expect(find.text('Follows the system by default'), findsOneWidget);
+      expect(find.text('Three to five working days'), findsOneWidget);
+    });
+
+    testWidgets('indeterminate draws a dash and reads as mixed',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthCheckbox(
+          label: 'Everything',
+          indeterminate: true,
+          value: false,
+          onChanged: (_) {},
+        )),
+      );
+
+      // Filled with a dash, not empty: an empty box would say "none of
+      // them", which is the one thing this state exists to deny.
+      expect(find.byIcon(Icons.remove), findsOneWidget);
+      expect(find.byIcon(Icons.check), findsNothing);
+
+      final semantics = tester.getSemantics(find.byType(PlinthCheckbox));
+      expect(semantics.flagsCollection.isChecked, CheckedState.mixed);
+    });
+
+    testWidgets('indeterminate leaves what a tap reports to value',
+        (tester) async {
+      final changes = <bool>[];
+      await tester.pumpWidget(
+        _wrap(PlinthCheckbox(
+          indeterminate: true,
+          value: false,
+          onChanged: changes.add,
+        )),
+      );
+
+      await tester.tap(find.byType(PlinthCheckbox));
+
+      // The caller decides what "some are selected" should become —
+      // usually all of them — so the widget reports the flip of `value`
+      // and stays out of it.
+      expect(changes, [true]);
+    });
+  });
 }

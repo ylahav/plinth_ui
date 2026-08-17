@@ -481,7 +481,19 @@ auto-advancing focus as each digit is typed and auto-retreating focus on
 backspace from an already-empty box.
 
 ### `PlinthCheckbox`
-`value`, `onChanged` (nullable — null disables), `label`, `size`, `color`, `radius`.
+`value`, `onChanged` (nullable — null disables), `label`, `description`,
+`error`, `indeterminate`, `size`, `color`, `radius`.
+
+`indeterminate` draws the box filled with a dash for the "some of the
+children are selected" state — filled rather than empty, since an empty
+box claims "none of them", which is what this state exists to deny. It
+reports `CheckedState.mixed` to assistive technology, and leaves what a
+tap reports to `value`, so resolving the mixed state stays the caller's
+decision.
+
+`description` and `error` are the same chrome the text inputs have had
+from the start; `PlinthRadio` and `PlinthSwitch` take both too, as of
+0.21.0.
 
 ### `PlinthRadio<T>` / `PlinthRadioGroup<T>`
 Use `PlinthRadioGroup` in practice — it wires `groupValue`/`onChanged` to
@@ -556,8 +568,9 @@ slot, since that slot is inside the dropdown's own hit area and a tap
 there would open the menu it is supposed to be clearing.
 
 ### `PlinthSwitch`
-`value`, `onChanged` (nullable), `label`, `size`, `color`, `radius`. Same
-animated-fill pattern as `PlinthCheckbox`, pill-shaped instead of square.
+`value`, `onChanged` (nullable), `label`, `description`, `error`, `size`,
+`color`, `radius`. Same animated-fill pattern as `PlinthCheckbox`,
+pill-shaped instead of square.
 
 ### `PlinthSlider` + `PlinthSliderMark`
 `value`, `onChanged` (nullable), `min`, `max`, `divisions` (omit for
