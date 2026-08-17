@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_components/plinth_components.dart';
@@ -357,6 +358,210 @@ void main() {
 
       expect(find.text('Bob'), findsOneWidget);
       expect(find.text('Alice'), findsNothing);
+    });
+  });
+
+  group('PlinthTable maxHeight', () {
+    final manyRows = [
+      for (var i = 0; i < 40; i++) ['Person $i', 'Role $i'],
+    ];
+
+    testWidgets('splits into a fixed header and a scrolling body',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthTable.text(
+          columns: const ['Name', 'Role'],
+          rows: manyRows,
+          maxHeight: 200,
+        )),
+      );
+
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
+      expect(tester.getSize(find.byType(PlinthTable)).height, equals(200));
+
+      final headerBefore = tester.getRect(find.text('Name'));
+      final rowBefore = tester.getRect(find.text('Person 0'));
+
+      await tester.drag(find.text('Person 0'), const Offset(0, -300));
+      await tester.pump();
+
+      // The rows moved; the header did not. That is the whole feature.
+      expect(tester.getRect(find.text('Name')), equals(headerBefore));
+      expect(
+        tester.getRect(find.text('Person 0')).top,
+        lessThan(rowBefore.top - 200),
+      );
+    });
+
+    testWidgets('the header and the body agree on column edges',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthTable.text(
+          // A short header over a long cell is exactly where two
+          // independently-sized tables would drift apart.
+          columns: const ['A', 'Description'],
+          rows: const [
+            ['x', 'a considerably longer piece of text than the header'],
+          ],
+          maxHeight: 200,
+        )),
+      );
+
+      expect(
+        tester.getRect(find.text('Description')).left,
+        equals(tester
+            .getRect(find.text(
+              'a considerably longer piece of text than the header',
+            ))
+            .left),
+      );
+    });
+
+    testWidgets('stays its natural height when the rows do not fill it',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthTable.text(
+          columns: const ['Name', 'Role'],
+          rows: const [
+            ['Alice', 'Engineer'],
+          ],
+          maxHeight: 400,
+        )),
+      );
+
+      expect(tester.getSize(find.byType(PlinthTable)).height, lessThan(400));
+    });
+
+    testWidgets('an empty result still shows the header and empty state',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthTable.text(
+          columns: const ['Name', 'Role'],
+          filter: 'nobody',
+          rows: const [
+            ['Alice', 'Engineer'],
+          ],
+          maxHeight: 200,
+          emptyState: const Text('No matches'),
+        )),
+      );
+
+      expect(find.text('Name'), findsOneWidget);
+      expect(find.text('No matches'), findsOneWidget);
+      expect(find.text('Alice'), findsNothing);
+    });
+
+    testWidgets('sorting a capped table still works', (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthTable.text(
+          columns: const ['Name'],
+          sortable: true,
+          rows: const [
+            ['Charlie'],
+            ['Alice'],
+          ],
+          maxHeight: 300,
+        )),
+      );
+
+      await tester.tap(find.text('Name'));
+      await tester.pump();
+
+      expect(
+        tester.getRect(find.text('Alice')).top,
+        lessThan(tester.getRect(find.text('Charlie')).top),
+      );
+    });
+  });
+
+  group('PlinthTable highlightOnHover', () {
+    /// The decoration of the row holding [cell], read off the TableRow
+    /// rather than the painted output — the colour is the assertion,
+    /// and TableRow is where it is set.
+    Color? rowColorFor(WidgetTester tester, int row) {
+      final table = tester.widgetList<Table>(find.byType(Table)).last;
+      return (table.children[row].decoration as BoxDecoration?)?.color;
+    }
+
+    testWidgets('tints the row under the pointer and clears on exit',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthTable.text(
+          columns: ['Name', 'Role'],
+          highlightOnHover: true,
+          rows: [
+            ['Alice', 'Engineer'],
+            ['Bob', 'Designer'],
+          ],
+        )),
+      );
+
+      // Row 0 here is the header; body rows follow it.
+      expect(rowColorFor(tester, 2), isNull);
+
+      final pointer = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await pointer.addPointer(location: Offset.zero);
+      addTearDown(pointer.removePointer);
+
+      await pointer.moveTo(tester.getCenter(find.text('Bob')));
+      await tester.pump();
+      expect(
+        rowColorFor(tester, 2),
+        equals(PlinthTheme.defaultTheme.surfaceSunken),
+      );
+      // Only the row the pointer is on.
+      expect(rowColorFor(tester, 1), isNull);
+
+      await pointer.moveTo(const Offset(-100, -100));
+      await tester.pump();
+      expect(rowColorFor(tester, 2), isNull);
+    });
+
+    testWidgets('a hovered striped row is still distinguishable',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthTable.text(
+          columns: ['Name'],
+          striped: true,
+          highlightOnHover: true,
+          rows: [
+            ['Alice'],
+            ['Bob'],
+          ],
+        )),
+      );
+
+      final striped = rowColorFor(tester, 2);
+      expect(striped, equals(PlinthTheme.defaultTheme.surfaceMuted));
+
+      final pointer = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await pointer.addPointer(location: Offset.zero);
+      addTearDown(pointer.removePointer);
+
+      await pointer.moveTo(tester.getCenter(find.text('Bob')));
+      await tester.pump();
+
+      expect(rowColorFor(tester, 2), isNot(equals(striped)));
+    });
+
+    testWidgets('off by default, so hovering paints nothing', (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthTable.text(
+          columns: ['Name'],
+          rows: [
+            ['Alice'],
+          ],
+        )),
+      );
+
+      final pointer = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await pointer.addPointer(location: Offset.zero);
+      addTearDown(pointer.removePointer);
+
+      await pointer.moveTo(tester.getCenter(find.text('Alice')));
+      await tester.pump();
+
+      expect(rowColorFor(tester, 1), isNull);
     });
   });
 }

@@ -42,6 +42,10 @@ class PlinthTabItem<T> {
 ///   },
 /// ),
 /// ```
+///
+/// `direction: Axis.vertical` stacks the tabs instead, with the
+/// indicator down the trailing edge — the shape a settings sidebar
+/// wants, and the one where a dozen tabs stay readable.
 class PlinthTabs<T> extends StatelessWidget {
   const PlinthTabs({
     super.key,
@@ -50,6 +54,7 @@ class PlinthTabs<T> extends StatelessWidget {
     required this.onChanged,
     this.size = PlinthSize.md,
     this.color,
+    this.direction = Axis.horizontal,
   });
 
   final List<PlinthTabItem<T>> tabs;
@@ -58,6 +63,11 @@ class PlinthTabs<T> extends StatelessWidget {
   final PlinthSize size;
   final String? color;
 
+  /// Which way the strip runs. Vertical puts the tabs in a column and
+  /// moves both the divider and the active indicator to their trailing
+  /// edge, so the content sits to the right of the list.
+  final Axis direction;
+
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
@@ -65,63 +75,94 @@ class PlinthTabs<T> extends StatelessWidget {
     final activeColor = theme.shaded(colorKey, 6);
     final verticalPadding = theme.spacing[size]! * 0.5;
     final horizontalPadding = theme.spacing[size]!;
+    final isVertical = direction == Axis.vertical;
 
-    final strip = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (final tab in tabs)
-          InkWell(
-            onTap: () => onChanged(tab.value),
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: horizontalPadding,
-                vertical: verticalPadding,
-              ),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color:
-                        tab.value == value ? activeColor : Colors.transparent,
-                    width: 2,
-                  ),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (tab.icon != null) ...[
-                    IconTheme(
-                      data: IconThemeData(
-                        size: 16,
-                        color: tab.value == value ? activeColor : Colors.grey,
-                      ),
-                      child: tab.icon!,
-                    ),
-                    SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
-                  ],
-                  PlinthText(
-                    tab.label,
-                    size: size,
-                    weight:
-                        tab.value == value ? FontWeight.w600 : FontWeight.w400,
-                    color: tab.value == value ? colorKey : null,
-                  ),
-                ],
-              ),
-            ),
+    Widget tabButton(PlinthTabItem<T> tab) {
+      final selected = tab.value == value;
+      final indicator = BorderSide(
+        color: selected ? activeColor : Colors.transparent,
+        width: 2,
+      );
+      final label = PlinthText(
+        tab.label,
+        size: size,
+        weight: selected ? FontWeight.w600 : FontWeight.w400,
+        color: selected ? colorKey : null,
+      );
+
+      return InkWell(
+        onTap: () => onChanged(tab.value),
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: horizontalPadding,
+            vertical: verticalPadding,
           ),
-      ],
-    );
+          decoration: BoxDecoration(
+            border: isVertical
+                ? Border(right: indicator)
+                : Border(bottom: indicator),
+          ),
+          child: Row(
+            // Vertical tabs are stretched to the strip's width, so
+            // their content would centre in whatever the widest label
+            // demands; a column of labels reads as a list only when
+            // they share a left edge.
+            mainAxisSize: isVertical ? MainAxisSize.max : MainAxisSize.min,
+            children: [
+              if (tab.icon != null) ...[
+                IconTheme(
+                  data: IconThemeData(
+                    size: 16,
+                    color: selected ? activeColor : Colors.grey,
+                  ),
+                  child: tab.icon!,
+                ),
+                SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
+              ],
+              // Flexible only where the width is bounded: a horizontal
+              // strip lays out inside a scroll view with no width to
+              // divide up, and a flex child there is a layout error.
+              if (isVertical) Flexible(child: label) else label,
+            ],
+          ),
+        ),
+      );
+    }
+
+    final strip = isVertical
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [for (final tab in tabs) tabButton(tab)],
+          )
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [for (final tab in tabs) tabButton(tab)],
+          );
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: theme.surfaceSunken)),
+        border: isVertical
+            ? Border(right: BorderSide(color: theme.surfaceSunken))
+            : Border(bottom: BorderSide(color: theme.surfaceSunken)),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          // Nothing can overflow without a width to overflow — and a
-          // scroll view needs a bounded one, so a tab bar sitting in a
-          // `Row` without an `Expanded` keeps the plain strip.
+          // Nothing can overflow without room to overflow — and a
+          // scroll view needs a bounded main axis, so a tab bar sitting
+          // in a `Row`/`Column` without an `Expanded` keeps the plain
+          // strip.
+          if (isVertical) {
+            // `stretch` needs a width to stretch to. Unbounded, the
+            // column takes its widest tab's width instead, which still
+            // gives every indicator the same edge to sit on.
+            final sized = constraints.hasBoundedWidth
+                ? strip
+                : IntrinsicWidth(child: strip);
+            if (!constraints.hasBoundedHeight) return sized;
+            return SingleChildScrollView(child: sized);
+          }
+
           if (!constraints.hasBoundedWidth) return strip;
 
           // More tabs than fit is the ordinary case on a phone, and

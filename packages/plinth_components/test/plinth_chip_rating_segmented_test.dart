@@ -91,6 +91,55 @@ void main() {
       // this test only guards against a crash when a read-only
       // rating is tapped.
     });
+
+    testWidgets('renders a half star for a fractional value', (tester) async {
+      await tester.pumpWidget(_wrap(const PlinthRating(value: 3.5, count: 5)));
+
+      expect(find.byIcon(Icons.star), findsNWidgets(3));
+      expect(find.byIcon(Icons.star_half), findsOneWidget);
+      expect(find.byIcon(Icons.star_border), findsOneWidget);
+    });
+
+    testWidgets('fractions: 2 selects halves from the left of a star',
+        (tester) async {
+      double? changed;
+      await tester.pumpWidget(
+        _wrap(PlinthRating(
+          value: 0,
+          fractions: 2,
+          onChanged: (v) => changed = v,
+        )),
+      );
+
+      // The third star spans two hit regions; the left one is 2.5 and
+      // the right one is 3.
+      final third = tester.getRect(find.byIcon(Icons.star_border).at(2));
+
+      await tester
+          .tapAt(Offset(third.left + third.width * 0.25, third.center.dy));
+      await tester.pump();
+      expect(changed, equals(2.5));
+
+      await tester
+          .tapAt(Offset(third.left + third.width * 0.75, third.center.dy));
+      await tester.pump();
+      expect(changed, equals(3.0));
+    });
+
+    testWidgets('fractions: 1 still reports whole stars', (tester) async {
+      double? changed;
+      await tester.pumpWidget(
+        _wrap(PlinthRating(value: 0, onChanged: (v) => changed = v)),
+      );
+
+      final second = tester.getRect(find.byIcon(Icons.star_border).at(1));
+      // Left edge of the star: a split rating would call this 1.5.
+      await tester
+          .tapAt(Offset(second.left + second.width * 0.1, second.center.dy));
+      await tester.pump();
+
+      expect(changed, equals(2.0));
+    });
   });
 
   group('PlinthSegmentedControl', () {

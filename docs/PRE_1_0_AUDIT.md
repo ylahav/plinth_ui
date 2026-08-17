@@ -117,29 +117,58 @@ what the tests pin in both directions.
 it `height`. Left for the naming pass, since two of those are really the
 naming question in disguise.
 
-## Tier 2 — triaged
+## Tier 2 — closed
 
-Each item is now **built** or **declined**, with the reason. That is
-what triage means here: the point isn't to build everything, it's that
+Each item is **built** or **declined**, with the reason. That is what
+triage meant here: the point wasn't to build everything, it's that
 nothing is left as an unexplained absence. Carousel is the precedent —
 it sat as a written-down exclusion until the reasoning was re-read and
 turned out to be wrong, which is only possible if the reasoning was
 written down at all.
 
+As of 0.22.0 nothing on this list is still "planned".
+
 | Item | Call | Why |
 |---|---|---|
 | `description`/`error` on Checkbox, Radio, Switch | **Built** (0.21.0) | Every text input had them from the start; a consent checkbox needs the explaining sentence more than most fields do |
 | `indeterminate` on Checkbox | **Built** (0.21.0) | A parent checkbox over a list of children has no other way to say "some" |
-| Sticky table header | **Planned** | Real, and the complaint that follows any long table. Wants `PlinthTable` to own a scroll view, which is a structural change rather than a prop |
-| `highlightOnHover` on Table | **Planned** | Cheap, and pairs with the above |
-| Vertical Tabs and Stepper | **Planned** | The two people actually ask for. Progress, Slider and SegmentedControl can wait for someone to ask |
-| `PlinthNavLink` children | **Planned** | The showcase builds it by hand out of `PlinthCollapse`, which is the same signal that found three Tier 1 items |
-| `withEdges` on Pagination | **Planned** | First/last controls, one evening's work |
-| `fractions` on Rating | **Planned** | It already renders halves; only selecting them is missing |
+| Sticky table header | **Built** (0.22.0) | Real, and the complaint that follows any long table. It did want `PlinthTable` to own a scroll view — see the note below on why it is spelled `maxHeight` |
+| `highlightOnHover` on Table | **Built** (0.22.0) | Cheap, and pairs with the above |
+| Vertical Tabs and Stepper | **Built** (0.22.0) | The two people actually ask for, both spelled `direction: Axis` per the naming rules. Progress, Slider and SegmentedControl can still wait for someone to ask |
+| `PlinthNavLink` children | **Built** (0.22.0) | The showcase built it by hand out of `PlinthCollapse`, which is the same signal that found three Tier 1 items. That block now calls the component |
+| `withEdges` on Pagination | **Built** (0.22.0) | First/last controls, as billed. Its `radius` prop turned out to be accepted and ignored, which the same commit fixed |
+| `fractions` on Rating | **Built** (0.22.0) | It already rendered halves; only selecting them was missing |
 | `processing` on Indicator | **Declined** | A pulsing dot is an animation with no off-switch for reduce-motion unless it takes one, and the same effect is a `PlinthLoader` beside the thing |
 | `labelPosition` on the boolean controls | **Declined** | A `Row` with the children swapped is three lines at the call site, and the prop would double the layout branches inside four components |
 | Searchable `PlinthSelect` | **Declined** | `PlinthAutocomplete` is the searchable one. A searchable *multi* select is the real gap, and that's a new component rather than a prop |
 | Mantine's remaining Input props | **Declined** | `inputContainer`, `inputWrapperOrder`, `*Props` pass-throughs and the rest exist because React composes by spreading props onto inner DOM nodes. A Flutter caller composes with widgets |
+
+### Why the sticky header is spelled `maxHeight`
+
+Mantine's `stickyHeader` is a flag on top of the page's own scrolling.
+Flutter has no page scroll to stick to, so the table has to own one,
+and a scroll view needs a height. That makes `stickyHeader: true` a
+flag that can only throw when the height it needs is missing — the
+`withCloseButton` + `onClose` case again, and settled the same way:
+**one prop that cannot be set wrong**. `maxHeight` gives the table a
+ceiling, and the header stays because there is now something for the
+rows to scroll under.
+
+The part that made it cheap rather than structural: every column is an
+equal-flex share of the available width, so splitting the header and
+the body into two `Table`s doesn't drift — flex widths come from the
+space, not from the content.
+
+### The prop that was there and did nothing
+
+`radius` was added to `PlinthPagination` in 0.19.0's coverage pass and
+never wired up; the cells hardcoded `4`, which happens to equal the
+default theme's `sm`. Nothing looked wrong, and nothing worked.
+
+Worth recording because of *how* it survived: the 0.19.0 radius test
+covers Cascader, PinInput, ColorSwatch, Badge, Chip and Switch, but
+never Pagination — and a prop with no test is indistinguishable from a
+prop with no implementation. It is tested in both directions now.
 
 ### The original Tier 2 list, for reference
 
@@ -207,9 +236,11 @@ A proposal, not a decision:
    `radius` coverage. `size` coverage carried into the naming pass.
 2. ~~**The naming table applied.**~~ Done in 0.20.0, and it is the last
    breaking change planned before 1.0.
-3. **Tier 2 triaged**, not necessarily done: each item either built or
-   written down as a deliberate exclusion, the way Carousel's absence
-   was recorded (and then reversed once the reasoning was re-read).
+3. ~~**Tier 2 triaged**, not necessarily done.~~ Triaged in 0.21.0 and
+   closed in 0.22.0: every item is built or written down as a
+   deliberate exclusion, the way Carousel's absence was recorded (and
+   then reversed once the reasoning was re-read). Tier 3 is what is
+   left, and it is a list of small additions rather than gaps.
 4. ~~**Golden coverage past the current 24 images.**~~ Widened to 31,
    and more usefully re-aimed: three of the six files now cover a
    *kind* of failure rather than a component — computed layout, states

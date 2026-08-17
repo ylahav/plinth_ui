@@ -70,6 +70,28 @@ import 'plinth_text.dart';
 /// over — the table then reports the sort it *would* apply and leaves
 /// the row order alone, which is what a server-side or paginated table
 /// needs. That's the same split as [PlinthTabs]/[PlinthTabView].
+///
+/// ## A header that stays put
+///
+/// Mantine spells this `stickyHeader`, a flag on top of the page's own
+/// scrolling. Flutter has no page scroll to stick to, so the table has
+/// to own one — and a scroll view needs a height. [maxHeight] is
+/// therefore the whole feature in one prop: give the table a ceiling
+/// and its rows scroll under a header that stays.
+///
+/// ```dart
+/// PlinthTable.text(
+///   columns: const ['Name', 'Role'],
+///   rows: manyRows,
+///   maxHeight: 320,
+///   highlightOnHover: true,
+/// )
+/// ```
+///
+/// A separate `stickyHeader: true` would only be a flag that throws
+/// when the height it needs is missing, which is a prop that can be
+/// set wrong. Below the ceiling the table is its natural height, so
+/// short tables don't grow to fill it.
 class PlinthTable extends StatefulWidget {
   /// A table whose cells are arbitrary widgets.
   const PlinthTable({
@@ -85,6 +107,8 @@ class PlinthTable extends StatefulWidget {
     this.onSortChanged,
     this.filter,
     this.emptyState,
+    this.highlightOnHover = false,
+    this.maxHeight,
   })  : _widgetRows = rows,
         _textRows = null,
         _sortValues = sortValues;
@@ -110,6 +134,8 @@ class PlinthTable extends StatefulWidget {
     this.onSortChanged,
     this.filter,
     this.emptyState,
+    this.highlightOnHover = false,
+    this.maxHeight,
   })  : _textRows = rows,
         _widgetRows = null,
         _sortValues = null;
@@ -149,6 +175,18 @@ class PlinthTable extends StatefulWidget {
   /// [PlinthEmptyState] is the natural fit.
   final Widget? emptyState;
 
+  /// Tints the row under the pointer. Pairs with [maxHeight]: the
+  /// longer the table, the more a row needs help staying one row as
+  /// the eye crosses it.
+  ///
+  /// Pointer-only by nature, so it is decoration rather than
+  /// information — nothing here is reachable only by hovering.
+  final bool highlightOnHover;
+
+  /// Caps the table's height and scrolls the rows under a header that
+  /// stays. Null lets the table be as tall as its rows.
+  final double? maxHeight;
+
   /// How many rows the table was given, before any filtering.
   int get rowCount => _widgetRows?.length ?? _textRows!.length;
 
@@ -170,6 +208,15 @@ class PlinthTable extends StatefulWidget {
 class _PlinthTableState extends State<PlinthTable> {
   int? _sortColumn;
   bool _ascending = true;
+
+  /// Index into the *displayed* order, not into the caller's rows —
+  /// it follows the pointer, and the pointer is over a position.
+  int? _hoveredRow;
+
+  void _hover(int? row) {
+    if (_hoveredRow == row) return;
+    setState(() => _hoveredRow = row);
+  }
 
   /// The caller owns the order the moment it asks to be told about it.
   bool get _controlled => widget.onSortChanged != null;
@@ -335,47 +382,125 @@ class _PlinthTableState extends State<PlinthTable> {
 
     final rows = _resolveRows();
 
-    final table = Table(
-      border: TableBorder(
-        horizontalInside: BorderSide(color: theme.surfaceSunken),
-        bottom: BorderSide(color: theme.surfaceSunken),
+    // Every column is an equal-flex share of the available width, which
+    // is what lets the header and the body be two separate tables when
+    // the header has to stay put: flex widths come from the space, not
+    // from the content, so both land on the same column edges.
+    final columnWidths = {
+      for (var i = 0; i < widget.columns.length; i++)
+        i: const FlexColumnWidth(),
+    };
+
+    final headerRow = TableRow(
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: theme.borderMuted, width: 2)),
       ),
-      // Middle rather than top: a row mixing a badge or an avatar with
-      // plain text looks misaligned otherwise, and mixed-height cells
-      // are the reason widget cells exist.
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-      columnWidths: {
-        for (var i = 0; i < widget.columns.length; i++)
-          i: const FlexColumnWidth(),
-      },
       children: [
-        TableRow(
-          decoration: BoxDecoration(
-            border:
-                Border(bottom: BorderSide(color: theme.borderMuted, width: 2)),
-          ),
-          children: [
-            for (var i = 0; i < widget.columns.length; i++) headerCell(i),
-          ],
-        ),
-        for (var r = 0; r < rows.length; r++)
-          TableRow(
-            decoration: widget.striped && r.isOdd
-                ? BoxDecoration(color: theme.surfaceMuted)
-                : null,
-            children: cellsFor(rows[r]),
-          ),
+        for (var i = 0; i < widget.columns.length; i++) headerCell(i),
       ],
     );
 
-    if (rows.isNotEmpty || widget.emptyState == null) return table;
+    // Cells rather than rows carry the hover region: a TableRow is
+    // configuration, not a widget, so there is nothing spanning a row
+    // to wrap. Entering any cell claims the row; only leaving the
+    // whole table gives it up, so the few pixels a short cell doesn't
+    // cover in a tall row don't make the highlight flicker.
+    Widget hoverable(int display, Widget cell) {
+      if (!widget.highlightOnHover) return cell;
+      return MouseRegion(
+        onEnter: (_) => _hover(display),
+        child: cell,
+      );
+    }
 
-    // A Table can't hold a widget spanning every column, so the empty
-    // state sits below the header rather than inside the grid.
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [table, widget.emptyState!],
+    BoxDecoration? rowDecoration(int display) {
+      if (widget.highlightOnHover && _hoveredRow == display) {
+        return BoxDecoration(color: theme.surfaceSunken);
+      }
+      if (widget.striped && display.isOdd) {
+        return BoxDecoration(color: theme.surfaceMuted);
+      }
+      return null;
+    }
+
+    final bodyRows = [
+      for (var r = 0; r < rows.length; r++)
+        TableRow(
+          decoration: rowDecoration(r),
+          children: [
+            for (final cell in cellsFor(rows[r])) hoverable(r, cell),
+          ],
+        ),
+    ];
+
+    Table table(List<TableRow> children, TableBorder border) => Table(
+          border: border,
+          // Middle rather than top: a row mixing a badge or an avatar
+          // with plain text looks misaligned otherwise, and mixed-height
+          // cells are the reason widget cells exist.
+          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+          columnWidths: columnWidths,
+          children: children,
+        );
+
+    final bodyBorder = TableBorder(
+      horizontalInside: BorderSide(color: theme.surfaceSunken),
+      bottom: BorderSide(color: theme.surfaceSunken),
+    );
+
+    Widget result;
+    if (widget.maxHeight == null) {
+      result = table([headerRow, ...bodyRows], bodyBorder);
+
+      if (rows.isEmpty && widget.emptyState != null) {
+        // A Table can't hold a widget spanning every column, so the
+        // empty state sits below the header rather than inside the grid.
+        result = Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [result, widget.emptyState!],
+        );
+      }
+    } else {
+      result = Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // The header table stops one hairline short of the first row
+          // so the seam between the two tables looks like the line
+          // `horizontalInside` draws everywhere else.
+          table(
+            [headerRow],
+            TableBorder(bottom: BorderSide(color: theme.surfaceSunken)),
+          ),
+          Flexible(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // A Table with no rows has no columns either, which
+                  // its own width assertions don't survive.
+                  if (bodyRows.isNotEmpty) table(bodyRows, bodyBorder),
+                  if (rows.isEmpty && widget.emptyState != null)
+                    widget.emptyState!,
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+
+      result = ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: widget.maxHeight!),
+        child: result,
+      );
+    }
+
+    if (!widget.highlightOnHover) return result;
+    return MouseRegion(
+      onExit: (_) => _hover(null),
+      child: result,
     );
   }
 }

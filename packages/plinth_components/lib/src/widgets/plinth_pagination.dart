@@ -15,6 +15,11 @@ import 'package:plinth_core/plinth_core.dart';
 ///   onChanged: (p) => setState(() => _page = p),
 /// )
 /// ```
+///
+/// [withEdges] adds first/last controls outside the previous/next
+/// pair. They earn their space once the range collapses — jumping from
+/// page 14 of 200 back to the start otherwise means tapping `1`, which
+/// the ellipsis has already hidden more often than not.
 class PlinthPagination extends StatelessWidget {
   const PlinthPagination({
     super.key,
@@ -25,6 +30,7 @@ class PlinthPagination extends StatelessWidget {
     this.size = PlinthSize.md,
     this.siblingCount = 1,
     this.radius,
+    this.withEdges = false,
   });
 
   /// Current page, 1-based.
@@ -33,7 +39,11 @@ class PlinthPagination extends StatelessWidget {
   /// Total number of pages.
   final int total;
 
-  final ValueChanged<int> onChanged;
+  /// Null disables every control, the way a null callback does
+  /// everywhere else in this library — a pager waiting on the request
+  /// that fills the page it is already on has nowhere to send a tap.
+  final ValueChanged<int>? onChanged;
+
   final String? color;
   final PlinthSize size;
 
@@ -43,6 +53,9 @@ class PlinthPagination extends StatelessWidget {
   /// How many page numbers to show on either side of [page] before
   /// collapsing into an ellipsis.
   final int siblingCount;
+
+  /// Adds first/last controls outside the previous/next pair.
+  final bool withEdges;
 
   List<Object> _buildRange() {
     // Object because entries are either an int page number or the
@@ -75,21 +88,29 @@ class PlinthPagination extends StatelessWidget {
       PlinthSize.lg => 38.0,
       PlinthSize.xl => 44.0,
     };
+    final resolvedRadius = theme.radius[radius ?? theme.defaultRadius]!;
+    final interactive = onChanged != null;
 
-    Widget navButton(IconData icon, bool enabled, VoidCallback onTap) {
+    Widget navButton(IconData icon, String label, bool enabled, int target) {
+      final usable = enabled && interactive;
       return _PageCell(
         dimension: dimension,
-        onTap: enabled ? onTap : null,
+        radius: resolvedRadius,
+        // Icon-only controls have nothing for a screen reader to read
+        // out; the numbered cells below carry their own number.
+        semanticLabel: label,
+        onTap: usable ? () => onChanged!(target) : null,
         child: Icon(icon,
             size: dimension * 0.5,
-            color: enabled ? theme.text : theme.textDisabled),
+            color: usable ? theme.text : theme.textDisabled),
       );
     }
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        navButton(Icons.chevron_left, page > 1, () => onChanged(page - 1)),
+        if (withEdges) navButton(Icons.first_page, 'First page', page > 1, 1),
+        navButton(Icons.chevron_left, 'Previous page', page > 1, page - 1),
         for (final entry in _buildRange())
           if (entry == '…')
             SizedBox(
@@ -100,20 +121,27 @@ class PlinthPagination extends StatelessWidget {
           else
             _PageCell(
               dimension: dimension,
+              radius: resolvedRadius,
               selected: entry == page,
               activeColor: activeColor,
-              onTap: entry == page ? null : () => onChanged(entry as int),
+              onTap: entry == page || !interactive
+                  ? null
+                  : () => onChanged!(entry as int),
               child: Text(
                 '$entry',
                 style: TextStyle(
                   color: entry == page
                       ? theme.contrastingOn(activeColor)
-                      : theme.text,
+                      : interactive
+                          ? theme.text
+                          : theme.textDisabled,
                   fontWeight: entry == page ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
             ),
-        navButton(Icons.chevron_right, page < total, () => onChanged(page + 1)),
+        navButton(Icons.chevron_right, 'Next page', page < total, page + 1),
+        if (withEdges)
+          navButton(Icons.last_page, 'Last page', page < total, total),
       ],
     );
   }
@@ -122,36 +150,49 @@ class PlinthPagination extends StatelessWidget {
 class _PageCell extends StatelessWidget {
   const _PageCell({
     required this.dimension,
+    required this.radius,
     required this.child,
     this.onTap,
     this.selected = false,
     this.activeColor,
+    this.semanticLabel,
   });
 
   final double dimension;
+  final double radius;
   final Widget child;
   final VoidCallback? onTap;
   final bool selected;
   final Color? activeColor;
+  final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    final cell = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 2),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(radius),
         child: Container(
           width: dimension,
           height: dimension,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: selected ? activeColor : Colors.transparent,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(radius),
           ),
           child: child,
         ),
       ),
+    );
+
+    if (semanticLabel == null) return cell;
+    return Semantics(
+      button: true,
+      enabled: onTap != null,
+      label: semanticLabel,
+      excludeSemantics: true,
+      child: cell,
     );
   }
 }

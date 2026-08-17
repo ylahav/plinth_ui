@@ -7,6 +7,77 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.22.0
+
+Closes the [pre-1.0 audit](../../docs/PRE_1_0_AUDIT.md)'s Tier 2. Every
+item on that list is now built or declined with a reason — nothing is
+left as "planned". All additive; no migration.
+
+### Added
+
+- **`maxHeight` on `PlinthTable`**, which is the sticky header. Mantine
+  spells it `stickyHeader`, a flag on top of the page's own scrolling;
+  Flutter has no page scroll to stick to, so the table has to own one
+  and a scroll view needs a height. A separate `stickyHeader: true`
+  could then only throw when the height it needs is missing, which is a
+  prop that can be set wrong — so it is one prop that can't be.
+
+  The header and the body become two `Table`s, which works only because
+  every column is an equal-flex share of the available width: the
+  column edges come from the space, not from the content, so the two
+  can't drift. Below `maxHeight` the table is its natural height, so a
+  short table doesn't grow to fill it.
+
+- **`highlightOnHover` on `PlinthTable`.** The hover region sits on the
+  cells rather than the row, because a `TableRow` is configuration
+  rather than a widget and there is nothing spanning a row to wrap.
+  Entering any cell claims the row and only leaving the whole table
+  gives it up, so the few pixels a short cell doesn't cover in a tall
+  row don't make the highlight flicker.
+
+- **`direction` on `PlinthTabs` and `PlinthStepper`**, typed `Axis` per
+  the [naming rules](../../docs/COMPONENTS.md#naming-rules). Vertical
+  tabs move the divider and the active indicator to the trailing edge;
+  a vertical stepper puts each label beside its circle rather than
+  under it, which is what gives a step description a line's width to
+  sit on.
+
+- **`children` on `PlinthNavLink`**, with `opened`, `onOpenedChanged`
+  and `childrenOffset`. `onTap` stays separate and a parent with both
+  calls both — that's what lets a parent which is only a grouping
+  heading stay unreachable as a route. The chevron is supplied unless
+  `trailing` fills the slot.
+
+  The showcase's **Navbar with sublevels** block built this by hand out
+  of `PlinthCollapse` and a padded column; it now calls the component,
+  which is the point of having noticed.
+
+- **`withEdges` on `PlinthPagination`** — first/last controls outside
+  the previous/next pair, for the jump the ellipsis hides once the
+  range collapses. Every icon-only control also gained a semantic
+  label, which none of them had.
+
+- **`fractions` on `PlinthRating`**, for selecting the half-stars it
+  has always been able to *render*. It splits each star into that many
+  hit regions. Empty, half and full keep Material's drawn glyphs — a
+  designed half-star beats a clipped one — and anything between them is
+  a clipped fill.
+
+### Fixed
+
+- **`PlinthPagination.radius` did nothing.** Added in 0.19.0's coverage
+  pass and never wired up: the cells hardcoded `4`, which happens to
+  equal the default theme's `sm`, so nothing looked wrong and nothing
+  worked. It now resolves through the theme like every other `radius`,
+  which also means a theme with a different `defaultRadius` reaches the
+  pager for the first time.
+
+### Changed
+
+- **`PlinthPagination.onChanged` is nullable.** Passing null disables
+  every control, which is how this library spells disabled everywhere
+  else. Existing calls compile unchanged.
+
 ## 0.21.1
 
 ### Fixed

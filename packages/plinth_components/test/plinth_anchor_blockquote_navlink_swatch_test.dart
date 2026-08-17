@@ -79,6 +79,100 @@ void main() {
 
       expect(tapped, isTrue);
     });
+
+    testWidgets('a link without children has no chevron', (tester) async {
+      await tester.pumpWidget(_wrap(const PlinthNavLink(label: 'Dashboard')));
+
+      expect(find.byIcon(Icons.expand_more), findsNothing);
+    });
+
+    testWidgets('children are hidden from semantics while closed',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthNavLink(
+          label: 'Analytics',
+          children: [PlinthNavLink(label: 'Traffic')],
+        )),
+      );
+      await tester.pumpAndSettle();
+
+      // PlinthCollapse keeps the child mounted, so it is still in the
+      // tree — the thing that must not happen is a screen reader
+      // reading out a link nobody can see.
+      expect(find.text('Traffic'), findsOneWidget);
+      final semantics = tester.getSemantics(find.byType(PlinthNavLink).first);
+      expect(semantics.label.contains('Traffic'), isFalse);
+    });
+
+    testWidgets('opened reveals the children and turns the chevron',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthNavLink(
+          label: 'Analytics',
+          opened: true,
+          children: [PlinthNavLink(label: 'Traffic')],
+        )),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Traffic'), findsOneWidget);
+      expect(find.byIcon(Icons.expand_more), findsOneWidget);
+      expect(
+        tester.widget<AnimatedRotation>(find.byType(AnimatedRotation)).turns,
+        equals(0.5),
+      );
+    });
+
+    testWidgets('tapping a parent reports the flipped opened state',
+        (tester) async {
+      bool? opened;
+      await tester.pumpWidget(
+        _wrap(PlinthNavLink(
+          label: 'Analytics',
+          onOpenedChanged: (o) => opened = o,
+          children: const [PlinthNavLink(label: 'Traffic')],
+        )),
+      );
+
+      await tester.tap(find.text('Analytics'));
+      await tester.pump();
+
+      expect(opened, isTrue);
+    });
+
+    testWidgets('a parent that is also a destination calls both callbacks',
+        (tester) async {
+      var tapped = false;
+      bool? opened;
+      await tester.pumpWidget(
+        _wrap(PlinthNavLink(
+          label: 'Analytics',
+          opened: true,
+          onTap: () => tapped = true,
+          onOpenedChanged: (o) => opened = o,
+          children: const [PlinthNavLink(label: 'Traffic')],
+        )),
+      );
+
+      await tester.tap(find.text('Analytics'));
+      await tester.pump();
+
+      expect(tapped, isTrue);
+      expect(opened, isFalse);
+    });
+
+    testWidgets('trailing keeps its slot ahead of the chevron', (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthNavLink(
+          label: 'Analytics',
+          trailing: Icon(Icons.circle),
+          children: [PlinthNavLink(label: 'Traffic')],
+        )),
+      );
+
+      expect(find.byIcon(Icons.circle), findsOneWidget);
+      expect(find.byIcon(Icons.expand_more), findsNothing);
+    });
   });
 
   group('PlinthColorSwatch', () {

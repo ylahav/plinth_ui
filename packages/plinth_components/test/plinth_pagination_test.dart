@@ -103,5 +103,116 @@ void main() {
 
       expect(find.text('1'), findsOneWidget);
     });
+
+    testWidgets('withEdges is off by default', (tester) async {
+      await tester.pumpWidget(
+        _wrap(PlinthPagination(page: 5, total: 20, onChanged: (_) {})),
+      );
+
+      expect(find.byIcon(Icons.first_page), findsNothing);
+      expect(find.byIcon(Icons.last_page), findsNothing);
+    });
+
+    testWidgets('withEdges jumps to the first and last page', (tester) async {
+      int? changed;
+      await tester.pumpWidget(
+        _wrap(PlinthPagination(
+          page: 10,
+          total: 20,
+          withEdges: true,
+          onChanged: (p) => changed = p,
+        )),
+      );
+
+      await tester.tap(find.byIcon(Icons.first_page));
+      await tester.pump();
+      expect(changed, equals(1));
+
+      await tester.tap(find.byIcon(Icons.last_page));
+      await tester.pump();
+      expect(changed, equals(20));
+    });
+
+    testWidgets('the edge controls are dead at the ends of the range',
+        (tester) async {
+      int? changed;
+      await tester.pumpWidget(
+        _wrap(PlinthPagination(
+          page: 1,
+          total: 20,
+          withEdges: true,
+          onChanged: (p) => changed = p,
+        )),
+      );
+
+      await tester.tap(find.byIcon(Icons.first_page));
+      await tester.pump();
+
+      // Already on page 1 — there is nowhere to jump to, and firing
+      // onChanged(1) would be a spurious rebuild of the same page.
+      expect(changed, isNull);
+    });
+
+    testWidgets('a null onChanged silences every control', (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthPagination(
+          page: 3,
+          total: 20,
+          withEdges: true,
+          onChanged: null,
+        )),
+      );
+
+      for (final icon in [
+        Icons.first_page,
+        Icons.chevron_left,
+        Icons.chevron_right,
+        Icons.last_page,
+      ]) {
+        await tester.tap(find.byIcon(icon));
+      }
+      await tester.tap(find.text('2'));
+      await tester.pump();
+
+      // Nothing to assert beyond "didn't throw and had nowhere to
+      // report to" — a null callback is how this library spells
+      // disabled.
+      expect(find.text('3'), findsOneWidget);
+    });
+
+    testWidgets('radius reaches the cells it is given to', (tester) async {
+      // It was an accepted-and-ignored prop until 0.22.0: the cells
+      // hardcoded a 4, which happens to equal the default theme's
+      // `sm`, so nothing looked wrong and nothing worked either.
+      double cellRadius(WidgetTester tester) {
+        final container = tester
+            .widgetList<Container>(find.descendant(
+              of: find.byType(PlinthPagination),
+              matching: find.byType(Container),
+            ))
+            .first;
+        final decoration = container.decoration! as BoxDecoration;
+        return decoration.borderRadius!.resolve(null).topLeft.x;
+      }
+
+      await tester.pumpWidget(
+        _wrap(PlinthPagination(page: 1, total: 5, onChanged: (_) {})),
+      );
+      expect(
+        cellRadius(tester),
+        PlinthTheme.defaultTheme.radius[PlinthTheme.defaultTheme.defaultRadius],
+      );
+
+      await tester.pumpWidget(
+        _wrap(PlinthPagination(
+          page: 1,
+          total: 5,
+          radius: PlinthSize.xl,
+          onChanged: (_) {},
+        )),
+      );
+      expect(
+          cellRadius(tester), PlinthTheme.defaultTheme.radius[PlinthSize.xl]);
+    });
   });
 }

@@ -634,11 +634,22 @@ state and pass `selected` per chip, same controlled-component pattern as
 `PlinthCheckbox`/`PlinthRadio`.
 
 ### `PlinthRating`
-`value` (supports half-values like `3.5` for read-only display), `onChanged`
+`value` (fractional values like `3.5` render as partly filled stars),
+`onChanged`
 (omit for a read-only display — e.g. showing an existing average rating),
 `count` (default `5`), `color` (defaults to an amber gold, not the theme's
 primary color — a rating in brand blue reads oddly against the
-conventional gold-star look), `size`.
+conventional gold-star look), `size`, `fractions`.
+
+`fractions` (default `1`) is how many parts each star can be
+*selected* in — `2` for halves, `4` for quarters. It splits each star
+into that many hit regions, so a tap reports a value `1 / fractions`
+granular. Rendering has always handled fractions; only choosing one
+was missing.
+
+Empty, half and full stars use Material's own drawn glyphs; anything
+between them is a clipped fill, since a designed half-star beats a
+mechanically clipped one where there is a glyph for it.
 
 ### `PlinthFieldset`
 `child`, `legend`, `variant` (`defaultVariant` draws a border,
@@ -1226,7 +1237,8 @@ the hidden children are still in the widget tree and `find.text` can't
 tell what was actually shown.
 
 ### `PlinthTable`
-`columns` (`List<String>`), `rows`, `striped`, `size`. Built on
+`columns` (`List<String>`), `rows`, `striped`, `size`,
+`highlightOnHover`, `maxHeight`. Built on
 Flutter's low-level `Table` widget rather than `DataTable`, since
 `DataTable`'s built-in Material styling (fixed row heights,
 sort/selection chrome) fights against a themeable design system more
@@ -1270,6 +1282,28 @@ reports the sort it *would* apply and leaves the row order alone,
 which is what a server-side or paginated table needs. Same split as
 `PlinthTabs`/`PlinthTabView`.
 
+**A header that stays put.** Mantine spells this `stickyHeader`, a flag
+over the page's own scrolling. Flutter has no page scroll to stick to,
+so the table has to own one — and a scroll view needs a height.
+`maxHeight` is therefore the whole feature in one prop: give the table
+a ceiling and its rows scroll under a header that stays. A separate
+`stickyHeader: true` would only be a flag that throws when the height
+it needs is missing, which is a prop that can be set wrong.
+
+Under the hood the header and the body become two `Table`s. That works
+only because every column is an equal-flex share of the available
+width, so both land on the same column edges no matter what is in the
+cells. Below `maxHeight` the table is its natural height, so a short
+table doesn't grow to fill it.
+
+**`highlightOnHover`** tints the row under the pointer. The region sits
+on the cells rather than the row — a `TableRow` is configuration, not a
+widget, so there is nothing spanning a row to wrap. Entering any cell
+claims the row and only leaving the whole table gives it up, so the few
+pixels a short cell doesn't cover in a tall row don't make the
+highlight flicker. Pointer-only by nature, so it is decoration rather
+than information.
+
 ---
 
 ## Navigation
@@ -1284,12 +1318,17 @@ controller, since expanded state is presentation-local to the widget.
 
 ### `PlinthStepper` + `PlinthStep`
 `steps` (`List<PlinthStep>`), `currentStep` (zero-based index), `onStepTapped`,
-`color`, `radius`. Each `PlinthStep` has `label` and optional `description`. Purely
+`color`, `radius`, `direction`. Each `PlinthStep` has `label` and optional `description`. Purely
 a visual progress indicator — like `PlinthTabs`/`PlinthTabView`, it doesn't
 manage step *content*; pair with your own conditional rendering driven by
 the same `currentStep` you pass in. Tapping a step calls `onStepTapped`
 but doesn't change `currentStep` itself — controlled-component pattern,
 same as `PlinthTabs`.
+
+`direction: Axis.vertical` runs the sequence down the page, with each
+label beside its circle rather than under it — the shape a long
+checkout or onboarding flow wants, where a description gets a line's
+width to sit on instead of a column's.
 
 ### `PlinthBreadcrumbs` + `PlinthBreadcrumbItem`
 `items` (`List<PlinthBreadcrumbItem>`), `separator` (default `'/'`), `color`.
@@ -1299,12 +1338,17 @@ whether it has an `onTap` — matching the convention that the current page
 isn't itself a link.
 
 ### `PlinthPagination`
-`page` (1-based), `total`, `onChanged`, `color`, `size`, `radius`,
-`siblingCount`
+`page` (1-based), `total`, `onChanged` (nullable — null disables every
+control), `color`, `size`, `radius`, `siblingCount`
 (default `1` — how many page numbers show on either side of `page` before
-collapsing into an ellipsis). For large `total`, always shows the first
+collapsing into an ellipsis), `withEdges`. For large `total`, always shows the first
 page, the last page, and `page`'s immediate neighbors; everything else
 collapses into a single `…` marker per side.
+
+`withEdges` adds first/last controls outside the previous/next pair.
+They earn their space once the range collapses: jumping from page 14 of
+200 back to the start otherwise means tapping `1`, which the ellipsis
+has usually hidden.
 
 ### `PlinthTimeline` + `PlinthTimelineItem`
 `items` (`List<PlinthTimelineItem>`), `color`. Each `PlinthTimelineItem`
@@ -1357,12 +1401,30 @@ mono display.
 ### `PlinthNavLink`
 `label`, `leadingIcon`, `trailing` (e.g. a `PlinthBadge` for an unread
 count),
-`active`, `onTap`, `color`. Sidebar-style navigation item — active state
+`active`, `onTap`, `color`, `children`, `opened`, `onOpenedChanged`,
+`childrenOffset`. Sidebar-style navigation item — active state
 tints the background and label in the theme color.
+
+**Nesting.** `children` makes the link a disclosure: they sit indented
+beneath it (by `childrenOffset`, default the theme's `lg` spacing) and
+animate in and out through `PlinthCollapse`. `opened` is controlled by
+the caller, like every other disclosure here, and a tap reports the
+flip through `onOpenedChanged`.
+
+`onTap` stays separate, and a parent with both calls both. Keeping them
+apart is what lets a parent that is *only* a grouping heading stay
+unreachable as a route, which is the shape a sidebar usually wants. The
+chevron is supplied for you when there are children, unless `trailing`
+fills that slot with something of its own.
+
+`PlinthCollapse` keeps children mounted while closed, so a deep tree
+pays to build every branch. For a sidebar that's the point — state in a
+branch survives closing it — but a tree of hundreds of nodes wants
+`PlinthTree`, which builds what it shows.
 
 ### `PlinthTabs<T>` + `PlinthTabView<T>`
 `PlinthTabs`: `tabs` (`List<PlinthTabItem<T>>`), `value`, `onChanged`, `size`,
-`color`. Renders an underline-style tab bar — deliberately a static
+`color`, `direction`. Renders an underline-style tab bar — deliberately a static
 per-tab underline rather than a measured sliding indicator (the kind
 needing `GlobalKey`/`RenderBox` size lookups), to keep the implementation
 simple and reliable.
@@ -1373,6 +1435,14 @@ the container. Given *unbounded* width — a tab bar in a `Row` with no
 `Expanded` — it falls back to shrink-wrapping, since a scroll view
 needs a bounded main axis and nothing can overflow a width that isn't
 there.
+
+`direction: Axis.vertical` stacks the tabs in a column and moves both
+the divider and the active indicator to their trailing edge, so the
+content sits to the right of the list — the shape a settings sidebar
+wants, and the one where a dozen tabs stay readable. The same
+bounded-axis rules apply, one axis over: a bounded *height* scrolls,
+and an unbounded *width* takes the widest tab's width rather than
+stretching to a width that isn't there.
 
 `PlinthTabView`: `value`, `children` (`Map<T, Widget>`). Fades between
 entries keyed by the same `value`/type as `PlinthTabs`. Renders nothing

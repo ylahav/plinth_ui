@@ -189,7 +189,7 @@ border/background logic, like `PlinthTextInput`'s focus/error states or
 `PlinthAlert`'s color tinting) over ones that are mostly just text
 (`PlinthText`, `PlinthBadge`'s label).
 
-**31 images across six files**, of which three are worth knowing about
+**34 images across seven files**, of which four are worth knowing about
 because they cover a *kind* of failure rather than a component:
 
 | File | What it pins |
@@ -197,6 +197,19 @@ because they cover a *kind* of failure rather than a component:
 | `plinth_computed_layout_golden_test.dart` | Components that place things by arithmetic and paint at the result — a rolling number's wheels, an arc's start angle, a slider mark against a track this library doesn't draw. A behaviour test can confirm the number that went in; only an image confirms where it came out |
 | `plinth_states_golden_test.dart` | States rather than props, each paired with the state it must *not* look like: disabled beside enabled, loading beside idle, a pill beside the same component squared off |
 | `plinth_dark_theme_golden_test.dart` | The dark theme across several components at once, on a dark page. An unfollowed token shows up by contrast with its neighbours |
+| `plinth_orientation_golden_test.dart` | Props that re-compose a component rather than tweak it — `direction: Axis.vertical` swapping a `Row` for a `Column` and moving an indicator to a different edge, `PlinthTable.maxHeight` splitting one table into two that must land on the same column edges |
+
+The orientation file earned its place before it was even committed. A
+throwaway local render of the vertical stepper showed its connectors
+painting as **full-width bars across the step below** rather than as
+hairlines under each circle: the column stretches its children so the
+steps share a left edge, and that stretch overruled the connector's
+own `width: 2`. Every behaviour assertion — order, taps, labels,
+descriptions, the completed check — passed through it. That is the
+third time in this repo an image has caught something no unit test
+could, so the case is now pinned by a cheap width assertion in
+`plinth_stepper_test.dart` as well, since goldens don't run on Windows
+or macOS.
 
 Two lessons are baked into those files. **A golden generated from broken
 code certifies the bug** — `plinth_button_disabled` did exactly that for

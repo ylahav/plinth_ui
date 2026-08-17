@@ -5333,39 +5333,25 @@ class _NavbarWithSublevelsExampleState
             // navbar's headings are flat destinations that merely
             // group. The difference shows in the state: only one
             // branch is open at a time, and the parent is not itself
-            // a place you can be.
-            for (final section in _sections) ...[
+            // a place you can be — which is why it takes
+            // onOpenedChanged and no onTap.
+            for (final section in _sections)
               PlinthNavLink(
                 label: section.label,
                 leadingIcon: Icon(section.icon, size: 18),
-                trailing: Icon(
-                  _open == section.label
-                      ? Icons.expand_less
-                      : Icons.expand_more,
-                  size: 16,
-                ),
-                onTap: () => setState(
-                  () => _open = _open == section.label ? '' : section.label,
-                ),
-              ),
-              PlinthCollapse(
                 opened: _open == section.label,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: PlinthStack(
-                    gap: PlinthSize.xs,
-                    children: [
-                      for (final child in section.children)
-                        PlinthNavLink(
-                          label: child,
-                          active: _active == child,
-                          onTap: () => setState(() => _active = child),
-                        ),
-                    ],
-                  ),
+                onOpenedChanged: (opened) => setState(
+                  () => _open = opened ? section.label : '',
                 ),
+                children: [
+                  for (final child in section.children)
+                    PlinthNavLink(
+                      label: child,
+                      active: _active == child,
+                      onTap: () => setState(() => _active = child),
+                    ),
+                ],
               ),
-            ],
           ],
         ),
       ),
