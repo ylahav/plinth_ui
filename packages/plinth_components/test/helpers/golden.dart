@@ -39,20 +39,32 @@ Widget goldenWrap(
           )
         : ThemeData(extensions: [PlinthTheme.defaultTheme]),
     home: Scaffold(
-      // The dark images used to render their components on Flutter's
-      // *light* scaffold, so every one of them showed dark chrome
-      // floating on a white page — a scene no app ever produces, and
-      // the wrong backdrop for the question a dark golden asks. A
-      // muted disabled fill only reads as recessive against the page
-      // it will actually sit on.
-      backgroundColor: dark ? kDarkSurface : null,
       body: Center(
         child: RepaintBoundary(
           key: goldenBoundary,
           child: SizedBox(
             width: width,
             height: height,
-            child: Center(child: child),
+            // Dark images paint their own page inside the boundary.
+            //
+            // The scaffold's background sits *outside* the boundary, so
+            // it never reaches the image at all — what looks like a
+            // white page in a dark golden is the PNG's transparency,
+            // which most viewers show as white. Setting the scaffold
+            // colour changed nothing, as a regeneration proved by
+            // returning byte-identical images.
+            //
+            // It matters because a dark golden's question is whether a
+            // component recedes or stands out against the page it will
+            // sit on, and transparency answers neither.
+            //
+            // Light stays transparent: every committed light image was
+            // generated that way, and repainting them to say the same
+            // thing would be churn.
+            child: ColoredBox(
+              color: dark ? kDarkSurface : const Color(0x00000000),
+              child: Center(child: child),
+            ),
           ),
         ),
       ),
