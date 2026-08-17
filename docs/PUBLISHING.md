@@ -11,7 +11,7 @@ now covers releasing an update.
 |---|---|---|
 | `plinth_core` | 0.2.1 | 0.2.1 |
 | `plinth_hooks` | 0.0.2 | 0.0.2 |
-| `plinth_components` | 0.24.0 | 0.25.0 (unreleased) |
+| `plinth_components` | 0.25.0 | 0.25.0 |
 
 `plinth_components` depends on the other two by hosted version
 (`plinth_core: ^0.2.0`, `plinth_hooks: >=0.0.1 <0.1.0`), not by path. Melos
