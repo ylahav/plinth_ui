@@ -189,7 +189,7 @@ border/background logic, like `PlinthTextInput`'s focus/error states or
 `PlinthAlert`'s color tinting) over ones that are mostly just text
 (`PlinthText`, `PlinthBadge`'s label).
 
-**34 images across seven files**, of which four are worth knowing about
+**42 images across eight files**, of which five are worth knowing about
 because they cover a *kind* of failure rather than a component:
 
 | File | What it pins |
@@ -198,6 +198,29 @@ because they cover a *kind* of failure rather than a component:
 | `plinth_states_golden_test.dart` | States rather than props, each paired with the state it must *not* look like: disabled beside enabled, loading beside idle, a pill beside the same component squared off |
 | `plinth_dark_theme_golden_test.dart` | The dark theme across several components at once, on a dark page. An unfollowed token shows up by contrast with its neighbours |
 | `plinth_orientation_golden_test.dart` | Props that re-compose a component rather than tweak it — `direction: Axis.vertical` swapping a `Row` for a `Column` and moving an indicator to a different edge, `PlinthTable.maxHeight` splitting one table into two that must land on the same column edges |
+| `plinth_overlay_golden_test.dart` | The components that render somewhere other than where they are written — menu, popover on all four sides, drawer, modal in both themes. A behaviour test can only ask whether the panel is in the tree; `find.text('Edit')` passes just as happily when it is behind its own trigger or off the side of the screen |
+
+**Goldens for an overlay need a different wrapper.** `goldenWrap` puts
+its boundary inside the scaffold, and a menu, popover, drawer or modal
+renders into the app's `Overlay` or a dialog route — *above* it. Shoot
+that boundary and you photograph the trigger and an empty page. Use
+`overlayGoldenWrap`, which puts the boundary outside the app, and call
+`useGoldenSurface` first: `MediaQuery` comes from the test view rather
+than from the box the app is laid out in, so without it a drawer or
+modal sizes itself for 800x600 inside whatever rectangle you asked for.
+Because the image is then the whole surface rather than a crop, the
+page is painted in both themes — there is no transparency to fall back
+on, and a popover's elevation is unreadable without a page under it.
+
+Two things worth knowing before reading those images. **The hard black
+band along the drawer's edge is not a bug**: `flutter_test` sets
+`debugDisableShadows = true`, which paints an elevation as a solid
+rectangle instead of a blurred one, and the drawer is the only overlay
+here with one (`elevation: 8`). It is left at the default deliberately,
+since a blurred shadow is exactly the kind of antialiasing these images
+should not be pinned to. And **`PlinthPopover` does not flip near a
+screen edge** — its anchors are fixed — so a fixture that puts a panel
+past the frame is a fixture problem, not a finding.
 
 The orientation file earned its place before it was even committed. A
 throwaway local render of the vertical stepper showed its connectors

@@ -296,10 +296,51 @@ A proposal, not a decision:
    one-letter-per-line home page, the disabled button that looked
    enabled. None were found by a unit test.
 
-   Still worth doing: the overlay components (menu, popover, drawer,
+   ~~Still worth doing: the overlay components (menu, popover, drawer,
    modal), which no image covers because each needs an interaction
-   pumped first.
+   pumped first.~~ **Done** — eight images in
+   `plinth_overlay_golden_test.dart`, 42 across eight files.
+
+   The interaction turned out to be the smaller half of the problem: a
+   controller opened and a `pumpAndSettle` is one line. The real
+   obstacle was that `goldenWrap` puts its boundary *inside* the
+   scaffold, and every one of these renders into the app's `Overlay` or
+   a dialog route — above it. Shooting that boundary photographs the
+   trigger and an empty page. `overlayGoldenWrap` puts the boundary
+   outside the app instead, which makes the image the whole surface
+   rather than a crop, and therefore also makes the page something the
+   helper has to paint.
+
+**With that, every item on this list is closed.** What remains before
+1.0 is Tier 3 — twelve small additions, none of them gaps — and a
+decision recorded in [PUBLISHING.md](PUBLISHING.md) about whether the
+two leaf packages move onto a matching version line.
 
 Beta, by contrast, is where the library is now: the API is stable
 enough to build against, and the remaining changes are additive except
 for the naming table.
+
+### What the overlay images are actually for
+
+A popover is placed by `CompositedTransformFollower` against a
+`LayerLink` — arithmetic on two anchors and an offset. A behaviour test
+can only ask whether the content is in the tree, and `find.text('Edit')`
+passes just as happily when the panel is behind its own trigger, off
+the side of the screen, or on the wrong edge entirely. Three of this
+library's bugs were exactly that shape (the rolling number's wheels,
+the vertical stepper's connectors, the indicator dot at its child's
+full size), and none was caught by a unit test.
+
+Two things the images turned up immediately, neither a bug:
+
+- **`PlinthPopover` does not flip near an edge.** Its anchors are
+  fixed, so a `bottom` popover on a target near the bottom of the
+  screen renders off it. `PlinthTooltip` *does* flip, because Flutter's
+  own tooltip does it — which is the note in the Tier 1 section above,
+  read from the other side. Worth a decision before 1.0; not filed as a
+  gap yet because nobody has hit it.
+- **The hard black band on the drawer's edge is `debugDisableShadows`**,
+  which `flutter_test` sets, painting an elevation as a solid rectangle
+  rather than a blurred one. Confirmed by rendering with shadows on.
+  Left at the default, so these images pin the shadow's extent and not
+  its softness.
