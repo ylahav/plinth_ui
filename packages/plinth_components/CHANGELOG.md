@@ -7,6 +7,79 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.23.0
+
+Closes the last open item in the [pre-1.0 audit](../../docs/PRE_1_0_AUDIT.md)'s
+Tier 1 — `size` coverage, deferred since 0.19.0 — and the three
+`PlinthIndicator` props that were written down in the audit's reference
+list but never reached its triage table.
+
+Measuring what these components already drew turned up two bugs, both
+of which changed pixels. **If you have golden images covering
+`PlinthIndicator` or a horizontal `PlinthStepper`, they need
+regenerating.**
+
+### Fixed
+
+- **`PlinthIndicator`'s dot was the size of the thing it marked.** A
+  `Container` with an `alignment` expands to fill whatever bounded
+  constraints it is given, and the corner this sits in — a
+  `Positioned.fill` inside a `Stack` — hands it the child's full size.
+  A 48px icon got a 48px disc over it rather than a dot on it; the
+  `minWidth: 16` was a floor the box sailed straight past. The label is
+  now centred with `textAlign`, which centres text without resizing the
+  box around it.
+
+  Three tests covered the component and all three passed — they asked
+  whether it rendered, never how big it was — and the committed
+  `plinth_pill_defaults.png` golden had been certifying the blob for
+  several releases.
+
+- **`PlinthStepper` drew its markers on two different lines** when only
+  some steps carried a `description`. `Row` centres each child against
+  the tallest, and a step with a description is taller than one
+  without, so the circles sat 8.5px apart. Steps are aligned to the top
+  now, and the connector is positioned from the circle's own radius
+  rather than a fixed bottom margin that only suited one size.
+
+### Added
+
+- **`size` on `PlinthDivider`**, stepping the rule's thickness on a
+  1–5px ramp. `xs` is the hairline it drew before, so nothing moves
+  unless asked. The space a rule occupies always equals the line it
+  draws, so a thicker rule never adds padding it doesn't paint.
+
+  Its `height` stays, and means the *length* of a vertical rule — a
+  different question from thickness, which is why both props exist
+  rather than one replacing the other.
+
+- **`size` on `PlinthIndicator`**, stepping the dot 8–24px with `md`
+  the existing 16. A `label` still widens the badge past that to fit
+  its text.
+
+- **`offset` on `PlinthIndicator`**, pulling the dot in from its corner
+  toward the child's centre, in logical pixels. The default placement
+  straddles the corner of the child's *bounding box*, which is right
+  for a square icon and wrong for a round avatar — a circle's edge is
+  well inside its box's corner. Measured rather than a scale step,
+  because what it clears is a radius rather than a size.
+
+- **`withBorder` on `PlinthIndicator`**, ringing the dot in the surface
+  colour so it stays legible on a photo. The surface rather than a
+  palette colour, so it reads as a gap rather than an outline.
+
+- **`size` on `PlinthStepper`**, scaling the marker and the text with
+  it — disc, number or tick, label and description all move together,
+  so a larger stepper isn't a big circle over small type.
+
+### Declined
+
+- **`size` on the colour sliders.** They spell it `height`, which the
+  0.20.0 naming rules already make correct: a measured dimension takes
+  its own name, and a track's height is measured. Adding
+  `size: PlinthSize` alongside would give one component two ways to say
+  how tall it is — the exact fault the naming pass fixed.
+
 ## 0.22.0
 
 Closes the [pre-1.0 audit](../../docs/PRE_1_0_AUDIT.md)'s Tier 2. Every

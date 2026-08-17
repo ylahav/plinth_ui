@@ -46,12 +46,18 @@ class PlinthStepper extends StatelessWidget {
     this.color,
     this.radius,
     this.direction = Axis.horizontal,
+    this.size = PlinthSize.md,
   });
 
   final List<PlinthStep> steps;
 
   /// Which way the sequence runs.
   final Axis direction;
+
+  /// Scales the marker and the text under or beside it together.
+  /// Defaults to [PlinthSize.md], which is what this drew before the
+  /// prop existed.
+  final PlinthSize size;
 
   /// Zero-based index of the active step. Steps before this are
   /// shown completed (filled circle with a check); steps after are
@@ -70,6 +76,7 @@ class PlinthStepper extends StatelessWidget {
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
     final activeColor = theme.shaded(colorKey, 6);
+    final metrics = _metricsFor(size);
 
     _StepState stateOf(int i) => i < currentStep
         ? _StepState.completed
@@ -82,6 +89,7 @@ class PlinthStepper extends StatelessWidget {
           step: steps[i],
           index: i,
           direction: direction,
+          metrics: metrics,
           state: stateOf(i),
           activeColor: activeColor,
           onTap: onStepTapped == null ? null : () => onStepTapped!(i),
@@ -109,7 +117,7 @@ class PlinthStepper extends StatelessWidget {
                   height: theme.spacing[PlinthSize.md]!,
                   // Centred under the circle above it: half the
                   // circle, less half the connector's own width.
-                  margin: EdgeInsets.only(left: _circleSize / 2 - 1),
+                  margin: EdgeInsets.only(left: metrics.circle / 2 - 1),
                   color: connectorColor(i),
                 ),
               ),
@@ -119,15 +127,25 @@ class PlinthStepper extends StatelessWidget {
     }
 
     return Row(
+      // Start rather than the default centre. Each step is a column of
+      // circle-then-label, and centring sized every one of those
+      // columns against the tallest — so a stepper where only some
+      // steps carry a description drew its markers on two different
+      // lines, 8px apart at the default size and further at a larger
+      // one. Aligned to the top, every circle starts at the same y and
+      // the connector has one line to sit on.
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (var i = 0; i < steps.length; i++) ...[
           Expanded(child: stepAt(i)),
           if (i != steps.length - 1)
             Expanded(
-              child: Container(
-                height: 2,
-                margin: EdgeInsets.only(bottom: theme.spacing[PlinthSize.lg]!),
-                color: connectorColor(i),
+              child: Padding(
+                // Half the circle, less half the connector, from the
+                // top the circles now share — which is the circle's
+                // centre line at any size.
+                padding: EdgeInsets.only(top: metrics.circle / 2 - 1),
+                child: Container(height: 2, color: connectorColor(i)),
               ),
             ),
         ],
@@ -136,10 +154,50 @@ class PlinthStepper extends StatelessWidget {
   }
 }
 
-/// The step marker's diameter. Fixed rather than themed — the
-/// connector has to line up with its centre, and a stepper is chrome
-/// around a flow rather than a sized control.
-const double _circleSize = 32;
+/// The measurements a [PlinthSize] resolves to for a step marker.
+///
+/// A record rather than four lookups: the circle and the connector's
+/// offset have to agree, and the surest way for them to agree is for
+/// them to come from the same place.
+typedef _StepMetrics = ({
+  double circle,
+  double number,
+  PlinthSize label,
+  PlinthSize description,
+});
+
+_StepMetrics _metricsFor(PlinthSize size) => switch (size) {
+      PlinthSize.xs => (
+          circle: 20,
+          number: 10,
+          label: PlinthSize.xs,
+          description: PlinthSize.xs
+        ),
+      PlinthSize.sm => (
+          circle: 26,
+          number: 11,
+          label: PlinthSize.xs,
+          description: PlinthSize.xs
+        ),
+      PlinthSize.md => (
+          circle: 32,
+          number: 13,
+          label: PlinthSize.sm,
+          description: PlinthSize.xs
+        ),
+      PlinthSize.lg => (
+          circle: 40,
+          number: 16,
+          label: PlinthSize.md,
+          description: PlinthSize.sm
+        ),
+      PlinthSize.xl => (
+          circle: 48,
+          number: 19,
+          label: PlinthSize.lg,
+          description: PlinthSize.md
+        ),
+    };
 
 enum _StepState { completed, active, pending }
 
@@ -152,6 +210,7 @@ class _StepCircleAndLabel extends StatelessWidget {
     required this.onTap,
     required this.radius,
     required this.direction,
+    required this.metrics,
   });
 
   final PlinthStep step;
@@ -160,6 +219,7 @@ class _StepCircleAndLabel extends StatelessWidget {
   final Color activeColor;
   final VoidCallback? onTap;
   final Axis direction;
+  final _StepMetrics metrics;
 
   /// Null keeps the circular default, which is what a step marker is.
   final PlinthSize? radius;
@@ -173,8 +233,8 @@ class _StepCircleAndLabel extends StatelessWidget {
     final align = isVertical ? TextAlign.start : TextAlign.center;
 
     final circle = Container(
-      width: _circleSize,
-      height: _circleSize,
+      width: metrics.circle,
+      height: metrics.circle,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
@@ -185,7 +245,13 @@ class _StepCircleAndLabel extends StatelessWidget {
         ),
       ),
       child: state == _StepState.completed
-          ? Icon(Icons.check, size: 16, color: theme.contrastingOn(activeColor))
+          ? Icon(
+              Icons.check,
+              // Half the circle, which is what 16 was at the default
+              // size - the tick has to grow with the disc it sits in.
+              size: metrics.circle / 2,
+              color: theme.contrastingOn(activeColor),
+            )
           : Text(
               '${index + 1}',
               style: TextStyle(
@@ -193,7 +259,7 @@ class _StepCircleAndLabel extends StatelessWidget {
                     ? theme.contrastingOn(activeColor)
                     : theme.textMuted,
                 fontWeight: FontWeight.w600,
-                fontSize: 13,
+                fontSize: metrics.number,
               ),
             ),
     );
@@ -201,14 +267,14 @@ class _StepCircleAndLabel extends StatelessWidget {
     final labels = [
       PlinthText(
         step.label,
-        size: PlinthSize.sm,
+        size: metrics.label,
         weight: state == _StepState.active ? FontWeight.w700 : FontWeight.w400,
         textAlign: align,
       ),
       if (step.description != null)
         PlinthText(
           step.description!,
-          size: PlinthSize.xs,
+          size: metrics.description,
           color: 'gray',
           textAlign: align,
         ),

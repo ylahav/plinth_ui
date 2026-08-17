@@ -214,7 +214,19 @@ or macOS.
 Two lessons are baked into those files. **A golden generated from broken
 code certifies the bug** — `plinth_button_disabled` did exactly that for
 several releases, which is why the states file pairs each state with its
-opposite instead of photographing it alone. And **the scaffold's
+opposite instead of photographing it alone.
+
+That happened a second time, and worse, in `plinth_pill_defaults.png`:
+the two `PlinthIndicator`s in it rendered as discs the size of their
+whole child rather than as corner dots, and the image had been the
+committed reference for that since it was added. Pairing didn't save
+it — both rows were equally wrong, so the picture looked internally
+consistent. **The habit that catches this is looking at the image when
+you add it**, not the structure of the test around it. 0.23.0 found it
+by measuring the dot in a unit test while adding a `size` prop; a
+glance at the PNG would have found it earlier and for free.
+
+And **the scaffold's
 background never reaches the image**, since it sits outside the
 `RepaintBoundary`: what looks like a white page in a dark golden is the
 PNG's transparency, so `goldenWrap` paints the dark page inside the

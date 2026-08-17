@@ -91,6 +91,126 @@ void main() {
     });
   });
 
+  group('PlinthStepper size', () {
+    const steps = [
+      PlinthStep(label: 'Account', description: 'Who you are'),
+      PlinthStep(label: 'Shipping'),
+      PlinthStep(label: 'Confirm'),
+    ];
+
+    /// The marker disc for the active step, found by the number in it.
+    Size circleSize(WidgetTester tester, String number) => tester.getSize(
+          find
+              .ancestor(
+                of: find.text(number),
+                matching: find.byType(Container),
+              )
+              .first,
+        );
+
+    testWidgets('md is the 32 it drew before the prop existed', (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthStepper(currentStep: 0, steps: steps)),
+      );
+
+      expect(circleSize(tester, '1'), equals(const Size(32, 32)));
+    });
+
+    testWidgets('every step scales the marker together', (tester) async {
+      for (final (size, expected) in const [
+        (PlinthSize.xs, 20.0),
+        (PlinthSize.sm, 26.0),
+        (PlinthSize.md, 32.0),
+        (PlinthSize.lg, 40.0),
+        (PlinthSize.xl, 48.0),
+      ]) {
+        await tester.pumpWidget(
+          _wrap(PlinthStepper(currentStep: 0, size: size, steps: steps)),
+        );
+        expect(
+          circleSize(tester, '1'),
+          equals(Size(expected, expected)),
+          reason: 'circle for $size',
+        );
+      }
+    });
+
+    testWidgets('the label grows with the marker', (tester) async {
+      double labelHeight(WidgetTester tester) =>
+          tester.getSize(find.text('Shipping')).height;
+
+      await tester.pumpWidget(
+        _wrap(const PlinthStepper(
+          currentStep: 0,
+          size: PlinthSize.xs,
+          steps: steps,
+        )),
+      );
+      final small = labelHeight(tester);
+
+      await tester.pumpWidget(
+        _wrap(const PlinthStepper(
+          currentStep: 0,
+          size: PlinthSize.xl,
+          steps: steps,
+        )),
+      );
+
+      // A giant disc over xs text would be the failure mode of scaling
+      // only the marker.
+      expect(labelHeight(tester), greaterThan(small));
+    });
+
+    testWidgets('markers share a line when only some steps have descriptions',
+        (tester) async {
+      // The Row centred each step column against the tallest, so the
+      // one carrying a description sat higher than its neighbours —
+      // markers 8.5px apart at md, and further at every larger size.
+      // Every other stepper assertion passed through it.
+      for (final size in PlinthSize.values) {
+        await tester.pumpWidget(
+          _wrap(PlinthStepper(currentStep: 2, size: size, steps: steps)),
+        );
+
+        final checks = find.byIcon(Icons.check);
+        expect(checks, findsNWidgets(2));
+        expect(
+          tester.getRect(checks.at(0)).top,
+          closeTo(tester.getRect(checks.at(1)).top, 0.01),
+          reason: 'markers should share a top edge at $size',
+        );
+      }
+    });
+
+    testWidgets('the connector sits on the markers\' centre line',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthStepper(
+          currentStep: 2,
+          size: PlinthSize.xl,
+          steps: steps,
+        )),
+      );
+
+      final marker = tester.getRect(find.byIcon(Icons.check).first);
+      final connectors = find.byWidgetPredicate(
+        (w) => w is Container && w.constraints?.maxHeight == 2,
+      );
+      expect(connectors, findsNWidgets(2));
+
+      // A connector joins marker centres, and at xl that centre is
+      // 24px down — the old fixed bottom-margin offset was tuned for
+      // one size and one label shape.
+      for (var i = 0; i < 2; i++) {
+        expect(
+          tester.getRect(connectors.at(i)).center.dy,
+          closeTo(marker.center.dy, 1),
+          reason: 'connector $i should meet the marker centre line',
+        );
+      }
+    });
+  });
+
   group('PlinthStepper direction', () {
     const steps = [
       PlinthStep(label: 'Account', description: 'Who you are'),

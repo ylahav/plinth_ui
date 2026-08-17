@@ -146,6 +146,64 @@ void main() {
         const Color(0xFF123456),
       );
     });
+
+    testWidgets('defaults to the hairline it always drew', (tester) async {
+      await tester.pumpWidget(_wrap(const PlinthDivider()));
+
+      final divider = tester.widget<Divider>(find.byType(Divider));
+      expect(divider.thickness, equals(1));
+      // The space it occupies matches the line it draws, so a rule
+      // never reserves padding it doesn't paint.
+      expect(divider.height, equals(1));
+    });
+
+    testWidgets('size steps the thickness', (tester) async {
+      for (final (size, expected) in const [
+        (PlinthSize.xs, 1.0),
+        (PlinthSize.sm, 2.0),
+        (PlinthSize.md, 3.0),
+        (PlinthSize.lg, 4.0),
+        (PlinthSize.xl, 5.0),
+      ]) {
+        await tester.pumpWidget(_wrap(PlinthDivider(size: size)));
+        expect(
+          tester.widget<Divider>(find.byType(Divider)).thickness,
+          equals(expected),
+          reason: 'thickness for $size',
+        );
+      }
+    });
+
+    testWidgets('size thickens a vertical rule too, and height is its length',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthDivider(
+          direction: Axis.vertical,
+          height: 40,
+          size: PlinthSize.lg,
+        )),
+      );
+
+      // The two props answer different questions, which is the whole
+      // reason both exist: 4 across, 40 along.
+      expect(
+        tester.widget<VerticalDivider>(find.byType(VerticalDivider)).thickness,
+        equals(4),
+      );
+      expect(tester.getSize(find.byType(VerticalDivider)).height, equals(40));
+    });
+
+    testWidgets('a labelled rule thickens on both sides', (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthDivider(label: 'OR', size: PlinthSize.md)),
+      );
+
+      final rules = tester.widgetList<Divider>(find.byType(Divider));
+      expect(rules.length, equals(2));
+      for (final rule in rules) {
+        expect(rule.thickness, equals(3));
+      }
+    });
   });
 
   group('PlinthImage', () {

@@ -112,10 +112,19 @@ loader's dots, a splitter's handle — and adding the prop there would be
 answering a question nobody asks. Every default is unchanged, which is
 what the tests pin in both directions.
 
-**`size` is still open**, on a smaller scale: `PlinthDivider` (thickness),
-`PlinthIndicator`, `PlinthStepper`, and the colour sliders, which spell
-it `height`. Left for the naming pass, since two of those are really the
-naming question in disguise.
+~~**`size` is still open**~~ — **closed in 0.23.0**, and the guess that
+"two of those are really the naming question in disguise" was right.
+The 0.20.0 rules decided it; this applied them.
+
+| Component | Call |
+|---|---|
+| `PlinthDivider` | **Built.** `size` is the thickness, a 1–5px ramp with `xs` the existing hairline. Its `height` stays and means the *length* of a vertical rule — a different question, so both props survive rather than one being renamed |
+| `PlinthIndicator` | **Built.** `size` steps the dot 8–24px, `md` being the existing 16 |
+| `PlinthStepper` | **Built.** `size` scales the marker and its text together |
+| The colour sliders | **Declined.** `height` is already correct under the naming rules: a measured dimension takes its own name, and a colour slider's track height is measured. Adding `size: PlinthSize` alongside would give one component two ways to say how tall it is — the exact fault the naming pass fixed when `size` meant both a scale step and a raw number |
+
+Two of the three "built" rows turned out to be bug fixes wearing a
+prop's clothes, which is the section below.
 
 ## Tier 2 — closed
 
@@ -159,6 +168,35 @@ equal-flex share of the available width, so splitting the header and
 the body into two `Table`s doesn't drift — flex widths come from the
 space, not from the content.
 
+### Two bugs that a size prop walked into
+
+Adding `size` to `PlinthIndicator` and `PlinthStepper` meant measuring
+what they already drew. Neither measured what it claimed.
+
+**The indicator's dot was the size of the thing it marked.** A
+`Container` with an `alignment` expands to fill whatever bounded
+constraints it is handed, and the corner this sits in — a
+`Positioned.fill` inside a `Stack` — hands it the child's full size. So
+a 48px icon got a 48px disc over it, not a dot on it. The
+`minWidth: 16` was a floor the box sailed past.
+
+Three tests covered this component and all three passed: they asked
+whether it rendered, never how big it was. **And `plinth_pill_defaults.png`
+had certified the blob for several releases** — the exact lesson
+`TESTING.md` already records from `plinth_button_disabled`, hit a
+second time. A golden is only as good as someone having looked at it.
+
+**The stepper's markers sat on two different lines.** `Row` centres
+each child against the tallest, and a step carrying a `description` is
+taller than one without — so a stepper where only some steps have one
+drew its circles 8.5px apart, with a connector that could be on the
+right line for at most one of them. `size` would have widened the gap
+at every step up.
+
+Both are now pinned by assertions on rendered geometry rather than on
+widget presence, and both were confirmed by reintroducing the bug and
+watching the new test fail.
+
 ### The prop that was there and did nothing
 
 `radius` was added to `PlinthPagination` in 0.19.0's coverage pass and
@@ -196,6 +234,12 @@ prop with no implementation. It is tested in both directions now.
 - **`PlinthIndicator`**: no `size`, `offset`, `withBorder`, or
   `processing` (the pulsing dot). It also spells disabled as
   `disabled`, which is the wrong side of our own convention.
+  *Fully resolved:* `disabled` → `visible` in 0.20.0, `processing`
+  declined in 0.21.0, `size`/`offset`/`withBorder` built in 0.23.0.
+  This bullet is the one place `offset` and `withBorder` were ever
+  written down — they never reached the Tier 2 triage table, which is
+  how they stayed open through two releases that thought they were
+  closing things.
 - **Searchable selects.** Mantine's Select/MultiSelect take
   `searchable` + `nothingFoundMessage`; Plinth splits that into a
   separate `PlinthAutocomplete`. Defensible, but it means a searchable
@@ -233,7 +277,8 @@ A proposal, not a decision:
 
 1. ~~**Tier 1 closed.**~~ Done in 0.19.0 — loading states, progress
    sections, slider marks, tooltip position, clearable fields, and
-   `radius` coverage. `size` coverage carried into the naming pass.
+   `radius` coverage. `size` coverage was carried forward and finally
+   closed in 0.23.0, which is the last of Tier 1 to land.
 2. ~~**The naming table applied.**~~ Done in 0.20.0, and it is the last
    breaking change planned before 1.0.
 3. ~~**Tier 2 triaged**, not necessarily done.~~ Triaged in 0.21.0 and

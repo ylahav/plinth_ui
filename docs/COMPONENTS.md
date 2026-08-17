@@ -384,10 +384,18 @@ badges, and input labels — an `h1` needs to be larger than any of them.
 
 ### `PlinthDivider`
 `label` (optional, centers a label with rules on either side, e.g. "OR"),
-`direction` (`Axis`, default horizontal), `height` (only meaningful
+`direction` (`Axis`, default horizontal), `size`, `height` (only meaningful
 when vertical — — `VerticalDivider`
 needs an explicit extent from its parent to render visibly in an
 unconstrained context), `color`.
+
+**`size` and `height` answer different questions**, which is why both
+exist: `size` is how *thick* the rule is, a step on its own 1–5px ramp
+(`xs` = the 1px hairline it drew before the prop existed, so nothing
+moves unless asked); `height` is how *long* a vertical one runs. A
+horizontal rule never needs the second — it fills the width it is
+given. The space a rule occupies always equals the line it draws, so
+thickening one never adds padding it doesn't paint.
 
 ### `PlinthKbd`
 `label` (positional), `size`. A styled keyboard-key badge for documenting
@@ -1111,9 +1119,32 @@ as red/attention regardless of brand color), `position`
 (`PlinthIndicatorPosition`: `topStart, topEnd, bottomStart, bottomEnd`),
 `visible` (default `true`; false hides the dot without removing `child`
 from the tree),
-`radius` (squares off the dot; omit for the round default).
+`radius` (squares off the dot; omit for the round default), `size`,
+`offset`, `withBorder`.
 Anchors a small badge/dot to a corner of `child` via `Stack` +
 `FractionalTranslation`.
+
+`size` steps the dot on its own 8–24px ramp; `md` is the 16px it drew
+before the prop existed. A `label` still widens the badge past that to
+fit its text — the size is the minimum square and the height.
+
+`offset` pulls the dot back in from its corner, in logical pixels,
+toward the child's centre from whichever corner it sits in. The default
+placement straddles the corner of `child`'s *bounding box*, which is
+right for a square icon and wrong for a round avatar: a circle's edge
+is well inside its box's corner, so an untouched dot floats off it.
+Measured rather than a scale step, because what it has to clear is a
+radius rather than a size.
+
+`withBorder` rings the dot in the surface colour so it stays legible on
+a photo. The surface rather than a palette colour, so it reads as a gap
+rather than an outline.
+
+> **Fixed in 0.23.0:** the badge used to render at `child`'s full size —
+> a 48px icon got a 48px "dot" covering it — because `Container.alignment`
+> makes a Container expand to whatever bounded constraints it is handed,
+> and the corner it sits in hands it the child's size. The label is now
+> centred with `textAlign`, which centres text without resizing the box.
 
 ### `PlinthCarousel` + `PlinthCarouselController`
 `slides`, `height` (default `240`), `slideSize` (default `1.0`), `gap`
@@ -1318,7 +1349,7 @@ controller, since expanded state is presentation-local to the widget.
 
 ### `PlinthStepper` + `PlinthStep`
 `steps` (`List<PlinthStep>`), `currentStep` (zero-based index), `onStepTapped`,
-`color`, `radius`, `direction`. Each `PlinthStep` has `label` and optional `description`. Purely
+`color`, `radius`, `direction`, `size`. Each `PlinthStep` has `label` and optional `description`. Purely
 a visual progress indicator — like `PlinthTabs`/`PlinthTabView`, it doesn't
 manage step *content*; pair with your own conditional rendering driven by
 the same `currentStep` you pass in. Tapping a step calls `onStepTapped`
@@ -1329,6 +1360,18 @@ same as `PlinthTabs`.
 label beside its circle rather than under it — the shape a long
 checkout or onboarding flow wants, where a description gets a line's
 width to sit on instead of a column's.
+
+`size` scales the marker and the text with it — the disc, the number
+or tick inside it, the label and the description all move together, so
+a larger stepper doesn't end up as a big circle over small type. `md`
+is what it drew before the prop existed.
+
+> **Fixed in 0.23.0:** a horizontal stepper where only *some* steps
+> carried a `description` drew its markers on two different lines,
+> 8.5px apart. `Row` centres each child against the tallest, and a step
+> with a description is taller than one without. The steps are aligned
+> to the top now, and the connector is positioned from the circle's own
+> radius rather than a fixed bottom margin tuned for one size.
 
 ### `PlinthBreadcrumbs` + `PlinthBreadcrumbItem`
 `items` (`List<PlinthBreadcrumbItem>`), `separator` (default `'/'`), `color`.

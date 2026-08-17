@@ -140,6 +140,155 @@ void main() {
         expect(find.byIcon(Icons.notifications_outlined), findsOneWidget);
       }
     });
+
+    /// The dot itself — the decorated box inside the indicator, not
+    /// the child it is anchored to.
+    Finder dot() => find.descendant(
+          of: find.byType(PlinthIndicator),
+          matching: find.byType(Container),
+        );
+
+    testWidgets('the dot is a dot, not the size of what it marks',
+        (tester) async {
+      // The bug this pins: `Container.alignment` makes a Container
+      // expand to fill bounded constraints, and the corner it sits in
+      // hands it the child's full size. A 48px icon got a 48px "dot"
+      // covering it. Three tests passed throughout — they asked
+      // whether it rendered, never how big it was — and the committed
+      // golden had certified the blob for several releases.
+      for (final childSize in [24.0, 48.0, 96.0]) {
+        await tester.pumpWidget(
+          _wrap(PlinthIndicator(
+            child: Icon(Icons.notifications_outlined, size: childSize),
+          )),
+        );
+        expect(
+          tester.getSize(dot()),
+          equals(const Size(16, 16)),
+          reason: 'dot should not track a $childSize child',
+        );
+      }
+    });
+
+    testWidgets('size steps the dot, and md is the old fixed 16',
+        (tester) async {
+      for (final (size, expected) in const [
+        (PlinthSize.xs, 8.0),
+        (PlinthSize.sm, 12.0),
+        (PlinthSize.md, 16.0),
+        (PlinthSize.lg, 20.0),
+        (PlinthSize.xl, 24.0),
+      ]) {
+        await tester.pumpWidget(
+          _wrap(PlinthIndicator(
+            size: size,
+            child: const Icon(Icons.notifications_outlined),
+          )),
+        );
+        expect(
+          tester.getSize(dot()),
+          equals(Size(expected, expected)),
+          reason: 'dot for $size',
+        );
+      }
+    });
+
+    testWidgets('a label widens the badge past the dot but keeps its height',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthIndicator(
+          label: '128',
+          child: Icon(Icons.notifications_outlined),
+        )),
+      );
+
+      final size = tester.getSize(dot());
+      expect(size.height, equals(16));
+      expect(size.width, greaterThan(16));
+    });
+
+    testWidgets('withBorder rings the dot in the surface colour',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(const PlinthIndicator(
+          child: Icon(Icons.notifications_outlined),
+        )),
+      );
+      expect(
+        (tester.widget<Container>(dot()).decoration! as BoxDecoration).border,
+        isNull,
+      );
+
+      await tester.pumpWidget(
+        _wrap(const PlinthIndicator(
+          withBorder: true,
+          child: Icon(Icons.notifications_outlined),
+        )),
+      );
+      final border =
+          (tester.widget<Container>(dot()).decoration! as BoxDecoration)
+              .border!;
+      expect(border.top.color, equals(PlinthTheme.defaultTheme.surface));
+      expect(border.top.width, equals(2));
+    });
+
+    testWidgets('offset pulls the dot in toward the child on both axes',
+        (tester) async {
+      Rect dotRect(WidgetTester tester) => tester.getRect(dot());
+
+      await tester.pumpWidget(
+        _wrap(const PlinthIndicator(
+          child: Icon(Icons.notifications_outlined, size: 48),
+        )),
+      );
+      final before = dotRect(tester);
+
+      await tester.pumpWidget(
+        _wrap(const PlinthIndicator(
+          offset: 6,
+          child: Icon(Icons.notifications_outlined, size: 48),
+        )),
+      );
+      final after = dotRect(tester);
+
+      // Default corner is topEnd, so "in" is left and down — what a
+      // round avatar needs to bring the dot back onto its edge.
+      expect(after.left, closeTo(before.left - 6, 0.01));
+      expect(after.top, closeTo(before.top + 6, 0.01));
+    });
+
+    testWidgets('offset moves toward the centre from any corner',
+        (tester) async {
+      Rect rectFor(WidgetTester tester) => tester.getRect(dot());
+
+      for (final position in PlinthIndicatorPosition.values) {
+        await tester.pumpWidget(
+          _wrap(PlinthIndicator(
+            position: position,
+            child: const Icon(Icons.notifications_outlined, size: 48),
+          )),
+        );
+        final before = rectFor(tester);
+
+        await tester.pumpWidget(
+          _wrap(PlinthIndicator(
+            position: position,
+            offset: 6,
+            child: const Icon(Icons.notifications_outlined, size: 48),
+          )),
+        );
+        final after = rectFor(tester);
+
+        final child = tester.getRect(find.byIcon(Icons.notifications_outlined));
+        // Whichever corner it sits in, the offset should shorten the
+        // distance to the child's centre rather than lengthen it.
+        expect(
+          (after.center - child.center).distance,
+          lessThan((before.center - child.center).distance),
+          reason: 'offset should pull inward at $position',
+        );
+      }
+    });
   });
 
   group('PlinthLoadingOverlay', () {
