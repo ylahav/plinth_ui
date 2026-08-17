@@ -7,13 +7,16 @@ import 'package:plinth_components/plinth_components.dart';
 
 import 'helpers/golden.dart';
 
-/// The dark theme, which nothing looked at before.
+/// The dark theme, across the chrome rather than one component at a
+/// time.
 ///
-/// Every other golden here renders light. Dark mode is where a
-/// hardcoded colour hides: a `Colors.white` surface, a `Colors.grey`
-/// border, a foreground resolved against the wrong background. None of
-/// it fails a behaviour test, and the contrast suite only checks the
-/// palette ramps — not whether a component reads the tokens at all.
+/// Two dark images existed before this: `plinth_text_input_dark` and
+/// `plinth_alert_dark`, each pinning its own component. Everything else
+/// was only ever rendered light — and dark is where a hardcoded colour
+/// hides: a `Colors.white` surface, a `Colors.grey` border, a
+/// foreground resolved against the wrong background. None of that fails
+/// a behaviour test, and the contrast suite only checks the palette
+/// ramps, not whether a component reads the tokens at all.
 ///
 /// One image per group rather than one per component: the point is
 /// whether the chrome follows the theme, and twelve components in one
@@ -27,7 +30,10 @@ void main() {
         goldenWrap(
           dark: true,
           width: 320,
-          height: 260,
+          // Tall enough for the stack: the first run of this came back
+          // 65px short, and an overflow stripe is not a golden anyone
+          // wants to inherit.
+          height: 340,
           SizedBox(
             width: 280,
             child: PlinthStack(
