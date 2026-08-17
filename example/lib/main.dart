@@ -736,7 +736,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
                           PlinthRingProgress(
                             value: 0.35,
                             color: 'blue',
-                            size: 60,
+                            diameter: 60,
                             thickness: 6,
                             label: Text('35%',
                                 style: TextStyle(
@@ -1260,13 +1260,13 @@ class _ShowcasePageState extends State<ShowcasePage> {
                         children: [
                           PlinthNavLink(
                             label: 'Dashboard',
-                            icon: const Icon(Icons.dashboard_outlined),
+                            leadingIcon: const Icon(Icons.dashboard_outlined),
                             active: true,
                             onTap: () {},
                           ),
                           PlinthNavLink(
                             label: 'Settings',
-                            icon: const Icon(Icons.settings_outlined),
+                            leadingIcon: const Icon(Icons.settings_outlined),
                             onTap: () {},
                           ),
                         ],

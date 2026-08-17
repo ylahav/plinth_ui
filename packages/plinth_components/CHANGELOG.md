@@ -7,6 +7,41 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.20.0
+
+The naming pass from the [pre-1.0 audit](../../docs/PRE_1_0_AUDIT.md).
+**Breaking**, deliberately and all at once: these are the changes a 1.0
+closes the door on, and spreading them over several releases would mean
+several migrations instead of one.
+
+The rules they follow are now written down in
+[COMPONENTS.md § Naming rules](../../docs/COMPONENTS.md#naming-rules),
+so the next component doesn't reopen them.
+
+### Changed — migration
+
+| Before | After | Why |
+|---|---|---|
+| `PlinthDivider(vertical: true)` | `PlinthDivider(direction: Axis.vertical)` | `PlinthFlex`, `PlinthScrollArea` and `PlinthSplitter` already took `direction: Axis`; the divider was the outlier |
+| `PlinthFieldset(disabled: true)` | `PlinthFieldset(enabled: false)` | `enabled` is what fifteen inputs already spell it |
+| `PlinthIndicator(disabled: true)` | `PlinthIndicator(visible: false)` | It never disabled anything — it hides the dot. An indicator isn't a control |
+| `PlinthRingProgress(size: 80)` | `PlinthRingProgress(diameter: 80)` | `size` means a step on the `PlinthSize` scale everywhere else |
+| `PlinthSemiCircleProgress(size: 160)` | `PlinthSemiCircleProgress(diameter: 160)` | as above |
+| `PlinthAngleSlider(size: 60)` | `PlinthAngleSlider(diameter: 60)` | as above |
+| `PlinthNavLink(icon: …)` | `PlinthNavLink(leadingIcon: …)` | it has a `trailing` too, so its icon is leading something |
+| `PlinthFileInput(icon: …)` | `PlinthFileInput(leadingIcon: …)` | as above |
+
+Every rename is a compile error rather than a silent behaviour change,
+so an upgrade either builds or tells you exactly where to look. Nothing
+else about these components moved.
+
+**Two things deliberately did not change.** `PlinthComboboxOption.disabled`
+stays: an option in a list is `disabled` in both Mantine and Flutter's
+own `DropdownMenuItem`. And `icon` stays on the components that *are* an
+icon — `PlinthActionIcon`, `PlinthThemeIcon`, `PlinthAlert`,
+`PlinthTimelineItem` — where there is no label for it to lead. The audit
+had proposed sweeping both; looking at the call sites said otherwise.
+
 ## 0.19.0
 
 First batch of the [pre-1.0 audit](../../docs/PRE_1_0_AUDIT.md), which

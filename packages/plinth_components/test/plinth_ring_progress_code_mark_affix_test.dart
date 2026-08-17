@@ -27,8 +27,8 @@ void main() {
     });
 
     testWidgets('respects the size parameter', (tester) async {
-      await tester
-          .pumpWidget(_wrap(const PlinthRingProgress(value: 0.5, size: 120)));
+      await tester.pumpWidget(
+          _wrap(const PlinthRingProgress(value: 0.5, diameter: 120)));
 
       final size = tester.getSize(find.byType(PlinthRingProgress));
       expect(size.width, equals(120));

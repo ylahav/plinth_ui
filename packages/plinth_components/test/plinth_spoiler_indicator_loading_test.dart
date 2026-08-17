@@ -117,7 +117,7 @@ void main() {
         _wrap(
           const PlinthIndicator(
             label: '3',
-            disabled: true,
+            visible: false,
             child: Icon(Icons.notifications_outlined),
           ),
         ),

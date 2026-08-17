@@ -19,7 +19,7 @@ class PlinthNavLink extends StatelessWidget {
   const PlinthNavLink({
     super.key,
     required this.label,
-    this.icon,
+    this.leadingIcon,
     this.trailing,
     this.active = false,
     this.onTap,
@@ -27,7 +27,7 @@ class PlinthNavLink extends StatelessWidget {
   });
 
   final String label;
-  final Widget? icon;
+  final Widget? leadingIcon;
 
   /// Content shown at the trailing edge, e.g. a `PlinthBadge` for an
   /// unread count.
@@ -58,13 +58,13 @@ class PlinthNavLink extends StatelessWidget {
           ),
           child: Row(
             children: [
-              if (icon != null) ...[
+              if (leadingIcon != null) ...[
                 IconTheme(
                   data: IconThemeData(
                     size: 18,
                     color: active ? activeColor : theme.textMuted,
                   ),
-                  child: icon!,
+                  child: leadingIcon!,
                 ),
                 SizedBox(width: theme.spacing[PlinthSize.xs]),
               ],

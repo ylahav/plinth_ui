@@ -27,7 +27,7 @@ class PlinthAngleSlider extends StatefulWidget {
     super.key,
     required this.value,
     required this.onChanged,
-    this.size = 60,
+    this.diameter = 60,
     this.thickness = 4,
     this.color,
     this.step = 1,
@@ -40,7 +40,11 @@ class PlinthAngleSlider extends StatefulWidget {
   /// Null disables the dial.
   final ValueChanged<double>? onChanged;
 
-  final double size;
+  /// Diameter of the dial in logical pixels.
+  ///
+  /// Named `size` before 0.20.0, which everywhere else in this library
+  /// means a step on the [PlinthSize] scale.
+  final double diameter;
   final double thickness;
   final String? color;
 
@@ -69,7 +73,7 @@ class _PlinthAngleSliderState extends State<PlinthAngleSlider> {
   void _emit(double degrees) => widget.onChanged?.call(_snap(degrees));
 
   void _emitFromPosition(Offset local) {
-    final centre = widget.size / 2;
+    final centre = widget.diameter / 2;
     final dx = local.dx - centre;
     final dy = local.dy - centre;
     if (dx == 0 && dy == 0) return;
@@ -128,7 +132,7 @@ class _PlinthAngleSliderState extends State<PlinthAngleSlider> {
           onPanUpdate:
               _enabled ? (d) => _emitFromPosition(d.localPosition) : null,
           child: CustomPaint(
-            size: Size.square(widget.size),
+            size: Size.square(widget.diameter),
             painter: _AngleDialPainter(
               degrees: degrees,
               fill: fill,

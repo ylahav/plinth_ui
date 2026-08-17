@@ -10,21 +10,25 @@ import 'plinth_text.dart';
 /// ```dart
 /// const PlinthDivider()                    // plain horizontal rule
 /// const PlinthDivider(label: 'OR')          // rule with a centered label
-/// PlinthDivider(vertical: true, height: 40) // vertical rule
+/// PlinthDivider(direction: Axis.vertical, height: 40) // vertical rule
 /// ```
 class PlinthDivider extends StatelessWidget {
   const PlinthDivider({
     super.key,
     this.label,
-    this.vertical = false,
+    this.direction = Axis.horizontal,
     this.height,
     this.color,
   });
 
   final String? label;
-  final bool vertical;
 
-  /// Only meaningful when [vertical] is true — [Divider] fills
+  /// Which way the rule runs. An `Axis` rather than a `vertical` flag
+  /// as of 0.20.0, matching [PlinthFlex], [PlinthScrollArea] and
+  /// [PlinthSplitter] — one spelling for one idea.
+  final Axis direction;
+
+  /// Only meaningful when [direction] is [Axis.vertical] — [Divider] fills
   /// available height on its own, but [VerticalDivider] needs an
   /// explicit extent from its parent to render visibly in an
   /// unconstrained context (e.g. inside a `Row` without a bounded
@@ -37,7 +41,7 @@ class PlinthDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     final resolvedColor = color ?? context.plinth.surfaceSunken;
 
-    if (vertical) {
+    if (direction == Axis.vertical) {
       return SizedBox(
         height: height,
         child: VerticalDivider(width: 1, color: resolvedColor),

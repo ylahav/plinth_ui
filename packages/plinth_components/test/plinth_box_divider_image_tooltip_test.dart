@@ -129,7 +129,7 @@ void main() {
 
     testWidgets('vertical uses a VerticalDivider', (tester) async {
       await tester.pumpWidget(
-        _wrap(const PlinthDivider(vertical: true, height: 40)),
+        _wrap(const PlinthDivider(direction: Axis.vertical, height: 40)),
       );
 
       expect(find.byType(VerticalDivider), findsOneWidget);

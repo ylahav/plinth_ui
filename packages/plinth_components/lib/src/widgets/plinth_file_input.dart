@@ -52,7 +52,7 @@ class PlinthFileInput<T> extends StatelessWidget {
     this.enabled = true,
     this.clearable = false,
     this.multiple = false,
-    this.icon,
+    this.leadingIcon,
   });
 
   /// The currently selected files. Owned by the caller, like every
@@ -92,7 +92,7 @@ class PlinthFileInput<T> extends StatelessWidget {
   final bool multiple;
 
   /// Leading icon. Defaults to a paperclip.
-  final Widget? icon;
+  final Widget? leadingIcon;
 
   Future<void> _pick() async {
     final picked = await onPick();
@@ -150,7 +150,7 @@ class PlinthFileInput<T> extends StatelessWidget {
                       color: enabled ? theme.textMuted : theme.textDisabled,
                       size: fontSize + 2,
                     ),
-                    child: icon ?? const Icon(Icons.attach_file),
+                    child: leadingIcon ?? const Icon(Icons.attach_file),
                   ),
                   SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.8),
                   Expanded(

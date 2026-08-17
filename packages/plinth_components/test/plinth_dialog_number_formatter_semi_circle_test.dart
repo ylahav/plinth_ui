@@ -245,7 +245,7 @@ void main() {
 
     testWidgets('is about half as tall as it is wide', (tester) async {
       await tester.pumpWidget(
-        _wrap(const PlinthSemiCircleProgress(value: 0.5, size: 160)),
+        _wrap(const PlinthSemiCircleProgress(value: 0.5, diameter: 160)),
       );
 
       final size = tester.getSize(find.byType(PlinthSemiCircleProgress));
@@ -276,7 +276,8 @@ void main() {
       // PlinthRingProgress needs.
       await tester.pumpWidget(
         _wrap(
-          const PlinthSemiCircleProgress(value: 0.5, size: 40, thickness: 200),
+          const PlinthSemiCircleProgress(
+              value: 0.5, diameter: 40, thickness: 200),
         ),
       );
 

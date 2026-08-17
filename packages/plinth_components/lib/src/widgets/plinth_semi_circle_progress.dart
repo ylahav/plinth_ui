@@ -21,7 +21,7 @@ class PlinthSemiCircleProgress extends StatelessWidget {
     super.key,
     required this.value,
     this.color,
-    this.size = 160,
+    this.diameter = 160,
     this.thickness = 12,
     this.trackColor,
     this.label,
@@ -34,7 +34,10 @@ class PlinthSemiCircleProgress extends StatelessWidget {
 
   /// Diameter of the full circle the arc is taken from. The rendered
   /// height is about half this, since only the top half is drawn.
-  final double size;
+  ///
+  /// Named `size` before 0.20.0, which everywhere else in this library
+  /// means a step on the [PlinthSize] scale.
+  final double diameter;
 
   final double thickness;
   final Color? trackColor;
@@ -48,18 +51,18 @@ class PlinthSemiCircleProgress extends StatelessWidget {
     final fill = theme.shaded(color ?? theme.primaryColor, 6);
     // Clamped so a thickness past the radius can't paint the arc back
     // over itself, the same guard PlinthRingProgress needs.
-    final stroke = math.min(thickness, size / 2);
+    final stroke = math.min(thickness, diameter / 2);
 
     return SizedBox(
-      width: size,
+      width: diameter,
       // Half the diameter plus the stroke, so the arc isn't clipped at
       // its thickest point.
-      height: size / 2 + stroke / 2,
+      height: diameter / 2 + stroke / 2,
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
           CustomPaint(
-            size: Size(size, size / 2 + stroke / 2),
+            size: Size(diameter, diameter / 2 + stroke / 2),
             painter: _SemiCirclePainter(
               value: value,
               fill: fill,

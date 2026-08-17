@@ -111,7 +111,7 @@ void main() {
         _wrap(
           PlinthFieldset(
             legend: 'Payment',
-            disabled: true,
+            enabled: false,
             child: PlinthButton(
               onPressed: () => taps++,
               child: const Text('Pay'),

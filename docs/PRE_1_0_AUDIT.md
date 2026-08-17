@@ -156,25 +156,33 @@ string), `Blockquote.cite`, `Code.block`, `Container.fluid`,
 `Menu.trigger: hover`, `Group.grow`, `SimpleGrid.minColWidth` (its
 container-query mode), `Table.layout`, `Timeline.align`.
 
-## Cross-cutting: three names for one idea
+## Cross-cutting: three names for one idea — **done in 0.20.0**
 
-Worth fixing before 1.0 precisely because it's the kind of thing a
-major version is allowed to change and a patch is not.
+Re-deriving this from the source before doing it changed the shape of
+the job, which is worth recording: **two of the three rows above were
+overstated, and one real case wasn't in the table at all.**
 
-| Idea | Names in use today | Suggested |
+| Idea | What was actually there | What happened |
 |---|---|---|
-| Disabled | null callback (buttons), `enabled` (15 inputs), `disabled` (Indicator, Fieldset) | null callback where there is one; `enabled` otherwise; retire `disabled` |
-| Leading / trailing content | `leadingIcon`, `icon`, `trailing`, `leading` | `leadingIcon` / `trailingIcon` for icons; `leading` / `trailing` for arbitrary widgets |
-| Axis | `vertical` (Divider), `direction` (Splitter, ScrollArea) | `direction: Axis` everywhere, since that is Flutter's own type |
+| Disabled | null callback (buttons), `enabled` (15 inputs), `disabled` (3) | `PlinthFieldset` → `enabled`. `PlinthIndicator` → `visible`, because it never disabled anything: it hides the dot, and an indicator isn't a control. `PlinthComboboxOption.disabled` **kept** — an option in a list is `disabled` in Mantine and in Flutter's own `DropdownMenuItem` |
+| Leading / trailing | `leadingIcon` on 6, `icon` on ~15, `trailing` on 1 | Only `PlinthNavLink` and `PlinthFileInput` renamed. Most of the `icon` props are on components that *are* an icon, where there is no label to lead — sweeping them would have made the names worse |
+| Axis | `vertical` (Divider), `direction: Axis` (Flex, ScrollArea, Splitter) | `PlinthDivider` → `direction: Axis`. One outlier, as billed |
+| **Size vs dimension** *(not in the original table)* | `size: PlinthSize` on most components, `size: double` on three | `PlinthRingProgress`, `PlinthSemiCircleProgress`, `PlinthAngleSlider` → `diameter`. One prop name meaning two different types is worse than any of the rows above |
+
+The rules are now in
+[COMPONENTS.md § Naming rules](COMPONENTS.md#naming-rules) so the next
+component doesn't reopen them. Every rename is a compile error rather
+than a silent behaviour change.
 
 ## What 1.0 should mean
 
 A proposal, not a decision:
 
-1. **Tier 1 closed.** Loading states, progress sections, slider marks,
-   tooltip position, clearable selects, and `radius`/`size` coverage.
-2. **The naming table applied** — because these are breaking changes,
-   and 1.0 is the last comfortable moment for them.
+1. ~~**Tier 1 closed.**~~ Done in 0.19.0 — loading states, progress
+   sections, slider marks, tooltip position, clearable fields, and
+   `radius` coverage. `size` coverage carried into the naming pass.
+2. ~~**The naming table applied.**~~ Done in 0.20.0, and it is the last
+   breaking change planned before 1.0.
 3. **Tier 2 triaged**, not necessarily done: each item either built or
    written down as a deliberate exclusion, the way Carousel's absence
    was recorded (and then reversed once the reasoning was re-read).

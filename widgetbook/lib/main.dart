@@ -1831,7 +1831,8 @@ final List<WidgetbookNode> plinthDirectories = [
                     ),
                     radius: _radiusKnob(context),
                     padding: _gapKnob(context, label: 'padding'),
-                    disabled: context.knobs.boolean(label: 'disabled'),
+                    enabled: context.knobs
+                        .boolean(label: 'enabled', initialValue: true),
                     child: const PlinthStack(
                       gap: PlinthSize.sm,
                       children: [
@@ -1853,7 +1854,7 @@ final List<WidgetbookNode> plinthDirectories = [
                 width: 360,
                 child: PlinthFieldset(
                   legend: 'Payment',
-                  disabled: true,
+                  enabled: false,
                   child: PlinthStack(
                     gap: PlinthSize.sm,
                     children: [
@@ -2532,7 +2533,7 @@ final List<WidgetbookNode> plinthDirectories = [
                         value: value,
                         onChanged: onChanged,
                         divisions: divisions,
-                        size: context.knobs.double
+                        diameter: context.knobs.double
                             .slider(
                               label: 'size',
                               initialValue: 72,
@@ -3185,7 +3186,7 @@ final List<WidgetbookNode> plinthDirectories = [
                     builder: (active, onChanged) => PlinthNavLink(
                       label: label,
                       active: active,
-                      icon: icon == null ? null : Icon(icon),
+                      leadingIcon: icon == null ? null : Icon(icon),
                       trailing: withBadge ? const PlinthBadge('3') : null,
                       color: color,
                       onTap: enabled ? () => onChanged(!active) : null,
@@ -3202,13 +3203,13 @@ final List<WidgetbookNode> plinthDirectories = [
                 children: [
                   PlinthNavLink(
                     label: 'Dashboard',
-                    icon: const Icon(Icons.dashboard_outlined),
+                    leadingIcon: const Icon(Icons.dashboard_outlined),
                     active: true,
                     onTap: () {},
                   ),
                   PlinthNavLink(
                     label: 'Settings',
-                    icon: const Icon(Icons.settings_outlined),
+                    leadingIcon: const Icon(Icons.settings_outlined),
                     onTap: () {},
                   ),
                 ],
@@ -3798,7 +3799,7 @@ final List<WidgetbookNode> plinthDirectories = [
                   // back over itself.
                   thickness:
                       thickness > diameter / 2 ? diameter / 2 : thickness,
-                  size: diameter,
+                  diameter: diameter,
                   color: _colorKnob(context),
                   trackColor: context.knobs.colorOrNull(
                     label: 'trackColor',
@@ -3819,7 +3820,7 @@ final List<WidgetbookNode> plinthDirectories = [
             name: 'Sections',
             builder: (context) => _themed(
               PlinthRingProgress.sections(
-                size: 120,
+                diameter: 120,
                 thickness: 14,
                 sections: const [
                   PlinthProgressSection(
@@ -3860,7 +3861,7 @@ final List<WidgetbookNode> plinthDirectories = [
               return _themed(
                 PlinthSemiCircleProgress(
                   value: value,
-                  size: diameter,
+                  diameter: diameter,
                   thickness: context.knobs.double.slider(
                     label: 'thickness',
                     initialValue: 12,
@@ -4978,8 +4979,9 @@ final List<WidgetbookNode> plinthDirectories = [
                 // Defaults to red rather than the theme primary — a
                 // notification dot reads as attention, not brand.
                 color: _colorKnob(context),
-                disabled: context.knobs.boolean(
-                  label: 'disabled',
+                visible: context.knobs.boolean(
+                  label: 'visible',
+                  initialValue: true,
                   description: 'Hides the indicator without removing '
                       'the child from the tree',
                 ),
@@ -6419,7 +6421,7 @@ final List<WidgetbookNode> plinthDirectories = [
                   width: 300,
                   child: PlinthDivider(
                     label: label,
-                    vertical: vertical,
+                    direction: vertical ? Axis.vertical : Axis.horizontal,
                     // A VerticalDivider needs an explicit extent from
                     // its parent to render visibly, so height is only
                     // meaningful in the vertical case.
@@ -6449,7 +6451,7 @@ final List<WidgetbookNode> plinthDirectories = [
             builder: (context) => _themed(
               const SizedBox(
                 height: 60,
-                child: PlinthDivider(vertical: true, height: 60),
+                child: PlinthDivider(direction: Axis.vertical, height: 60),
               ),
             ),
           ),

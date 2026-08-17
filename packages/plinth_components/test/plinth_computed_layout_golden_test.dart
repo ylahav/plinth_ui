@@ -57,7 +57,7 @@ void main() {
             children: [
               PlinthSemiCircleProgress(
                 value: 0.72,
-                size: 140,
+                diameter: 140,
                 label: PlinthText('72%', weight: FontWeight.w700),
               ),
               SizedBox(width: 24),
@@ -87,7 +87,8 @@ void main() {
             mainAxisSize: MainAxisSize.min,
             children: [
               for (final angle in [0.0, 45.0, 135.0, 270.0]) ...[
-                PlinthAngleSlider(value: angle, onChanged: (_) {}, size: 64),
+                PlinthAngleSlider(
+                    value: angle, onChanged: (_) {}, diameter: 64),
                 const SizedBox(width: 12),
               ],
             ],

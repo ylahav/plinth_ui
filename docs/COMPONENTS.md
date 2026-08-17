@@ -21,6 +21,22 @@ MaterialApp(
 Shared enums used throughout: `PlinthSize` (`xs, sm, md, lg, xl`) and
 `PlinthVariant` (`filled, light, outline, subtle, transparent, defaultVariant`).
 
+## Naming rules
+
+Settled in 0.20.0, after an audit found the same idea spelled three
+ways. New components follow these rather than reopening them.
+
+| Idea | Spelling | Notes |
+|---|---|---|
+| Not usable right now | a null callback where the component has one (`onPressed: null`), otherwise `enabled` | Flutter's own idiom. `disabled` survives only on `PlinthComboboxOption`, where an option in a list is `disabled` in both Mantine and Flutter's `DropdownMenuItem` |
+| Which way it runs | `direction`, typed `Axis` | Not a `vertical` flag. `PlinthFlex`, `PlinthScrollArea`, `PlinthSplitter` and `PlinthDivider` all take it |
+| Step on the size scale | `size`, typed `PlinthSize` | Never a raw number |
+| A measured dimension | its own name — `diameter`, `height`, `width`, `dimension` | `PlinthRingProgress`, `PlinthSemiCircleProgress` and `PlinthAngleSlider` take `diameter`; calling that `size` made one prop name mean two different things |
+| Content before the label | `leadingIcon` for an icon, `leading` for arbitrary content | Only where there *is* a label or a trailing slot to be leading of |
+| Content after the label | `trailing` | Arbitrary widget, e.g. a badge |
+| The component's one icon | `icon` | When a component is *made of* an icon (`PlinthActionIcon`, `PlinthThemeIcon`, `PlinthAlert`, `PlinthTimelineItem`), it isn't leading anything |
+| Reporting a change | `onChanged`, taking `ValueChanged<T>` | Mantine's `onChange` |
+
 ## Theme tokens
 
 Two kinds of color live on `PlinthTheme`, and components use them for
@@ -368,7 +384,8 @@ badges, and input labels — an `h1` needs to be larger than any of them.
 
 ### `PlinthDivider`
 `label` (optional, centers a label with rules on either side, e.g. "OR"),
-`vertical`, `height` (only meaningful when `vertical` — `VerticalDivider`
+`direction` (`Axis`, default horizontal), `height` (only meaningful
+when vertical — — `VerticalDivider`
 needs an explicit extent from its parent to render visibly in an
 unconstrained context), `color`.
 
@@ -484,7 +501,7 @@ PlinthRadioGroup<String>(
 ### `PlinthFileInput<T>`
 `value` (`List<T>`), `onPick`, `onChanged`, `labelBuilder`, `label`,
 `description`, `placeholder`, `error`, `size`, `color`, `radius`,
-`enabled`, `clearable`, `multiple`, `icon`.
+`enabled`, `clearable`, `multiple`, `leadingIcon`.
 
 **It does not open a file picker.** Flutter has no built-in one, and
 every package providing it (`file_picker`, `file_selector`,
@@ -613,7 +630,7 @@ conventional gold-star look), `size`.
 ### `PlinthFieldset`
 `child`, `legend`, `variant` (`defaultVariant` draws a border,
 `filled` uses a muted fill with no border; other variants fall back to
-the border treatment), `radius`, `padding` (default `md`), `disabled`.
+the border treatment), `radius`, `padding` (default `md`), `enabled`.
 A bordered group of related fields, with the legend sitting *in* the
 border rather than above it — that's what distinguishes it from a
 titled `PlinthCard`: the frame says "these belong together" and the
@@ -848,7 +865,7 @@ separates *transparent* from *pale*: without it, 50% black and solid
 grey look identical.
 
 ### `PlinthAngleSlider`
-`value` (degrees), `onChanged`, `size` (default `60`), `thickness`,
+`value` (degrees), `onChanged`, `diameter` (default `60`), `thickness`,
 `color`, `step`, `divisions`. A circular dial — the one control in this
 set that isn't about colour. It picks a direction: a gradient's angle,
 a shadow's offset, a rotation. Zero points up and the value grows
@@ -905,8 +922,8 @@ The named constructor isn't `const`: checking that the parts fit inside
 the whole means summing them, which a const assert can't do.
 
 ### `PlinthRingProgress`
-`value` (0.0–1.0, asserted in range), `color`, `size` (outer diameter,
-default 80), `thickness` (default 8), `trackColor`, `label` (optional
+`value` (0.0–1.0, asserted in range), `color`, `diameter` (default 80),
+`thickness` (default 8), `trackColor`, `label` (optional
 centered content, e.g. a percentage). Circular companion to
 `PlinthProgress` — built on `CustomPaint`, sweeping clockwise from 12
 o'clock.
@@ -918,9 +935,9 @@ on consecutive arcs overlap, so each section would eat a little of the
 one before it.
 
 ### `PlinthSemiCircleProgress`
-`value` (0.0–1.0, asserted in range), `color`, `size` (diameter of the
-full circle the arc is taken from, default 160 — rendered height is
-about half that), `thickness` (default 12), `trackColor`, `label`.
+`value` (0.0–1.0, asserted in range), `color`, `diameter` (of the full
+circle the arc is taken from, default 160 — rendered height is about
+half that), `thickness` (default 12), `trackColor`, `label`.
 `PlinthRingProgress` drawn as a 180° arc, which suits a dashboard tile
 better than a full circle: the flat bottom sits on a baseline, and the
 empty half of a full ring reads as wasted space when the value is the
@@ -1068,7 +1085,8 @@ tappable (`ThemeIcon` is decorative, `ActionIcon` is interactive).
 not the theme's primary color — a notification dot conventionally reads
 as red/attention regardless of brand color), `position`
 (`PlinthIndicatorPosition`: `topStart, topEnd, bottomStart, bottomEnd`),
-`disabled` (hides the indicator without removing `child` from the tree),
+`visible` (default `true`; false hides the dot without removing `child`
+from the tree),
 `radius` (squares off the dot; omit for the round default).
 Anchors a small badge/dot to a corner of `child` via `Stack` +
 `FractionalTranslation`.
@@ -1324,7 +1342,8 @@ rail: a rail alone is easy to miss, and colour alone doesn't survive a
 mono display.
 
 ### `PlinthNavLink`
-`label`, `icon`, `trailing` (e.g. a `PlinthBadge` for an unread count),
+`label`, `leadingIcon`, `trailing` (e.g. a `PlinthBadge` for an unread
+count),
 `active`, `onTap`, `color`. Sidebar-style navigation item — active state
 tints the background and label in the theme color.
 

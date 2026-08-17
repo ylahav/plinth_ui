@@ -25,7 +25,7 @@ class PlinthIndicator extends StatelessWidget {
     this.label,
     this.color,
     this.position = PlinthIndicatorPosition.topEnd,
-    this.disabled = false,
+    this.visible = true,
     this.radius,
   });
 
@@ -38,10 +38,13 @@ class PlinthIndicator extends StatelessWidget {
   final String? color;
   final PlinthIndicatorPosition position;
 
-  /// Hides the indicator entirely when true, without removing
-  /// [child] from the tree — useful for a "has unread" state that
-  /// toggles on/off without restructuring your widget tree.
-  final bool disabled;
+  /// Whether the dot is drawn at all. False keeps [child] in the tree
+  /// untouched — for a "has unread" state that toggles without
+  /// restructuring anything.
+  ///
+  /// Named `disabled` before 0.20.0, which said the wrong thing: an
+  /// indicator is not a control, and hiding it disables nothing.
+  final bool visible;
 
   /// Squares off the fully rounded default. Omit unless it has to
   /// match squarer chrome around it.
@@ -67,7 +70,7 @@ class PlinthIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (disabled) return child;
+    if (!visible) return child;
 
     final theme = context.plinth;
     final colorKey = color ?? 'red';

@@ -2514,7 +2514,7 @@ class _LiveMetricsExampleState extends State<LiveMetricsExample> {
               const PlinthText('Capacity', size: PlinthSize.xs, color: 'gray'),
               PlinthSemiCircleProgress(
                 value: _capacity,
-                size: 120,
+                diameter: 120,
                 label: PlinthText(
                   '${(_capacity * 100).round()}%',
                   weight: FontWeight.w700,
@@ -2662,7 +2662,7 @@ class _CollapsibleNavbarExampleState extends State<CollapsibleNavbarExample> {
               for (final item in _items)
                 PlinthNavLink(
                   label: _collapsed ? '' : item.label,
-                  icon: Icon(item.icon, size: 18),
+                  leadingIcon: Icon(item.icon, size: 18),
                   active: _active == item.value,
                   onTap: () => setState(() => _active = item.value),
                 ),
@@ -2702,25 +2702,25 @@ class SectionedNavbarExample extends StatelessWidget {
             _heading('Workspace'),
             PlinthNavLink(
               label: 'Overview',
-              icon: const Icon(Icons.dashboard_outlined, size: 18),
+              leadingIcon: const Icon(Icons.dashboard_outlined, size: 18),
               active: true,
               onTap: () {},
             ),
             PlinthNavLink(
               label: 'Reports',
-              icon: const Icon(Icons.insights_outlined, size: 18),
+              leadingIcon: const Icon(Icons.insights_outlined, size: 18),
               onTap: () {},
             ),
             _heading('Settings'),
             PlinthNavLink(
               label: 'Members',
-              icon: const Icon(Icons.people_outline, size: 18),
+              leadingIcon: const Icon(Icons.people_outline, size: 18),
               trailing: const PlinthBadge('4'),
               onTap: () {},
             ),
             PlinthNavLink(
               label: 'Billing',
-              icon: const Icon(Icons.credit_card, size: 18),
+              leadingIcon: const Icon(Icons.credit_card, size: 18),
               onTap: () {},
             ),
           ],
@@ -3399,7 +3399,7 @@ class StatGoalRingsExample extends StatelessWidget {
                   PlinthRingProgress(
                     value: g.value,
                     color: g.color,
-                    size: 72,
+                    diameter: 72,
                     label: PlinthText(
                       '${(g.value * 100).round()}%',
                       size: PlinthSize.sm,
@@ -5337,7 +5337,7 @@ class _NavbarWithSublevelsExampleState
             for (final section in _sections) ...[
               PlinthNavLink(
                 label: section.label,
-                icon: Icon(section.icon, size: 18),
+                leadingIcon: Icon(section.icon, size: 18),
                 trailing: Icon(
                   _open == section.label
                       ? Icons.expand_less
@@ -5419,19 +5419,19 @@ class NavbarWithFooterUserExample extends StatelessWidget {
             const SizedBox(height: 12),
             PlinthNavLink(
               label: 'Overview',
-              icon: const Icon(Icons.dashboard_outlined, size: 18),
+              leadingIcon: const Icon(Icons.dashboard_outlined, size: 18),
               active: true,
               onTap: () {},
             ),
             PlinthNavLink(
               label: 'Inbox',
-              icon: const Icon(Icons.inbox_outlined, size: 18),
+              leadingIcon: const Icon(Icons.inbox_outlined, size: 18),
               trailing: const PlinthBadge('12', color: 'red'),
               onTap: () {},
             ),
             PlinthNavLink(
               label: 'Projects',
-              icon: const Icon(Icons.folder_outlined, size: 18),
+              leadingIcon: const Icon(Icons.folder_outlined, size: 18),
               onTap: () {},
             ),
             const Spacer(),

@@ -23,7 +23,7 @@ class PlinthRingProgress extends StatelessWidget {
     super.key,
     required this.value,
     this.color,
-    this.size = 80,
+    this.diameter = 80,
     this.thickness = 8,
     this.trackColor,
     this.label,
@@ -36,7 +36,7 @@ class PlinthRingProgress extends StatelessWidget {
   PlinthRingProgress.sections({
     super.key,
     required List<PlinthProgressSection> sections,
-    this.size = 80,
+    this.diameter = 80,
     this.thickness = 8,
     this.trackColor,
     this.label,
@@ -55,7 +55,10 @@ class PlinthRingProgress extends StatelessWidget {
   final String? color;
 
   /// Outer diameter in logical pixels.
-  final double size;
+  ///
+  /// Named `size` before 0.20.0, which everywhere else in this library
+  /// means a step on the [PlinthSize] scale.
+  final double diameter;
   final double thickness;
 
   /// Background ring color. Defaults to a light gray.
@@ -76,13 +79,13 @@ class PlinthRingProgress extends StatelessWidget {
     final described = sections?.where((s) => s.label != null) ?? const [];
 
     Widget ring = SizedBox(
-      width: size,
-      height: size,
+      width: diameter,
+      height: diameter,
       child: Stack(
         alignment: Alignment.center,
         children: [
           CustomPaint(
-            size: Size(size, size),
+            size: Size(diameter, diameter),
             painter: _RingPainter(
               value: value,
               thickness: thickness,

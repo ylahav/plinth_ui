@@ -25,7 +25,7 @@ class PlinthFieldset extends StatelessWidget {
     this.variant = PlinthVariant.defaultVariant,
     this.radius,
     this.padding = PlinthSize.md,
-    this.disabled = false,
+    this.enabled = true,
   });
 
   final Widget child;
@@ -45,7 +45,7 @@ class PlinthFieldset extends StatelessWidget {
   /// Greys the contents and blocks interaction with everything inside,
   /// so a whole section can be switched off without each field needing
   /// its own `enabled` wired up.
-  final bool disabled;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -69,11 +69,11 @@ class PlinthFieldset extends StatelessWidget {
       // Container groups the children under the legend rather than
       // letting it be read as a sibling of them.
       container: true,
-      enabled: !disabled,
+      enabled: enabled,
       child: Opacity(
-        opacity: disabled ? 0.5 : 1,
+        opacity: !enabled ? 0.5 : 1,
         child: IgnorePointer(
-          ignoring: disabled,
+          ignoring: !enabled,
           child: legend == null
               ? body
               : Stack(
