@@ -179,16 +179,33 @@ these tests won't catch a font-rendering regression specifically, but they
 do catch color, layout, padding, and border changes, which covers the vast
 majority of what could actually go wrong in a themed component.
 
-**Extending this pattern to other components:** copy
-`plinth_button_golden_test.dart`'s `_goldenWrap` helper (or share one via a
-`test/helpers/` file once you have three or more golden test files) and
-follow the same shape — `RepaintBoundary` with a stable `Key`, sized to a
-fixed rectangle, one `matchesGoldenFile` call per state worth locking down
-visually. Not every component needs golden coverage on day one; prioritize
-the ones most likely to have a subtle visual regression slip through
-(anything with conditional border/background logic, like `PlinthTextInput`'s
-focus/error states or `PlinthAlert`'s color tinting) over ones that are
-mostly just text (`PlinthText`, `PlinthBadge`'s label).
+**Extending this pattern to other components:** use `goldenWrap` from
+`test/helpers/golden.dart` and follow the same shape — `RepaintBoundary`
+with a stable `Key`, sized to a fixed rectangle, one `matchesGoldenFile`
+call per state worth locking down visually. Not every component needs
+golden coverage on day one; prioritize the ones most likely to have a
+subtle visual regression slip through (anything with conditional
+border/background logic, like `PlinthTextInput`'s focus/error states or
+`PlinthAlert`'s color tinting) over ones that are mostly just text
+(`PlinthText`, `PlinthBadge`'s label).
+
+**31 images across six files**, of which three are worth knowing about
+because they cover a *kind* of failure rather than a component:
+
+| File | What it pins |
+|---|---|
+| `plinth_computed_layout_golden_test.dart` | Components that place things by arithmetic and paint at the result — a rolling number's wheels, an arc's start angle, a slider mark against a track this library doesn't draw. A behaviour test can confirm the number that went in; only an image confirms where it came out |
+| `plinth_states_golden_test.dart` | States rather than props, each paired with the state it must *not* look like: disabled beside enabled, loading beside idle, a pill beside the same component squared off |
+| `plinth_dark_theme_golden_test.dart` | The dark theme across several components at once, on a dark page. An unfollowed token shows up by contrast with its neighbours |
+
+Two lessons are baked into those files. **A golden generated from broken
+code certifies the bug** — `plinth_button_disabled` did exactly that for
+several releases, which is why the states file pairs each state with its
+opposite instead of photographing it alone. And **the scaffold's
+background never reaches the image**, since it sits outside the
+`RepaintBoundary`: what looks like a white page in a dark golden is the
+PNG's transparency, so `goldenWrap` paints the dark page inside the
+boundary itself.
 
 **They are skipped off Linux, on purpose.** Each golden file carries
 `@Tags(['golden'])`, and `packages/plinth_components/dart_test.yaml`

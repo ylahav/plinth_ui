@@ -186,11 +186,19 @@ A proposal, not a decision:
 3. **Tier 2 triaged**, not necessarily done: each item either built or
    written down as a deliberate exclusion, the way Carousel's absence
    was recorded (and then reversed once the reasoning was re-read).
-4. **Golden coverage past the current 24 images.** Every visual bug
-   this project has had was found by looking at rendered output — the
-   rolling-number digits, the marquee overflow, the dropped ambient
-   font, the one-letter-per-line home page. None were found by a unit
-   test.
+4. ~~**Golden coverage past the current 24 images.**~~ Widened to 31,
+   and more usefully re-aimed: three of the six files now cover a
+   *kind* of failure rather than a component — computed layout, states
+   paired with the state they must not resemble, and the dark theme
+   across several components at once. Every visual bug this project has
+   had was found by looking at rendered output — the rolling-number
+   digits, the marquee overflow, the dropped ambient font, the
+   one-letter-per-line home page, the disabled button that looked
+   enabled. None were found by a unit test.
+
+   Still worth doing: the overlay components (menu, popover, drawer,
+   modal), which no image covers because each needs an interaction
+   pumped first.
 
 Beta, by contrast, is where the library is now: the API is stable
 enough to build against, and the remaining changes are additive except
