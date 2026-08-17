@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:plinth_core/plinth_core.dart';
 
 import 'plinth_text.dart';
@@ -46,7 +47,29 @@ class PlinthTabItem<T> {
 /// `direction: Axis.vertical` stacks the tabs instead, with the
 /// indicator down the trailing edge — the shape a settings sidebar
 /// wants, and the one where a dozen tabs stay readable.
-class PlinthTabs<T> extends StatelessWidget {
+///
+/// ## Keyboard
+///
+/// The strip is **one stop** in the tab order, not one per tab. `Tab`
+/// moves onto the selected tab and the next `Tab` leaves the strip
+/// entirely — the roving-focus pattern WAI-ARIA specifies, and the
+/// reason a twelve-tab settings page doesn't cost twelve presses to
+/// walk past.
+///
+/// Once inside: the arrows along the strip's own axis move between
+/// tabs (left/right when horizontal, up/down when vertical), `Home`
+/// and `End` jump to the ends, and [loop] decides whether the ends
+/// wrap. The arrows are direction-aware, so in an RTL locale the left
+/// arrow still moves the way the strip reads.
+///
+/// **Moving selects.** Arrowing onto a tab reports it through
+/// [onChanged] rather than only moving a focus ring, which is the
+/// automatic-activation half of the ARIA pattern — right for panels
+/// that are cheap to build, which is what [PlinthTabView] encourages.
+/// If a panel is expensive enough that arrowing through the strip
+/// should not build all of them, keep the panel behind its own
+/// loading state rather than reaching for manual activation.
+class PlinthTabs<T> extends StatefulWidget {
   const PlinthTabs({
     super.key,
     required this.tabs,
@@ -55,6 +78,7 @@ class PlinthTabs<T> extends StatelessWidget {
     this.size = PlinthSize.md,
     this.color,
     this.direction = Axis.horizontal,
+    this.loop = true,
   });
 
   final List<PlinthTabItem<T>> tabs;
@@ -68,8 +92,123 @@ class PlinthTabs<T> extends StatelessWidget {
   /// edge, so the content sits to the right of the list.
   final Axis direction;
 
+  /// Whether arrowing past either end wraps around to the other.
+  ///
+  /// On by default, matching Mantine. Turn it off where the strip
+  /// stands for a sequence — a wizard, a set of steps — and arriving
+  /// back at the first item by pressing "next" would be a lie about
+  /// what comes next.
+  final bool loop;
+
+  @override
+  State<PlinthTabs<T>> createState() => _PlinthTabsState<T>();
+}
+
+class _PlinthTabsState<T> extends State<PlinthTabs<T>> {
+  /// One node per tab value, kept across rebuilds so focus survives
+  /// the selection change an arrow key causes.
+  final Map<T, FocusNode> _nodes = {};
+
+  FocusNode _nodeFor(T value) =>
+      _nodes.putIfAbsent(value, () => FocusNode(debugLabel: 'PlinthTab'));
+
+  @override
+  void dispose() {
+    for (final node in _nodes.values) {
+      node.dispose();
+    }
+    super.dispose();
+  }
+
+  /// Reports [value] and keeps focus with it — only the selected tab
+  /// is in the traversal order, so leaving focus on the old one would
+  /// strand it outside.
+  void _select(T value) {
+    widget.onChanged(value);
+    _nodeFor(value).requestFocus();
+  }
+
+  void _move(int delta) {
+    final tabs = widget.tabs;
+    if (tabs.isEmpty) return;
+
+    final current = tabs.indexWhere((t) => t.value == widget.value);
+    final from = current < 0 ? 0 : current;
+    final next = widget.loop
+        ? (from + delta) % tabs.length
+        : (from + delta).clamp(0, tabs.length - 1);
+
+    if (next == from) return;
+    _select(tabs[next].value);
+  }
+
+  void _jumpTo(int index) {
+    final tabs = widget.tabs;
+    if (tabs.isEmpty) return;
+    final target = tabs[index.clamp(0, tabs.length - 1)];
+    if (target.value == widget.value) return;
+    _select(target.value);
+  }
+
+  KeyEventResult _onKey(FocusNode node, KeyEvent event) {
+    // Repeats included: holding an arrow down should keep moving, the
+    // way it does in every other list.
+    if (event is KeyUpEvent) return KeyEventResult.ignored;
+
+    final key = event.logicalKey;
+    final isVertical = widget.direction == Axis.vertical;
+
+    if (key == LogicalKeyboardKey.home) {
+      _jumpTo(0);
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.end) {
+      _jumpTo(widget.tabs.length - 1);
+      return KeyEventResult.handled;
+    }
+
+    // Only the strip's own axis, so a vertical strip doesn't swallow
+    // the left/right keys a text field beside it might want.
+    if (isVertical) {
+      if (key == LogicalKeyboardKey.arrowUp) {
+        _move(-1);
+        return KeyEventResult.handled;
+      }
+      if (key == LogicalKeyboardKey.arrowDown) {
+        _move(1);
+        return KeyEventResult.handled;
+      }
+      return KeyEventResult.ignored;
+    }
+
+    // Horizontal reads in the locale's direction, so "next" is the
+    // left arrow in an RTL one.
+    final forward = Directionality.of(context) == TextDirection.rtl
+        ? LogicalKeyboardKey.arrowLeft
+        : LogicalKeyboardKey.arrowRight;
+    final back = forward == LogicalKeyboardKey.arrowRight
+        ? LogicalKeyboardKey.arrowLeft
+        : LogicalKeyboardKey.arrowRight;
+
+    if (key == forward) {
+      _move(1);
+      return KeyEventResult.handled;
+    }
+    if (key == back) {
+      _move(-1);
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final widget = this.widget;
+    final value = widget.value;
+    final size = widget.size;
+    final color = widget.color;
+    final direction = widget.direction;
+    final tabs = widget.tabs;
     final theme = context.plinth;
     final colorKey = color ?? theme.primaryColor;
     final activeColor = theme.shaded(colorKey, 6);
@@ -90,42 +229,67 @@ class PlinthTabs<T> extends StatelessWidget {
         color: selected ? colorKey : null,
       );
 
-      return InkWell(
-        onTap: () => onChanged(tab.value),
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: horizontalPadding,
-            vertical: verticalPadding,
-          ),
-          decoration: BoxDecoration(
-            border: isVertical
-                ? Border(right: indicator)
-                : Border(bottom: indicator),
-          ),
-          child: Row(
-            // Vertical tabs are stretched to the strip's width, so
-            // their content would centre in whatever the widest label
-            // demands; a column of labels reads as a list only when
-            // they share a left edge.
-            mainAxisSize: isVertical ? MainAxisSize.max : MainAxisSize.min,
-            children: [
-              if (tab.icon != null) ...[
-                IconTheme(
-                  data: IconThemeData(
-                    size: 16,
-                    color: selected ? activeColor : Colors.grey,
-                  ),
-                  child: tab.icon!,
+      return Focus(
+        focusNode: _nodeFor(tab.value),
+        // Roving focus: only the selected tab is a stop in the tab
+        // order, so the strip costs one press to enter and one to
+        // leave however many tabs it holds.
+        skipTraversal: !selected,
+        onKeyEvent: _onKey,
+        child: Builder(builder: (context) {
+          final focused = Focus.of(context).hasFocus;
+
+          return Semantics(
+            selected: selected,
+            child: InkWell(
+              // The Focus above owns the node; letting the InkWell
+              // claim one too would put two stops on every tab.
+              canRequestFocus: false,
+              onTap: () => _select(tab.value),
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding,
+                  vertical: verticalPadding,
                 ),
-                SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
-              ],
-              // Flexible only where the width is bounded: a horizontal
-              // strip lays out inside a scroll view with no width to
-              // divide up, and a flex child there is a layout error.
-              if (isVertical) Flexible(child: label) else label,
-            ],
-          ),
-        ),
+                decoration: BoxDecoration(
+                  // Selection and focus land on the same tab while
+                  // arrowing, so the tint is really saying "the strip
+                  // has the keyboard" — which is the thing a pointer
+                  // user never needs and a keyboard user always does.
+                  color: focused ? theme.shaded(colorKey, 0) : null,
+                  border: isVertical
+                      ? Border(right: indicator)
+                      : Border(bottom: indicator),
+                ),
+                child: Row(
+                  // Vertical tabs are stretched to the strip's width,
+                  // so their content would centre in whatever the
+                  // widest label demands; a column of labels reads as
+                  // a list only when they share a left edge.
+                  mainAxisSize:
+                      isVertical ? MainAxisSize.max : MainAxisSize.min,
+                  children: [
+                    if (tab.icon != null) ...[
+                      IconTheme(
+                        data: IconThemeData(
+                          size: 16,
+                          color: selected ? activeColor : Colors.grey,
+                        ),
+                        child: tab.icon!,
+                      ),
+                      SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
+                    ],
+                    // Flexible only where the width is bounded: a
+                    // horizontal strip lays out inside a scroll view
+                    // with no width to divide up, and a flex child
+                    // there is a layout error.
+                    if (isVertical) Flexible(child: label) else label,
+                  ],
+                ),
+              ),
+            ),
+          );
+        }),
       );
     }
 

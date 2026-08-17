@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_components/plinth_components.dart';
 
@@ -181,6 +182,71 @@ void main() {
       await tester.pump();
 
       expect(changed, equals('grid'));
+    });
+
+    testWidgets('arrows move between segments and select as they go',
+        (tester) async {
+      var value = 'list';
+      await tester.pumpWidget(
+        StatefulBuilder(
+          builder: (context, setState) => MaterialApp(
+            theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
+            home: Scaffold(
+              body: PlinthSegmentedControl<String>(
+                value: value,
+                onChanged: (v) => setState(() => value = v),
+                items: const [
+                  PlinthSegmentedControlItem('list', 'List'),
+                  PlinthSegmentedControlItem('grid', 'Grid'),
+                  PlinthSegmentedControlItem('map', 'Map'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('List'));
+      await tester.pumpAndSettle();
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      expect(value, equals('grid'));
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.end);
+      await tester.pumpAndSettle();
+      expect(value, equals('map'));
+
+      // Loops by default, the same as PlinthTabs.
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      expect(value, equals('list'));
+    });
+
+    testWidgets('the control is one stop in the tab order', (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          PlinthSegmentedControl<String>(
+            value: 'list',
+            onChanged: (_) {},
+            items: const [
+              PlinthSegmentedControlItem('list', 'List'),
+              PlinthSegmentedControlItem('grid', 'Grid'),
+              PlinthSegmentedControlItem('map', 'Map'),
+            ],
+          ),
+        ),
+      );
+
+      final stops = tester
+          .widgetList<Focus>(find.descendant(
+            of: find.byType(PlinthSegmentedControl<String>),
+            matching: find.byType(Focus),
+          ))
+          .where((f) => f.focusNode != null && !f.skipTraversal)
+          .length;
+
+      expect(stops, equals(1));
     });
   });
 }

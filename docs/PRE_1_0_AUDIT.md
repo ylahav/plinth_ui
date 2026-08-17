@@ -263,23 +263,39 @@ absence is only useful if it gets re-read.
 | `Marquee.fadeEdges` | **Built** | A `dstIn` shader mask rather than a gradient overlay — an overlay would have to know the page colour behind the strip and be wrong on any other |
 | `Timeline.align` | **Built** | `PlinthTimelineAlign.start`/`.end` rather than left/right, so an RTL locale isn't the one place this component ignores direction |
 | `Spoiler` expand control refs | **Declined** | A React ref for imperative expansion. The Plinth equivalent would be a controller, and this library already decided that case: `PlinthAccordion` "manages its own open/closed state internally — there's no external controller, since expanded state is presentation-local". Spoiler is the same shape |
-| `Tabs.loop` | **Declined, and it hides a real gap** | `loop` governs whether arrow-key navigation wraps around. `PlinthTabs` has **no keyboard navigation at all** — not one `Focus`, `Shortcuts` or key handler. Shipping `loop` would add a prop that does nothing to an absence nobody had noticed. See below |
+| `Tabs.loop` | **Declined in 0.24.0, built in 0.25.0** | `loop` governs whether arrow-key navigation wraps around, and there was no arrow-key navigation to wrap. Shipping it alone would have been a prop that did nothing. The navigation landed in 0.25.0 and `loop` came with it, on `PlinthTabs` and `PlinthSegmentedControl` both. See below |
 | `Menu.trigger: hover` | **Declined** | `PlinthHoverCard` is the hover-triggered floating panel, the same split this library already made for `PlinthTooltip`. A hover-only menu is also unreachable on touch |
 | `Table.layout` | **Declined** | `layout: auto` means intrinsic column widths, and 0.22.0's sticky header works *because* every column is an equal-flex share — that is what lets the header and body be two tables that cannot drift. `auto` would break it silently whenever `maxHeight` was set. Per-column widths are the honest version of this request, if anyone asks |
 
-### The gap `Tabs.loop` was standing in front of
+### The gap `Tabs.loop` was standing in front of — **built in 0.25.0**
 
-`PlinthTabs` cannot be operated from a keyboard. Tabs are one of the
-few components where that is a real accessibility failure rather than a
-convenience — the WAI-ARIA tabs pattern is arrow-keys-to-move,
-Tab-to-leave, and a tab strip that only responds to taps locks out
-anyone not using a pointer.
+**A correction first, because 0.24.0 shipped this section overstating
+the problem.** It said a tab strip that only answers taps "locks out
+anyone not using a pointer". That was wrong, and checking rather than
+reasoning is what caught it: Material's `InkWell` supplies focus and
+Enter-activation on its own, so every one of these components has been
+keyboard-*reachable* all along. A probe against the untouched
+`PlinthStepper` confirmed it — `Tab` focuses a step, `Enter` fires its
+callback, with no code of ours involved.
 
-This is deliberately **not** filed as a Tier 3 item, because it isn't
-one. It is larger than the twelve above put together, it belongs with
-whatever review decides `PlinthSegmentedControl` and `PlinthStepper`
-have the same problem, and a 1.0 that ships without it should say so on
-purpose rather than by omission.
+The real gap was narrower and still worth closing: **the strip did not
+follow the tablist pattern.** Every tab was its own stop in the tab
+order, so a twelve-tab settings page cost twelve presses to walk past,
+and there were no arrow keys, no `Home`/`End`, and nothing announcing
+which tab was selected.
+
+`PlinthTabs` and `PlinthSegmentedControl` now use roving focus — one
+stop for the strip, arrows along its own axis, `Home`/`End`, `loop` to
+decide whether the ends wrap, and direction-aware arrows so RTL reads
+correctly. Selection follows the arrow (automatic activation), which is
+the right half of the ARIA pattern for panels as cheap as
+[PlinthTabView]'s.
+
+**`PlinthStepper` is deliberately left alone.** Its steps are
+independent buttons rather than a single-selection group — `onStepTapped`
+is a notification, not a selection, and `currentStep` stays the
+caller's. A set of independent buttons each being its own tab stop is
+correct, not a bug.
 
 ## Cross-cutting: three names for one idea — **done in 0.20.0**
 
@@ -343,12 +359,13 @@ A proposal, not a decision:
 in 0.24.0, so all three tiers are now triaged. What remains before 1.0
 is not a gap list:
 
-1. **Keyboard navigation on `PlinthTabs`** (and probably
-   `PlinthSegmentedControl` and `PlinthStepper`), which Tier 3's
-   `Tabs.loop` turned out to be standing in front of. The one genuine
-   accessibility hole this audit has found.
+1. ~~**Keyboard navigation on `PlinthTabs`**~~ — done in 0.25.0, on
+   `PlinthSegmentedControl` too. `PlinthStepper` was assessed and left
+   alone with a reason. See the correction below: 0.24.0 described this
+   gap as worse than it was.
 2. **A decision** recorded in [PUBLISHING.md](PUBLISHING.md) about
    whether the two leaf packages move onto a matching version line.
+   The only thing on this list that isn't code.
 
 Beta, by contrast, is where the library is now: the API is stable
 enough to build against, and the remaining changes are additive except

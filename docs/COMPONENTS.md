@@ -660,9 +660,17 @@ implementation, not a `PlinthSelect` variant — `DropdownButton` (which
 
 ### `PlinthSegmentedControl<T>` + `PlinthSegmentedControlItem<T>`
 `items` (`List<PlinthSegmentedControlItem<T>>`), `value`, `onChanged`,
-`color`, `size`, `fullWidth`. Like `PlinthTabs`, uses a static
+`color`, `size`, `fullWidth`, `loop`. Like `PlinthTabs`, uses a static
 per-segment fill rather than a measured sliding indicator, for the same
 simplicity/reliability reasons.
+
+**Keyboard**: the same roving-focus arrangement as `PlinthTabs`,
+because it is the same shape — one stop in the tab order, left/right
+arrows to move and select, `Home`/`End` for the ends, `loop` for
+whether they wrap, and direction-aware arrows. ARIA calls this a radio
+group rather than a tab list, which changes what it announces — each
+segment reports being in a mutually exclusive group — but not how it is
+driven.
 
 ### `PlinthNumberInput`
 `value` (`num`), `onChanged`, `min`, `max`, `step` (default `1`), `label`,
@@ -1522,7 +1530,7 @@ branch survives closing it — but a tree of hundreds of nodes wants
 
 ### `PlinthTabs<T>` + `PlinthTabView<T>`
 `PlinthTabs`: `tabs` (`List<PlinthTabItem<T>>`), `value`, `onChanged`, `size`,
-`color`, `direction`. Renders an underline-style tab bar — deliberately a static
+`color`, `direction`, `loop`. Renders an underline-style tab bar — deliberately a static
 per-tab underline rather than a measured sliding indicator (the kind
 needing `GlobalKey`/`RenderBox` size lookups), to keep the implementation
 simple and reliable.

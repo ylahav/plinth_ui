@@ -7,6 +7,60 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.25.0
+
+Keyboard navigation for the two single-selection strips, which is the
+last item on the [pre-1.0 audit](../../docs/PRE_1_0_AUDIT.md)'s
+remaining list that is code rather than a decision. Additive; no
+migration.
+
+### Correction to 0.24.0
+
+0.24.0's notes said `PlinthTabs` "has no keyboard handling at all" and
+the audit called a tap-only strip something that "locks out anyone not
+using a pointer". **Both overstated the problem**, and checking rather
+than reasoning is what caught it: Material's `InkWell` supplies focus
+and Enter-activation on its own, so these components have been
+keyboard-*reachable* all along. A probe against the untouched
+`PlinthStepper` confirmed it — `Tab` focuses a step and `Enter` fires
+its callback with no code of ours involved.
+
+The real gap was narrower and still worth closing: the strips didn't
+follow the tablist pattern. Every tab was its own stop in the tab
+order, so a twelve-tab settings page cost twelve presses to walk past,
+and there were no arrow keys, no `Home`/`End`, and nothing announcing
+which tab was selected.
+
+### Added
+
+- **Roving focus and arrow-key navigation on `PlinthTabs` and
+  `PlinthSegmentedControl`.** The strip is one stop in the tab order
+  rather than one per item. Inside it, the arrows along the strip's own
+  axis move between items, `Home` and `End` reach the ends, and the new
+  **`loop`** (default `true`) decides whether the ends wrap.
+
+  The arrows are direction-aware, so in an RTL locale the left arrow
+  still moves the way the strip reads. A vertical `PlinthTabs` responds
+  only to up/down, leaving left/right to whatever else is on the page.
+
+  Moving selects, rather than only moving a focus ring — the
+  automatic-activation half of the ARIA pattern, which is right for
+  panels as cheap as `PlinthTabView`'s.
+
+- **Selection is now announced.** Each tab reports its selected state;
+  each segment additionally reports being in a mutually exclusive
+  group, which is what ARIA calls a radio group.
+
+- **`loop` on both**, closing the Tier 3 item that 0.24.0 declined
+  because it governed navigation that did not yet exist.
+
+### Not changed, deliberately
+
+**`PlinthStepper`** was assessed and left alone. Its steps are
+independent buttons rather than a single-selection group —
+`onStepTapped` is a notification and `currentStep` stays the caller's —
+so each step being its own tab stop is correct rather than a bug.
+
 ## 0.24.0
 
 Closes the [pre-1.0 audit](../../docs/PRE_1_0_AUDIT.md)'s Tier 3, and
