@@ -2,10 +2,37 @@
 
 All notable changes to this package will be documented in this file.
 
-The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project intends to adhere to [Semantic Versioning](https://semver.org/)
-once it reaches a `1.0.0` release. Versions before `1.0.0` may include
-breaking changes without a major version bump.
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+and [Semantic Versioning](https://semver.org/).
+
+The three Plinth packages move in lockstep from `1.0.0` onward — see
+[PUBLISHING.md](../../docs/PUBLISHING.md#decided-lockstep-from-10-onward).
+A release where this package itself did not change says so rather than
+inventing one. Before `1.0.0`, minor bumps could carry breaking
+changes; from `1.0.0` they cannot.
+
+## 1.0.0-beta.1
+
+The first release with all three Plinth packages on one version line,
+and the rehearsal for 1.0.0.
+
+**No component changes.** Everything here is release plumbing.
+
+The `1.0.0-beta` line is the rehearsal for that promise, not the
+promise itself: the API is what 1.0.0 intends to ship, and the beta
+exists so the three-package release sequence gets run once while a
+mistake is still cheap. `flutter pub add` still resolves the last
+stable release unless a prerelease is asked for.
+
+### Changed
+
+- **`plinth_core` and `plinth_hooks` constraints are now `^1.0.0-beta.1`.**
+  Below 1.0.0 a caret pins the *minor* — `^0.2.0` means `<0.3.0` — so
+  lockstep on the 0.x line would have forced all three to be
+  republished for every components-only change. Above it, `^1.0.0`
+  means `<2.0.0` and the leaf packages can sit still while this one
+  moves. That is the concrete reason the version line starts at 1.0
+  rather than at 0.26.
 
 ## 0.25.0
 

@@ -2,10 +2,29 @@
 
 All notable changes to this package will be documented in this file.
 
-The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project intends to adhere to [Semantic Versioning](https://semver.org/)
-once it reaches a `1.0.0` release. Versions before `1.0.0` may include
-breaking changes without a major version bump.
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+and [Semantic Versioning](https://semver.org/).
+
+The three Plinth packages move in lockstep from `1.0.0` onward — see
+[PUBLISHING.md](../../docs/PUBLISHING.md#decided-lockstep-from-10-onward).
+A release where this package itself did not change says so rather than
+inventing one. Before `1.0.0`, minor bumps could carry breaking
+changes; from `1.0.0` they cannot.
+
+## 1.0.0-beta.1
+
+**No changes to this package.** The version moves because the three
+Plinth packages are now released in lockstep, and this is the first
+release under that convention. `PlinthDisclosureController` is
+unchanged since 0.0.2, which is itself the argument for lockstep: a
+package nobody depends on directly is one whose version number is only
+useful as an answer to "which one goes with the others?".
+
+The `1.0.0-beta` line is the rehearsal for that promise, not the
+promise itself: the API is what 1.0.0 intends to ship, and the beta
+exists so the three-package release sequence gets run once while a
+mistake is still cheap. `flutter pub add` still resolves the last
+stable release unless a prerelease is asked for.
 
 ## 0.0.2
 

@@ -1,6 +1,6 @@
 name: plinth_hooks
 description: Reusable stateful controllers for Plinth UI (equivalent to Mantine's @mantine/hooks).
-version: 0.0.2
+version: 1.0.0-beta.1
 homepage: https://github.com/ylahav/plinth_ui
 repository: https://github.com/ylahav/plinth_ui
 issue_tracker: https://github.com/ylahav/plinth_ui/issues

@@ -174,21 +174,21 @@ packages:
       path: "../packages/plinth_components"
       relative: true
     source: path
-    version: "0.16.3"
+    version: "1.0.0-beta.1"
   plinth_core:
     dependency: "direct overridden"
     description:
       path: "../packages/plinth_core"
       relative: true
     source: path
-    version: "0.2.1"
+    version: "1.0.0-beta.1"
   plinth_hooks:
     dependency: "direct main"
     description:
       path: "../packages/plinth_hooks"
       relative: true
     source: path
-    version: "0.0.2"
+    version: "1.0.0-beta.1"
   plugin_platform_interface:
     dependency: transitive
     description:

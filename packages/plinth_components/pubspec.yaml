@@ -3,7 +3,7 @@ description: >-
   A Mantine-inspired component library for Flutter: 112 themeable,
   accessible widgets on a shared design-token foundation, with light
   and dark themes and WCAG-checked colour.
-version: 0.25.0
+version: 1.0.0-beta.1
 # The live demo rather than the source: `repository` already covers
 # the code, and someone reading the listing wants to try it.
 homepage: https://ylahav.github.io/plinth_ui/
@@ -46,12 +46,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # Switched from path: deps to real published versions now that
-  # both are live on pub.dev.
-  plinth_core: ^0.2.0
-  # Not ^0.0.1: for pre-1.0 versions caret means >=0.0.1 <0.0.2, which
-  # would exclude every future 0.0.x of a package whose API is stable.
-  plinth_hooks: '>=0.0.1 <0.1.0'
+  # Caret finally means what it looks like now that the major version
+  # is non-zero: >=1.0.0-beta.1 <2.0.0, so these two can sit still
+  # while this package moves. Below 1.0.0 a caret pinned the *minor*
+  # (^0.2.0 meant <0.3.0), which is why lockstep starts at 1.0 rather
+  # than at 0.26 — see docs/PUBLISHING.md.
+  #
+  # The prerelease in the lower bound is deliberate: it carries through
+  # to 1.0.0 final without another edit.
+  plinth_core: ^1.0.0-beta.1
+  plinth_hooks: ^1.0.0-beta.1
 
 dev_dependencies:
   flutter_test:

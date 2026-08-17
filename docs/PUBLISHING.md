@@ -9,12 +9,13 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | 0.2.1 | 0.2.1 |
-| `plinth_hooks` | 0.0.2 | 0.0.2 |
-| `plinth_components` | 0.25.0 | 0.25.0 |
+| `plinth_core` | 0.2.1 | 1.0.0-beta.1 (unreleased) |
+| `plinth_hooks` | 0.0.2 | 1.0.0-beta.1 (unreleased) |
+| `plinth_components` | 0.25.0 | 1.0.0-beta.1 (unreleased) |
 
 `plinth_components` depends on the other two by hosted version
-(`plinth_core: ^0.2.0`, `plinth_hooks: >=0.0.1 <0.1.0`), not by path. Melos
+(`plinth_core: ^1.0.0-beta.1`, `plinth_hooks: ^1.0.0-beta.1`), not by
+path. Melos
 still writes a `pubspec_overrides.yaml` pointing at the local copies so
 the workspace builds against your working tree — see the caveat below.
 
@@ -176,6 +177,31 @@ never having to explain that `plinth_core` 0.2.1 is the right one for
 **What it does not mean.** Lockstep is a release convention, not a
 promise that every package changes every time. A leaf package with no
 changes gets a CHANGELOG entry saying exactly that.
+
+### The `1.0.0-beta.1` rehearsal
+
+The beta exists so this sequence gets run once while a mistake is still
+cheap. It is the same five steps as below, with `1.0.0-beta.1` in place
+of `1.0.0`, and **the dry run cannot substitute for step 3.**
+
+That was checked rather than assumed. Running
+`flutter pub publish --dry-run` in `plinth_components` with the new
+constraints in place **resolves cleanly** — because
+`pubspec_overrides.yaml` points at the local siblings, so pub never
+looks for `plinth_core 1.0.0-beta.1` on pub.dev at all. Pub says so
+itself, in a hint most people skim past:
+
+> Non-dev dependencies are overridden in pubspec_overrides.yaml.
+
+A green dry run in the workspace is therefore **not evidence** that the
+package a consumer downloads will resolve. It is the 0.6.0 failure with
+the alarm already ringing.
+
+One thing the beta cannot prove until step 3 runs for real: that
+`^1.0.0-beta.1` resolves the way it reads (`>=1.0.0-beta.1 <2.0.0`) and
+carries through to `1.0.0` final without another constraint edit. That
+is the expected pub_semver behaviour, and step 3 is where it stops
+being expected and starts being known.
 
 ### The 1.0.0 release sequence
 
