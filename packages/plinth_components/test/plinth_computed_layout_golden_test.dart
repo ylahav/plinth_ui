@@ -139,6 +139,47 @@ void main() {
       );
     });
 
+    testWidgets('progress sections divide the whole, not each other',
+        (tester) async {
+      final sections = [
+        const PlinthProgressSection(value: 0.5, color: 'blue'),
+        const PlinthProgressSection(value: 0.3, color: 'teal'),
+        const PlinthProgressSection(value: 0.1, color: 'grape'),
+      ];
+
+      await tester.pumpWidget(
+        goldenWrap(
+          SizedBox(
+            width: 280,
+            child: PlinthStack(
+              gap: PlinthSize.lg,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PlinthProgress.sections(sections: sections),
+                PlinthRingProgress.sections(
+                  sections: sections,
+                  diameter: 90,
+                  thickness: 14,
+                ),
+              ],
+            ),
+          ),
+          width: 320,
+          height: 180,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // The parts sum to 0.9, so a tenth of both the bar and the ring
+      // must stay track. That remainder is the whole design decision,
+      // and it is the first thing a switch to flex weights would eat —
+      // silently, since the colours and order would look unchanged.
+      await expectLater(
+        find.byKey(goldenBoundary),
+        matchesGoldenFile('goldens/plinth_progress_sections.png'),
+      );
+    });
+
     testWidgets('overflow list, everything fits', (tester) async {
       await tester.pumpWidget(
         goldenWrap(
