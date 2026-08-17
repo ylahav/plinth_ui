@@ -43,7 +43,7 @@ class PlinthRingProgress extends StatelessWidget {
   })  : sections = sections,
         value = 0,
         color = null,
-        assert(sections.length > 0, 'a sectioned ring needs a section'),
+        assert(sections.isNotEmpty, 'a sectioned ring needs a section'),
         assert(
           sections.fold<double>(0, (sum, s) => sum + s.value) <= 1.0001,
           'sections are fractions of the whole ring, so they cannot sum '

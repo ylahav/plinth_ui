@@ -7,6 +7,22 @@ and this project intends to adhere to [Semantic Versioning](https://semver.org/)
 once it reaches a `1.0.0` release. Versions before `1.0.0` may include
 breaking changes without a major version bump.
 
+## 0.21.1
+
+### Fixed
+
+- **Two `assert(sections.length > 0, …)` calls became
+  `assert(sections.isNotEmpty, …)`**, in `PlinthProgress.sections` and
+  `PlinthRingProgress.sections`. Behaviour is identical; pub.dev
+  deducted 10 points from 0.21.0 for them, taking the score to 150/160.
+
+  The real fix is the second half: this package had no
+  `analysis_options.yaml` at all, so `melos run analyze` ran the SDK
+  defaults while pana analyses every published package against
+  `package:lints/core.yaml`. CI reported clean on code the score
+  docked. It now includes core lints, so the next one fails locally
+  instead of a release later.
+
 ## 0.21.0
 
 Start of the [pre-1.0 audit](../../docs/PRE_1_0_AUDIT.md)'s Tier 2,

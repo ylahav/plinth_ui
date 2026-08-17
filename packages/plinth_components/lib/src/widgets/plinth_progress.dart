@@ -71,7 +71,7 @@ class PlinthProgress extends StatelessWidget {
   })  : sections = sections,
         value = 0,
         color = null,
-        assert(sections.length > 0, 'a sectioned bar needs a section'),
+        assert(sections.isNotEmpty, 'a sectioned bar needs a section'),
         assert(
           sections.fold<double>(0, (sum, s) => sum + s.value) <= 1.0001,
           'sections are fractions of the whole bar, so they cannot sum '
