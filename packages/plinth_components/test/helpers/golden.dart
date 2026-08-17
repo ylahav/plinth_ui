@@ -39,6 +39,13 @@ Widget goldenWrap(
           )
         : ThemeData(extensions: [PlinthTheme.defaultTheme]),
     home: Scaffold(
+      // The dark images used to render their components on Flutter's
+      // *light* scaffold, so every one of them showed dark chrome
+      // floating on a white page — a scene no app ever produces, and
+      // the wrong backdrop for the question a dark golden asks. A
+      // muted disabled fill only reads as recessive against the page
+      // it will actually sit on.
+      backgroundColor: dark ? kDarkSurface : null,
       body: Center(
         child: RepaintBoundary(
           key: goldenBoundary,
