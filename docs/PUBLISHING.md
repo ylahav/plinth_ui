@@ -153,10 +153,73 @@ resolution.
 line where minor bumps carry new components and may include breaking
 changes without a major bump, as its CHANGELOG header states.
 
-Worth deciding before 1.0: whether the two leaf packages should be
-brought up to a matching version line, or left to drift at their own
-pace. Lockstep versioning is simpler to reason about for consumers;
-independent versioning is more honest about what actually changed.
+### Decided: lockstep from 1.0 onward
+
+The three packages go to **1.0.0 together**, and move together after
+that. This was the last open question before 1.0, and it is now closed.
+
+**Why lockstep won.** The honesty argument for independent versions is
+real — `plinth_hooks` has changed twice in its life, and a 1.0.0 on it
+claims more movement than happened. But it is answering a question
+nobody asks. Nobody depends on `plinth_hooks` alone; it exists because
+`plinth_components` needed a disclosure controller. What consumers
+actually ask is *"which versions of these three go together?"*, and
+lockstep answers it by construction, where independent versioning
+answers it with a compatibility table someone has to maintain and
+everyone has to read.
+
+The cost is honest and small: some 1.x releases of the leaf packages
+will contain nothing but a version bump. That is a fair price for
+never having to explain that `plinth_core` 0.2.1 is the right one for
+`plinth_components` 0.25.0.
+
+**What it does not mean.** Lockstep is a release convention, not a
+promise that every package changes every time. A leaf package with no
+changes gets a CHANGELOG entry saying exactly that.
+
+### The 1.0.0 release sequence
+
+Dependency order matters more here than in any release so far, because
+all three constraints move at once. **This is the mistake that already
+shipped a broken `plinth_components` 0.6.0** — see the warning at the
+top of this file — and the workspace cannot catch it, because melos
+resolves siblings from disk.
+
+1. **`plinth_core` → 1.0.0.** Bump, CHANGELOG entry, `flutter pub publish`.
+2. **`plinth_hooks` → 1.0.0.** Same. Its entry should say the version
+   is lockstep rather than invent a change.
+3. **Wait for both to be resolvable.** Not just "published" — pub
+   caches version listings on disk, so verify from a scratch directory
+   outside the workspace:
+   ```bash
+   flutter create resolve_check && cd resolve_check
+   flutter pub add plinth_core plinth_hooks
+   ```
+   If it fails and you believe it shouldn't, clear the stale listing
+   (paths in the section above) and retry.
+4. **Raise both constraints** in `packages/plinth_components/pubspec.yaml`:
+   `plinth_core: ^1.0.0` and `plinth_hooks: ^1.0.0`. The hooks
+   constraint stops being the `>=0.0.1 <0.1.0` form, since `^` finally
+   means something once the major version is non-zero.
+5. **`plinth_components` → 1.0.0**, then
+   `melos bootstrap && melos run analyze && melos run format && melos run test`,
+   then publish.
+
+Steps 1 and 2 must actually complete before step 5. Publishing
+components against constraints pub.dev has never seen is the exact
+failure described at the top of this file.
+
+### What 1.0.0 promises
+
+Worth writing down before it is claimed, because a major version is a
+statement about the future rather than the present: **no breaking
+change without a 2.0.0.** The 0.x line explicitly allowed breaking
+changes in minor bumps, and its CHANGELOG header says so. That freedom
+ends at 1.0.0.
+
+The naming pass in 0.20.0 was deliberately the last breaking change
+planned before this, which is what makes the promise credible rather
+than optimistic.
 
 ## Optional automation
 

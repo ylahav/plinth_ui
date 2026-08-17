@@ -363,9 +363,15 @@ is not a gap list:
    `PlinthSegmentedControl` too. `PlinthStepper` was assessed and left
    alone with a reason. See the correction below: 0.24.0 described this
    gap as worse than it was.
-2. **A decision** recorded in [PUBLISHING.md](PUBLISHING.md) about
-   whether the two leaf packages move onto a matching version line.
-   The only thing on this list that isn't code.
+2. ~~**A decision** about whether the two leaf packages move onto a
+   matching version line.~~ **Decided: lockstep.** All three packages
+   go to 1.0.0 together and move together after that; the reasoning
+   and the ordered release sequence are in
+   [PUBLISHING.md](PUBLISHING.md#decided-lockstep-from-10-onward).
+
+**This list is now empty.** Everything this audit set out to find has
+been found, and everything it found has been built or written down as a
+deliberate exclusion. What remains before 1.0 is the release itself.
 
 Beta, by contrast, is where the library is now: the API is stable
 enough to build against, and the remaining changes are additive except
