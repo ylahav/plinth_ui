@@ -11,6 +11,43 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.0.0-beta.2
+
+**No API changes. Every component looks different.**
+
+`plinth_core`'s ramp generator now anchors a seed colour at shade 6, so
+the 13 built-in ramps finally return the Mantine values they are seeded
+with — see that package's changelog for the measurements. Nothing here
+changed to cause it, and nothing here needs changing to consume it, but
+the rendered output moves: **32 of the 43 golden images were
+rebaselined.**
+
+### Changed
+
+- **Filled buttons in blue and red now carry a dark label, not a white
+  one.** `contrastingOn` picks whichever foreground contrasts better,
+  and on the corrected fills the light one stops winning: white on
+  `blue.6` falls from 4.15:1 to 3.56:1 while the dark foreground reaches
+  4.84:1. New for blue and red only — green, yellow and teal already had
+  dark labels, violet keeps white. **`blue` is the default
+  `primaryColor`, so this changes the default button.**
+
+  Deliberate, and the reason is uncomfortable enough to state plainly:
+  white on Mantine's real `blue.6` fails AA for body text, so Mantine's
+  own filled buttons do not clear it either. The distorted palette had
+  been hiding that. Override `onFilled` / `onFilledInverse` to get the
+  old pairing back.
+
+- **Alert and notification titles drift toward muted on the
+  low-luminance ramps** — a yellow alert title now lands on dark
+  olive-brown. `readableOn` is holding them to the 4.5:1 body floor.
+  Whether a title is body text or a heading is filed as `PR-17` and not
+  yet decided; if it becomes `large` (3.0), these move back toward
+  brand.
+
+- `PlinthVariant.light` is unaffected. The four components that pin it
+  to `PlinthContrast.large` still render exactly as they did.
+
 ## 1.0.0-beta.1
 
 The first release with all three Plinth packages on one version line,

@@ -7,11 +7,17 @@ now covers releasing an update.
 
 ## Current state
 
-| Package | pub.dev | In this repo |
-|---|---|---|
-| `plinth_core` | 0.2.1 | 1.0.0-beta.1 (unreleased) |
-| `plinth_hooks` | 0.0.2 | 1.0.0-beta.1 (unreleased) |
-| `plinth_components` | 0.25.0 | 1.0.0-beta.1 (unreleased) |
+| Package | pub.dev (stable) | pub.dev (prerelease) | In this repo |
+|---|---|---|---|
+| `plinth_core` | 0.2.1 | 1.0.0-beta.1 | 1.0.0-beta.2 |
+| `plinth_hooks` | 0.0.2 | 1.0.0-beta.1 | 1.0.0-beta.2 |
+| `plinth_components` | 0.25.0 | 1.0.0-beta.1 | 1.0.0-beta.2 |
+
+**`1.0.0-beta.1` is live**, and the stable column still reads 0.x
+because pub.dev never promotes a prerelease to "latest" — `pub add`
+without an explicit constraint still resolves to the 0.x line. That is
+the intended behaviour of a beta, not a failed publish, and it is worth
+knowing before reading the listing as evidence of one.
 
 `plinth_components` depends on the other two by hosted version
 (`plinth_core: ^1.0.0-beta.1`, `plinth_hooks: ^1.0.0-beta.1`), not by
@@ -297,6 +303,20 @@ ends at 1.0.0.
 The naming pass in 0.20.0 was deliberately the last breaking change
 planned before this, which is what makes the promise credible rather
 than optimistic.
+
+**That stopped being true, and it is why `1.0.0-beta.2` exists.**
+Migrating a real app onto the packages
+([ADOPTION_REQUIREMENTS.md](ADOPTION_REQUIREMENTS.md)) produced three
+more breaking changes after 0.20.0 — `readableOn`'s contrast floor, the
+anchored ramp generator, and the filled-label flip that followed from
+it. None was foreseeable from inside the source; all three came from
+watching someone use it.
+
+So the sequence above is unchanged but its **precondition** is not:
+**do not start it while a requirement that moves rendered output is
+still open.** `PR-17` is exactly that. A promise of "no breaking change
+without a 2.0.0" made one week before a known visual change is not a
+promise, and the fix is another beta rather than a softer promise.
 
 ## Optional automation
 

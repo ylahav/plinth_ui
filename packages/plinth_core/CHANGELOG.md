@@ -11,7 +11,13 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
-## Unreleased
+## 1.0.0-beta.2
+
+**A second beta rather than 1.0.0, deliberately.** Everything below is
+breaking, and `PR-17` — whether a heading on a tinted surface belongs at
+the body floor or the large-text one — is still open and would move
+colours again. 1.0.0 promises no breaking change without a 2.0.0, and
+spending that promise the week it is made is worse than one more beta.
 
 Everything here came from migrating one real app onto the packages and
 recording where it had to work around them — see

@@ -11,6 +11,11 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.0.0-beta.2
+
+**No changes to this package.** The version moves because the three
+packages are released in lockstep.
+
 ## 1.0.0-beta.1
 
 **No changes to this package.** The version moves because the three
