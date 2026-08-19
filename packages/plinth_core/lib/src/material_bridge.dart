@@ -74,12 +74,11 @@ extension PlinthMaterialBridge on PlinthTheme {
   /// Plinth's**, because inventing values for them would produce
   /// agreement that means nothing.
   ///
-  /// `error` maps to the `red` ramp deliberately: `plinth_components`
-  /// hardcodes `red` as its destructive colour in 12 places, so red is
-  /// already the error ramp whether or not anyone declared it.
+  /// `error` comes from [PlinthRole.error], so remapping that role moves
+  /// Material's error colour with it and the two cannot drift apart.
   ColorScheme toColorScheme() {
     final primary = shaded(primaryColor, 6);
-    final error = shaded('red', 6);
+    final error = roleShaded(PlinthRole.error, 6);
     return ColorScheme.fromSeed(
       seedColor: primary,
       brightness: brightness,

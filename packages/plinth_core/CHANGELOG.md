@@ -15,6 +15,33 @@ changes; from `1.0.0` they cannot.
 
 ### Added
 
+- **`PlinthRole` and `roleRamps`** — the component library resolves its
+  own colour roles through a mapping instead of reaching into `colors`
+  for `'red'`, `'gray'` and `'green'`. (PR-09)
+
+  ```dart
+  // Keep 'red' for your own meaning; the library still has an error colour.
+  theme.copyWith(roleRamps: const {PlinthRole.error: 'brandDanger'});
+  ```
+
+  `colors` was a namespace shared between the library and its consumer
+  where **neither knew**. An app that repurposed `red` as its expense
+  pole silently restyled every form field's error state; an app that did
+  not ended up with two different reds on screen. Both happened in the
+  same migration.
+
+  Three roles, because three is what the library actually uses:
+  `error` (every field's border and message), `neutral` (descriptions,
+  separators, empty states), `success` (the copy button's flash).
+
+  **Value-preserving.** `kDefaultRoleRamps` maps them to `red`, `gray`
+  and `green` — exactly what was hardcoded — and a test asserts equality
+  across all three roles and all ten shades in both themes. 53 call
+  sites moved; no golden did.
+
+  A partial map falls back per role, so remapping one does not blank the
+  other two.
+
 - **A Material bridge** — `PlinthMaterialBridge`, an extension on
   `PlinthTheme` for reconciling it with `ThemeData`. (PR-08)
 

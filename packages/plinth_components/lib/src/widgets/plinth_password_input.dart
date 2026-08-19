@@ -76,7 +76,7 @@ class _PlinthPasswordInputState extends State<PlinthPasswordInput> {
 
     final Color borderColor;
     if (hasError) {
-      borderColor = theme.shaded('red', 6);
+      borderColor = theme.roleShaded(PlinthRole.error, 6);
     } else if (_isFocused) {
       borderColor = theme.shaded(colorKey, 6);
     } else {
@@ -91,7 +91,8 @@ class _PlinthPasswordInputState extends State<PlinthPasswordInput> {
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         if (widget.description != null) ...[
-          PlinthText(widget.description!, size: PlinthSize.xs, color: 'gray'),
+          PlinthText(widget.description!,
+              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         Container(
@@ -144,7 +145,8 @@ class _PlinthPasswordInputState extends State<PlinthPasswordInput> {
         ),
         if (hasError) ...[
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthText(widget.error!, size: PlinthSize.xs, color: 'red'),
+          PlinthText(widget.error!,
+              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
         ],
       ],
     );

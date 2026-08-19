@@ -84,7 +84,7 @@ class PlinthPillsInput extends StatelessWidget {
 
     final Color borderColor;
     if (hasError) {
-      borderColor = theme.shaded('red', 6);
+      borderColor = theme.roleShaded(PlinthRole.error, 6);
     } else if (focused) {
       borderColor = theme.shaded(colorKey, 6);
     } else {
@@ -99,7 +99,8 @@ class PlinthPillsInput extends StatelessWidget {
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         if (description != null) ...[
-          PlinthText(description!, size: PlinthSize.xs, color: 'gray'),
+          PlinthText(description!,
+              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         GestureDetector(
@@ -120,7 +121,8 @@ class PlinthPillsInput extends StatelessWidget {
               color: enabled ? theme.surface : theme.surfaceMuted,
             ),
             child: children.isEmpty && placeholder != null
-                ? PlinthText(placeholder!, size: size, color: 'gray')
+                ? PlinthText(placeholder!,
+                    size: size, color: theme.rampFor(PlinthRole.neutral))
                 : Wrap(
                     spacing: 4,
                     runSpacing: 4,
@@ -131,7 +133,8 @@ class PlinthPillsInput extends StatelessWidget {
         ),
         if (hasError) ...[
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthText(error!, size: PlinthSize.xs, color: 'red'),
+          PlinthText(error!,
+              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
         ],
       ],
     );

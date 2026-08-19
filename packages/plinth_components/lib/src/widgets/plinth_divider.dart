@@ -95,7 +95,9 @@ class PlinthDivider extends StatelessWidget {
         Expanded(child: rule()),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: PlinthText(label!, size: PlinthSize.xs, color: 'gray'),
+          child: PlinthText(label!,
+              size: PlinthSize.xs,
+              color: context.plinth.rampFor(PlinthRole.neutral)),
         ),
         Expanded(child: rule()),
       ],

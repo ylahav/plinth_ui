@@ -134,6 +134,18 @@ enum PlinthContrast {
   final double ratio;
 }
 
+/// Which ramp answers each of the component library's own roles.
+///
+/// These are the values `plinth_components` used to reach for directly,
+/// so the defaults keep every component rendering exactly as it did.
+/// Remap them — `{PlinthRole.error: 'pink'}` — and the whole library
+/// follows, without an app having to give up the `red` key to do it.
+const Map<PlinthRole, String> kDefaultRoleRamps = {
+  PlinthRole.error: 'red',
+  PlinthRole.neutral: 'gray',
+  PlinthRole.success: 'green',
+};
+
 /// The default categorical sequence, as keys into [PlinthTheme.colors].
 ///
 /// Ten ramps, chosen and ordered by measurement rather than by taste.
@@ -253,6 +265,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     this.semanticColors = const {},
     this.seriesRamps = kDefaultSeriesRamps,
     this.seriesKeys = const {},
+    this.roleRamps = kDefaultRoleRamps,
     this.spacing = kDefaultSpacing,
     this.radius = kDefaultRadius,
     this.fontSizes = kDefaultFontSizes,
@@ -275,6 +288,18 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// Named color palettes (e.g. 'blue', 'red', 'gray'), each with a
   /// 10-shade ramp from lightest (0) to darkest (9), mirroring Mantine.
   final Map<String, PlinthColorShades> colors;
+
+  /// Which ramp answers each of the component library's own roles.
+  ///
+  /// Distinct from [semanticColors], which is the *app's* namespace.
+  /// This one is Plinth's: `plinth_components` resolves its error
+  /// borders, muted descriptions and success flashes through here
+  /// rather than reaching into [colors] for `'red'`, `'gray'` and
+  /// `'green'` — so an app is free to use those keys for its own
+  /// meanings without restyling every form field by accident.
+  ///
+  /// Read through [rampFor] and [roleShaded].
+  final Map<PlinthRole, String> roleRamps;
 
   /// The ordered categorical palette, as keys into [colors].
   ///
@@ -568,6 +593,17 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   Color semanticWash(String name, {double alpha = 0.08}) =>
       wash(roleFor(name).ramp, alpha: alpha);
 
+  /// The ramp key answering [role].
+  ///
+  /// Falls back to [kDefaultRoleRamps] for a role a partial map omits,
+  /// so `copyWith(roleRamps: {PlinthRole.error: 'pink'})` remaps one
+  /// role without silently blanking the other two.
+  String rampFor(PlinthRole role) =>
+      roleRamps[role] ?? kDefaultRoleRamps[role]!;
+
+  /// [shaded] against the ramp answering [role].
+  Color roleShaded(PlinthRole role, int shade) => shaded(rampFor(role), shade);
+
   /// The *n*th categorical colour, wrapping past the end of
   /// [seriesRamps].
   ///
@@ -793,6 +829,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     Map<String, PlinthSemanticColor>? semanticColors,
     List<String>? seriesRamps,
     Map<String, int>? seriesKeys,
+    Map<PlinthRole, String>? roleRamps,
     Map<PlinthSize, double>? spacing,
     Map<PlinthSize, double>? radius,
     Map<PlinthSize, double>? fontSizes,
@@ -817,6 +854,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
       semanticColors: semanticColors ?? this.semanticColors,
       seriesRamps: seriesRamps ?? this.seriesRamps,
       seriesKeys: seriesKeys ?? this.seriesKeys,
+      roleRamps: roleRamps ?? this.roleRamps,
       spacing: spacing ?? this.spacing,
       radius: radius ?? this.radius,
       fontSizes: fontSizes ?? this.fontSizes,

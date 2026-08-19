@@ -13,6 +13,20 @@ changes; from `1.0.0` they cannot.
 
 ## Unreleased
 
+### Changed
+
+- **Every internal use of the `red`, `gray` and `green` ramps now goes
+  through `PlinthRole`.** (PR-09)
+
+  53 call sites: error borders and messages, muted descriptions and
+  separators, the copy button's success flash. **Nothing renders
+  differently** — `kDefaultRoleRamps` maps the three roles to exactly
+  the ramps that were hardcoded, and no golden moved.
+
+  What changes is that an app can now take the `red` key for its own
+  meaning without restyling every form field in the library, by pointing
+  `PlinthRole.error` somewhere else.
+
 ### Added
 
 - **`PlinthNotification.showOn(messenger, …)`** — show a notification

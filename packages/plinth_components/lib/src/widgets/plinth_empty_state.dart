@@ -82,7 +82,7 @@ class PlinthEmptyState extends StatelessWidget {
             PlinthText(
               description!,
               size: size == PlinthSize.xs ? PlinthSize.xs : PlinthSize.sm,
-              color: 'gray',
+              color: theme.rampFor(PlinthRole.neutral),
               textAlign: TextAlign.center,
             ),
           ],

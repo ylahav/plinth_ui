@@ -145,7 +145,9 @@ class _TimelineRow extends StatelessWidget {
             PlinthText(item.title, weight: FontWeight.w600),
             if (item.description != null) ...[
               SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.3),
-              PlinthText(item.description!, size: PlinthSize.sm, color: 'gray'),
+              PlinthText(item.description!,
+                  size: PlinthSize.sm,
+                  color: theme.rampFor(PlinthRole.neutral)),
             ],
           ],
         ),

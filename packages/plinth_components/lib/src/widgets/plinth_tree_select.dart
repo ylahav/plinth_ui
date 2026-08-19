@@ -168,7 +168,8 @@ class _PlinthTreeSelectState extends State<PlinthTreeSelect> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(resolvedRadius),
         border: Border.all(
-          color: hasError ? theme.shaded('red', 6) : theme.border,
+          color:
+              hasError ? theme.roleShaded(PlinthRole.error, 6) : theme.border,
           width: hasError ? 2 : 1,
         ),
         color: enabled ? theme.surface : theme.surfaceMuted,
@@ -201,7 +202,8 @@ class _PlinthTreeSelectState extends State<PlinthTreeSelect> {
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         if (widget.description != null) ...[
-          PlinthText(widget.description!, size: PlinthSize.xs, color: 'gray'),
+          PlinthText(widget.description!,
+              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         Semantics(
@@ -234,7 +236,8 @@ class _PlinthTreeSelectState extends State<PlinthTreeSelect> {
         ),
         if (hasError) ...[
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthText(widget.error!, size: PlinthSize.xs, color: 'red'),
+          PlinthText(widget.error!,
+              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
         ],
       ],
     );

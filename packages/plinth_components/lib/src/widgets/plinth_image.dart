@@ -73,9 +73,9 @@ class PlinthImage extends StatelessWidget {
             width: width,
             height: height,
             child: ColoredBox(
-              color: theme.shaded('gray', 1),
+              color: theme.roleShaded(PlinthRole.neutral, 1),
               child: Icon(Icons.broken_image_outlined,
-                  color: theme.shaded('gray', 5)),
+                  color: theme.roleShaded(PlinthRole.neutral, 5)),
             ),
           );
         },

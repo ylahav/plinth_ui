@@ -66,6 +66,76 @@ void main() {
     });
   });
 
+  group('PR-09 — the library and its consumer stop sharing a namespace', () {
+    // plinth_components used to reach into `colors` for 'red', 'gray'
+    // and 'green' directly. An app repurposing 'red' as its expense
+    // pole silently restyled every form field's error state.
+
+    test('the defaults are exactly what components used to hardcode', () {
+      // This is what says the indirection changed nothing visually.
+      expect(light.rampFor(PlinthRole.error), 'red');
+      expect(light.rampFor(PlinthRole.neutral), 'gray');
+      expect(light.rampFor(PlinthRole.success), 'green');
+      for (final role in PlinthRole.values) {
+        for (var shade = 0; shade < 10; shade++) {
+          expect(light.roleShaded(role, shade),
+              light.shaded(kDefaultRoleRamps[role]!, shade));
+          expect(dark.roleShaded(role, shade),
+              dark.shaded(kDefaultRoleRamps[role]!, shade));
+        }
+      }
+    });
+
+    test('every role has a default, so nothing can resolve to null', () {
+      expect(kDefaultRoleRamps.keys.toSet(), PlinthRole.values.toSet());
+    });
+
+    test('remapping a role does not disturb the ramp it left behind', () {
+      // The point of the separation: the app keeps 'red' for itself and
+      // the library still has an error colour.
+      final t = light.copyWith(roleRamps: const {PlinthRole.error: 'pink'});
+      expect(t.roleShaded(PlinthRole.error, 6), t.shaded('pink', 6));
+      expect(t.shaded('red', 6), light.shaded('red', 6));
+      expect(t.roleShaded(PlinthRole.error, 6), isNot(t.shaded('red', 6)));
+    });
+
+    test('a partial map falls back rather than blanking the rest', () {
+      // copyWith(roleRamps: {error: …}) replaces the whole map, so the
+      // other two roles have to survive on defaults or every muted
+      // description in the library turns primary-coloured.
+      final t = light.copyWith(roleRamps: const {PlinthRole.error: 'pink'});
+      expect(t.rampFor(PlinthRole.neutral), 'gray');
+      expect(t.rampFor(PlinthRole.success), 'green');
+    });
+
+    test('an app can point a role at a ramp it generated itself', () {
+      final t = light.copyWith(
+        colors: {
+          ...light.colors,
+          'brandDanger': PlinthTheme.generateShades(const Color(0xFFFF3B30)),
+        },
+        roleRamps: const {PlinthRole.error: 'brandDanger'},
+      );
+      // PR-03 anchoring means the brand colour comes back exactly.
+      expect(t.roleShaded(PlinthRole.error, 6), const Color(0xFFFF3B30));
+    });
+
+    test('the Material bridge follows the role, not the red ramp', () {
+      final t = light.copyWith(roleRamps: const {PlinthRole.error: 'pink'});
+      expect(t.toColorScheme().error, t.shaded('pink', 6));
+    });
+
+    test('app roles and library roles are different namespaces', () {
+      // PR-01 gave the app `semanticColors`; this gives the library
+      // `roleRamps`. Declaring one must not touch the other.
+      final t = light.copyWith(
+        semanticColors: {'error': const PlinthSemanticColor('grape')},
+      );
+      expect(t.semantic('error'), t.shaded('grape', 6));
+      expect(t.roleShaded(PlinthRole.error, 6), t.shaded('red', 6));
+    });
+  });
+
   group('PR-08 — reconcile with Material', () {
     test('a derived scheme agrees with itself', () {
       expect(light.colorSchemeDisagreements(light.toColorScheme()), isEmpty);

@@ -109,7 +109,8 @@ class PlinthFileInput<T> extends StatelessWidget {
     final theme = context.plinth;
     final hasError = error != null && error!.isNotEmpty;
     final resolvedRadius = theme.radius[radius ?? theme.defaultRadius]!;
-    final borderColor = hasError ? theme.shaded('red', 6) : theme.border;
+    final borderColor =
+        hasError ? theme.roleShaded(PlinthRole.error, 6) : theme.border;
     final fontSize = theme.fontSizes[size]!;
 
     return Column(
@@ -120,7 +121,8 @@ class PlinthFileInput<T> extends StatelessWidget {
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         if (description != null) ...[
-          PlinthText(description!, size: PlinthSize.xs, color: 'gray'),
+          PlinthText(description!,
+              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         Semantics(
@@ -200,7 +202,8 @@ class PlinthFileInput<T> extends StatelessWidget {
         ),
         if (hasError) ...[
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthText(error!, size: PlinthSize.xs, color: 'red'),
+          PlinthText(error!,
+              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
         ],
       ],
     );

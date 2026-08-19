@@ -74,7 +74,8 @@ class PlinthSelect<T> extends StatelessWidget {
     final verticalPadding = theme.spacing[size]! * 0.5;
     final horizontalPadding = theme.spacing[size]!;
 
-    final borderColor = hasError ? theme.shaded('red', 6) : theme.border;
+    final borderColor =
+        hasError ? theme.roleShaded(PlinthRole.error, 6) : theme.border;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +85,8 @@ class PlinthSelect<T> extends StatelessWidget {
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         if (description != null) ...[
-          PlinthText(description!, size: PlinthSize.xs, color: 'gray'),
+          PlinthText(description!,
+              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         Theme(
@@ -155,7 +157,8 @@ class PlinthSelect<T> extends StatelessWidget {
         ),
         if (hasError) ...[
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthText(error!, size: PlinthSize.xs, color: 'red'),
+          PlinthText(error!,
+              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
         ],
       ],
     );

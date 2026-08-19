@@ -54,7 +54,8 @@ class PlinthBlockquote extends StatelessWidget {
           PlinthText(quote, size: PlinthSize.lg, italic: true),
           if (citation != null) ...[
             SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.5),
-            PlinthText('— $citation', size: PlinthSize.sm, color: 'gray'),
+            PlinthText('— $citation',
+                size: PlinthSize.sm, color: theme.rampFor(PlinthRole.neutral)),
           ],
         ],
       ),

@@ -130,9 +130,12 @@ class PlinthSwitch extends StatelessWidget {
                       PlinthText(label!, size: size),
                       if (description != null)
                         PlinthText(description!,
-                            size: PlinthSize.xs, color: 'gray'),
+                            size: PlinthSize.xs,
+                            color: theme.rampFor(PlinthRole.neutral)),
                       if (error != null && error!.isNotEmpty)
-                        PlinthText(error!, size: PlinthSize.xs, color: 'red'),
+                        PlinthText(error!,
+                            size: PlinthSize.xs,
+                            color: theme.rampFor(PlinthRole.error)),
                     ],
                   ),
                 ),

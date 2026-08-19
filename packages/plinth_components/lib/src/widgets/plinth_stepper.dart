@@ -275,7 +275,7 @@ class _StepCircleAndLabel extends StatelessWidget {
         PlinthText(
           step.description!,
           size: metrics.description,
-          color: 'gray',
+          color: theme.rampFor(PlinthRole.neutral),
           textAlign: align,
         ),
     ];

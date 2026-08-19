@@ -25,9 +25,9 @@ the two can be cited against each other.
 
 ## Status
 
-Eleven landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
-PR-12 and PR-08 on 19 Aug. **Every Blocker and every High is closed**,
-as is the Medium that Phase −1 promoted above them (PR-08).
+Twelve landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
+PR-12, PR-08 and PR-09 on 19 Aug. **Every Blocker and every High is
+closed**, as is the Medium that Phase −1 promoted above them (PR-08).
 
 **The 18 Aug five were behaviour-preserving.** Verified by re-running
 the subject app's own harness against the changed packages: 225/225 app
@@ -42,12 +42,15 @@ with. Shades 0 and 9 are unmoved (both endpoints are held), so washes
 and the darkest shades render as before; shades 1–8 shift, most visibly
 on `red` and `violet`.
 
-**PR-01, PR-04, PR-12 and PR-08 are additive.** The first two add a map
-that defaults to empty or a sequence nothing reads unless asked; PR-12
-adds an overload and routes the existing one through it; PR-08 is a new
-extension nothing in the library calls. None moves a pixel.
+**PR-01, PR-04, PR-12, PR-08 and PR-09 all leave rendering alone.** The
+first two add a map that defaults to empty or a sequence nothing reads
+unless asked; PR-12 adds an overload and routes the existing one through
+it; PR-08 is a new extension nothing in the library calls. PR-09 is the
+only one that touched component source — 53 call sites — and its
+defaults resolve to the exact ramps that were hardcoded, which a test
+asserts across every role and shade in both themes.
 
-Current: 102 core tests, 647 component tests, `dart analyze` and
+Current: 109 core tests, 648 component tests, `dart analyze` and
 `dart format` clean. One component test changed — `PlinthText`'s
 "resolves a color key at shade 6" asserted `color('red', 6)` and passed
 only because the un-anchored generator over-darkened the ramp; the
@@ -99,7 +102,7 @@ rather than fixed here.
 | [PR-06](#pr-06--readableons-default-floor-is-wrong) | `readableOn`'s default floor is wrong | core | **High** | **Done** |
 | [PR-07](#pr-07--a-spacing-scale-for-dense-ui) | A spacing scale for dense UI | core | **High** | **Done** |
 | [PR-08](#pr-08--reconcile-with-materials-colorscheme) | Reconcile with Material's `ColorScheme` | core | **Medium** | **Done** |
-| [PR-09](#pr-09--separate-the-app-and-component-ramp-namespaces) | Separate app and component ramp namespaces | core | **Medium** | Open |
+| [PR-09](#pr-09--separate-the-app-and-component-ramp-namespaces) | Separate app and component ramp namespaces | core | **Medium** | **Done** |
 | [PR-10](#pr-10--themedataplinth) | `ThemeData.plinth` | core | **Low** | **Done** |
 | [PR-11](#pr-11--make-lerp-real-or-say-it-isnt) | Make `lerp` real, or say it isn't | core | **Low** | Open |
 | [PR-12](#pr-12--showon-for-messenger-backed-apis) | `showOn` for messenger-backed APIs | components | **High** | **Done** |
@@ -515,6 +518,42 @@ role ramps from a configurable mapping so `error` can point wherever the
 app wants.
 
 *Priority.* **Medium.** Falls out naturally if [PR-01](#pr-01--a-semantic-token-tier) is done properly.
+
+> **Done**, in two halves and only half of it fell out of PR-01 as
+> predicted.
+>
+> PR-01 gave the *app* its own namespace (`semanticColors`), which
+> stopped role names being smuggled in as ramps. It did **not** stop the
+> library reaching into `colors` for `'red'`, `'gray'` and `'green'` —
+> so the collision that actually bit remained.
+>
+> This closes it with the second shape the requirement offered: a
+> configurable role mapping. `PlinthRole { error, neutral, success }` —
+> the three the library genuinely uses — resolved through `roleRamps`,
+> read with `rampFor(role)` and `roleShaded(role, shade)`.
+>
+> **The counts in the evidence above were stale**, which is worth
+> recording since they were the basis for calling this Medium. Measured
+> again at the time of the fix: **31 `error` sites** (13 theme lookups
+> plus 18 `color: 'red'` props), **26 `neutral`**, and **1 `success`** —
+> not 12/3/1. `error` alone is every form field's border *and* its
+> message.
+>
+> **53 call sites swept, and the defaults are unchanged**, so this is
+> value-preserving by construction: `kDefaultRoleRamps` maps
+> `error → red`, `neutral → gray`, `success → green`, exactly what the
+> widgets hardcoded. A test asserts equality across all three roles and
+> all ten shades in both themes, and no golden moved.
+>
+> A partial map falls back per role rather than blanking the rest —
+> `copyWith(roleRamps: {error: 'pink'})` replaces the whole map, so
+> without the fallback every muted description in the library would
+> have gone primary-coloured.
+>
+> [PR-08](#pr-08--reconcile-with-materials-colorscheme)'s bridge was
+> corrected as part of this: it had hardcoded `shaded('red', 6)` for
+> `ColorScheme.error` the same way, one commit earlier. It now follows
+> the role, so remapping moves Material's error colour with it.
 
 ### PR-10 — `ThemeData.plinth`
 

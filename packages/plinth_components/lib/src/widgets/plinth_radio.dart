@@ -106,9 +106,12 @@ class PlinthRadio<T> extends StatelessWidget {
                       PlinthText(label!, size: size),
                       if (description != null)
                         PlinthText(description!,
-                            size: PlinthSize.xs, color: 'gray'),
+                            size: PlinthSize.xs,
+                            color: theme.rampFor(PlinthRole.neutral)),
                       if (error != null && error!.isNotEmpty)
-                        PlinthText(error!, size: PlinthSize.xs, color: 'red'),
+                        PlinthText(error!,
+                            size: PlinthSize.xs,
+                            color: theme.rampFor(PlinthRole.error)),
                     ],
                   ),
                 ),
@@ -165,7 +168,8 @@ class PlinthRadioGroup<T> extends StatelessWidget {
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         if (description != null) ...[
-          PlinthText(description!, size: PlinthSize.xs, color: 'gray'),
+          PlinthText(description!,
+              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         for (final option in options)

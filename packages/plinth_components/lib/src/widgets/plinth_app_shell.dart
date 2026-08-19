@@ -103,7 +103,7 @@ class PlinthAppShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final borderColor = theme.shaded('gray', 2);
+    final borderColor = theme.roleShaded(PlinthRole.neutral, 2);
     final border =
         withBorder ? BorderSide(color: borderColor, width: 1) : BorderSide.none;
 

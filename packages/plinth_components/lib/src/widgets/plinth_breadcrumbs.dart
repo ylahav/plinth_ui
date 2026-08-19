@@ -57,7 +57,9 @@ class PlinthBreadcrumbs extends StatelessWidget {
           if (i > 0)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: PlinthText(separator, size: PlinthSize.sm, color: 'gray'),
+              child: PlinthText(separator,
+                  size: PlinthSize.sm,
+                  color: theme.rampFor(PlinthRole.neutral)),
             ),
           _Crumb(
             item: items[i],

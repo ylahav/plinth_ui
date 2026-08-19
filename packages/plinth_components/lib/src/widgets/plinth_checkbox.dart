@@ -89,7 +89,7 @@ class PlinthCheckbox extends StatelessWidget {
           color: filled
               ? Colors.transparent
               : hasError
-                  ? theme.shaded('red', 6)
+                  ? theme.roleShaded(PlinthRole.error, 6)
                   : theme.border,
           width: 1.5,
         ),
@@ -134,9 +134,12 @@ class PlinthCheckbox extends StatelessWidget {
                       PlinthText(label!, size: size),
                       if (description != null)
                         PlinthText(description!,
-                            size: PlinthSize.xs, color: 'gray'),
+                            size: PlinthSize.xs,
+                            color: theme.rampFor(PlinthRole.neutral)),
                       if (hasError)
-                        PlinthText(error!, size: PlinthSize.xs, color: 'red'),
+                        PlinthText(error!,
+                            size: PlinthSize.xs,
+                            color: theme.rampFor(PlinthRole.error)),
                     ],
                   ),
                 ),

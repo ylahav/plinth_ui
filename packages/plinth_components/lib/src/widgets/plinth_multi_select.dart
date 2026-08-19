@@ -186,7 +186,8 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
     final hasError = widget.error != null && widget.error!.isNotEmpty;
     final colorKey = widget.color ?? theme.primaryColor;
     final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
-    final borderColor = hasError ? theme.shaded('red', 6) : theme.border;
+    final borderColor =
+        hasError ? theme.roleShaded(PlinthRole.error, 6) : theme.border;
 
     final selectedLabels = {
       for (final o in widget.options) o.value: o.label,
@@ -201,7 +202,8 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         if (widget.description != null) ...[
-          PlinthText(widget.description!, size: PlinthSize.xs, color: 'gray'),
+          PlinthText(widget.description!,
+              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         CompositedTransformTarget(
@@ -274,7 +276,8 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
         ),
         if (hasError) ...[
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthText(widget.error!, size: PlinthSize.xs, color: 'red'),
+          PlinthText(widget.error!,
+              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
         ],
       ],
     );

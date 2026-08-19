@@ -107,6 +107,25 @@ void main() {
       expect(_border(tester).top.width, 2);
     });
 
+    testWidgets('the error border follows PlinthRole.error, not the red ramp',
+        (tester) async {
+      // PR-09. Before this the widget reached into `colors` for 'red'
+      // directly, so an app repurposing that key as its own expense
+      // colour silently restyled every form field in the library.
+      final remapped = PlinthTheme.defaultTheme
+          .copyWith(roleRamps: const {PlinthRole.error: 'grape'});
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(extensions: [remapped]),
+          home: const Scaffold(body: PlinthTextInput(error: 'Required')),
+        ),
+      );
+
+      expect(_border(tester).top.color, remapped.color('grape', 6));
+      expect(_border(tester).top.color, isNot(remapped.color('red', 6)));
+    });
+
     testWidgets('error takes precedence over focus', (tester) async {
       await tester.pumpWidget(
         _wrap(const PlinthTextInput(color: 'green', error: 'Required')),

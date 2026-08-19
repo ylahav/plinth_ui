@@ -47,6 +47,29 @@ ten shades each, the same in light and dark themes. Every `color:` prop
 on a component is a key into these. Shade 6 is the base a component
 fills with; 0–1 are tints for backgrounds, 7–9 are for contrast.
 
+**Component roles** — `theme.roleShaded(PlinthRole.error, 6)`. The
+library needs three colours that are not "whatever the caller passed":
+an error colour for every field's border and message, a neutral for
+descriptions and separators, a success colour for the copy button's
+flash. Those resolve through `roleRamps`, which defaults to
+`error → red`, `neutral → gray`, `success → green`.
+
+This exists so the library and your app stop sharing one namespace. If
+you want `red` to mean *your* red, remap the role instead of fighting
+over the key:
+
+```dart
+PlinthTheme.defaultTheme.copyWith(
+  colors: {...PlinthTheme.defaultTheme.colors, 'brandDanger': myRamp},
+  roleRamps: const {PlinthRole.error: 'brandDanger'},
+);
+```
+
+Distinct from `semanticColors`, which is *your* role namespace
+(`expense`, `income`) and which the library never reads. A partial
+`roleRamps` map falls back per role, so remapping one leaves the others
+alone.
+
 **Chrome tokens** — the neutrals the ramps don't cover, and what makes
 a dark theme a value swap rather than a rewrite:
 

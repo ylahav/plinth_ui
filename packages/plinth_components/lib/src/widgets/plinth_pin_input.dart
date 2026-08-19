@@ -189,8 +189,9 @@ class _PlinthPinInputState extends State<PlinthPinInput> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(resolvedRadius),
                     borderSide: BorderSide(
-                      color:
-                          widget.error ? theme.shaded('red', 6) : theme.border,
+                      color: widget.error
+                          ? theme.roleShaded(PlinthRole.error, 6)
+                          : theme.border,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
