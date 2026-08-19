@@ -192,16 +192,119 @@ pipeline.**
 
 ---
 
+## What B0 found
+
+Ran 19 Aug 2026, against `74f5f99`. **B0c is still open** — it needs a
+person at a screen reader, which no probe substitutes for.
+
+### B0d — clean
+
+**0 of 232** gallery use cases threw when built right-to-left. Kept as a
+permanent test, reusing the gallery's own use-case walk so coverage is
+the whole component surface rather than a sample. It corroborates the
+stronger evidence already on file: a real Hebrew/English app rendered 12
+of 12 page x language combinations clean.
+
+This closes the RTL anxiety properly. What it does *not* cover is
+whether the text reads well, which needs a reader.
+
+### B0b — the tap-target result depends entirely on which bar
+
+The raw guideline run looks alarming and mostly is not. Measured against
+the three standards that actually exist:
+
+| Standard | Result |
+|---|---|
+| **WCAG 2.2 AA** (SC 2.5.8, 24x24) | **10 of 11 pass** |
+| **iOS HIG** (44) | 0 of 11 |
+| **Android Material** (48) | 0 of 11 |
+
+Heights at default size: Button 39, TextInput 40, ActionIcon 36, Chip
+36, Checkbox/Switch/Radio/Pagination 32, CloseButton 24, Anchor 23.
+
+**So Plinth is a web/desktop-density library that does not meet mobile
+touch guidelines at default size** — which is what matching Mantine's
+sizing implies, and is a positioning question rather than a pile of
+bugs. It is the argument for **A1c** (control sizing fed by a density
+axis), and A1c is an **L**.
+
+Three genuine defects, separate from the density question:
+
+- **`PlinthAnchor` fails even the 24x24 AA bar**, at 23px. By one pixel,
+  which is the kind of miss only a measurement finds.
+- **`PlinthAnchor` fails text contrast** because it paints
+  `shaded(colorKey, 6)` — a raw shade for a *foreground*. Blue 6 on
+  white is 3.56:1. This is the same class as PR-17's alert icons and
+  PR-19's `PlinthText`, in a component neither touched. **Third
+  instance of the same bug.**
+- **`PlinthActionIcon` has no `semanticLabel` parameter at all.** It
+  wraps in `Semantics(button: true)` with no name, so an icon-only
+  button is announced as an unlabelled button. `PlinthCloseButton` has
+  the parameter; this does not.
+
+`PlinthBadge` also fails text contrast, and that one is **deliberate**:
+`PlinthVariant.light` is pinned to `PlinthContrast.large` because a
+same-hue label on a same-hue tint cannot reach 4.5 and stay that colour.
+Recorded so it is not rediscovered as a bug.
+
+### B0a — labels are the gap, not roles
+
+Probing the composite controls for tappable nodes, how many carry a
+label, and how many carry a role:
+
+| Control | tappable | labelled | roled |
+|---|---|---|---|
+| Select | 1 | 1 | 1 |
+| MultiSelect | 2 | 2 | 1 |
+| Breadcrumbs | 1 | 1 | 0 |
+| Stepper | 2 | 2 | 0 |
+| Accordion | 1 | 1 | 0 |
+| **Autocomplete** | 1 | **0** | 1 |
+| **PinInput** | 4 | **0** | 4 |
+| **Rating** | 5 | **0** | 0 |
+
+**`PlinthRating` is the worst in the library**: five tappable stars,
+none labelled, none with a role. A screen-reader user gets five
+anonymous tappable things and no way to know the current value.
+`PlinthPinInput` is four unlabelled fields. `PlinthAutocomplete` is
+unlabelled *despite* being given a `label`, so the label is not reaching
+semantics.
+
+Accordion, Breadcrumbs and Stepper are labelled but carry no role, so
+they are announced as text rather than as controls.
+
+**The pattern across B0a and B0b is one thing:** icon-only and
+repeated-element controls do not carry names. That is a coherent, fixable
+piece of work rather than a scattering.
+
+### What this means for 1.0.0
+
+`1.0.0` promises no breaking change without a `2.0.0`, and this repo has
+treated visual changes as breaking — that is why `1.0.0-beta.2` exists.
+B0 found work that will move pixels and change behaviour:
+
+- Labelling the unlabelled controls (**B0a**) — additive, safe.
+- Fixing `PlinthAnchor`'s height and colour — visual.
+- `PlinthActionIcon`'s missing parameter — additive API.
+- Focus containment (**B1**) — still **0 of 116 files**, still known
+  broken without needing a probe.
+- The density question (**A1c**) — **L**, and moves every control.
+
+The first three are small. B1 and A1c are not, and A1c in particular
+cannot land inside a `1.x` under the current promise.
+
+---
+
 ## Workstream B — Accessibility
 
 Unchanged by the audience answer, and it survives every version of this
 plan. A team cannot retrofit it, and `highContrast` / `boldText` /
 `textScaler` are token concerns as much as widget ones.
 
-- [ ] **B0a** Semantics probe on the 11 composite controls with neither explicit nor inherited semantics: Select, Autocomplete, MultiSelect, Menu, Menubar, Accordion, PinInput, Rating, Breadcrumbs, Stepper, Drawer. 37 of 115 files reference `Semantics`; some absences are correct (layout), some inherited (Material-wrapping). **M.** Record the result either way — "already correct, here is the probe" is as useful an entry as a fix.
-- [ ] **B0b** Run `textContrastGuideline`, `androidTapTargetGuideline` and `labeledTapTargetGuideline` across the library; add the passing set to CI. **M.** Currently **1 of 59 test files** asserts anything about accessibility.
+- [x] **B0a** **RAN — see § What B0 found.** Semantics probe on the 11 composite controls with neither explicit nor inherited semantics: Select, Autocomplete, MultiSelect, Menu, Menubar, Accordion, PinInput, Rating, Breadcrumbs, Stepper, Drawer. 37 of 115 files reference `Semantics`; some absences are correct (layout), some inherited (Material-wrapping). **M.** Record the result either way — "already correct, here is the probe" is as useful an entry as a fix.
+- [x] **B0b** **RAN — see § What B0 found.** Run `textContrastGuideline`, `androidTapTargetGuideline` and `labeledTapTargetGuideline` across the library; add the passing set to CI. **M.** Currently **1 of 59 test files** asserts anything about accessibility.
 - [ ] **B0c** Manual NVDA and VoiceOver pass against the deployed demo. **M.** The only task here that cannot be satisfied by writing code.
-- [ ] **B0d** RTL golden pass. **S** to run; 7 of 115 files touch `Directionality`, so the other 108 are unverified rather than known-broken.
+- [x] **B0d** **RAN — clean, 0 of 232 gallery use cases threw in RTL; kept as `widgetbook/test/gallery_rtl_smoke_test.dart`.** RTL golden pass. **S** to run; 7 of 115 files touch `Directionality`, so the other 108 are unverified rather than known-broken.
 - [ ] **B1** Focus containment — **zero** uses of `FocusTraversalGroup`, `FocusScope`, `Shortcuts` or `Actions` across 115 files. Drawer first, as a reusable trap, then Popover, Menu, HoverCard. Modal already gets it from `showGeneralDialog`. **M**
 - [ ] **B2a** Extract the roving-focus logic welded inside `PlinthTabs` since 0.25.0 into a reusable controller. **M.** Three tasks below consume it.
 - [ ] **B2b–d** Roving focus on Menu/Menubar, the listbox family (Select, Combobox, MultiSelect — the largest, since the trigger/popup split doubles the focus cases), then Tree, Pagination, Accordion. **L**
