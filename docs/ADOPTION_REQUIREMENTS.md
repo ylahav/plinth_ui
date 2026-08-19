@@ -25,9 +25,10 @@ the two can be cited against each other.
 
 ## Status
 
-Thirteen landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
-PR-12, PR-08, PR-09 and PR-13 on 19 Aug. **Every Blocker and every High is
-closed**, as is the Medium that Phase −1 promoted above them (PR-08).
+Fourteen landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
+PR-12, PR-08, PR-09, PR-13 and PR-14 on 19 Aug. **Every Blocker and
+every High is closed**, as is the Medium that Phase −1 promoted above
+them (PR-08).
 
 **The 18 Aug five were behaviour-preserving.** Verified by re-running
 the subject app's own harness against the changed packages: 225/225 app
@@ -107,7 +108,7 @@ rather than fixed here.
 | [PR-11](#pr-11--make-lerp-real-or-say-it-isnt) | Make `lerp` real, or say it isn't | core | **Low** | Open |
 | [PR-12](#pr-12--showon-for-messenger-backed-apis) | `showOn` for messenger-backed APIs | components | **High** | **Done** |
 | [PR-13](#pr-13--a-numerals-stay-ltr-primitive) | A "numerals stay LTR" primitive | components | **Medium** | **Done** |
-| [PR-14](#pr-14--path-dependencies-are-unusable) | Path dependencies are unusable | both | **Medium** | Open |
+| [PR-14](#pr-14--path-dependencies-are-unusable) | Path dependencies are unusable | both | **Medium** | **Done** |
 | [PR-15](#pr-15--a-migration-guide-for-the-const-and-context-tax) | A migration guide for the `const`/context tax | docs | **Medium** | Open |
 | [PR-16](#pr-16--the-built-in-palette-is-not-mantines) | The built-in palette is not Mantine's | core | **High** | **Done** |
 | [PR-17](#pr-17--decide-the-contrast-floor-for-headings-on-tinted-surfaces) | Contrast floor for headings on tinted surfaces | components | **Medium** | Open |
@@ -859,6 +860,36 @@ backward compatible across a major version bump.
 consider whether the inter-package constraints need to be looser.
 
 *Priority.* **Medium**, and it is a README change.
+
+> **Done** — [README § 4. Running against a local checkout](../README.md#4-running-against-a-local-checkout).
+>
+> **The second half of the shape was a red herring, and it is worth
+> recording as one.** "Consider whether the inter-package constraints
+> need to be looser" is the natural first guess and it is wrong: pub
+> permits one *source* per package in a resolution, so a path dependency
+> in the app conflicts with the hosted one `plinth_components` pulls in
+> **regardless of the version range**. No constraint we could write
+> would fix it.
+>
+> Checked rather than reasoned about, because publishing a claim about
+> someone else's resolver on the strength of an argument is how the
+> stale counts in PR-09 happened. Three runs against a scratch app
+> outside the workspace:
+>
+> | Setup | Result |
+> |---|---|
+> | `plinth_components ^1.0.0-beta.2` + `plinth_core` from path | fails, with the error quoted above |
+> | same, but `plinth_core: any` from **hosted** | **resolves** |
+> | same, but path moved into `dependency_overrides` | **resolves**, and the lockfile records `source: path` |
+>
+> The middle row is the one that settles it: the version constraint is
+> at its loosest possible and it still resolves, so the source is the
+> only variable that matters.
+>
+> The README entry also warns to remove the overrides before shipping.
+> `dependency_overrides` is root-only and ignored for anyone consuming
+> your package, so one that quietly became load-bearing is a bug you do
+> not see until somebody else builds your code.
 
 ### PR-15 — A migration guide for the `const`/context tax
 

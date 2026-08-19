@@ -147,6 +147,55 @@ for all 112 components, and the theme-token table there explains which
 color method to reach for (`shaded`, `contrastingOn`, `readableOn`)
 when you build your own widget on the same foundation.
 
+### 4. Running against a local checkout
+
+Sooner or later you'll want to patch `plinth_core` locally — to debug
+something, or to try a token change before asking for it. Adding it as
+a path dependency **does not work**, and the error is not obviously
+about what it is about:
+
+```
+Because your_app depends on plinth_components ^1.0.0-beta.2 which
+depends on plinth_core ^1.0.0-beta.2, plinth_core from hosted is
+required. So, because your_app depends on plinth_core from path,
+version solving failed.
+```
+
+This is the first thing an adopter hits, before writing any Dart. Use
+`dependency_overrides`, which is root-only and exists for exactly this:
+
+```yaml
+# your_app/pubspec.yaml
+dependencies:
+  plinth_components: ^1.0.0-beta.2
+
+dependency_overrides:
+  plinth_core:
+    path: ../plinth_ui/packages/plinth_core
+  # If you're patching the widgets too, override both — otherwise
+  # plinth_components still comes from pub.dev and won't see your
+  # changes.
+  plinth_components:
+    path: ../plinth_ui/packages/plinth_components
+```
+
+**Loosening our version constraints would not have helped**, which is
+worth saying because it is the natural first guess. Pub allows one
+*source* per package in a resolution, so a path dependency in your app
+conflicts with the hosted one `plinth_components` pulls in no matter how
+wide the version range is — `plinth_core: any` fails the same way.
+`dependency_overrides` is the mechanism, not a workaround for a
+constraint we set too tightly.
+
+Remove the overrides before you publish or ship; they are ignored for
+anyone consuming your package, so an override that silently became
+load-bearing is a bug you won't see until someone else builds your code.
+
+Encouraging data point from doing this for real: `plinth_components
+0.16.1`, compiled against `plinth_core 0.2.0`, ran clean against
+`plinth_core 1.0.0-beta.1` — a major version later. The core's API has
+stayed genuinely backward compatible.
+
 ## Working on Plinth itself
 
 Clone, bootstrap, and run one of the two demo apps:
