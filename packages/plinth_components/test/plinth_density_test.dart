@@ -68,23 +68,22 @@ void main() {
       }
     });
 
-    testWidgets('the painted control does not grow with the target',
-        (tester) async {
-      // The extra room is transparent padding, the way Flutter's own
-      // MaterialTapTargetSize works — a button at `touch` is a 39px
-      // button in a 48px hit area, not a 48px slab.
-      final button = PlinthButton(onPressed: () {}, child: const Text('Save'));
-      await tester.pumpWidget(_at(PlinthDensity.touch, button));
-      await tester.pumpAndSettle();
-
-      expect(tester.getSize(find.byWidget(button)).height, 48);
-      final painted = tester.getSize(
-        find
-            .descendant(
-                of: find.byWidget(button), matching: find.byType(Material))
-            .first,
-      );
-      expect(painted.height, 39, reason: 'the ink surface should not grow');
+    testWidgets('a full-width button is still full width', (tester) async {
+      // The floor has to be transparent to layout. An earlier version
+      // centred the child so the *painted* box could stay small while
+      // the target grew — the way Flutter's MaterialTapTargetSize
+      // works. Centring shrink-wraps, which collapsed every
+      // `fullWidth: true` button to the width of its label. No test
+      // here caught that; a golden did.
+      final button = PlinthButton(
+          onPressed: () {}, fullWidth: true, child: const Text('Save'));
+      for (final density in PlinthDensity.values) {
+        await tester
+            .pumpWidget(_at(density, SizedBox(width: 300, child: button)));
+        await tester.pumpAndSettle();
+        expect(tester.getSize(find.byWidget(button)).width, 300,
+            reason: 'fullWidth collapsed at ${density.name}');
+      }
     });
 
     test('the floors are the standards they claim to be', () {

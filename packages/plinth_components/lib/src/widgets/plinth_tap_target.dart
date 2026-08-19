@@ -16,14 +16,18 @@ import 'package:plinth_core/plinth_core.dart';
 /// ])
 /// ```
 ///
-/// **It grows the target, not the control.** The visual box keeps its
-/// own size; the extra room is transparent padding around it, the same
-/// way Flutter's own `MaterialTapTargetSize` works. A button does not
-/// become a 48px slab, it becomes a 39px button with a 48px hit area.
+/// **The control itself grows**, rather than gaining transparent
+/// padding around a smaller painted box. Flutter's own
+/// `MaterialTapTargetSize` takes the other approach and needs a custom
+/// render object to do it; the widget-level version of that shrink-wraps
+/// its child, which quietly collapsed every `fullWidth: true` button to
+/// the width of its label. A golden caught it. Growing the control is
+/// both simpler and what density usually means — a touch-density button
+/// is a taller button.
 ///
-/// A control already larger than the floor is returned untouched, so
-/// this costs nothing at [PlinthDensity.standard] for most of the
-/// library.
+/// A control already larger than the floor passes through untouched, so
+/// this costs nothing at [PlinthDensity.standard], where every Plinth
+/// control already clears 24.
 class PlinthTapTarget extends StatelessWidget {
   const PlinthTapTarget({super.key, required this.child});
 
@@ -32,14 +36,14 @@ class PlinthTapTarget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final floor = context.plinth.density.minTapTarget;
+    // Deliberately just a minimum, with no alignment or shrink-wrap.
+    // Anything that centres the child also changes how it sizes, and a
+    // tap-target floor has no business doing that: it has to be
+    // transparent to a Row that gives unbounded width and to a child
+    // that asks for infinite width.
     return ConstrainedBox(
       constraints: BoxConstraints(minWidth: floor, minHeight: floor),
-      // `Center` with both factors at 1 rather than an `alignment:` on a
-      // Container: an alignment centres the child *and* expands the box
-      // to fill whatever it is given, which turns a minimum into "as
-      // tall as the viewport". That mistake cost a debugging round in
-      // PlinthPagination, where a fixed size had been hiding it.
-      child: Center(widthFactor: 1, heightFactor: 1, child: child),
+      child: child,
     );
   }
 }
