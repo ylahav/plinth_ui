@@ -22,6 +22,8 @@ plinth_ui/
     SHOWCASE.md               # The example app's composed blocks, and what's missing
     TESTING.md                # How to verify this locally — SDK setup through golden tests
     PRE_1_0_AUDIT.md          # How complete each component is, against Mantine's own props
+    ADOPTING_TOKENS.md        # What adopting tokens costs an app, and
+    │                          the five patterns every adopter hits
     POST_1_0_ROADMAP.md       # Who the packages are for, and the token,
     │                          interop and accessibility work that follows
     PHASE_MINUS_1_FINDINGS.md # plinth_core tried against a real app,
@@ -32,7 +34,7 @@ plinth_ui/
 
 🌐 **[Live demo](https://ylahav.github.io/plinth_ui/)** · 🎛️ **[Widgetbook gallery](https://ylahav.github.io/plinth_ui/widgetbook/)**
 
-📖 **[Component reference](docs/COMPONENTS.md)** · 🧱 **[Showcase blocks](docs/SHOWCASE.md)** · 🧪 **[Testing guide](docs/TESTING.md)** · 🔍 **[Pre-1.0 audit](docs/PRE_1_0_AUDIT.md)** · 🗺️ **[Post-1.0 roadmap](docs/POST_1_0_ROADMAP.md)**
+📖 **[Component reference](docs/COMPONENTS.md)** · 🧭 **[Adopting tokens](docs/ADOPTING_TOKENS.md)** · 🧱 **[Showcase blocks](docs/SHOWCASE.md)** · 🧪 **[Testing guide](docs/TESTING.md)** · 🔍 **[Pre-1.0 audit](docs/PRE_1_0_AUDIT.md)** · 🗺️ **[Post-1.0 roadmap](docs/POST_1_0_ROADMAP.md)**
 
 Both are the real apps in this repo, built for the web and deployed on
 every push to `main` by `.github/workflows/pages.yml`. The demo is the

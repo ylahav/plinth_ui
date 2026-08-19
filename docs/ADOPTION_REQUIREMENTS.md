@@ -25,33 +25,35 @@ the two can be cited against each other.
 
 ## Status
 
-Fourteen landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
-PR-12, PR-08, PR-09, PR-13 and PR-14 on 19 Aug. **Every Blocker and
-every High is closed**, as is the Medium that Phase −1 promoted above
-them (PR-08).
+Fifteen landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
+PR-12, PR-08, PR-09, PR-13, PR-14 and PR-15 on 19 Aug. **Every Blocker
+and every High is closed**, as is the Medium that Phase −1 promoted
+above them (PR-08). Three remain open, and two of those were filed *by*
+this round's work rather than by the migration.
 
 **The 18 Aug five were behaviour-preserving.** Verified by re-running
 the subject app's own harness against the changed packages: 225/225 app
 tests, 48 core tests, 643 component tests, and the T4 palette snapshot
 **unchanged**.
 
-**Of the 19 Aug four, three are not, and the palette snapshot no longer
-holds.** PR-03 anchors the ramp generator, which moves every interior
+**Only PR-03 and PR-16 changed rendering, and the palette snapshot no
+longer holds because of them.** PR-03 anchors the ramp generator, which moves every interior
 shade of all 13 built-in ramps — that is the point of PR-16, since the
 ramps had never actually matched the Mantine values they are seeded
 with. Shades 0 and 9 are unmoved (both endpoints are held), so washes
 and the darkest shades render as before; shades 1–8 shift, most visibly
 on `red` and `violet`.
 
-**PR-01, PR-04, PR-12, PR-08 and PR-09 all leave rendering alone.** The
-first two add a map that defaults to empty or a sequence nothing reads
-unless asked; PR-12 adds an overload and routes the existing one through
-it; PR-08 is a new extension nothing in the library calls. PR-09 is the
-only one that touched component source — 53 call sites — and its
-defaults resolve to the exact ramps that were hardcoded, which a test
-asserts across every role and shade in both themes.
+**Everything else on 19 Aug leaves rendering alone.** PR-01 and PR-04
+add a map that defaults to empty or a sequence nothing reads unless
+asked; PR-12 adds an overload and routes the existing one through it;
+PR-08 is a new extension nothing in the library calls; PR-13 is a new
+widget; PR-14 and PR-15 are documentation. PR-09 is the only one that
+touched component source in bulk — 53 call sites — and its defaults
+resolve to the exact ramps that were hardcoded, which a test asserts
+across every role and shade in both themes.
 
-Current: 109 core tests, 654 component tests, `dart analyze` and
+Current: 109 core tests, 656 component tests, `dart analyze` and
 `dart format` clean. One component test changed — `PlinthText`'s
 "resolves a color key at shade 6" asserted `color('red', 6)` and passed
 only because the un-anchored generator over-darkened the ramp; the
@@ -109,7 +111,7 @@ rather than fixed here.
 | [PR-12](#pr-12--showon-for-messenger-backed-apis) | `showOn` for messenger-backed APIs | components | **High** | **Done** |
 | [PR-13](#pr-13--a-numerals-stay-ltr-primitive) | A "numerals stay LTR" primitive | components | **Medium** | **Done** |
 | [PR-14](#pr-14--path-dependencies-are-unusable) | Path dependencies are unusable | both | **Medium** | **Done** |
-| [PR-15](#pr-15--a-migration-guide-for-the-const-and-context-tax) | A migration guide for the `const`/context tax | docs | **Medium** | Open |
+| [PR-15](#pr-15--a-migration-guide-for-the-const-and-context-tax) | A migration guide for the `const`/context tax | docs | **Medium** | **Done** |
 | [PR-16](#pr-16--the-built-in-palette-is-not-mantines) | The built-in palette is not Mantine's | core | **High** | **Done** |
 | [PR-17](#pr-17--decide-the-contrast-floor-for-headings-on-tinted-surfaces) | Contrast floor for headings on tinted surfaces | components | **Medium** | Open |
 | [PR-18](#pr-18--the-series-palette-is-unverified-for-colour-vision-deficiency) | Series palette unverified for colour-vision deficiency | core | **Medium** | Open |
@@ -928,6 +930,43 @@ patterns and their fixes.
 
 *Priority.* **Medium.** It converts an hour of rediscovery per adopter
 into a five-minute read.
+
+> **Done** — [ADOPTING_TOKENS.md](ADOPTING_TOKENS.md), with all five
+> patterns and two things the requirement did not ask for:
+>
+> - **The tax is smaller than it was when this was written.**
+>   [PR-07](#pr-07--a-spacing-scale-for-dense-ui) shipped `PlinthSpacing`
+>   as compile-time constants, so spacing keeps its `const`. The guide
+>   leads with that, because the app's **355 spacing literals** were the
+>   bulk of the surface and routing them through a theme would have
+>   traded 355 `const` widgets for 355 runtime ones and bought nothing.
+>   The honest headline is "colour needs a context, spacing does not" —
+>   not "tokens cost you `const`".
+> - **Pattern 5's answer changed.** The requirement recorded that
+>   `use_build_context_synchronously` cannot see through a function
+>   boundary, so a wrapper still needs a visible guard.
+>   [PR-12](#pr-12--showon-for-messenger-backed-apis) has since made the
+>   guard unnecessary for notifications: capture the messenger before
+>   the `await` and no context is involved. The guide gives that as the
+>   preferred answer and explains that it is different *behaviour*, not
+>   just a quieter lint.
+>
+> **`radius` is called out as a real remaining gap.** There is no const
+> equivalent of `PlinthSpacing` for it, so `theme.radius[…]` still costs
+> a context. Said plainly rather than left for an adopter to hit.
+>
+> The examples are **compile-checked**
+> (`plinth_components/test/adopting_tokens_doc_test.dart`). A guide
+> exists to be pasted from, so a stale example is worse than none — and
+> this repo already has the other kind: the example app's
+> `demo_code.dart` snippets are hand-maintained strings that still
+> compile and still render after they drift.
+>
+> The guide closes on the finding that should worry an adopter most:
+> **colour drift will not fail your tests.** The subject app's 202 tests
+> passed before, after, and through intermediate states where the
+> palette was materially different, because not one asserted on a
+> colour.
 
 ---
 
