@@ -15,6 +15,47 @@ changes; from `1.0.0` they cannot.
 
 ### Added
 
+- **A Material bridge** — `PlinthMaterialBridge`, an extension on
+  `PlinthTheme` for reconciling it with `ThemeData`. (PR-08)
+
+  ```dart
+  // Keep your own ThemeData, and assert the two agree.
+  test('palettes agree', () {
+    expect(myTheme.colorSchemeDisagreements(myScheme), isEmpty);
+  });
+
+  // Or derive Material's types from Plinth.
+  ThemeData(colorScheme: myTheme.toColorScheme(),
+            textTheme: myTheme.toTextTheme());
+  ```
+
+  **The need was agreement, not generation**, and that reverses what
+  was planned. A `toThemeData()` was the roadmap's top-ranked task and
+  during the migration it was **never reached for** — the app already
+  had six working lines of `ThemeData`, and replacing that wholesale is
+  riskier than the six lines it saves. What actually broke was reading
+  colour from two systems at once: 58 `plinth.*` lookups beside 31
+  `colorScheme.*` and 80 `textTheme.*`, with Material's seeded red
+  sitting in the same tables as the app's red and nothing keeping them
+  in agreement.
+
+  **What Plinth does not have an opinion about is named, not guessed.**
+  `toColorScheme` takes `secondary`, `tertiary`, the container roles and
+  the inverse roles from `ColorScheme.fromSeed`, and the checker ignores
+  them; `ownedSchemeFields` lists the ten it decides. Reporting a
+  disagreement about a field Plinth never had a view on would train
+  people to ignore the list. Likewise `toTextTheme` fills the body,
+  title and label roles and leaves `headline`/`display` as the base had
+  them, because `fontSizes` runs 12 to 20 and cannot answer what a
+  display size is without inventing one.
+
+  `error` maps to the `red` ramp because `plinth_components` already
+  hardcodes `shaded('red', …)` for destructive state in 12 places.
+
+  Comparison is exact, deliberately: a tolerance would decide for you
+  how much drift is acceptable, which is the judgement this exists to
+  surface rather than make.
+
 - **A categorical series palette** — ask for the *n*th distinguishable
   colour. (PR-04, the largest single category of hardcoding that
   survived the migration: **36 of the app's 91 colours were chart

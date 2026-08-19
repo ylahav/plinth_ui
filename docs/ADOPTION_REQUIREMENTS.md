@@ -25,8 +25,9 @@ the two can be cited against each other.
 
 ## Status
 
-Ten landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04 and
-PR-12 on 19 Aug. **Every Blocker and every High is now closed.**
+Eleven landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
+PR-12 and PR-08 on 19 Aug. **Every Blocker and every High is closed**,
+as is the Medium that Phase −1 promoted above them (PR-08).
 
 **The 18 Aug five were behaviour-preserving.** Verified by re-running
 the subject app's own harness against the changed packages: 225/225 app
@@ -41,11 +42,12 @@ with. Shades 0 and 9 are unmoved (both endpoints are held), so washes
 and the darkest shades render as before; shades 1–8 shift, most visibly
 on `red` and `violet`.
 
-**PR-01, PR-04 and PR-12 are additive.** The first two add a map that
-defaults to empty or a sequence nothing reads unless asked; PR-12 adds
-an overload and routes the existing one through it. None moves a pixel.
+**PR-01, PR-04, PR-12 and PR-08 are additive.** The first two add a map
+that defaults to empty or a sequence nothing reads unless asked; PR-12
+adds an overload and routes the existing one through it; PR-08 is a new
+extension nothing in the library calls. None moves a pixel.
 
-Current: 91 core tests, 643 component tests, `dart analyze` and
+Current: 102 core tests, 647 component tests, `dart analyze` and
 `dart format` clean. One component test changed — `PlinthText`'s
 "resolves a color key at shade 6" asserted `color('red', 6)` and passed
 only because the un-anchored generator over-darkened the ramp; the
@@ -96,7 +98,7 @@ rather than fixed here.
 | [PR-05](#pr-05--a-wash-role-that-survives-dark-mode) | A `wash` role that survives dark mode | core | **High** | **Done** |
 | [PR-06](#pr-06--readableons-default-floor-is-wrong) | `readableOn`'s default floor is wrong | core | **High** | **Done** |
 | [PR-07](#pr-07--a-spacing-scale-for-dense-ui) | A spacing scale for dense UI | core | **High** | **Done** |
-| [PR-08](#pr-08--reconcile-with-materials-colorscheme) | Reconcile with Material's `ColorScheme` | core | **Medium** | Open |
+| [PR-08](#pr-08--reconcile-with-materials-colorscheme) | Reconcile with Material's `ColorScheme` | core | **Medium** | **Done** |
 | [PR-09](#pr-09--separate-the-app-and-component-ramp-namespaces) | Separate app and component ramp namespaces | core | **Medium** | Open |
 | [PR-10](#pr-10--themedataplinth) | `ThemeData.plinth` | core | **Low** | **Done** |
 | [PR-11](#pr-11--make-lerp-real-or-say-it-isnt) | Make `lerp` real, or say it isn't | core | **Low** | Open |
@@ -458,6 +460,40 @@ constructor will be ignored by the audience it was written for.
 
 *Priority.* **Medium** — but it should displace `toThemeData()` in the
 roadmap rather than sit beside it.
+
+> **Done**, and it displaced `toThemeData()` rather than sitting beside
+> it — `A8` in [POST_1_0_ROADMAP.md](POST_1_0_ROADMAP.md) is struck out
+> and `A8'` is this.
+>
+> Shipped as an extension, `PlinthMaterialBridge`, in both directions:
+>
+> - **`colorSchemeDisagreements(scheme)`** — keep your own `ThemeData`
+>   and get a list of where the two disagree. This is the half the
+>   migration actually wanted: assert it is empty in a test and the
+>   drift cannot come back silently.
+> - **`toColorScheme()` / `toTextTheme({base})`** — derive Material's
+>   types from Plinth, for an app willing to hand over the decision.
+>
+> **The scope of "agreement" is stated rather than implied.** Plinth has
+> no opinion about `secondary`, `tertiary`, the container roles or the
+> inverse roles, so `toColorScheme` takes those from
+> `ColorScheme.fromSeed` and the checker ignores them —
+> `ownedSchemeFields` names the ten it does decide. Reporting a
+> disagreement about a field Plinth never had a view on would train
+> people to ignore the list.
+>
+> Same discipline on type: `fontSizes` runs 12 to 20, so `toTextTheme`
+> fills the body, title and label roles and **leaves `headline` and
+> `display` exactly as the base had them** rather than inventing a
+> number for them.
+>
+> `error` maps to the `red` ramp because `plinth_components` already
+> hardcodes `shaded('red', …)` for destructive state in 12 places — red
+> was the error ramp whether or not anyone declared it.
+>
+> Comparison is exact, deliberately. A tolerance would decide for the
+> caller how much drift is acceptable, which is the judgement this
+> exists to surface rather than make.
 
 ### PR-09 — Separate the app and component ramp namespaces
 

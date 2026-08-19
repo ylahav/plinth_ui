@@ -66,6 +66,123 @@ void main() {
     });
   });
 
+  group('PR-08 — reconcile with Material', () {
+    test('a derived scheme agrees with itself', () {
+      expect(light.colorSchemeDisagreements(light.toColorScheme()), isEmpty);
+      expect(dark.colorSchemeDisagreements(dark.toColorScheme()), isEmpty);
+    });
+
+    test('Plinth owns the fields it claims to own', () {
+      final scheme = light.toColorScheme();
+      expect(scheme.primary, light.shaded(light.primaryColor, 6));
+      expect(scheme.onPrimary, light.contrastingOn(scheme.primary));
+      expect(scheme.surface, light.surface);
+      expect(scheme.onSurface, light.text);
+      expect(scheme.outline, light.border);
+      expect(scheme.outlineVariant, light.borderMuted);
+      expect(scheme.shadow, light.shadow);
+      expect(scheme.scrim, light.scrim);
+    });
+
+    test('error is the red ramp, because components already treat it so', () {
+      // plinth_components hardcodes shaded('red', …) in 12 places for
+      // destructive state, so red is the error ramp whether or not
+      // anyone declared it.
+      expect(light.toColorScheme().error, light.shaded('red', 6));
+    });
+
+    test('brightness carries through', () {
+      expect(light.toColorScheme().brightness, Brightness.light);
+      expect(dark.toColorScheme().brightness, Brightness.dark);
+      expect(dark.toColorScheme().surface, dark.surface);
+    });
+
+    test('it reports the disagreement the migration actually hit', () {
+      // The app wrote ColorScheme.fromSeed(seedColor: seed) beside a
+      // PlinthTheme and had no way to know the two reds differed.
+      final handWritten = ColorScheme.fromSeed(
+        seedColor: const Color(0xFF2E7D32), // Material Green 800
+      );
+      final found = light.colorSchemeDisagreements(handWritten);
+
+      expect(found, isNotEmpty);
+      final fields = found.map((d) => d.field).toSet();
+      expect(fields, contains('primary'));
+      expect(fields, contains('error'));
+
+      final error = found.firstWhere((d) => d.field == 'error');
+      expect(error.plinth, light.shaded('red', 6));
+      expect(error.material, handWritten.error);
+      expect(error.plinth, isNot(error.material));
+    });
+
+    test('a disagreement reads as something you can act on', () {
+      final found = light.colorSchemeDisagreements(
+        ColorScheme.fromSeed(seedColor: const Color(0xFF2E7D32)),
+      );
+      expect(
+          found.first.toString(),
+          matches(r'^\w+: plinth #[0-9A-F]{6} '
+              r'vs material #[0-9A-F]{6}$'));
+    });
+
+    test('only owned fields are checked', () {
+      // Disagreeing about a field Plinth has no opinion on is not a
+      // disagreement, and reporting it would train people to ignore the
+      // list.
+      final scheme = light.toColorScheme();
+      final tweaked = scheme.copyWith(
+        secondary: const Color(0xFF00FF00),
+        tertiary: const Color(0xFFFF00FF),
+        primaryContainer: const Color(0xFF123456),
+        inversePrimary: const Color(0xFF654321),
+      );
+      expect(light.colorSchemeDisagreements(tweaked), isEmpty);
+
+      // But a field it does own is caught.
+      expect(
+        light.colorSchemeDisagreements(
+            scheme.copyWith(outline: const Color(0xFF010203))),
+        hasLength(1),
+      );
+    });
+
+    test('toTextTheme applies the scale where the scale reaches', () {
+      final t = light.toTextTheme();
+      expect(t.bodySmall!.fontSize, light.fontSizes[PlinthSize.xs]);
+      expect(t.bodyMedium!.fontSize, light.fontSizes[PlinthSize.sm]);
+      expect(t.bodyLarge!.fontSize, light.fontSizes[PlinthSize.md]);
+      expect(t.titleLarge!.fontSize, light.fontSizes[PlinthSize.xl]);
+    });
+
+    test('toTextTheme leaves display and headline alone', () {
+      // fontSizes runs 12 to 20, so it cannot answer what a display
+      // size is without inventing one.
+      final base = Typography.material2021().black;
+      final t = light.toTextTheme(base: base);
+      expect(t.displayLarge!.fontSize, base.displayLarge!.fontSize);
+      expect(t.headlineMedium!.fontSize, base.headlineMedium!.fontSize);
+    });
+
+    test('toTextTheme respects a supplied base', () {
+      final base = Typography.material2021()
+          .black
+          .apply(fontFamily: 'Rubik', bodyColor: const Color(0xFF112233));
+      final t = light.toTextTheme(base: base);
+      expect(t.bodyLarge!.fontFamily, 'Rubik');
+      expect(t.bodyLarge!.color, const Color(0xFF112233));
+      expect(t.bodyLarge!.fontSize, light.fontSizes[PlinthSize.md]);
+    });
+
+    test('a retuned scale flows through', () {
+      final custom = light.copyWith(fontSizes: {
+        ...light.fontSizes,
+        PlinthSize.md: 17,
+      });
+      expect(custom.toTextTheme().bodyLarge!.fontSize, 17);
+    });
+  });
+
   group('PR-04 — a categorical series palette', () {
     // 36 of the app's 91 hardcoded colours were chart series, and they
     // were the hardest 36 to migrate. The property they needed was not
