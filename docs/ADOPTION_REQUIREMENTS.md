@@ -25,23 +25,27 @@ the two can be cited against each other.
 
 ## Status
 
-Eight landed: five on 18 Aug 2026, then PR-01, PR-03 and PR-16 on
-19 Aug.
+Nine landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16 and PR-04
+on 19 Aug.
 
 **The 18 Aug five were behaviour-preserving.** Verified by re-running
 the subject app's own harness against the changed packages: 225/225 app
 tests, 48 core tests, 643 component tests, and the T4 palette snapshot
 **unchanged**.
 
-**The 19 Aug three are not, and the palette snapshot no longer holds.**
-PR-03 anchors the ramp generator, which moves every interior shade of
-all 13 built-in ramps — that is the point of PR-16, since the ramps had
-never actually matched the Mantine values they are seeded with. Shades 0
-and 9 are unmoved (both endpoints are held), so washes and the darkest
-shades render as before; shades 1–8 shift, most visibly on `red` and
-`violet`.
+**Of the 19 Aug four, three are not, and the palette snapshot no longer
+holds.** PR-03 anchors the ramp generator, which moves every interior
+shade of all 13 built-in ramps — that is the point of PR-16, since the
+ramps had never actually matched the Mantine values they are seeded
+with. Shades 0 and 9 are unmoved (both endpoints are held), so washes
+and the darkest shades render as before; shades 1–8 shift, most visibly
+on `red` and `violet`.
 
-Current: 80 core tests, 643 component tests, `dart analyze` and
+**PR-01 and PR-04 are the additive pair.** Both add a map that defaults
+to empty or a sequence nothing reads unless asked, so neither moves a
+pixel on its own.
+
+Current: 91 core tests, 643 component tests, `dart analyze` and
 `dart format` clean. One component test changed — `PlinthText`'s
 "resolves a color key at shade 6" asserted `color('red', 6)` and passed
 only because the un-anchored generator over-darkened the ramp; the
@@ -88,7 +92,7 @@ rather than fixed here.
 | [PR-01](#pr-01--a-semantic-token-tier) | A semantic token tier | core | **Blocker** | **Done** |
 | [PR-02](#pr-02--publish-the-ramp-generator) | Publish the ramp generator | core | **Blocker** | **Done** |
 | [PR-03](#pr-03--anchor-a-supplied-brand-colour) | Anchor a supplied brand colour | core | **High** | **Done** |
-| [PR-04](#pr-04--a-categorical-series-palette) | A categorical series palette | core | **High** | Open |
+| [PR-04](#pr-04--a-categorical-series-palette) | A categorical series palette | core | **High** | **Done** |
 | [PR-05](#pr-05--a-wash-role-that-survives-dark-mode) | A `wash` role that survives dark mode | core | **High** | **Done** |
 | [PR-06](#pr-06--readableons-default-floor-is-wrong) | `readableOn`'s default floor is wrong | core | **High** | **Done** |
 | [PR-07](#pr-07--a-spacing-scale-for-dense-ui) | A spacing scale for dense UI | core | **High** | **Done** |
@@ -102,6 +106,7 @@ rather than fixed here.
 | [PR-15](#pr-15--a-migration-guide-for-the-const-and-context-tax) | A migration guide for the `const`/context tax | docs | **Medium** | Open |
 | [PR-16](#pr-16--the-built-in-palette-is-not-mantines) | The built-in palette is not Mantine's | core | **High** | **Done** |
 | [PR-17](#pr-17--decide-the-contrast-floor-for-headings-on-tinted-surfaces) | Contrast floor for headings on tinted surfaces | components | **Medium** | Open |
+| [PR-18](#pr-18--the-series-palette-is-unverified-for-colour-vision-deficiency) | Series palette unverified for colour-vision deficiency | core | **Medium** | Open |
 
 ---
 
@@ -260,6 +265,40 @@ the widget layer looks up, not a `Color` the engine picks.
 
 *Priority.* **High**, and the largest single category of hardcoding
 that survived the migration.
+
+> **Done.** `seriesRamps` (an ordered list of ramp keys) and
+> `seriesKeys` (domain key → position), read through `series(i)`,
+> `seriesFor(key)` and `seriesIndexFor(key)`.
+>
+> **The default sequence was chosen by measurement, not taste.** Of the
+> twelve non-neutral ramps, `kDefaultSeriesRamps` is the ten-subset with
+> the largest minimum pairwise CIE76 ΔE — **30.5** — ordered so the
+> minimum ΔE between neighbours is as large as it can be, **112.7**.
+> Neighbours are scored separately because adjacent series are the ones
+> a reader actually compares. `violet` and `green` are dropped: violet
+> collides with `grape`, green with `teal` and `lime`. `gray` is
+> excluded because a neutral among the series makes one look disabled.
+> Both numbers are asserted in the test rather than only claimed here,
+> so reordering the list fails if the palette gets worse.
+>
+> **The name-not-colour constraint is honoured.** `seriesFor(String)` is
+> the API, so a pure-Dart engine layer emits `'crypto'` and the widget
+> layer resolves it — nothing has to import a theme to pick a colour.
+>
+> Two limits, both deliberate and both tested:
+>
+> - **The hash is a floor, not a solution.** An unregistered key
+>   resolves deterministically (explicit FNV-1a, not `hashCode`, which
+>   Dart does not promise to keep stable across runs) so a chart does
+>   not reshuffle on restart. But ten positions and an unbounded key
+>   space collide by pigeonhole, and not hypothetically: **`'groceries'`
+>   and `'transport'` both land on 0.** Any set of categories shown
+>   together must be registered.
+> - **Not verified for colour-vision deficiency.** The separation is
+>   measured in ordinary trichromatic vision; nothing simulates
+>   deuteranopia, and `red` beside `orange` and `yellow` is exactly
+>   where that would show. Filed as
+>   [PR-18](#pr-18--the-series-palette-is-unverified-for-colour-vision-deficiency).
 
 ### PR-05 — A `wash` role that survives dark mode
 
@@ -531,6 +570,37 @@ the code does not honour.
 > **Done.** All 13 ramps now return their Mantine seed at shade 6
 > exactly, pinned per-ramp in `plinth_adoption_test.dart` with a guard
 > asserting the ramp list itself is fully covered.
+
+### PR-18 — The series palette is unverified for colour-vision deficiency
+
+**`kDefaultSeriesRamps` guarantees separation in trichromatic vision
+only.**
+
+*Evidence.* Raised by building
+[PR-04](#pr-04--a-categorical-series-palette), and recorded rather than
+quietly shipped. The ten-ramp sequence is optimised for minimum
+pairwise CIE76 ΔE, computed in sRGB with no CVD simulation. Its warm
+run — `red`, `yellow`, `orange` — is precisely the cluster that
+collapses under deuteranopia and protanopia, which together affect
+roughly 8% of men.
+
+A categorical palette whose entire purpose is "these are tellable
+apart" that is not tellable apart for 1 in 12 male readers is failing
+at its one job, for those readers.
+
+*Shape.* Simulate the common deficiencies (Brettel or Viénot is enough
+— this does not need to be perfect to be useful), re-score the subset
+and ordering under each, and either find a sequence that holds up
+across all of them or ship a second named sequence and say plainly
+which is which. **The scoring harness from PR-04 already exists;** what
+is missing is the simulation step in front of it.
+
+Worth settling as part of it: whether the default should be the
+CVD-safe sequence outright. Optimising for the 92% by default is a
+choice, not a neutral starting point.
+
+*Priority.* **Medium.** Nothing is broken for most readers, and the
+escape hatch exists — an app can pass its own `seriesRamps` today.
 
 ### PR-17 — Decide the contrast floor for headings on tinted surfaces
 

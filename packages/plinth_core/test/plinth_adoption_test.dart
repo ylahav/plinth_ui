@@ -14,6 +14,30 @@ double _luminance(Color c) {
   return 0.2126 * ch(c.r) + 0.7152 * ch(c.g) + 0.0722 * ch(c.b);
 }
 
+/// CIE76 ΔE — perceptual distance, which is the thing a categorical
+/// palette has to guarantee. Contrast ratio cannot answer it: two
+/// colours can sit at the same luminance and be entirely different
+/// colours, which is exactly the case a chart legend cares about.
+List<double> _lab(Color c) {
+  double inv(double v) =>
+      v <= 0.04045 ? v / 12.92 : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
+  final r = inv(c.r), g = inv(c.g), b = inv(c.b);
+  final x = (0.4124 * r + 0.3576 * g + 0.1805 * b) / 0.95047;
+  final y = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  final z = (0.0193 * r + 0.1192 * g + 0.9505 * b) / 1.08883;
+  double f(double t) =>
+      t > 0.008856 ? math.pow(t, 1 / 3).toDouble() : 7.787 * t + 16 / 116;
+  final fx = f(x), fy = f(y), fz = f(z);
+  return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
+}
+
+double _deltaE(Color a, Color b) {
+  final p = _lab(a), q = _lab(b);
+  return math.sqrt(math.pow(p[0] - q[0], 2) +
+      math.pow(p[1] - q[1], 2) +
+      math.pow(p[2] - q[2], 2));
+}
+
 double ratio(Color a, Color b) {
   final x = _luminance(a), y = _luminance(b);
   final hi = x > y ? x : y, lo = x > y ? y : x;
@@ -39,6 +63,113 @@ void main() {
         PlinthTheme.generateShades(const Color(0xFF228BE6)),
         equals(light.colors['blue']),
       );
+    });
+  });
+
+  group('PR-04 — a categorical series palette', () {
+    // 36 of the app's 91 hardcoded colours were chart series, and they
+    // were the hardest 36 to migrate. The property they needed was not
+    // brand or status: adjacent slices must be tellable apart.
+
+    test('the separation guarantee holds, and is what is documented', () {
+      // The claim in kDefaultSeriesRamps' doc, asserted rather than
+      // asserted-in-prose. If someone reorders the list or swaps a
+      // ramp, this is what says the palette got worse.
+      final colors = [
+        for (var i = 0; i < kDefaultSeriesRamps.length; i++) light.series(i)
+      ];
+
+      var minPair = double.infinity;
+      var minAdjacent = double.infinity;
+      for (var i = 0; i < colors.length; i++) {
+        for (var j = i + 1; j < colors.length; j++) {
+          final d = _deltaE(colors[i], colors[j]);
+          if (d < minPair) minPair = d;
+          if (j == i + 1 && d < minAdjacent) minAdjacent = d;
+        }
+      }
+      expect(minPair, greaterThan(30.0), reason: 'worst pair, CIE76 ΔE');
+      expect(minAdjacent, greaterThan(110.0), reason: 'closest neighbours');
+    });
+
+    test('gray is not in the sequence', () {
+      // A neutral among the series makes one look disabled.
+      expect(kDefaultSeriesRamps, isNot(contains('gray')));
+    });
+
+    test('series wraps rather than throwing past the end', () {
+      final n = kDefaultSeriesRamps.length;
+      expect(light.series(n), equals(light.series(0)));
+      expect(light.series(n * 3 + 2), equals(light.series(2)));
+    });
+
+    test('a registered key gets its pinned colour', () {
+      final t = light.copyWith(seriesKeys: const {'groceries': 3});
+      expect(t.hasSeriesKey('groceries'), isTrue);
+      expect(t.seriesIndexFor('groceries'), 3);
+      expect(t.seriesFor('groceries'), equals(t.series(3)));
+    });
+
+    test('an unregistered key still resolves, and stays put', () {
+      // The failure this prevents: a chart whose colours reshuffle on
+      // restart. Values are pinned, not just compared to themselves,
+      // so a change to the hash shows up here.
+      expect(light.hasSeriesKey('crypto'), isFalse);
+      expect(light.seriesIndexFor('crypto'), 2);
+      expect(light.seriesIndexFor('il'), 8);
+      expect(light.seriesIndexFor('emerging'), 3);
+      expect(light.seriesIndexFor('gold'), 5);
+      expect(light.seriesIndexFor('us'), 9);
+      expect(light.seriesIndexFor(''), 1);
+    });
+
+    test('two keys can collide, which is why registration exists', () {
+      // Recorded rather than hidden: the hash spreads keys, it does not
+      // separate them. 'transport' and 'groceries' both land on 0, and
+      // an app charting both must pin at least one.
+      expect(light.seriesIndexFor('transport'), 0);
+      expect(light.seriesIndexFor('groceries'), 0);
+      expect(
+          light.seriesFor('transport'), equals(light.seriesFor('groceries')));
+
+      final pinned = light.copyWith(seriesKeys: const {'groceries': 4});
+      expect(pinned.seriesFor('transport'),
+          isNot(equals(pinned.seriesFor('groceries'))));
+    });
+
+    test('registration overrides the hash for that key only', () {
+      final t = light.copyWith(seriesKeys: const {'crypto': 0});
+      expect(t.seriesIndexFor('crypto'), 0);
+      expect(t.seriesIndexFor('il'), light.seriesIndexFor('il'));
+    });
+
+    test('a name survives the layer boundary the engine cannot cross', () {
+      // The constraint PR-04 records: the engine layer is pure Dart and
+      // must not import a theme, so what crosses is a key.
+      const fromPureDartEngine = 'transport';
+      expect(
+          light.seriesFor(fromPureDartEngine),
+          equals(dark
+              .copyWith(brightness: Brightness.light)
+              .series(light.seriesIndexFor(fromPureDartEngine))));
+    });
+
+    test('series follows the theme into dark', () {
+      // shaded() mirrors, so a series colour is the dark-theme member of
+      // the same ramp rather than the identical pixel.
+      expect(dark.series(0), equals(dark.shaded(kDefaultSeriesRamps[0], 6)));
+      expect(dark.series(0), isNot(equals(light.series(0))));
+    });
+
+    test('an empty sequence degrades instead of crashing', () {
+      final t = light.copyWith(seriesRamps: const []);
+      expect(t.series(0), equals(t.shaded(t.primaryColor, 6)));
+      expect(t.seriesIndexFor('anything'), 0);
+    });
+
+    test('copyWith round-trips both fields', () {
+      expect(light.copyWith().seriesRamps, same(light.seriesRamps));
+      expect(light.copyWith().seriesKeys, same(light.seriesKeys));
     });
   });
 

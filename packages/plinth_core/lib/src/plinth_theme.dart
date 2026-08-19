@@ -134,6 +134,40 @@ enum PlinthContrast {
   final double ratio;
 }
 
+/// The default categorical sequence, as keys into [PlinthTheme.colors].
+///
+/// Ten ramps, chosen and ordered by measurement rather than by taste.
+/// Of the twelve non-neutral ramps, this is the ten-subset with the
+/// largest **minimum pairwise CIE76 ΔE** (30.5), ordered so the
+/// **minimum ΔE between neighbours** is as large as it can be (112.7).
+/// `violet` and `green` are the two left out: violet collides with
+/// `grape`, green with `teal` and `lime`.
+///
+/// Neighbours matter separately from the worst pair because adjacent
+/// series are the ones a reader compares — touching pie slices, stacked
+/// bars, consecutive legend rows.
+///
+/// `gray` is excluded on purpose. A categorical palette that includes
+/// the neutral makes one series look disabled.
+///
+/// **Not verified for colour-vision deficiency.** The separation above
+/// is measured in ordinary trichromatic vision; nothing here simulates
+/// deuteranopia or protanopia, and `red` next to `orange` and `yellow`
+/// is exactly where that would show. Pass your own
+/// [PlinthTheme.seriesRamps] if you need a CVD-safe sequence.
+const List<String> kDefaultSeriesRamps = [
+  'red',
+  'indigo',
+  'teal',
+  'pink',
+  'lime',
+  'grape',
+  'yellow',
+  'blue',
+  'orange',
+  'cyan',
+];
+
 /// A colour named by the role it plays, rather than by its hue.
 ///
 /// An app does not think in "red shade 6"; it thinks in *expense*,
@@ -217,6 +251,8 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     required this.colors,
     required this.primaryColor,
     this.semanticColors = const {},
+    this.seriesRamps = kDefaultSeriesRamps,
+    this.seriesKeys = const {},
     this.spacing = kDefaultSpacing,
     this.radius = kDefaultRadius,
     this.fontSizes = kDefaultFontSizes,
@@ -239,6 +275,24 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// Named color palettes (e.g. 'blue', 'red', 'gray'), each with a
   /// 10-shade ramp from lightest (0) to darkest (9), mirroring Mantine.
   final Map<String, PlinthColorShades> colors;
+
+  /// The ordered categorical palette, as keys into [colors].
+  ///
+  /// Chart series, legend swatches, tag colours — anywhere the only
+  /// thing that matters is that the *n*th thing is tellable apart from
+  /// the others. That is neither a brand ramp nor a status colour, and
+  /// thirteen named ramps answer a different question.
+  ///
+  /// Read through [series] and [seriesFor] rather than directly.
+  final List<String> seriesRamps;
+
+  /// Domain keys pinned to a position in [seriesRamps] — `'groceries'`
+  /// to 0, `'transport'` to 1.
+  ///
+  /// Registering a key fixes its colour. An unregistered key still
+  /// resolves, deterministically, so a chart never has to invent one;
+  /// see [seriesIndexFor].
+  final Map<String, int> seriesKeys;
 
   /// Colours the *app* names by role — `expense`, `income`, `brand` —
   /// each resolving to a ramp in [colors] plus a shade.
@@ -514,6 +568,63 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   Color semanticWash(String name, {double alpha = 0.08}) =>
       wash(roleFor(name).ramp, alpha: alpha);
 
+  /// The *n*th categorical colour, wrapping past the end of
+  /// [seriesRamps].
+  ///
+  /// Wraps rather than throwing or fading, because a chart with more
+  /// series than the palette has colours still has to render. Past the
+  /// tenth series a repeat is unavoidable and a legend is doing the
+  /// work regardless — see [kDefaultSeriesRamps] for the separation
+  /// this can actually promise.
+  Color series(int index) {
+    if (seriesRamps.isEmpty) return shaded(primaryColor, 6);
+    return shaded(seriesRamps[index % seriesRamps.length], 6);
+  }
+
+  /// The categorical colour for a domain key — `'groceries'`,
+  /// `'emerging'`, `'crypto'`.
+  ///
+  /// **The unit here is a name, not a [Color], and that is the point.**
+  /// The layer that knows a slice is `'crypto'` is usually pure Dart
+  /// with no [BuildContext] and no business importing a theme; the
+  /// layer that paints it has both. A name passes across that boundary,
+  /// a colour cannot without dragging the theme along with it.
+  Color seriesFor(String key) => series(seriesIndexFor(key));
+
+  /// The position [seriesFor] resolves [key] to.
+  ///
+  /// A key registered in [seriesKeys] gets its pinned position.
+  /// Anything else is hashed — deterministically, and with an explicit
+  /// FNV-1a rather than [Object.hashCode], which Dart does not promise
+  /// to keep stable between runs. An unregistered key therefore keeps
+  /// the same colour across restarts and platforms, which is the
+  /// difference between a chart that looks broken after a reload and
+  /// one that does not.
+  ///
+  /// It does **not** promise two different keys get different colours,
+  /// and this is not a theoretical caveat: `'groceries'` and
+  /// `'transport'` — two categories from the app this API was built
+  /// for — both land on 0. Ten positions and an unbounded key space
+  /// collide by the pigeonhole principle long before the hash is at
+  /// fault.
+  ///
+  /// So the hash is a floor, not a solution: it stops an unregistered
+  /// key from being colourless or random. **Any set of categories shown
+  /// together should be registered in [seriesKeys].**
+  int seriesIndexFor(String key) {
+    final pinned = seriesKeys[key];
+    if (pinned != null) return pinned;
+    if (seriesRamps.isEmpty) return 0;
+    var hash = 0x811c9dc5;
+    for (final unit in key.codeUnits) {
+      hash = ((hash ^ unit) * 0x01000193) & 0xFFFFFFFF;
+    }
+    return hash % seriesRamps.length;
+  }
+
+  /// Whether [seriesKeys] pins [key] to a position.
+  bool hasSeriesKey(String key) => seriesKeys.containsKey(key);
+
   /// The default palette: Mantine's standard color set, each generated
   /// from its base (shade 6) value.
   ///
@@ -680,6 +791,8 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     Map<String, PlinthColorShades>? colors,
     String? primaryColor,
     Map<String, PlinthSemanticColor>? semanticColors,
+    List<String>? seriesRamps,
+    Map<String, int>? seriesKeys,
     Map<PlinthSize, double>? spacing,
     Map<PlinthSize, double>? radius,
     Map<PlinthSize, double>? fontSizes,
@@ -702,6 +815,8 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
       colors: colors ?? this.colors,
       primaryColor: primaryColor ?? this.primaryColor,
       semanticColors: semanticColors ?? this.semanticColors,
+      seriesRamps: seriesRamps ?? this.seriesRamps,
+      seriesKeys: seriesKeys ?? this.seriesKeys,
       spacing: spacing ?? this.spacing,
       radius: radius ?? this.radius,
       fontSizes: fontSizes ?? this.fontSizes,

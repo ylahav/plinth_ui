@@ -11,6 +11,48 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## Unreleased
+
+### Added
+
+- **A categorical series palette** — ask for the *n*th distinguishable
+  colour. (PR-04, the largest single category of hardcoding that
+  survived the migration: **36 of the app's 91 colours were chart
+  series**)
+
+  ```dart
+  theme.series(0);              // the first series colour
+  theme.seriesFor('groceries'); // by domain key
+  ```
+
+  Neither a brand ramp nor a status colour. The property is separation,
+  and the default sequence is picked to maximise it rather than chosen
+  by eye: of the twelve non-neutral ramps, `kDefaultSeriesRamps` is the
+  ten-subset with the largest **minimum pairwise CIE76 ΔE (30.5)**,
+  ordered so the **minimum ΔE between neighbours (112.7)** is as large
+  as it can be. Neighbours score separately because adjacent series are
+  the ones a reader compares. `violet` and `green` are dropped — violet
+  collides with `grape`, green with `teal` and `lime` — and `gray` is
+  excluded because a neutral among the series makes one look disabled.
+
+  **`seriesFor` takes a name, not a `Color`, and that is the point.**
+  The layer that knows a slice is `'crypto'` is usually pure Dart with
+  no `BuildContext`; the layer that paints it has one. A name crosses
+  that boundary, a colour cannot without dragging the theme with it.
+
+  Register domain keys with `seriesKeys` to pin them. Unregistered keys
+  still resolve, deterministically — an explicit FNV-1a rather than
+  `hashCode`, which Dart does not promise to keep stable across runs —
+  so a chart does not reshuffle its colours on restart. **The hash is a
+  floor, not a solution:** ten positions and an unbounded key space
+  collide, and `'groceries'` and `'transport'` both land on 0. Register
+  anything shown together.
+
+  **Not verified for colour-vision deficiency.** The separation is
+  measured in ordinary trichromatic vision, and the warm run — red,
+  yellow, orange — is exactly where deuteranopia would show. Pass your
+  own `seriesRamps` if you need a CVD-safe sequence.
+
 ## 1.0.0-beta.2
 
 **A second beta rather than 1.0.0, deliberately.** Everything below is
