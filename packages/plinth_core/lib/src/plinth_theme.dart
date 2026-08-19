@@ -13,6 +13,58 @@ const Map<PlinthSize, double> kDefaultSpacing = {
   PlinthSize.xl: 32,
 };
 
+/// The base spacing unit. Every step on the spacing scale, and every
+/// ad-hoc gap a caller needs, should be a whole multiple of this.
+///
+/// Four rather than five or ten because that is what the values already
+/// in use round to. `plinth_components` writes
+/// `theme.spacing[PlinthSize.xs]! * 0.4` in 38 places and `* 0.8` in 8
+/// more — with `xs` at 10 those are 4px and 8px, i.e. the library has
+/// been reconstructing a sub-`xs` scale out of fractions because the
+/// scale does not reach down that far. 80 of its 87 spacing multipliers
+/// resolve to something below 10.
+///
+/// See [PlinthTheme.space].
+const double kSpaceUnit = 4;
+
+/// The spacing scale as compile-time constants.
+///
+/// [PlinthTheme.space] and [PlinthTheme.spacing] both need a theme, so
+/// both cost a `BuildContext` and force a widget out of `const`. That is
+/// the right trade for colour, which genuinely varies by theme — and the
+/// wrong one for spacing, which does not. Applying a token layer to one
+/// real app meant touching 355 spacing literals; routing them through a
+/// theme lookup would have traded 355 `const` widgets for 355 runtime
+/// ones and bought nothing.
+///
+/// ```dart
+/// const SizedBox(height: PlinthSpacing.xs)          // still const
+/// const EdgeInsets.all(PlinthSpacing.md)
+/// ```
+///
+/// Use [PlinthTheme.space] only where the multiple is computed at
+/// runtime, and [PlinthTheme.spacing] only where a caller passed a
+/// [PlinthSize] you have to honour.
+abstract final class PlinthSpacing {
+  /// 4 — the base unit. Icon-to-label, chip padding, hairline gaps.
+  static const double xxs = kSpaceUnit;
+
+  /// 8 — the workhorse. Gaps inside a row or a form field.
+  static const double xs = kSpaceUnit * 2;
+
+  /// 12 — between related blocks.
+  static const double sm = kSpaceUnit * 3;
+
+  /// 16 — card padding, between sections.
+  static const double md = kSpaceUnit * 4;
+
+  /// 24 — between major regions.
+  static const double lg = kSpaceUnit * 6;
+
+  /// 32 — page gutters.
+  static const double xl = kSpaceUnit * 8;
+}
+
 /// Default corner radius scale (in logical pixels).
 const Map<PlinthSize, double> kDefaultRadius = {
   PlinthSize.xs: 2,
@@ -59,6 +111,92 @@ const Color kDarkText = Color(0xFFC1C2C5);
 const Color kDarkTextMuted = Color(0xFF909296);
 const Color kDarkTextDisabled = Color(0xFF5C5F66);
 
+/// The contrast floor a colour has to clear, by what it is being used
+/// for. WCAG 2.x gives three, and picking between them is a decision
+/// about the content — not something a caller should have to remember
+/// as a bare number.
+enum PlinthContrast {
+  /// Normal body text: anything under ~18pt regular / ~14pt bold.
+  /// The default, because most text is this and getting it wrong is
+  /// invisible.
+  body(4.5),
+
+  /// Large text — headings at or above ~18pt regular / ~14pt bold.
+  large(3.0),
+
+  /// Non-text UI that carries meaning on its own: icons, chart marks,
+  /// borders, focus rings (WCAG 1.4.11).
+  nonText(3.0);
+
+  const PlinthContrast(this.ratio);
+
+  /// The minimum WCAG contrast ratio for this use.
+  final double ratio;
+}
+
+/// A colour named by the role it plays, rather than by its hue.
+///
+/// An app does not think in "red shade 6"; it thinks in *expense*,
+/// *income*, *pension*. Migrating one real app onto these packages cost
+/// 110 lines of hand-written `app_tokens.dart` — ramp anchors, semantic
+/// getters and resolvers — which is a design-token layer sitting on top
+/// of a design-token package.
+///
+/// That layer worked only because [PlinthTheme.colors] accepts
+/// arbitrary string keys, so role names could be smuggled in as ramps.
+/// **That was an accident, not an API:** nothing documented it, nothing
+/// validated it, and it collided with the ramp names
+/// `plinth_components` hardcodes for itself (`red` is already the
+/// destructive/error ramp — an app repurposing it silently restyles
+/// every component error state).
+///
+/// Declaring roles here instead keeps the two namespaces apart: an app
+/// owns [PlinthTheme.semanticColors], the component library owns
+/// [PlinthTheme.colors].
+///
+/// ```dart
+/// PlinthTheme.defaultTheme.copyWith(
+///   colors: {
+///     ...PlinthTheme.defaultTheme.colors,
+///     'expenseRamp': PlinthTheme.generateShades(const Color(0xFFFF3B30)),
+///   },
+///   semanticColors: {'expense': const PlinthSemanticColor('expenseRamp')},
+/// );
+/// ```
+@immutable
+class PlinthSemanticColor {
+  const PlinthSemanticColor(
+    this.ramp, {
+    this.shade = 6,
+    this.level = PlinthContrast.body,
+  });
+
+  /// The key into [PlinthTheme.colors] this role resolves against.
+  final String ramp;
+
+  /// The role-shade for the fill. 6 to match what components default
+  /// to, and what [PlinthTheme.generateShades] treats as the base.
+  final int shade;
+
+  /// The contrast floor [PlinthTheme.semanticText] has to clear.
+  ///
+  /// Per-role because the floor is a fact about the content, not about
+  /// the colour: a role only ever used for a heading can honestly sit
+  /// at [PlinthContrast.large], and one used in a table cell cannot.
+  final PlinthContrast level;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PlinthSemanticColor &&
+          other.ramp == ramp &&
+          other.shade == shade &&
+          other.level == level;
+
+  @override
+  int get hashCode => Object.hash(ramp, shade, level);
+}
+
 /// The design-token layer for Plinth. Every Plinth widget reads its
 /// colors, spacing, radius, and font sizes from an instance of this
 /// class rather than hardcoding values, so a single theme swap
@@ -78,6 +216,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   const PlinthTheme({
     required this.colors,
     required this.primaryColor,
+    this.semanticColors = const {},
     this.spacing = kDefaultSpacing,
     this.radius = kDefaultRadius,
     this.fontSizes = kDefaultFontSizes,
@@ -100,6 +239,16 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// Named color palettes (e.g. 'blue', 'red', 'gray'), each with a
   /// 10-shade ramp from lightest (0) to darkest (9), mirroring Mantine.
   final Map<String, PlinthColorShades> colors;
+
+  /// Colours the *app* names by role — `expense`, `income`, `brand` —
+  /// each resolving to a ramp in [colors] plus a shade.
+  ///
+  /// Empty by default: `plinth_components` declares no roles, so this
+  /// map belongs entirely to the consuming app and cannot collide with
+  /// the ramp names the library hardcodes for itself. See
+  /// [PlinthSemanticColor], and [semantic] / [semanticText] /
+  /// [semanticWash] for the three roles a real app actually read.
+  final Map<String, PlinthSemanticColor> semanticColors;
 
   /// The key into [colors] used by components when no explicit
   /// `color` prop is given.
@@ -166,6 +315,26 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// Base color for the barrier behind a modal or drawer.
   final Color scrim;
 
+  /// A gap of [steps] base units, in logical pixels.
+  ///
+  /// The named scale ([spacing]) answers "how big is a medium gap".
+  /// This answers "how big is *this* gap", which is the question a
+  /// layout actually asks and the one the named scale keeps failing:
+  /// its smallest step is `xs: 10`, above the values both this library
+  /// and its adopters reach for most. Measured on one real app, 355
+  /// spacing literals produced zero uses of [spacing], because its two
+  /// commonest values — 8 (128 uses) and 4 (29) — are not on the scale
+  /// at all.
+  ///
+  /// ```dart
+  /// SizedBox(height: theme.space(2))   // 8
+  /// EdgeInsets.all(theme.space(4))     // 16
+  /// ```
+  ///
+  /// Half steps are allowed (`space(1.5)` is 6) but are a smell: if a
+  /// layout needs many of them, the base unit is wrong for it.
+  double space(double steps) => kSpaceUnit * steps;
+
   /// Resolves a color name + shade index to a concrete [Color].
   /// Falls back to [primaryColor] if the name isn't found.
   Color color(String name, int shade) {
@@ -208,22 +377,46 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// it wherever a palette colour is *text or an icon*; [shaded] is
   /// right for fills, which carry their own foreground via
   /// [contrastingOn].
+  /// [level] names the floor by what the colour is for; [minRatio]
+  /// overrides it with an explicit number when nothing fits.
+  ///
+  /// The default is [PlinthContrast.body] (4.5:1). It used to be 3.0,
+  /// which is WCAG's *large text* threshold — a value that is correct
+  /// for a heading and wrong for the table cell most callers are
+  /// actually painting. Adopting this against a real app moved six of
+  /// its seven text tokens from "large text only" up to AA.
   Color readableOn(
     String name,
     Color background, {
     int from = 6,
-    double minRatio = 3.0,
+    PlinthContrast level = PlinthContrast.body,
+    double? minRatio,
   }) {
+    final target = minRatio ?? level.ratio;
     final start = shadeFor(from);
     // Darken against a light background, lighten against a dark one.
     final step = _luminance(background) > 0.5 ? 1 : -1;
 
     for (var shade = start; shade >= 0 && shade <= 9; shade += step) {
       final candidate = color(name, shade);
-      if (_contrastRatio(candidate, background) >= minRatio) return candidate;
+      if (_contrastRatio(candidate, background) >= target) return candidate;
     }
     return color(name, step > 0 ? 9 : 0);
   }
+
+  /// A barely-there tint of [name], for the background of a status
+  /// panel, a highlighted row, a callout.
+  ///
+  /// Deliberately *not* `shaded(name, 0)`. [shadeFor] mirrors 0 to 9 in
+  /// a dark theme, which is right for a foreground — a shade's role
+  /// survives the flip — but exactly wrong for a wash, whose role is
+  /// "almost the same as the surface". Mirrored, the lightest shade
+  /// becomes the most saturated one: `shaded('green', 0)` is `#F2F8F3`
+  /// in light and `#245B2E` in dark, a saturated green panel.
+  ///
+  /// Compositing over [surface] keeps the role in both themes.
+  Color wash(String name, {double alpha = 0.08}) =>
+      Color.alphaBlend(color(name, 6).withValues(alpha: alpha), surface);
 
   /// A foreground that stays legible on [background].
   ///
@@ -266,6 +459,61 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// picking a swatch to offer in a UI, say, rather than rendering one.
   bool hasColor(String name) => colors.containsKey(name);
 
+  /// Whether [semanticColors] declares a role under [name].
+  bool hasSemantic(String name) => semanticColors.containsKey(name);
+
+  /// The declaration behind a role name.
+  ///
+  /// An undeclared name resolves to `PlinthSemanticColor(name)` — the
+  /// role is treated as a ramp key. That keeps [semantic] working for
+  /// plain palette names, and keeps the pre-`semanticColors` pattern
+  /// of smuggling role names into [colors] rendering as it did. Use
+  /// [hasSemantic] where the difference matters; the fallback is
+  /// silent, exactly like [color]'s.
+  PlinthSemanticColor roleFor(String name) =>
+      semanticColors[name] ?? PlinthSemanticColor(name);
+
+  /// The fill for a role — the colour itself.
+  ///
+  /// One of the three roles a real app read. Migrating that app used
+  /// exactly a fill, a text variant and a wash per pole, and **reached
+  /// for nothing else: 7 of each ramp's 10 shades were never read.**
+  /// The ramp still backs all three because [semanticText] has to walk
+  /// it to find a shade that clears its floor.
+  Color semantic(String name) {
+    final role = roleFor(name);
+    return shaded(role.ramp, role.shade);
+  }
+
+  /// The role as *text or an icon*, dark or light enough to read on
+  /// [on] — [surface] when omitted.
+  ///
+  /// Not the same colour as [semantic]. A brand red that looks right as
+  /// a fill is routinely unreadable as a label: the subject app
+  /// hand-computed `#B26A00` from its own `#FF9500` for exactly this
+  /// reason, because `#FF9500` on white is 2.20:1. That hand-computed
+  /// darkening *is* this method, written before it existed.
+  ///
+  /// Expect this to drift from brand. Clearing 4.5:1 moved that app's
+  /// income pole `#34C759` → `#277F3E`. [PlinthSemanticColor.level]
+  /// names the floor the role is held to; nothing here can resolve the
+  /// brand-fidelity-versus-legibility conflict, only surface it.
+  Color semanticText(String name, {Color? on}) {
+    final role = roleFor(name);
+    return readableOn(
+      role.ramp,
+      on ?? surface,
+      from: role.shade,
+      level: role.level,
+    );
+  }
+
+  /// The role as a barely-there tint, for a status panel or a
+  /// highlighted row. See [wash] for why this composites rather than
+  /// taking the lightest shade.
+  Color semanticWash(String name, {double alpha = 0.08}) =>
+      wash(roleFor(name).ramp, alpha: alpha);
+
   /// The default palette: Mantine's standard color set, each generated
   /// from its base (shade 6) value.
   ///
@@ -276,19 +524,19 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   static final PlinthTheme defaultTheme = PlinthTheme(
     primaryColor: 'blue',
     colors: {
-      'gray': _generateShades(const Color(0xFF868E96)),
-      'red': _generateShades(const Color(0xFFFA5252)),
-      'pink': _generateShades(const Color(0xFFE64980)),
-      'grape': _generateShades(const Color(0xFFBE4BDB)),
-      'violet': _generateShades(const Color(0xFF7950F2)),
-      'indigo': _generateShades(const Color(0xFF4C6EF5)),
-      'blue': _generateShades(const Color(0xFF228BE6)),
-      'cyan': _generateShades(const Color(0xFF15AABF)),
-      'teal': _generateShades(const Color(0xFF12B886)),
-      'green': _generateShades(const Color(0xFF40C057)),
-      'lime': _generateShades(const Color(0xFF82C91E)),
-      'yellow': _generateShades(const Color(0xFFFAB005)),
-      'orange': _generateShades(const Color(0xFFFD7E14)),
+      'gray': generateShades(const Color(0xFF868E96)),
+      'red': generateShades(const Color(0xFFFA5252)),
+      'pink': generateShades(const Color(0xFFE64980)),
+      'grape': generateShades(const Color(0xFFBE4BDB)),
+      'violet': generateShades(const Color(0xFF7950F2)),
+      'indigo': generateShades(const Color(0xFF4C6EF5)),
+      'blue': generateShades(const Color(0xFF228BE6)),
+      'cyan': generateShades(const Color(0xFF15AABF)),
+      'teal': generateShades(const Color(0xFF12B886)),
+      'green': generateShades(const Color(0xFF40C057)),
+      'lime': generateShades(const Color(0xFF82C91E)),
+      'yellow': generateShades(const Color(0xFFFAB005)),
+      'orange': generateShades(const Color(0xFFFD7E14)),
     },
   );
 
@@ -346,7 +594,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// can't express. Doing this properly means per-hue drift tables —
   /// a different and much larger job than a curve tweak. Contrast is
   /// not the blocker: `plinth_contrast_test.dart` passed throughout.
-  static PlinthColorShades _generateShades(Color base) {
+  static PlinthColorShades generateShades(Color base) {
     final baseHsl = HSLColor.fromColor(base);
     final hue = baseHsl.hue;
 
@@ -396,6 +644,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   PlinthTheme copyWith({
     Map<String, PlinthColorShades>? colors,
     String? primaryColor,
+    Map<String, PlinthSemanticColor>? semanticColors,
     Map<PlinthSize, double>? spacing,
     Map<PlinthSize, double>? radius,
     Map<PlinthSize, double>? fontSizes,
@@ -417,6 +666,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     return PlinthTheme(
       colors: colors ?? this.colors,
       primaryColor: primaryColor ?? this.primaryColor,
+      semanticColors: semanticColors ?? this.semanticColors,
       spacing: spacing ?? this.spacing,
       radius: radius ?? this.radius,
       fontSizes: fontSizes ?? this.fontSizes,
@@ -449,6 +699,16 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
 
 /// Convenience accessor: `context.plinth`.
 extension PlinthThemeContext on BuildContext {
+  PlinthTheme get plinth => Theme.of(this).plinth;
+}
+
+/// The same lookup for code that already holds a [ThemeData].
+///
+/// A helper written the idiomatic Flutter way — `Widget _badge(ThemeData
+/// theme, …)` — has the theme and still could not reach the tokens,
+/// because `context.plinth` was the only accessor. It had to grow a
+/// [BuildContext] parameter, which then ripples to every call site.
+extension PlinthThemeData on ThemeData {
   PlinthTheme get plinth =>
-      Theme.of(this).extension<PlinthTheme>() ?? PlinthTheme.defaultTheme;
+      extension<PlinthTheme>() ?? PlinthTheme.defaultTheme;
 }

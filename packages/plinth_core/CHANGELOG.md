@@ -11,6 +11,127 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## Unreleased
+
+Everything here came from migrating one real app onto the packages and
+recording where it had to work around them — see
+[ADOPTION_REQUIREMENTS.md](../../docs/ADOPTION_REQUIREMENTS.md), which
+numbers each gap, and
+[APP_VALIDATION_PLAN.md](../../docs/APP_VALIDATION_PLAN.md) for how the
+evidence was gathered.
+
+### Breaking
+
+- **`readableOn` now defaults to a body-text contrast floor (4.5:1)
+  instead of 3.0:1.** (PR-06) 3.0 is WCAG's *large text* threshold — right
+  for a heading, wrong for the table cell most callers are actually
+  painting. On the subject app, six of seven text tokens were sitting in
+  "large text only" and nobody had noticed.
+
+  The floor is now named rather than numeric: `PlinthContrast.body`
+  (4.5), `.large` (3.0), `.nonText` (3.0), passed as `level:`. An
+  explicit `minRatio:` still overrides it, so existing callers that
+  passed a number are unaffected.
+
+  **What moves:** accent colours darken where they were between 3.0 and
+  4.5 — 19 of 26 ramp/background pairings in the light theme, 11 of 26
+  in dark. `plinth_components` pins its `PlinthVariant.light` pairings
+  to `.large` explicitly, so that variant looks exactly as it did: a
+  same-hue label on a same-hue tint cannot reach 4.5 and stay
+  recognisably that colour, since in a dark theme walking to body
+  contrast lands on near-white (`cyan #90DFEA → #F0F8F9`).
+
+  **Golden images need regenerating on Linux.** The goldens are skipped
+  on Windows and macOS by design, so this change could not be verified
+  visually where it was made.
+
+### Added
+
+- **A semantic token tier** — name a colour by the role it plays rather
+  than by its hue. (PR-01, the largest gap the adoption exercise found)
+
+  ```dart
+  PlinthTheme.defaultTheme.copyWith(
+    colors: {
+      ...PlinthTheme.defaultTheme.colors,
+      'expenseRamp': PlinthTheme.generateShades(const Color(0xFFFF3B30)),
+    },
+    semanticColors: {'expense': const PlinthSemanticColor('expenseRamp')},
+  );
+
+  theme.semantic('expense');      // the fill
+  theme.semanticText('expense');  // legible as a label on the surface
+  theme.semanticWash('expense');  // a panel or row tint
+  ```
+
+  Three roles, because three is what a real app read — migrating it
+  used a fill, a text variant and a wash per pole and reached for
+  nothing else, leaving **7 of each ramp's 10 shades unread.** It cost
+  110 lines of hand-written `app_tokens.dart` to get them, and that
+  only worked because `colors` accepts arbitrary string keys, so role
+  names could be smuggled in as ramps — an accident rather than an API.
+
+  `PlinthSemanticColor` carries the contrast floor per role
+  (`level:`, default `PlinthContrast.body`) rather than per call site,
+  since the floor is a fact about the content: a heading-only role can
+  honestly sit at `.large`, a table cell cannot.
+
+  Roles live in their own map, so declaring `expense` no longer spends
+  the `red` key `plinth_components` hardcodes in 12 places for error
+  states. An undeclared role falls back to reading the name as a ramp
+  key, so `semantic('blue')` works and the pre-existing smuggling
+  pattern renders as it did.
+
+  **Additive** — `semanticColors` defaults to empty and no component
+  declares a role, so nothing renders differently until an app opts in.
+  It does **not** on its own retire an adopter's hand-written tier: the
+  roles resolve against a ramp, and PR-03 (anchoring a supplied brand
+  colour so shade 6 returns what you fed it) is still open.
+
+- **`PlinthSpacing`** — the spacing scale as compile-time constants
+  (`xxs` 4, `xs` 8, `sm` 12, `md` 16, `lg` 24, `xl` 32), on a 4px base
+  unit exposed as `kSpaceUnit`. (PR-07)
+
+  The named `spacing` map starts at `xs: 10`, above the values both this
+  library and its adopters reach for most: `plinth_components` writes
+  `spacing[PlinthSize.xs]! * 0.4` in 38 places and `* 0.8` in 8 more —
+  4px and 8px — and **80 of its 87 spacing multipliers resolve below
+  10**. The library has been rebuilding a sub-`xs` scale out of
+  fractions.
+
+  Constants rather than a theme lookup on purpose: spacing does not vary
+  by theme, and a lookup costs a `BuildContext` and forces the widget out
+  of `const`. Applying this to the subject app converted 314 literals
+  and every one stayed `const`. `PlinthTheme.space(steps)` is there for
+  runtime multiples.
+
+- **`PlinthTheme.wash(name, {alpha})`** — a background tint that survives
+  the brightness flip. (PR-05) `shaded(name, 0)` mirrors to shade 9 in a
+  dark theme, turning the lightest tint into the most saturated shade:
+  `shaded('green', 0)` is `#F2F8F3` in light and `#245B2E` in dark, a
+  saturated panel where a wash was wanted. `wash` composites over
+  `surface` instead, so the role holds in both themes.
+
+- **`PlinthTheme.generateShades`** is public. (PR-02) It was private, so
+  an app supplying its own brand colour could not reach the function that
+  built the library's own palette and had to copy it.
+
+- **`ThemeData.plinth`** — the same lookup as `context.plinth` for code
+  that already holds a `ThemeData`. (PR-10) A helper written the
+  idiomatic Flutter way (`Widget _badge(ThemeData theme, …)`) had the
+  theme and still had to grow a `BuildContext` parameter.
+
+### Known gaps
+
+- `generateShades` still normalises a base colour onto fixed lightness
+  stops rather than anchoring it, so feeding it `#FF3B30` and asking for
+  shade 6 returns `#F00D00`. Making it public does not yet let an app
+  retire its own copy — that needs PR-03.
+- The 4px grid covered 314 of the subject app's 353 spacing literals.
+  The 39 that did not fit cluster on half-steps (`6` ×20, `2` ×10,
+  `10` ×8), which is either a missing 2px sub-unit or drift worth
+  normalising.
+
 ## 1.0.0-beta.1
 
 **No changes to this package.** The version moves because the three

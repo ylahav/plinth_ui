@@ -62,7 +62,14 @@ class PlinthThemeIcon extends StatelessWidget {
       PlinthVariant.filled => (baseColor, theme.contrastingOn(baseColor)),
       PlinthVariant.light => (
           lightColor,
-          theme.readableOn(colorKey, lightColor)
+          theme.readableOn(colorKey, lightColor,
+              // A same-hue label on a same-hue tint cannot reach 4.5 and
+              // stay recognisably that colour: in a dark theme the tint
+              // is shade 8, and walking to body contrast lands on
+              // near-white (cyan #90DFEA -> #F0F8F9), losing the hue the
+              // variant exists to show. Pinned to `large` so raising the
+              // default did not silently repaint this variant.
+              level: PlinthContrast.large)
         ),
       PlinthVariant.outline => (
           Colors.transparent,
