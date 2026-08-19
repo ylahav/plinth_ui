@@ -25,11 +25,12 @@ the two can be cited against each other.
 
 ## Status
 
-Fifteen landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
-PR-12, PR-08, PR-09, PR-13, PR-14 and PR-15 on 19 Aug. **Every Blocker
-and every High is closed**, as is the Medium that Phase −1 promoted
-above them (PR-08). Three remain open, and two of those were filed *by*
-this round's work rather than by the migration.
+Sixteen landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
+PR-12, PR-08, PR-09, PR-13, PR-14, PR-15 and PR-11 on 19 Aug.
+**Everything the migration itself found is now closed** — every
+Blocker, every High, every Medium and the one Low. The two that remain
+open, PR-17 and PR-18, were filed *by* this round's work rather than by
+the app.
 
 **The 18 Aug five were behaviour-preserving.** Verified by re-running
 the subject app's own harness against the changed packages: 225/225 app
@@ -53,7 +54,7 @@ touched component source in bulk — 53 call sites — and its defaults
 resolve to the exact ramps that were hardcoded, which a test asserts
 across every role and shade in both themes.
 
-Current: 109 core tests, 656 component tests, `dart analyze` and
+Current: 120 core tests, 656 component tests, `dart analyze` and
 `dart format` clean. One component test changed — `PlinthText`'s
 "resolves a color key at shade 6" asserted `color('red', 6)` and passed
 only because the un-anchored generator over-darkened the ramp; the
@@ -107,7 +108,7 @@ rather than fixed here.
 | [PR-08](#pr-08--reconcile-with-materials-colorscheme) | Reconcile with Material's `ColorScheme` | core | **Medium** | **Done** |
 | [PR-09](#pr-09--separate-the-app-and-component-ramp-namespaces) | Separate app and component ramp namespaces | core | **Medium** | **Done** |
 | [PR-10](#pr-10--themedataplinth) | `ThemeData.plinth` | core | **Low** | **Done** |
-| [PR-11](#pr-11--make-lerp-real-or-say-it-isnt) | Make `lerp` real, or say it isn't | core | **Low** | Open |
+| [PR-11](#pr-11--make-lerp-real-or-say-it-isnt) | Make `lerp` real, or say it isn't | core | **Low** | **Done** |
 | [PR-12](#pr-12--showon-for-messenger-backed-apis) | `showOn` for messenger-backed APIs | components | **High** | **Done** |
 | [PR-13](#pr-13--a-numerals-stay-ltr-primitive) | A "numerals stay LTR" primitive | components | **Medium** | **Done** |
 | [PR-14](#pr-14--path-dependencies-are-unusable) | Path dependencies are unusable | both | **Medium** | **Done** |
@@ -601,6 +602,36 @@ documented statement in the class doc that theme transitions are not
 animated. Both are acceptable; the current silence is not.
 
 *Priority.* **Low.**
+
+> **Done — made real, not documented away.** Chrome colours, ramp shades
+> and the numeric scales (`spacing`, `radius`, `fontSizes`) all
+> interpolate.
+>
+> **What still snaps, and why it is not a shortcut:** `brightness`,
+> `primaryColor`, `defaultRadius` and the four lookup maps
+> (`semanticColors`, `roleRamps`, `seriesRamps`, `seriesKeys`). There is
+> no half-step between two brightnesses or two ramp *names*, so these
+> change over at the midpoint.
+>
+> **One consequence is worth knowing rather than discovering, and it
+> hits the most common transition there is.** `defaultTheme` and
+> `darkTheme` **share the same ramp map** — a light versus dark palette
+> colour differs only through `shadeFor` mirroring, which follows
+> `brightness`. So on a light↔dark toggle the chrome cross-fades
+> smoothly while palette colours still change over at the midpoint.
+> Documented on `lerp` itself and pinned by a test, so the doc comment
+> cannot quietly become a lie.
+>
+> That same sharing gives the fast path its point: `_lerpRamps`
+> short-circuits on `identical`, so the commonest transition never
+> rebuilds 13 ten-colour lists per frame. A test asserts the sharing
+> holds, because if it ever stops the optimisation is dead and nobody
+> would notice.
+>
+> Proven end to end rather than at the unit: a widget test pumps a
+> `MaterialApp` through a theme change and asserts a frame 100 ms in is
+> **neither** endpoint. Under the old `t < 0.5 ? this : other` it would
+> always have been one of them.
 
 ### PR-16 — The built-in palette is not Mantine's
 

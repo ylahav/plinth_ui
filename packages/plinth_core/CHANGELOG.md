@@ -15,6 +15,24 @@ changes; from `1.0.0` they cannot.
 
 ### Added
 
+- **`lerp` is real, so theme changes animate.** (PR-11)
+
+  It used to be `return t < 0.5 ? this : other;` — a hard cut halfway
+  through any transition. Chrome colours, ramp shades and the numeric
+  scales now interpolate, driven by the `AnimatedTheme` that
+  `MaterialApp` already installs.
+
+  `brightness`, `primaryColor`, `defaultRadius` and the four lookup maps
+  still change over at the midpoint, because there is no half-step
+  between two brightnesses or two ramp names.
+
+  **Expect a light↔dark toggle to be a partial cross-fade.**
+  `defaultTheme` and `darkTheme` share one ramp map, so a light versus
+  dark palette colour differs only through `shadeFor` mirroring — which
+  follows `brightness` and therefore snaps. The chrome fades; the
+  accents change over. That is a limit of shade mirroring, not of the
+  interpolation.
+
 - **`PlinthRole` and `roleRamps`** — the component library resolves its
   own colour roles through a mapping instead of reaching into `colors`
   for `'red'`, `'gray'` and `'green'`. (PR-09)

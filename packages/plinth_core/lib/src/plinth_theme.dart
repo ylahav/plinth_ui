@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/material.dart';
 
@@ -876,12 +877,107 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   }
 
   @override
+
+  /// Interpolates toward [other], so a theme change animates rather
+  /// than cutting.
+  ///
+  /// **What cross-fades:** every chrome colour, every ramp shade, and
+  /// the numeric scales (`spacing`, `radius`, `fontSizes`).
+  ///
+  /// **What snaps at the midpoint**, because there is nothing between
+  /// the two values: `brightness`, `primaryColor`, `defaultRadius`,
+  /// and the four lookup maps (`semanticColors`, `roleRamps`,
+  /// `seriesRamps`, `seriesKeys`).
+  ///
+  /// One consequence is worth knowing rather than discovering, and it
+  /// applies to the most common transition of all. `defaultTheme` and
+  /// `darkTheme` **share the same ramps** — the difference between a
+  /// light and a dark palette colour is [shadeFor] mirroring, which is
+  /// driven by `brightness`. Brightness is discrete, so on a light↔dark
+  /// toggle the chrome cross-fades smoothly while palette colours still
+  /// change over at the midpoint. That is a real limit, not an
+  /// oversight: a shade index has no meaningful half-step.
+  ///
+  /// Theme transitions are driven by `AnimatedTheme`, which
+  /// `MaterialApp` installs for you, so nothing needs calling directly.
+  @override
   PlinthTheme lerp(ThemeExtension<PlinthTheme>? other, double t) {
     if (other is! PlinthTheme) return this;
-    // Colors/spacing maps aren't meaningfully lerped key-by-key here;
-    // snap at the midpoint. Replace with per-key Color.lerp if you
-    // need smooth theme-transition animations.
-    return t < 0.5 ? this : other;
+    if (identical(this, other)) return this;
+    if (t <= 0) return this;
+    if (t >= 1) return other;
+
+    final beforeHalf = t < 0.5;
+    return PlinthTheme(
+      colors: _lerpRamps(colors, other.colors, t),
+      primaryColor: beforeHalf ? primaryColor : other.primaryColor,
+      semanticColors: beforeHalf ? semanticColors : other.semanticColors,
+      seriesRamps: beforeHalf ? seriesRamps : other.seriesRamps,
+      seriesKeys: beforeHalf ? seriesKeys : other.seriesKeys,
+      roleRamps: beforeHalf ? roleRamps : other.roleRamps,
+      spacing: _lerpScale(spacing, other.spacing, t),
+      radius: _lerpScale(radius, other.radius, t),
+      fontSizes: _lerpScale(fontSizes, other.fontSizes, t),
+      defaultRadius: beforeHalf ? defaultRadius : other.defaultRadius,
+      brightness: beforeHalf ? brightness : other.brightness,
+      surface: Color.lerp(surface, other.surface, t)!,
+      surfaceMuted: Color.lerp(surfaceMuted, other.surfaceMuted, t)!,
+      surfaceSunken: Color.lerp(surfaceSunken, other.surfaceSunken, t)!,
+      border: Color.lerp(border, other.border, t)!,
+      borderMuted: Color.lerp(borderMuted, other.borderMuted, t)!,
+      text: Color.lerp(text, other.text, t)!,
+      textMuted: Color.lerp(textMuted, other.textMuted, t)!,
+      textDisabled: Color.lerp(textDisabled, other.textDisabled, t)!,
+      onFilled: Color.lerp(onFilled, other.onFilled, t)!,
+      onFilledInverse: Color.lerp(onFilledInverse, other.onFilledInverse, t)!,
+      shadow: Color.lerp(shadow, other.shadow, t)!,
+      scrim: Color.lerp(scrim, other.scrim, t)!,
+    );
+  }
+
+  /// Ramps, shade by shade.
+  ///
+  /// Short-circuits on identity, which is the common case rather than a
+  /// micro-optimisation: `darkTheme` is built from `defaultTheme.colors`,
+  /// so a light↔dark toggle passes the very same map and rebuilding 13
+  /// ten-colour lists per frame would buy nothing.
+  ///
+  /// A key in only one of the two themes keeps its own ramp rather than
+  /// disappearing mid-animation.
+  static Map<String, PlinthColorShades> _lerpRamps(
+    Map<String, PlinthColorShades> a,
+    Map<String, PlinthColorShades> b,
+    double t,
+  ) {
+    if (identical(a, b)) return a;
+    return {
+      for (final key in {...a.keys, ...b.keys})
+        key: _lerpRamp(a[key] ?? b[key]!, b[key] ?? a[key]!, t),
+    };
+  }
+
+  static PlinthColorShades _lerpRamp(
+    PlinthColorShades a,
+    PlinthColorShades b,
+    double t,
+  ) {
+    if (identical(a, b)) return a;
+    return [
+      for (var i = 0; i < a.length; i++)
+        Color.lerp(a[i], i < b.length ? b[i] : a[i], t)!,
+    ];
+  }
+
+  static Map<PlinthSize, double> _lerpScale(
+    Map<PlinthSize, double> a,
+    Map<PlinthSize, double> b,
+    double t,
+  ) {
+    if (identical(a, b)) return a;
+    return {
+      for (final key in {...a.keys, ...b.keys})
+        key: lerpDouble(a[key] ?? b[key]!, b[key] ?? a[key]!, t)!,
+    };
   }
 }
 

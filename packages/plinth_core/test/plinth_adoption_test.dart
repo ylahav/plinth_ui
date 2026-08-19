@@ -66,6 +66,154 @@ void main() {
     });
   });
 
+  group('PR-11 — lerp is real', () {
+    // It used to be `return t < 0.5 ? this : other;` — a hard cut
+    // halfway through any theme transition.
+
+    test('the endpoints are exact', () {
+      expect(light.lerp(dark, 0), same(light));
+      expect(light.lerp(dark, 1), same(dark));
+      expect(light.lerp(light, 0.5), same(light));
+    });
+
+    test('a foreign extension is left alone', () {
+      expect(light.lerp(null, 0.5), same(light));
+    });
+
+    test('chrome cross-fades rather than cutting', () {
+      final mid = light.lerp(dark, 0.5);
+      for (final pick in <Color Function(PlinthTheme)>[
+        (t) => t.surface,
+        (t) => t.surfaceMuted,
+        (t) => t.border,
+        (t) => t.text,
+      ]) {
+        final a = pick(light), b = pick(dark), m = pick(mid);
+        expect(m, isNot(a));
+        expect(m, isNot(b));
+        // Halfway really is halfway.
+        expect(m, Color.lerp(a, b, 0.5));
+      }
+    });
+
+    test('it moves monotonically rather than snapping', () {
+      // The regression this closes: three points along the transition
+      // that used to be only two distinct values.
+      final quarter = light.lerp(dark, 0.25).surface;
+      final half = light.lerp(dark, 0.5).surface;
+      final threeQuarters = light.lerp(dark, 0.75).surface;
+      expect({quarter, half, threeQuarters}, hasLength(3));
+      expect(_luminance(quarter), greaterThan(_luminance(half)));
+      expect(_luminance(half), greaterThan(_luminance(threeQuarters)));
+    });
+
+    test('numeric scales interpolate', () {
+      final dense = light.copyWith(
+        spacing: {...light.spacing, PlinthSize.md: 8},
+        radius: {...light.radius, PlinthSize.md: 0},
+      );
+      final mid = light.lerp(dense, 0.5);
+      expect(mid.spacing[PlinthSize.md], 12); // between 16 and 8
+      expect(mid.radius[PlinthSize.md], 4); // between 8 and 0
+    });
+
+    test('ramps interpolate shade by shade', () {
+      final other = light.copyWith(colors: {
+        ...light.colors,
+        'blue': PlinthTheme.generateShades(const Color(0xFFFF0000)),
+      });
+      final mid = light.lerp(other, 0.5);
+      for (var shade = 0; shade < 10; shade++) {
+        expect(
+          mid.colors['blue']![shade],
+          Color.lerp(
+              light.colors['blue']![shade], other.colors['blue']![shade], 0.5),
+        );
+      }
+    });
+
+    test('identical ramps are passed through, not rebuilt', () {
+      // Not a micro-optimisation: darkTheme is built from
+      // defaultTheme.colors, so the commonest transition of all hands
+      // lerp the very same map.
+      expect(identical(light.colors, dark.colors), isTrue,
+          reason: 'the premise — if this changes, the fast path is dead');
+      expect(identical(light.lerp(dark, 0.5).colors, light.colors), isTrue);
+    });
+
+    test('a ramp present in only one theme survives the transition', () {
+      final branded = light.copyWith(colors: {
+        ...light.colors,
+        'brand': PlinthTheme.generateShades(const Color(0xFFFF3B30)),
+      });
+      final mid = light.lerp(branded, 0.5);
+      expect(mid.colors.containsKey('brand'), isTrue);
+      expect(mid.colors['brand'], branded.colors['brand']);
+    });
+
+    test('discrete fields snap at the midpoint', () {
+      // There is no half-step between two brightnesses or two ramp
+      // names, so these change over rather than blending.
+      final other = dark.copyWith(
+        primaryColor: 'grape',
+        defaultRadius: PlinthSize.xl,
+        roleRamps: const {PlinthRole.error: 'pink'},
+      );
+      expect(light.lerp(other, 0.49).brightness, Brightness.light);
+      expect(light.lerp(other, 0.51).brightness, Brightness.dark);
+      expect(light.lerp(other, 0.49).primaryColor, light.primaryColor);
+      expect(light.lerp(other, 0.51).primaryColor, 'grape');
+      expect(light.lerp(other, 0.51).defaultRadius, PlinthSize.xl);
+      expect(light.lerp(other, 0.51).rampFor(PlinthRole.error), 'pink');
+    });
+
+    test('the documented light↔dark caveat is real', () {
+      // Because the two themes share ramps, a palette colour differs
+      // only through shadeFor mirroring — which follows brightness and
+      // therefore snaps. Chrome still cross-fades. Pinned so the doc
+      // comment cannot quietly become a lie.
+      final before = light.lerp(dark, 0.49);
+      final after = light.lerp(dark, 0.51);
+      expect(before.shaded('blue', 6), light.shaded('blue', 6));
+      expect(after.shaded('blue', 6), dark.shaded('blue', 6));
+      expect(before.surface, isNot(after.surface));
+    });
+
+    testWidgets('a theme change animates through AnimatedTheme',
+        (tester) async {
+      Widget app(PlinthTheme theme) => MaterialApp(
+            theme: ThemeData(extensions: [theme]),
+            home: Builder(
+              builder: (context) => ColoredBox(
+                key: const Key('probe'),
+                color: context.plinth.surface,
+              ),
+            ),
+          );
+
+      await tester.pumpWidget(app(light));
+      await tester.pumpAndSettle();
+      final start =
+          tester.widget<ColoredBox>(find.byKey(const Key('probe'))).color;
+
+      await tester.pumpWidget(app(dark));
+      await tester.pump(const Duration(milliseconds: 100));
+      final during =
+          tester.widget<ColoredBox>(find.byKey(const Key('probe'))).color;
+
+      await tester.pumpAndSettle();
+      final end =
+          tester.widget<ColoredBox>(find.byKey(const Key('probe'))).color;
+
+      expect(start, light.surface);
+      expect(end, dark.surface);
+      // The point of the whole requirement: a frame mid-transition is
+      // neither endpoint.
+      expect(during, isNot(start));
+      expect(during, isNot(end));
+    });
+  });
+
   group('PR-09 — the library and its consumer stop sharing a namespace', () {
     // plinth_components used to reach into `colors` for 'red', 'gray'
     // and 'green' directly. An app repurposing 'red' as its expense
