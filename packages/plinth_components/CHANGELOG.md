@@ -11,6 +11,36 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## Unreleased
+
+### Added
+
+- **`PlinthNotification.showOn(messenger, …)`** — show a notification
+  against a `ScaffoldMessengerState` you already hold, rather than a
+  live `BuildContext`. (PR-12)
+
+  Flutter's idiom for feedback after an `await` is to capture the
+  messenger *before* it, so nothing needs a context once the work
+  finishes:
+
+  ```dart
+  final messenger = ScaffoldMessenger.of(context);
+  await store.applyImport(file);
+  PlinthNotification.showOn(messenger, child: const Text('Imported'));
+  ```
+
+  `show(context, …)` could not express that, and one real app had to
+  delete **13** such captures and replace them with
+  `if (!context.mounted) return;`. That is a behaviour change rather
+  than a rewrite: the captured messenger still delivers when the widget
+  has gone away, and the guard silently drops the message. For "import
+  finished" the guard is often the wrong answer — and either way it
+  should be the app's choice, not a consequence of the signature.
+
+  `show` now delegates to `showOn`, so the messenger-taking form is the
+  primitive and the context-taking one is a lookup in front of it.
+  Nothing changes for existing `show` callers.
+
 ## 1.0.0-beta.2
 
 **No API changes. Every component looks different.**

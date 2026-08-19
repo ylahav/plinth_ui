@@ -25,8 +25,8 @@ the two can be cited against each other.
 
 ## Status
 
-Nine landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16 and PR-04
-on 19 Aug.
+Ten landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04 and
+PR-12 on 19 Aug. **Every Blocker and every High is now closed.**
 
 **The 18 Aug five were behaviour-preserving.** Verified by re-running
 the subject app's own harness against the changed packages: 225/225 app
@@ -41,9 +41,9 @@ with. Shades 0 and 9 are unmoved (both endpoints are held), so washes
 and the darkest shades render as before; shades 1–8 shift, most visibly
 on `red` and `violet`.
 
-**PR-01 and PR-04 are the additive pair.** Both add a map that defaults
-to empty or a sequence nothing reads unless asked, so neither moves a
-pixel on its own.
+**PR-01, PR-04 and PR-12 are additive.** The first two add a map that
+defaults to empty or a sequence nothing reads unless asked; PR-12 adds
+an overload and routes the existing one through it. None moves a pixel.
 
 Current: 91 core tests, 643 component tests, `dart analyze` and
 `dart format` clean. One component test changed — `PlinthText`'s
@@ -100,7 +100,7 @@ rather than fixed here.
 | [PR-09](#pr-09--separate-the-app-and-component-ramp-namespaces) | Separate app and component ramp namespaces | core | **Medium** | Open |
 | [PR-10](#pr-10--themedataplinth) | `ThemeData.plinth` | core | **Low** | **Done** |
 | [PR-11](#pr-11--make-lerp-real-or-say-it-isnt) | Make `lerp` real, or say it isn't | core | **Low** | Open |
-| [PR-12](#pr-12--showon-for-messenger-backed-apis) | `showOn` for messenger-backed APIs | components | **High** | Open |
+| [PR-12](#pr-12--showon-for-messenger-backed-apis) | `showOn` for messenger-backed APIs | components | **High** | **Done** |
 | [PR-13](#pr-13--a-numerals-stay-ltr-primitive) | A "numerals stay LTR" primitive | components | **Medium** | Open |
 | [PR-14](#pr-14--path-dependencies-are-unusable) | Path dependencies are unusable | both | **Medium** | Open |
 | [PR-15](#pr-15--a-migration-guide-for-the-const-and-context-tax) | A migration guide for the `const`/context tax | docs | **Medium** | Open |
@@ -682,6 +682,24 @@ messenger-taking form is the more primitive of the two and costs a few
 lines. Apply the same to any future `show`-style API.
 
 *Priority.* **High** for anything overlay-shaped.
+
+> **Done.** `PlinthNotification.showOn(ScaffoldMessengerState, …)`, with
+> `show(context, …)` now delegating to it — so the messenger-taking form
+> is the primitive and the context-taking one is a lookup in front of
+> it, as the shape above called for.
+>
+> `PlinthNotification.show` was the **only** messenger-backed API in the
+> library, so "apply the same to any future `show`-style API" has
+> nothing else to apply to today. The modal and drawer overlays go
+> through `Navigator`/`OverlayEntry` and a `PlinthDisclosureController`
+> rather than a messenger, which is a different problem.
+>
+> The behaviour difference is what the tests pin, not just the
+> signature: one shows a notification from a captured messenger **after
+> the originating widget has been disposed**, which is exactly the case
+> `show(context, …)` cannot express and the `context.mounted` guard
+> silently drops. Another asserts `show` and `showOn` build an identical
+> `PlinthNotification`, so the delegation cannot drift.
 
 ### PR-13 — A "numerals stay LTR" primitive
 

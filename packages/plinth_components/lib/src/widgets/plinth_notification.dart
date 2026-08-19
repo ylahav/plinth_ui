@@ -51,6 +51,8 @@ class PlinthNotification extends StatelessWidget {
   /// [ScaffoldMessenger]. Requires a `Scaffold` (or `MaterialApp`'s
   /// built-in one) above [context] in the widget tree — the same
   /// requirement Flutter's `SnackBar` already has.
+  ///
+  /// Use [showOn] instead when showing a message *after* an `await`.
   static void show(
     BuildContext context, {
     String? title,
@@ -60,7 +62,50 @@ class PlinthNotification extends StatelessWidget {
     PlinthSize? radius,
     Duration duration = const Duration(seconds: 4),
   }) {
-    final messenger = ScaffoldMessenger.of(context);
+    showOn(
+      ScaffoldMessenger.of(context),
+      title: title,
+      color: color,
+      icon: icon,
+      radius: radius,
+      duration: duration,
+      child: child,
+    );
+  }
+
+  /// The same, against a messenger you already hold.
+  ///
+  /// Flutter's idiom for feedback after an `await` is to capture the
+  /// messenger *before* it, precisely so no `BuildContext` is needed
+  /// once the work finishes:
+  ///
+  /// ```dart
+  /// final messenger = ScaffoldMessenger.of(context);
+  /// await store.applyImport(file);
+  /// PlinthNotification.showOn(messenger, child: const Text('Imported'));
+  /// ```
+  ///
+  /// [show] cannot express that. Taking only a context forces the
+  /// `if (!context.mounted) return;` form instead — which is **a
+  /// different behaviour, not a different spelling**: the captured
+  /// messenger still delivers its message when the widget has gone
+  /// away, and the guard silently drops it. For "import finished" the
+  /// guard is often the wrong choice, and either way it should be the
+  /// caller's decision rather than a consequence of the signature.
+  ///
+  /// One real app hit this 13 times.
+  ///
+  /// This is the more primitive of the two — [show] is this plus a
+  /// lookup.
+  static void showOn(
+    ScaffoldMessengerState messenger, {
+    String? title,
+    required Widget child,
+    String color = 'blue',
+    Widget? icon,
+    PlinthSize? radius,
+    Duration duration = const Duration(seconds: 4),
+  }) {
     late final ScaffoldFeatureController<SnackBar, SnackBarClosedReason>
         controller;
     controller = messenger.showSnackBar(

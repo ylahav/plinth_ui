@@ -1043,6 +1043,24 @@ via `ScaffoldMessenger` — inherits Flutter's own stacking, auto-dismiss
 timing, and swipe-to-dismiss rather than reimplementing a toast stack.
 `onClose` is wired up automatically when shown via `show()`.
 
+`PlinthNotification.showOn(messenger, ...)` takes a
+`ScaffoldMessengerState` you already hold, for the standard idiom of
+capturing the messenger *before* an `await` so no `BuildContext` is
+needed afterwards:
+
+```dart
+final messenger = ScaffoldMessenger.of(context);
+await store.applyImport(file);
+PlinthNotification.showOn(messenger, child: const Text('Imported'));
+```
+
+Reach for it whenever the message follows an `await`. The difference
+from `show` is behavioural, not stylistic: a captured messenger still
+delivers once the widget has gone, while the
+`if (!context.mounted) return;` that `show` forces silently drops the
+message. Which of those you want is the caller's call. `show` is
+`showOn` plus a `ScaffoldMessenger.of` lookup.
+
 ### `PlinthLoader`
 `type` (`PlinthLoaderType`: `oval, dots, bars` — default `oval`), `size`,
 `color`, `colorValue`, `dimension`. The loading indicator on its own, for
