@@ -178,6 +178,44 @@ never having to explain that `plinth_core` 0.2.1 is the right one for
 promise that every package changes every time. A leaf package with no
 changes gets a CHANGELOG entry saying exactly that.
 
+### Reopened after 1.0, and closed again
+
+**The reasoning above rests on one premise: "nobody depends on
+`plinth_hooks` alone; it exists because `plinth_components` needed a
+disclosure controller."** That premise was true of `plinth_core` too
+when this was written, and it is exactly what
+[POST_1_0_ROADMAP.md](POST_1_0_ROADMAP.md) decided to change —
+`plinth_core` becomes the headline product and `plinth_components`
+the reference implementation.
+
+If people depend on `plinth_core` alone, lockstep starts working
+against it. A foundation'''s value is that it does not move, and
+lockstep bumps its version every time a component ships. The two goals
+point in opposite directions.
+
+**Resolved: lockstep stands.** The roadmap's thesis moved once more —
+from "`plinth_core` is the headline" to "both layers serve one goal,
+making a new Flutter app easier to build" — and that restores the
+original argument rather than overriding it. If a user adopts both
+layers as one experience, *"which versions go together?"* is exactly
+the question they ask, and lockstep answers it by construction.
+
+**One caveat, now that the audience is settled.** The roadmap's target
+is Flutter *teams*, and one of the two — a team with an existing app and
+their own widgets — may depend on `plinth_core` alone and never install
+`plinth_components`. Lockstep shows that team version bumps containing
+nothing for them.
+
+That is the cost this section already accepted in writing (*"some 1.x
+releases of the leaf packages will contain nothing but a version
+bump"*), and it is still smaller than a compatibility table for the
+teams who adopt both. **Revisit only if `plinth_core`-only adoption
+turns out to dominate** — which is a fact to observe, not to predict.
+
+Left in place rather than deleted, so the record shows the question was
+answered rather than forgotten. Tracked as **V1** in
+[POST_1_0_ROADMAP.md](POST_1_0_ROADMAP.md).
+
 ### The `1.0.0-beta.1` rehearsal
 
 The beta exists so this sequence gets run once while a mistake is still

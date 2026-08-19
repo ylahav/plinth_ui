@@ -22,13 +22,17 @@ plinth_ui/
     SHOWCASE.md               # The example app's composed blocks, and what's missing
     TESTING.md                # How to verify this locally — SDK setup through golden tests
     PRE_1_0_AUDIT.md          # How complete each component is, against Mantine's own props
+    POST_1_0_ROADMAP.md       # Who the packages are for, and the token,
+    │                          interop and accessibility work that follows
+    PHASE_MINUS_1_FINDINGS.md # plinth_core tried against a real app,
+    │                          before any of that work starts
 ```
 
 [![CI](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml/badge.svg)](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml)
 
 🌐 **[Live demo](https://ylahav.github.io/plinth_ui/)** · 🎛️ **[Widgetbook gallery](https://ylahav.github.io/plinth_ui/widgetbook/)**
 
-📖 **[Component reference](docs/COMPONENTS.md)** · 🧱 **[Showcase blocks](docs/SHOWCASE.md)** · 🧪 **[Testing guide](docs/TESTING.md)** · 🔍 **[Pre-1.0 audit](docs/PRE_1_0_AUDIT.md)**
+📖 **[Component reference](docs/COMPONENTS.md)** · 🧱 **[Showcase blocks](docs/SHOWCASE.md)** · 🧪 **[Testing guide](docs/TESTING.md)** · 🔍 **[Pre-1.0 audit](docs/PRE_1_0_AUDIT.md)** · 🗺️ **[Post-1.0 roadmap](docs/POST_1_0_ROADMAP.md)**
 
 Both are the real apps in this repo, built for the web and deployed on
 every push to `main` by `.github/workflows/pages.yml`. The demo is the
@@ -411,9 +415,3 @@ intentional rather than bugs:
   160/160 on pana but ships no `topics:` and no `screenshots:` in its
   pubspec, which are the two things that make it findable by someone
   who isn't already looking for it.
-
-## Naming note
-
-Package name `plinth` / `plinth_ui` was verified unclaimed on pub.dev as
-of this session (Aug 2026) — re-check before publishing, since
-availability can change.

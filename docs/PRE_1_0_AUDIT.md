@@ -377,6 +377,14 @@ Beta, by contrast, is where the library is now: the API is stable
 enough to build against, and the remaining changes are additive except
 for the naming table.
 
+**What comes after 1.0 is a different question**, and this document is
+not the place for it: this one asked how complete each *component* is,
+and the answer is "complete". The gaps that remain are in the token
+layer, in accessibility evidence, in `plinth_hooks`, and in the eleven
+Mantine packages scoped out at the top of this file. Those are
+inventoried and sequenced in
+[POST_1_0_ROADMAP.md](POST_1_0_ROADMAP.md).
+
 ### What the overlay images are actually for
 
 A popover is placed by `CompositedTransformFollower` against a
