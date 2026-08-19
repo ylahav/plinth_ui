@@ -5314,6 +5314,88 @@ final List<WidgetbookNode> plinthDirectories = [
     name: 'Layout & Typography',
     children: [
       WidgetbookComponent(
+        name: 'PlinthLtr',
+        useCases: [
+          WidgetbookUseCase(
+            name: 'Playground',
+            builder: (context) {
+              final rtl = context.knobs.boolean(
+                label: 'page is RTL',
+                initialValue: true,
+              );
+              final pinned = context.knobs.boolean(
+                label: 'wrap in PlinthLtr',
+                initialValue: true,
+              );
+              Widget row() => const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      PlinthBadge('1'),
+                      SizedBox(width: 4),
+                      PlinthBadge('2'),
+                      SizedBox(width: 4),
+                      PlinthBadge('3'),
+                      SizedBox(width: 8),
+                      PlinthNumberFormatter(
+                          value: 1234567.5, prefix: r'$', decimalScale: 2),
+                    ],
+                  );
+              return _themed(
+                Directionality(
+                  textDirection: rtl ? TextDirection.rtl : TextDirection.ltr,
+                  child: PlinthStack(
+                    children: [
+                      const PlinthText(
+                        'Turn the page RTL and the axis reverses. Pin it and '
+                        'the figures read the way numbers do.',
+                        size: PlinthSize.sm,
+                      ),
+                      if (pinned) PlinthLtr(child: row()) else row(),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          WidgetbookUseCase(
+            name: 'Pinned vs inherited in an RTL page',
+            builder: (context) => _themed(
+              const Directionality(
+                textDirection: TextDirection.rtl,
+                child: PlinthStack(
+                  children: [
+                    PlinthText('inherited — reverses', size: PlinthSize.xs),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        PlinthBadge('1'),
+                        SizedBox(width: 4),
+                        PlinthBadge('2'),
+                        SizedBox(width: 4),
+                        PlinthBadge('3'),
+                      ],
+                    ),
+                    PlinthText('PlinthLtr — stays put', size: PlinthSize.xs),
+                    PlinthLtr(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          PlinthBadge('1'),
+                          SizedBox(width: 4),
+                          PlinthBadge('2'),
+                          SizedBox(width: 4),
+                          PlinthBadge('3'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
         name: 'PlinthSplitter',
         useCases: [
           WidgetbookUseCase(

@@ -25,8 +25,8 @@ the two can be cited against each other.
 
 ## Status
 
-Twelve landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
-PR-12, PR-08 and PR-09 on 19 Aug. **Every Blocker and every High is
+Thirteen landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
+PR-12, PR-08, PR-09 and PR-13 on 19 Aug. **Every Blocker and every High is
 closed**, as is the Medium that Phase −1 promoted above them (PR-08).
 
 **The 18 Aug five were behaviour-preserving.** Verified by re-running
@@ -50,7 +50,7 @@ only one that touched component source — 53 call sites — and its
 defaults resolve to the exact ramps that were hardcoded, which a test
 asserts across every role and shade in both themes.
 
-Current: 109 core tests, 648 component tests, `dart analyze` and
+Current: 109 core tests, 654 component tests, `dart analyze` and
 `dart format` clean. One component test changed — `PlinthText`'s
 "resolves a color key at shade 6" asserted `color('red', 6)` and passed
 only because the un-anchored generator over-darkened the ramp; the
@@ -106,7 +106,7 @@ rather than fixed here.
 | [PR-10](#pr-10--themedataplinth) | `ThemeData.plinth` | core | **Low** | **Done** |
 | [PR-11](#pr-11--make-lerp-real-or-say-it-isnt) | Make `lerp` real, or say it isn't | core | **Low** | Open |
 | [PR-12](#pr-12--showon-for-messenger-backed-apis) | `showOn` for messenger-backed APIs | components | **High** | **Done** |
-| [PR-13](#pr-13--a-numerals-stay-ltr-primitive) | A "numerals stay LTR" primitive | components | **Medium** | Open |
+| [PR-13](#pr-13--a-numerals-stay-ltr-primitive) | A "numerals stay LTR" primitive | components | **Medium** | **Done** |
 | [PR-14](#pr-14--path-dependencies-are-unusable) | Path dependencies are unusable | both | **Medium** | Open |
 | [PR-15](#pr-15--a-migration-guide-for-the-const-and-context-tax) | A migration guide for the `const`/context tax | docs | **Medium** | Open |
 | [PR-16](#pr-16--the-built-in-palette-is-not-mantines) | The built-in palette is not Mantine's | core | **High** | **Done** |
@@ -805,6 +805,26 @@ what's actually missing.
 numeric widgets. Small, cheap, obviously correct.
 
 *Priority.* **Medium.**
+
+> **Done.** `PlinthLtr(child:)`, the first of the two shapes.
+>
+> The `direction` escape hatch was **not** added, deliberately. It would
+> mean a flag on every numeric widget for a case the wrapper already
+> covers, and the wrapper works for the thing the evidence actually
+> showed — a `CustomPaint` chart, which no per-widget flag reaches.
+>
+> **Nothing existing was changed to use it.** The temptation was to wrap
+> `PlinthNumberFormatter` and `PlinthRollingNumber` in it internally,
+> and that would have been wrong: the validation found RTL already
+> correct, so auto-pinning would be an unrequested behaviour change
+> justified by no evidence — and it would take the *caller's* ability to
+> choose away. The docs on both widgets point at the wrapper instead.
+>
+> Tested with a control case, because a directionality wrapper is easy
+> to assert vacuously: one test checks a `Row` lays out left-to-right
+> inside it, and a second checks the *same* `Row` reverses without it.
+> Without the second, the first would pass even if `PlinthLtr` did
+> nothing.
 
 ---
 

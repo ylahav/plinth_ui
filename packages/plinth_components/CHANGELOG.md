@@ -29,6 +29,27 @@ changes; from `1.0.0` they cannot.
 
 ### Added
 
+- **`PlinthLtr`** — pins a subtree to left-to-right inside an RTL page.
+  (PR-13)
+
+  ```dart
+  PlinthLtr(child: CustomPaint(painter: BarsPainter(months)))
+  ```
+
+  Charts, time axes and currency figures have no direction of their own
+  and must not flip with the page. Every bidirectional app writes
+  `Directionality(textDirection: TextDirection.ltr, …)` by hand; this is
+  that line with a name, so the next reader can tell the direction was
+  pinned on purpose.
+
+  **This was the only concrete RTL gap the validation found**, and worth
+  stating plainly because the prediction was the opposite: Plinth was
+  expected to break in Hebrew and did not. 12 of 12 page × language
+  combinations rendered clean, and a setup wizard walked end to end at
+  `textScaler` 2.0 in both directions. Reach for this narrowly — it is
+  not a fix for RTL problems.
+
+
 - **`PlinthNotification.showOn(messenger, …)`** — show a notification
   against a `ScaffoldMessengerState` you already hold, rather than a
   live `BuildContext`. (PR-12)

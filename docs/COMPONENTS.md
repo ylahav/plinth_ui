@@ -208,6 +208,26 @@ line and never overlaps them.
 exists because stacking vertically is common enough that saying so
 directly reads better than configuring a flex.
 
+### `PlinthLtr`
+`child`. Pins its subtree to left-to-right inside an RTL page. Some
+content is not language and must not flip with it: a chart's bars and
+axis, a time axis, a currency figure, a version string.
+
+```dart
+PlinthLtr(child: CustomPaint(painter: BarsPainter(months)))
+```
+
+It is `Directionality(textDirection: TextDirection.ltr, …)` with a name
+— the wrapper exists because every bidirectional app writes that line by
+hand, and because the bare version says *what* while this says *why*.
+
+**Reach for it narrowly.** Validating the library against a
+Hebrew/English app found RTL already correct: 12 of 12 page × language
+combinations rendered clean. This is not a fix for RTL problems, and
+wrapping a page in it to make one go away produces a page that is wrong
+in a harder-to-see way. It is for content that genuinely has no
+direction of its own.
+
 ### `PlinthSplitter`
 `first`, `second`, `direction` (default `horizontal`),
 `initialFraction`, `minFraction`, `maxFraction`, `thickness`,
@@ -1287,6 +1307,10 @@ your own selected-color state, same controlled-component pattern as
 `trimTrailingZeros`, `size`, `color`, `weight`. Grouping, decimals,
 prefix, and suffix — the formatting a figure in a table or a stat tile
 needs, without reaching for a package.
+
+In a bidirectional app, wrap it in `PlinthLtr` where the figure has to
+read left-to-right regardless of the page — a currency column, a chart
+axis.
 
 **Not localised.** The separators are yours to pass, so it's correct
 for a fixed format and wrong for anything that should follow the
