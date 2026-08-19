@@ -13,6 +13,35 @@ changes; from `1.0.0` they cannot.
 
 ## Unreleased
 
+### Added
+
+- **`PlinthFocusTrap`, and keyboard focus no longer escapes a popover.**
+  (B1)
+
+  ```dart
+  PlinthFocusTrap(onEscape: controller.close, child: myPanel)
+  ```
+
+  A route gets a `FocusScope` from Flutter for free, so `PlinthModal`
+  and `PlinthDrawer` already contained Tab. An `OverlayEntry` does not —
+  it sits in the same route and the same focus scope as the page behind
+  it. Measured before the fix: **Popover, Menu and Combobox all leaked
+  on the first Tab**, putting focus on content the user cannot see.
+
+  Applied to `PlinthPopover`, which covers `PlinthMenu`,
+  `PlinthHoverCard`, `PlinthColorInput` and `PlinthTreeSelect`.
+  Focus moves into the panel on open, **returns to the trigger on
+  close** — the half a trap is usually missing — and Escape dismisses.
+
+  Exported, because an app building its own `OverlayEntry` panel has
+  exactly the same problem.
+
+  **Not applied to `PlinthDialog` or `PlinthPortal`**, deliberately: a
+  Plinth dialog is non-blocking by design, and Portal is a raw primitive
+  with no trigger to hand focus back to. **Not applied to the dropdown
+  family** either — focus belongs in the text field while the list is
+  open, and trapping them would make them worse.
+
 ### Changed
 
 - **Interactive controls now carry a name and a role.** (B0a, B0b)

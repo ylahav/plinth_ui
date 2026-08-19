@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 import 'package:plinth_hooks/plinth_hooks.dart';
 
+import 'plinth_focus_trap.dart';
+
 /// Which side of the target [PlinthPopover]'s content appears on.
 enum PlinthPopoverPosition { top, bottom, left, right }
 
@@ -199,22 +201,31 @@ class _PlinthPopoverState extends State<PlinthPopover> {
             offset: _offset,
             // Laid out on the first frame so it can be measured, but
             // neither drawn nor tappable until the side is settled.
-            child: IgnorePointer(
-              ignoring: !_measured,
-              child: Opacity(
-                opacity: _measured ? 1 : 0,
-                child: Material(
-                  key: _panelKey,
-                  elevation: 4,
-                  borderRadius: BorderRadius.circular(resolvedRadius),
-                  child: Container(
-                    width: widget.width,
-                    padding: EdgeInsets.all(theme.spacing[PlinthSize.sm]!),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(resolvedRadius),
+            //
+            // The trap goes here, inside the follower, rather than
+            // around it: the follower has to stay a direct child of
+            // the Stack. Wrapping it made the Stack lay the wrapper
+            // out instead, and the panel rendered at a negative x --
+            // present, measured, opaque, and off-screen.
+            child: PlinthFocusTrap(
+              onEscape: widget.controller.close,
+              child: IgnorePointer(
+                ignoring: !_measured,
+                child: Opacity(
+                  opacity: _measured ? 1 : 0,
+                  child: Material(
+                    key: _panelKey,
+                    elevation: 4,
+                    borderRadius: BorderRadius.circular(resolvedRadius),
+                    child: Container(
+                      width: widget.width,
+                      padding: EdgeInsets.all(theme.spacing[PlinthSize.sm]!),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(resolvedRadius),
+                      ),
+                      child: widget.content,
                     ),
-                    child: widget.content,
                   ),
                 ),
               ),

@@ -324,8 +324,17 @@ plan. A team cannot retrofit it, and `highContrast` / `boldText` /
 - [x] **B0b** **RAN — see § What B0 found.** Run `textContrastGuideline`, `androidTapTargetGuideline` and `labeledTapTargetGuideline` across the library; add the passing set to CI. **M.** Currently **1 of 59 test files** asserts anything about accessibility.
 - [ ] **B0c** Manual NVDA and VoiceOver pass against the deployed demo. **M.** The only task here that cannot be satisfied by writing code.
 - [x] **B0d** **RAN — clean, 0 of 232 gallery use cases threw in RTL; kept as `widgetbook/test/gallery_rtl_smoke_test.dart`.** RTL golden pass. **S** to run; 7 of 115 files touch `Directionality`, so the other 108 are unverified rather than known-broken.
-- [ ] **B1** Focus containment — **zero** uses of `FocusTraversalGroup`, `FocusScope`, `Shortcuts` or `Actions` across 115 files. Drawer first, as a reusable trap, then Popover, Menu, HoverCard. Modal already gets it from `showGeneralDialog`. **M**
+- [x] **B1** **DONE, and smaller than this entry assumed.** Focus containment. The premise — "Drawer first, as a reusable trap ... Modal already gets it from `showGeneralDialog`" — was half wrong: **`PlinthDrawer` uses `showGeneralDialog` too**, so it was already contained and would have been the one overlay that did not need the work. Measured rather than assumed; see below.
+
+  The real split is **route vs `OverlayEntry`**. A route gets a `FocusScope` from Flutter for free; an `OverlayEntry` sits in the *same* route and the same scope as the page behind it, so Tab walks straight out. Measured before the fix: Modal **contained**, Drawer **contained**, Popover / Menu / Combobox **escaped on the first Tab**.
+
+  Shipped as `PlinthFocusTrap`, exported so an app building its own overlay can use it. Focus moves in on open, returns to the trigger on close, Escape dismisses. Applied to **`PlinthPopover`**, which covers `PlinthMenu`, `PlinthHoverCard`, `PlinthColorInput` and `PlinthTreeSelect` — everything built on it.
+
+  Two deliberate non-cases, both on the widget's own documented intent: **`PlinthDialog`** is non-blocking by design ("the point of a dialog over a modal is that the rest of the app stays usable"), so trapping it would be wrong; **`PlinthPortal`** is a raw primitive with no trigger and no open/close, so the caller decides. The dropdown family is **B2**, not this — see below.
+
 - [ ] **B2a** Extract the roving-focus logic welded inside `PlinthTabs` since 0.25.0 into a reusable controller. **M.** Three tasks below consume it.
+  **Note from B1:** `Combobox`, `Autocomplete` and `MultiSelect` leak Tab as well, and a trap is the wrong fix — focus should stay in the text field while the list is open, with arrow keys moving a highlighted option. Trapping them would make them worse. That is this task.
+
 - [ ] **B2b–d** Roving focus on Menu/Menubar, the listbox family (Select, Combobox, MultiSelect — the largest, since the trigger/popup split doubles the focus cases), then Tree, Pagination, Accordion. **L**
 - [ ] **B3** Fix whatever B0d turned up. **?**
 - [ ] **B4** Record the outcome in `PRE_1_0_AUDIT.md`'s style, including every probe that found nothing wrong. **S**

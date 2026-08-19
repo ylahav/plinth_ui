@@ -47,6 +47,7 @@ export 'src/widgets/plinth_fieldset.dart';
 export 'src/widgets/plinth_file_button.dart';
 export 'src/widgets/plinth_file_input.dart';
 export 'src/widgets/plinth_flex.dart';
+export 'src/widgets/plinth_focus_trap.dart';
 export 'src/widgets/plinth_floating_window.dart';
 export 'src/widgets/plinth_grid.dart';
 export 'src/widgets/plinth_group.dart';
