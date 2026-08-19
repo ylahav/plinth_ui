@@ -56,6 +56,21 @@ evidence was gathered.
     working, not a regression.
   - **Anything pinned to a literal shade value will move.** If you
     screenshot-test or hardcode a generated shade, re-baseline it.
+  - **Filled buttons in blue and red now carry a dark label, not a
+    white one.** `contrastingOn` picks whichever foreground contrasts
+    better, and on the corrected fills the light one stops winning:
+    white on `blue.6` goes from 4.15:1 to **3.56:1** while the dark
+    foreground reaches 4.84:1. New for blue and red only — green,
+    yellow and teal already had dark labels and violet keeps white.
+    Since `blue` is the default `primaryColor`, this changes the
+    default button.
+
+    Deliberate. White on Mantine's real `blue.6` fails AA for body
+    text, so Mantine's own filled buttons do not clear it either; the
+    distorted palette had been hiding that. Plinth is now more
+    accessible than the palette it copies, and looks less like it.
+    Override `onFilled` / `onFilledInverse` if you want the old
+    pairing back.
 
   An app supplying its own brand colour can now delete any re-anchoring
   curve it wrote — which is what publishing `generateShades` was

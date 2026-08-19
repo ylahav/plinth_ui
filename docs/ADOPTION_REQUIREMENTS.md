@@ -48,12 +48,38 @@ only because the un-anchored generator over-darkened the ramp; the
 widget correctly routes text through `readableOn`, and Mantine's real
 `red.6` does not clear the body floor on white.
 
-**Golden images must be regenerated on Linux before this can merge.**
-They are skipped on Windows by design, so a local run is green and
-proves nothing about the 42 images; CI will fail on them until
-`.github/workflows/regenerate-goldens.yml` has run. Unlike the 18 Aug
-work, a golden diff here is *expected* rather than a bug — review each
-one rather than accepting the batch.
+**Goldens regenerated on Linux and reviewed: 32 of 43 moved.** They are
+skipped on Windows by design, so a local run proves nothing about them;
+these came from `.github/workflows/regenerate-goldens.yml`. Unlike the
+18 Aug work, a golden diff here was *expected* rather than a bug — and
+reviewing them rather than accepting the batch is what caught the
+following, which no test asserted:
+
+**Filled buttons in blue and red now carry a dark label instead of a
+white one.** `contrastingOn` maximises contrast, and on the corrected
+fills the light foreground stops winning:
+
+| Ramp | Old fill | white / dark | New fill | white / dark |
+|---|---|---|---|---|
+| `blue` | `#187FD7` | 4.15 / 4.15 → white | `#228BE6` | **3.56** / 4.84 → dark |
+| `red` | `#E90707` | 4.67 / 3.69 → white | `#FA5252` | **3.28** / 5.24 → dark |
+| `violet` | `#4511DF` | 8.75 / 1.97 → white | `#7950F2` | 4.95 / 3.48 → white |
+| `green` | `#3BB451` | 2.68 / 6.42 → dark | `#40C057` | 2.36 / 7.29 → dark |
+
+New for `blue` and `red` only — green, yellow and teal already had dark
+labels, violet keeps white. Blue was a literal 4.15 tie and fell to
+white on the tiebreak; it is now decisively dark. Since `blue` is the
+default `primaryColor`, **this changes the library's default button.**
+
+Accepted deliberately. **White on Mantine's true `blue.6` is 3.56:1 and
+fails AA for body text** — so Mantine's own filled buttons do not clear
+AA with white labels, and the distorted palette had been hiding it. The
+cost is honest and worth stating: Plinth's filled buttons now look
+unlike Mantine's at the moment the palette finally matches Mantine's.
+
+The same `readableOn` correction made alert titles drift toward muddy —
+filed as [PR-17](#pr-17--decide-the-contrast-floor-for-headings-on-tinted-surfaces)
+rather than fixed here.
 
 ## Summary
 
@@ -75,6 +101,7 @@ one rather than accepting the batch.
 | [PR-14](#pr-14--path-dependencies-are-unusable) | Path dependencies are unusable | both | **Medium** | Open |
 | [PR-15](#pr-15--a-migration-guide-for-the-const-and-context-tax) | A migration guide for the `const`/context tax | docs | **Medium** | Open |
 | [PR-16](#pr-16--the-built-in-palette-is-not-mantines) | The built-in palette is not Mantine's | core | **High** | **Done** |
+| [PR-17](#pr-17--decide-the-contrast-floor-for-headings-on-tinted-surfaces) | Contrast floor for headings on tinted surfaces | components | **Medium** | Open |
 
 ---
 
@@ -504,6 +531,52 @@ the code does not honour.
 > **Done.** All 13 ramps now return their Mantine seed at shade 6
 > exactly, pinned per-ramp in `plinth_adoption_test.dart` with a guard
 > asserting the ramp list itself is fully covered.
+
+### PR-17 — Decide the contrast floor for headings on tinted surfaces
+
+**An alert title is a heading, and it is being held to the body-text
+floor.**
+
+*Evidence.* Found while reviewing the goldens PR-03 moved — like PR-16,
+a defect surfaced by fixing the palette rather than a gap an adopter
+hit.
+
+With the ramps corrected, `readableOn` has real work to do, and it does
+it uniformly at 4.5:1. On the low-luminance ramps that walks a title a
+long way from brand:
+
+| Alert | Title before | Title after |
+|---|---|---|
+| `yellow` | mid amber | dark olive-brown |
+| `red` | bright red | deep red |
+
+The colour is correct and the *reading* of it is the question: WCAG's
+4.5 floor is for body text, and 3.0 (`PlinthContrast.large`) applies at
+~18pt regular / ~14pt bold. An alert title is rendered larger and
+bolder than the body beneath it, so it plausibly qualifies — which
+would keep it recognisably the alert's colour.
+
+This is the same call already made for `PlinthVariant.light` during
+PR-06, where four components pin `large` explicitly because a same-hue
+label on a same-hue tint cannot reach 4.5 and stay that colour. The
+question is whether alert and notification titles belong in that set.
+
+*Shape.* Audit which components render text that is a *heading* rather
+than body, and pin those to `PlinthContrast.large`. Do not do it by
+component — do it by what the text is, and record the ones deliberately
+left at `body`.
+
+Two things to settle rather than assume:
+
+- **Measure the actual rendered size** before claiming `large`. The
+  floor is defined by pt size and weight, not by the word "title", and
+  a title that does not clear ~18pt regular / ~14pt bold does not
+  qualify however heading-like it looks.
+- **`nonText` (3.0) may be the right answer for icons** in the same
+  banners, which is a separate judgement from the title.
+
+*Priority.* **Medium.** Visible, and wrong in the safe direction — the
+current colours are over-corrected rather than illegible.
 
 ---
 
