@@ -15,6 +15,31 @@ changes; from `1.0.0` they cannot.
 
 ### Changed
 
+- **Text now resolves its contrast against the background it actually
+  sits on.** (PR-19)
+
+  `PlinthText` takes an `on:` parameter naming that background, and
+  defaults to the surface — so nothing changes for text on a page.
+
+  Two components were resolving against the surface while rendering on
+  a tint, which is the silent kind of miss: `readableOn` was called, a
+  floor was cleared, and the floor was measured against a background the
+  text never touched.
+
+  - **`PlinthAlert` titles** — 3 of 13 ramps under the floor in light,
+    1 in dark, at 4.35–4.48. Marginal, which is why nobody noticed.
+  - **`PlinthHighlight`** — **9 of 13 in light and 13 of 13 in dark.**
+    Its matched runs get a mark colour and the rest stay on the surface
+    under one style, so the run the widget exists for was the one that
+    failed. Matched runs now carry their own foreground.
+
+  **`PlinthHighlight`'s mark also changed**, from `shaded(color, 2)` to
+  `wash(color, alpha: 0.30)`. Shade 2 mirrors to shade 7 in a dark
+  theme, giving a saturated block instead of a highlight — the same
+  trap `wash` was added for in `1.0.0-beta.2` — and no text colour could
+  clear it. The alpha was chosen to sit closest to the old light-mode
+  mark (mean ΔE 3.3), so light barely moves and dark is fixed.
+
 - **Every internal use of the `red`, `gray` and `green` ramps now goes
   through `PlinthRole`.** (PR-09)
 

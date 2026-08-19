@@ -58,8 +58,19 @@ class PlinthHighlight extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final colorKey = color ?? 'yellow';
+    // A wash rather than `shaded(colorKey, 2)`, for the reason PR-05
+    // gave for alerts: `shadeFor` mirrors 2 to 7 in a dark theme, and a
+    // shade-7 mark is a saturated block rather than a highlight. It also
+    // left the marked text unreadable -- 8 of 13 ramps had *no* shade
+    // clearing 4.5:1 against their own mark in dark, because the mark
+    // sat in the middle of the ramp.
+    //
+    // Compositing over the surface keeps the mark a tint in both
+    // themes. Alpha 0.30 is chosen to sit closest to the old light-mode
+    // mark (mean ΔE 3.3), so the theme that was already correct barely
+    // moves.
     final markColor = theme.colors.containsKey(colorKey)
-        ? theme.shaded(colorKey, 2)
+        ? theme.wash(colorKey, alpha: 0.30)
         : const Color(0xFFFFF3BF);
 
     final baseStyle = TextStyle(
@@ -80,8 +91,23 @@ class PlinthHighlight extends StatelessWidget {
               // WidgetSpan: a widget span is laid out as one atomic box,
               // so a long match could not wrap and would push the line
               // past its bounds.
+              // A matched run has a different background from the rest,
+              // so it needs a different foreground. Resolving one colour
+              // against the surface and painting it on the mark left 9
+              // of 13 ramps under the floor in light and all 13 in dark
+              // -- and the marked run is the whole point of the widget.
+              //
+              // Per-span rather than one colour clearing both: for 8 of
+              // the 26 ramp/theme pairings no shade clears 4.5:1 against
+              // the surface and the mark at once, because the tint sits
+              // too close to the ramp's own middle.
               style: isMatch
-                  ? baseStyle.copyWith(backgroundColor: markColor)
+                  ? baseStyle.copyWith(
+                      backgroundColor: markColor,
+                      color: textColor != null
+                          ? theme.readableOn(textColor!, markColor)
+                          : theme.readableOn(colorKey, markColor),
+                    )
                   : baseStyle,
             ),
         ],

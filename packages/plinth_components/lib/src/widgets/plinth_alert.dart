@@ -78,7 +78,11 @@ class PlinthAlert extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (title != null)
-                  PlinthText(title!, weight: FontWeight.w700, color: color),
+                  PlinthText(title!,
+                      weight: FontWeight.w700,
+                      color: color,
+                      // The title sits on the tint, not on the surface.
+                      on: backgroundColor),
                 if (title != null)
                   SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.5),
                 DefaultTextStyle.merge(

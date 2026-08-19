@@ -25,13 +25,14 @@ the two can be cited against each other.
 
 ## Status
 
-Seventeen landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
-PR-12, PR-08, PR-09, PR-13, PR-14, PR-15, PR-11, PR-17 and PR-18 on
-19 Aug.
-**Everything the migration itself found is now closed** — every
-Blocker, every High, every Medium and the one Low. So is everything this
-round's work filed against itself, except **PR-19**, which PR-17's
-measurements turned up and which is the highest-priority item left.
+Nineteen landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
+PR-12, PR-08, PR-09, PR-13, PR-14, PR-15, PR-11, PR-17, PR-18 and
+PR-19 on 19 Aug.
+**Everything is closed** — all fifteen the migration found, and the four
+this round's work filed against itself (PR-16 through PR-19). Each of
+those four was found by fixing an earlier one, which is the pattern
+worth noting: PR-03's anchoring exposed PR-16, PR-04's palette exposed
+PR-18, and PR-17's measurements exposed PR-19 — the worst of the four.
 
 **The 18 Aug five were behaviour-preserving.** Verified by re-running
 the subject app's own harness against the changed packages: 225/225 app
@@ -116,7 +117,7 @@ rather than fixed here.
 | [PR-15](#pr-15--a-migration-guide-for-the-const-and-context-tax) | A migration guide for the `const`/context tax | docs | **Medium** | **Done** |
 | [PR-16](#pr-16--the-built-in-palette-is-not-mantines) | The built-in palette is not Mantine's | core | **High** | **Done** |
 | [PR-17](#pr-17--decide-the-contrast-floor-for-headings-on-tinted-surfaces) | Contrast floor for headings on tinted surfaces | components | **Medium** | **Done** |
-| [PR-19](#pr-19--plinthtext-resolves-contrast-against-the-wrong-background) | `PlinthText` resolves contrast against the wrong background | components | **High** | Open |
+| [PR-19](#pr-19--plinthtext-resolves-contrast-against-the-wrong-background) | `PlinthText` resolves contrast against the wrong background | components | **High** | **Done** |
 | [PR-18](#pr-18--the-series-palette-is-unverified-for-colour-vision-deficiency) | Series palette unverified for colour-vision deficiency | core | **Medium** | **Done** |
 
 ---
@@ -989,6 +990,45 @@ belongs to the same conversation.
 *Priority.* **High.** It is a correctness bug in the accessibility
 machinery itself, which is the part most likely to be trusted without
 checking.
+
+> **Done**, and the alert was the smaller half. `PlinthText` gained an
+> `on:` parameter naming the background it sits on, defaulting to the
+> surface so nothing changes for text on a page — which is most text.
+> `PlinthAlert` passes its tint, and its titles now clear the floor on
+> all 13 ramps in both themes.
+>
+> **`PlinthHighlight` was failing far worse: 9 of 13 ramps in light and
+> 13 of 13 in dark.** Its marked runs sit on a mark colour while the
+> rest sit on the surface, under one `TextStyle` resolved against the
+> surface alone — so the part the widget exists for was the part that
+> failed.
+>
+> **`readableOnAll` was built for this and then deleted.** The idea was
+> one colour clearing every background a run touches. Measuring killed
+> it: for **8 of the 26 ramp/theme pairings no shade clears 4.5:1
+> against the surface and the ramp's own tint at once**, because the
+> tint sits too close to the ramp's middle. An API that cannot deliver
+> its guarantee a third of the time is worse than none, and it had no
+> other caller. **The right answer was simpler than the one I built:**
+> a matched run has its own background, so it gets its own foreground.
+>
+> **The mark colour was the deeper bug, and it is
+> [PR-05](#pr-05--a-wash-role-that-survives-dark-mode) unapplied.**
+> `shaded(colorKey, 2)` mirrors to shade **7** in a dark theme — a
+> saturated block rather than a highlight, and the reason no text colour
+> could clear it. The mark is now `wash(colorKey, alpha: 0.30)`, which
+> composites over the surface and stays a tint in both themes. Alpha
+> 0.30 was picked by measurement as the value closest to the old
+> light-mode mark (mean ΔE 3.3), so the theme that was already correct
+> barely moves while the broken one is fixed.
+>
+> Result: **0 of 13 unsatisfiable in either theme**, down from 9 and 13.
+>
+> On the open question this requirement raised — whether `readableOn`
+> should make the background required — **it already does.** The
+> background is a required positional parameter and always was. The
+> defaulting happened one layer up, inside `PlinthText`, which is where
+> the bug lived. The API was right and the widget was wrong.
 
 ---
 
