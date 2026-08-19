@@ -60,7 +60,15 @@ class PlinthAlert extends StatelessWidget {
         children: [
           if (icon != null) ...[
             IconTheme(
-              data: IconThemeData(color: accentColor, size: 20),
+              // Not `accentColor`. An icon carries meaning on its own,
+              // so WCAG 1.4.11 asks 3:1 against what is behind it — and
+              // shade 6 on shade 0 cleared that for only 6 of the 13
+              // ramps: yellow landed at 1.74:1, lime 1.91, green 2.19.
+              data: IconThemeData(
+                color: theme.readableOn(color, backgroundColor,
+                    level: PlinthContrast.nonText),
+                size: 20,
+              ),
               child: icon!,
             ),
             SizedBox(width: theme.spacing[PlinthSize.sm]),

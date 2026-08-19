@@ -148,7 +148,14 @@ class PlinthNotification extends StatelessWidget {
           children: [
             if (icon != null) ...[
               IconTheme(
-                data: IconThemeData(color: accentColor, size: 20),
+                // See PlinthAlert: an icon is non-text UI, so it is held
+                // to WCAG 1.4.11's 3:1 against its background rather
+                // than painted at a fixed shade.
+                data: IconThemeData(
+                  color: theme.readableOn(color, theme.surface,
+                      level: PlinthContrast.nonText),
+                  size: 20,
+                ),
                 child: icon!,
               ),
               SizedBox(width: theme.spacing[PlinthSize.sm]),

@@ -25,12 +25,12 @@ the two can be cited against each other.
 
 ## Status
 
-Sixteen landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
-PR-12, PR-08, PR-09, PR-13, PR-14, PR-15 and PR-11 on 19 Aug.
+Seventeen landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
+PR-12, PR-08, PR-09, PR-13, PR-14, PR-15, PR-11 and PR-17 on 19 Aug.
 **Everything the migration itself found is now closed** — every
-Blocker, every High, every Medium and the one Low. The two that remain
-open, PR-17 and PR-18, were filed *by* this round's work rather than by
-the app.
+Blocker, every High, every Medium and the one Low. What remains open was
+filed *by* this round's work rather than by the app: PR-18, and PR-19,
+which PR-17's measurements turned up.
 
 **The 18 Aug five were behaviour-preserving.** Verified by re-running
 the subject app's own harness against the changed packages: 225/225 app
@@ -114,7 +114,8 @@ rather than fixed here.
 | [PR-14](#pr-14--path-dependencies-are-unusable) | Path dependencies are unusable | both | **Medium** | **Done** |
 | [PR-15](#pr-15--a-migration-guide-for-the-const-and-context-tax) | A migration guide for the `const`/context tax | docs | **Medium** | **Done** |
 | [PR-16](#pr-16--the-built-in-palette-is-not-mantines) | The built-in palette is not Mantine's | core | **High** | **Done** |
-| [PR-17](#pr-17--decide-the-contrast-floor-for-headings-on-tinted-surfaces) | Contrast floor for headings on tinted surfaces | components | **Medium** | Open |
+| [PR-17](#pr-17--decide-the-contrast-floor-for-headings-on-tinted-surfaces) | Contrast floor for headings on tinted surfaces | components | **Medium** | **Done** |
+| [PR-19](#pr-19--plinthtext-resolves-contrast-against-the-wrong-background) | `PlinthText` resolves contrast against the wrong background | components | **High** | Open |
 | [PR-18](#pr-18--the-series-palette-is-unverified-for-colour-vision-deficiency) | Series palette unverified for colour-vision deficiency | core | **Medium** | Open |
 
 ---
@@ -757,6 +758,51 @@ Two things to settle rather than assume:
 *Priority.* **Medium.** Visible, and wrong in the safe direction — the
 current colours are over-corrected rather than illegible.
 
+> **Done, and the premise was wrong.** The requirement said to measure
+> before claiming `large`. Measuring says an alert title does **not**
+> qualify, and says something worse about the icon beside it.
+>
+> **WCAG's large-text floor is ≥18pt regular or ≥14pt bold** — 24px and
+> 18.67px in logical pixels. Against that:
+>
+> | Text | Size / weight | Large? |
+> |---|---|---|
+> | `PlinthTitle` order 1 | 34px w700 | **yes** |
+> | `PlinthTitle` order 2 | 26px w700 | **yes** |
+> | `PlinthTitle` order 3 | 22px w700 | **yes** |
+> | `PlinthTitle` order 4 | 18px w600 | no — short on both readings |
+> | `PlinthTitle` order 5 | 16px w600 | no |
+> | `PlinthTitle` order 6 | 14px w600 | no |
+> | Alert / notification title | **16px w700** | **no** — 2.67px short |
+>
+> So the muddy alert titles are **correct**, not over-corrected, and
+> nothing about them changed. `PlinthTitle` now picks its floor from the
+> measurement rather than from the word "title": orders 1–3 take
+> `large`, 4–6 keep `body`.
+>
+> **The icons were the real defect, and in the opposite direction to
+> what this requirement guessed.** They were not over-corrected — they
+> were not corrected at all, painted at a raw `shaded(color, 6)`.
+> Against the alert's own tinted background, **7 of 13 ramps failed WCAG
+> 1.4.11's 3:1**: yellow at **1.74:1**, lime 1.91, green 2.19, teal
+> 2.38, cyan 2.59, red 2.94. Both banner icons now resolve through
+> `readableOn(..., level: PlinthContrast.nonText)` against what is
+> actually behind them.
+>
+> **Icons elsewhere were deliberately left alone.**
+> `PlinthActionIcon`, `PlinthThemeIcon` and `PlinthCloseButton` already
+> resolve at `body` (4.5). Loosening them to `nonText` would trade
+> contrast for brand fidelity with no accessibility gain — over-
+> correcting an icon is safe, under-correcting is not. Tighten where
+> failing; do not loosen where passing.
+>
+> One thing this surfaced about [PR-11](#pr-11--make-lerp-real-or-say-it-isnt):
+> a widget test that swaps the theme extension between pumps is now
+> **mid-transition** unless it settles, so `context.plinth` holds a
+> lerped theme. The first draft of this requirement's test failed for
+> exactly that reason. Worth knowing before writing any test that
+> compares two themes in one tree.
+
 ---
 
 ## Components
@@ -859,6 +905,42 @@ numeric widgets. Small, cheap, obviously correct.
 > inside it, and a second checks the *same* `Row` reverses without it.
 > Without the second, the first would pass even if `PlinthLtr` did
 > nothing.
+
+### PR-19 — `PlinthText` resolves contrast against the wrong background
+
+**A colour prop is checked against the surface, wherever the text
+actually sits.**
+
+*Evidence.* Found while measuring for
+[PR-17](#pr-17--decide-the-contrast-floor-for-headings-on-tinted-surfaces).
+
+`PlinthText` resolves `readableOn(color, theme.surface)` — always the
+surface, with no way to say otherwise. That is right for text on a page
+and wrong everywhere else, and the library puts it everywhere else:
+`PlinthAlert` renders its title with `PlinthText` on a **tinted**
+background of `shaded(color, 0)`.
+
+Measured against the background the title is really on, **3 of 13 ramps
+fall below 4.5:1 in the light theme** — the contrast machinery reports
+a pass while the rendered text does not clear the floor it claims.
+
+It is a small miss, and it is the *silent* kind: everything looks
+deliberate, `readableOn` was called, and the number it cleared was
+against a surface the text never touches.
+
+*Shape.* `PlinthText` needs a way to name the background it sits on —
+an `on:` parameter taking a `Color`, defaulting to the surface. Then
+`PlinthAlert` and `PlinthNotification` pass their own background, and
+any app compositing text over a tint can do the same.
+
+Worth deciding as part of it: whether `readableOn`'s signature should
+make the background *required* rather than defaulted, so the question
+cannot be skipped by accident. That is a wider breaking change and
+belongs to the same conversation.
+
+*Priority.* **High.** It is a correctness bug in the accessibility
+machinery itself, which is the part most likely to be trusted without
+checking.
 
 ---
 

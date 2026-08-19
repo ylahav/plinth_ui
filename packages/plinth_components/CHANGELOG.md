@@ -27,6 +27,31 @@ changes; from `1.0.0` they cannot.
   meaning without restyling every form field in the library, by pointing
   `PlinthRole.error` somewhere else.
 
+- **Banner icons now meet WCAG 1.4.11, and headings pick their contrast
+  floor by measurement.** (PR-17)
+
+  `PlinthAlert` and `PlinthNotification` painted their icon at a raw
+  `shaded(color, 6)`. Against the alert's own tinted background **7 of
+  13 ramps failed the 3:1 an icon needs** — yellow at **1.74:1**, lime
+  1.91, green 2.19. Both now resolve through `readableOn` at
+  `PlinthContrast.nonText` against what is actually behind them, so
+  those icons get darker in the light theme.
+
+  `PlinthTitle` orders 1–3 (34/26/22px at w700) clear WCAG's large-text
+  threshold and now take the looser 3:1 floor, keeping them nearer the
+  brand colour. Orders 4–6 (18/16/14px at w600) do not clear it and are
+  unchanged.
+
+  **Alert and notification titles are unchanged**, and that is the
+  finding rather than an omission: at 16px w700 they are 2.67px short of
+  the 18.67px a bold face needs, so the body floor is correct for them
+  and the muted colours they took on in `1.0.0-beta.2` were right.
+
+  Icons outside the banners — `PlinthActionIcon`, `PlinthThemeIcon`,
+  `PlinthCloseButton` — already resolved at 4.5:1 and were left there.
+  Loosening them would trade contrast for brand fidelity with no
+  accessibility gain.
+
 ### Added
 
 - **`PlinthLtr`** — pins a subtree to left-to-right inside an RTL page.

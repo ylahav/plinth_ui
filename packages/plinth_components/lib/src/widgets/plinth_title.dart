@@ -77,7 +77,21 @@ class PlinthTitle extends StatelessWidget {
         style: TextStyle(
           fontSize: size,
           fontWeight: weight,
-          color: color != null ? theme.readableOn(color!, theme.surface) : null,
+          // WCAG's large-text floor (3.0) applies at ~18pt regular or
+          // ~14pt bold — 24px and 18.67px in logical pixels. Orders 1–3
+          // are 34, 26 and 22px at w700 and clear it; orders 4–6 are 18,
+          // 16 and 14px at w600 and do not, on either reading of
+          // "bold". So the level is decided by the measurement, not by
+          // the word "title".
+          color: color == null
+              ? null
+              : theme.readableOn(
+                  color!,
+                  theme.surface,
+                  level: size >= 18.67 && weight.value >= FontWeight.w700.value
+                      ? PlinthContrast.large
+                      : PlinthContrast.body,
+                ),
           height: 1.3,
         ),
       ),
