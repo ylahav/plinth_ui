@@ -106,6 +106,7 @@ export 'src/widgets/plinth_switch.dart';
 export 'src/widgets/plinth_table.dart';
 export 'src/widgets/plinth_table_of_contents.dart';
 export 'src/widgets/plinth_tabs.dart';
+export 'src/widgets/plinth_tap_target.dart';
 export 'src/widgets/plinth_tags_input.dart';
 export 'src/widgets/plinth_text.dart';
 export 'src/widgets/plinth_text_input.dart';

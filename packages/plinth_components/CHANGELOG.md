@@ -15,6 +15,21 @@ changes; from `1.0.0` they cannot.
 
 ### Added
 
+- **`PlinthTapTarget`, and controls honour `PlinthDensity`.** (A1c)
+
+  `PlinthButton`, `PlinthActionIcon`, `PlinthCloseButton` and
+  `PlinthChip` now grow their hit area to the theme's density floor.
+  **The painted control does not grow** — the extra room is transparent
+  padding, the way Flutter's own `MaterialTapTargetSize` works, so a
+  button at `touch` is a 39px button in a 48px target rather than a 48px
+  slab.
+
+  Exported, because an app building its own control needs the same
+  floor and cannot reach it from outside.
+
+  Nothing changes at the default `standard` density, which a test pins
+  per control.
+
 - **`PlinthFocusTrap`, and keyboard focus no longer escapes a popover.**
   (B1)
 

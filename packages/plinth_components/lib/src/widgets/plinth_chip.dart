@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_tap_target.dart';
+
 /// A selectable pill toggle matching Mantine's `Chip`: shows a
 /// checkmark and fills with the theme color when selected.
 ///
@@ -85,40 +87,45 @@ class PlinthChip extends StatelessWidget {
       button: true,
       selected: selected,
       enabled: enabled,
-      child: InkWell(
-        onTap: enabled ? () => onSelected!(!selected) : null,
-        borderRadius: BorderRadius.circular(resolvedRadius),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          padding: EdgeInsets.symmetric(
-            horizontal: _horizontalPadding[size]!,
-            vertical: _verticalPadding[size]!,
-          ),
-          decoration: BoxDecoration(
-            color: selected ? baseColor : theme.surface,
-            borderRadius: BorderRadius.circular(resolvedRadius),
-            border: Border.all(
-              color: selected ? baseColor : theme.border,
+      // Inside the Semantics: the button role covers the whole hit
+      // area, and `getSemantics` resolves from the widget's root.
+      child: PlinthTapTarget(
+        child: InkWell(
+          onTap: enabled ? () => onSelected!(!selected) : null,
+          borderRadius: BorderRadius.circular(resolvedRadius),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            padding: EdgeInsets.symmetric(
+              horizontal: _horizontalPadding[size]!,
+              vertical: _verticalPadding[size]!,
             ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (selected) ...[
-                Icon(Icons.check,
-                    size: _fontSizes[size]! + 2,
-                    color: theme.contrastingOn(baseColor)),
-                const SizedBox(width: 4),
-              ],
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: _fontSizes[size],
-                  color: selected ? theme.contrastingOn(baseColor) : theme.text,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                ),
+            decoration: BoxDecoration(
+              color: selected ? baseColor : theme.surface,
+              borderRadius: BorderRadius.circular(resolvedRadius),
+              border: Border.all(
+                color: selected ? baseColor : theme.border,
               ),
-            ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (selected) ...[
+                  Icon(Icons.check,
+                      size: _fontSizes[size]! + 2,
+                      color: theme.contrastingOn(baseColor)),
+                  const SizedBox(width: 4),
+                ],
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: _fontSizes[size],
+                    color:
+                        selected ? theme.contrastingOn(baseColor) : theme.text,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

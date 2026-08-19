@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_tap_target.dart';
+
 /// Icon extent per [PlinthSize].
 const Map<PlinthSize, double> _iconSizes = {
   PlinthSize.xs: 12,
@@ -72,14 +74,20 @@ class PlinthCloseButton extends StatelessWidget {
       button: true,
       enabled: enabled,
       label: semanticLabel,
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(resolvedRadius),
-        child: Padding(
-          // A bare icon is a small tap target; the padding brings it
-          // closer to a comfortable one without changing the glyph.
-          padding: const EdgeInsets.all(4),
-          child: Icon(Icons.close, size: iconSize, color: foreground),
+      // Inside the Semantics, not outside it: the button role should
+      // cover the whole hit area, and `getSemantics` resolves from the
+      // widget's root — a tap target above it would hide the node a
+      // caller is looking for.
+      child: PlinthTapTarget(
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(resolvedRadius),
+          child: Padding(
+            // A bare icon is a small tap target; the padding brings it
+            // closer to a comfortable one without changing the glyph.
+            padding: const EdgeInsets.all(4),
+            child: Icon(Icons.close, size: iconSize, color: foreground),
+          ),
         ),
       ),
     );

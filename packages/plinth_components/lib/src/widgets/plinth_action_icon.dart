@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_tap_target.dart';
+
 import 'plinth_loader.dart';
 
 /// An icon-only button matching Mantine's `ActionIcon`: same
@@ -149,30 +151,34 @@ class PlinthActionIcon extends StatelessWidget {
       button: true,
       label: semanticLabel,
       enabled: !disabled && !loading,
-      child: Material(
-        color: background,
-        borderRadius: BorderRadius.circular(resolvedRadius),
-        child: InkWell(
-          onTap: loading ? null : onPressed,
+      // Inside the Semantics: the button role covers the whole hit
+      // area, and `getSemantics` resolves from the widget's root.
+      child: PlinthTapTarget(
+        child: Material(
+          color: background,
           borderRadius: BorderRadius.circular(resolvedRadius),
-          child: Container(
-            width: dimension,
-            height: dimension,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(resolvedRadius),
-              border: border != null ? Border.all(color: border) : null,
+          child: InkWell(
+            onTap: loading ? null : onPressed,
+            borderRadius: BorderRadius.circular(resolvedRadius),
+            child: Container(
+              width: dimension,
+              height: dimension,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(resolvedRadius),
+                border: border != null ? Border.all(color: border) : null,
+              ),
+              child: loading
+                  ? PlinthLoader(
+                      dimension: _iconSizes[size],
+                      colorValue: foreground,
+                    )
+                  : IconTheme(
+                      data: IconThemeData(
+                          size: _iconSizes[size], color: foreground),
+                      child: icon,
+                    ),
             ),
-            child: loading
-                ? PlinthLoader(
-                    dimension: _iconSizes[size],
-                    colorValue: foreground,
-                  )
-                : IconTheme(
-                    data: IconThemeData(
-                        size: _iconSizes[size], color: foreground),
-                    child: icon,
-                  ),
           ),
         ),
       ),

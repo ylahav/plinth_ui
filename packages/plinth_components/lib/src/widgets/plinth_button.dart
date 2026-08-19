@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_tap_target.dart';
+
 import 'plinth_loader.dart';
 
 /// A themeable button matching Mantine's Button API shape: a
@@ -75,63 +77,68 @@ class PlinthButton extends StatelessWidget {
             theme: theme,
           );
 
-    return SizedBox(
-      width: fullWidth ? double.infinity : null,
-      child: Semantics(
-        button: true,
-        enabled: !disabled && !loading,
-        child: Material(
-          color: background,
-          borderRadius: BorderRadius.circular(resolvedRadius),
-          child: InkWell(
-            // A button mid-request must not take a second press, so
-            // loading removes the callback rather than only dressing
-            // the button up as busy.
-            onTap: loading ? null : onPressed,
+    // The visual button keeps its own size; the floor only grows the
+    // hit area around it. At `standard` this is a no-op for a button,
+    // which is already 39 tall.
+    return PlinthTapTarget(
+      child: SizedBox(
+        width: fullWidth ? double.infinity : null,
+        child: Semantics(
+          button: true,
+          enabled: !disabled && !loading,
+          child: Material(
+            color: background,
             borderRadius: BorderRadius.circular(resolvedRadius),
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: horizontalPadding,
-                vertical: verticalPadding,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(resolvedRadius),
-                border: border != null ? Border.all(color: border) : null,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (loading) ...[
-                    // Sized to the label rather than the size scale, so
-                    // starting to load doesn't change the button's
-                    // height — and tinted to the foreground, which on a
-                    // filled button is a colour the palette can't name.
-                    PlinthLoader(
-                      dimension: fontSize,
-                      colorValue: foreground,
-                    ),
-                    SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
-                  ] else if (leadingIcon != null) ...[
-                    leadingIcon!,
-                    SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
-                  ],
-                  // Flexible so a label too long for the available
-                  // width shrinks instead of overflowing the button.
-                  // Reachable whenever the width is constrained rather
-                  // than derived from the content: fullWidth, a narrow
-                  // parent, or a large text scale.
-                  Flexible(
-                    child: DefaultTextStyle.merge(
-                      style: TextStyle(
-                        color: foreground,
-                        fontSize: fontSize,
-                        fontWeight: FontWeight.w600,
+            child: InkWell(
+              // A button mid-request must not take a second press, so
+              // loading removes the callback rather than only dressing
+              // the button up as busy.
+              onTap: loading ? null : onPressed,
+              borderRadius: BorderRadius.circular(resolvedRadius),
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding,
+                  vertical: verticalPadding,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(resolvedRadius),
+                  border: border != null ? Border.all(color: border) : null,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (loading) ...[
+                      // Sized to the label rather than the size scale, so
+                      // starting to load doesn't change the button's
+                      // height — and tinted to the foreground, which on a
+                      // filled button is a colour the palette can't name.
+                      PlinthLoader(
+                        dimension: fontSize,
+                        colorValue: foreground,
                       ),
-                      child: child,
+                      SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
+                    ] else if (leadingIcon != null) ...[
+                      leadingIcon!,
+                      SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
+                    ],
+                    // Flexible so a label too long for the available
+                    // width shrinks instead of overflowing the button.
+                    // Reachable whenever the width is constrained rather
+                    // than derived from the content: fullWidth, a narrow
+                    // parent, or a large text scale.
+                    Flexible(
+                      child: DefaultTextStyle.merge(
+                        style: TextStyle(
+                          color: foreground,
+                          fontSize: fontSize,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        child: child,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

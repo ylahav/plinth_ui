@@ -15,6 +15,28 @@ changes; from `1.0.0` they cannot.
 
 ### Added
 
+- **`PlinthDensity`** — a tap-target floor, so an app can say whether it
+  is a desktop tool or a phone. (A1c)
+
+  ```dart
+  PlinthTheme.defaultTheme.copyWith(density: PlinthDensity.touch)
+  ```
+
+  Plinth sizes like the web library it is modelled on. Measured across
+  eleven controls at default size: **every one clears WCAG 2.2 AA's
+  24x24, and none clears iOS's 44 or Android's 48.** That is the right
+  answer for a dense admin table and the wrong one for a phone, and
+  there was no way to say which.
+
+  | | floor |
+  |---|---|
+  | `standard` (default) | 24 — WCAG 2.2 SC 2.5.8 |
+  | `comfortable` | 44 — iOS HIG |
+  | `touch` | 48 — Android Material |
+
+  **`standard` is a no-op**, asserted rather than assumed: every control
+  already cleared 24, so the default density cannot restyle anything.
+
 - **`lerp` is real, so theme changes animate.** (PR-11)
 
   It used to be `return t < 0.5 ? this : other;` — a hard cut halfway

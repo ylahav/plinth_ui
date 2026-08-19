@@ -326,6 +326,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     this.seriesColors = kDefaultSeriesColors,
     this.seriesKeys = const {},
     this.roleRamps = kDefaultRoleRamps,
+    this.density = PlinthDensity.standard,
     this.spacing = kDefaultSpacing,
     this.radius = kDefaultRadius,
     this.fontSizes = kDefaultFontSizes,
@@ -360,6 +361,14 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   ///
   /// Read through [rampFor] and [roleShaded].
   final Map<PlinthRole, String> roleRamps;
+
+  /// How much room interactive controls are given.
+  ///
+  /// Defaults to [PlinthDensity.standard], which is what every control
+  /// was sized for and which clears WCAG 2.2 AA. Raise it to
+  /// [PlinthDensity.touch] on a phone and every control grows to meet
+  /// Android's 48px minimum, without changing type size or padding.
+  final PlinthDensity density;
 
   /// The ordered categorical palette.
   ///
@@ -891,6 +900,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     List<PlinthSeriesColor>? seriesColors,
     Map<String, int>? seriesKeys,
     Map<PlinthRole, String>? roleRamps,
+    PlinthDensity? density,
     Map<PlinthSize, double>? spacing,
     Map<PlinthSize, double>? radius,
     Map<PlinthSize, double>? fontSizes,
@@ -916,6 +926,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
       seriesColors: seriesColors ?? this.seriesColors,
       seriesKeys: seriesKeys ?? this.seriesKeys,
       roleRamps: roleRamps ?? this.roleRamps,
+      density: density ?? this.density,
       spacing: spacing ?? this.spacing,
       radius: radius ?? this.radius,
       fontSizes: fontSizes ?? this.fontSizes,
@@ -975,6 +986,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
       seriesColors: beforeHalf ? seriesColors : other.seriesColors,
       seriesKeys: beforeHalf ? seriesKeys : other.seriesKeys,
       roleRamps: beforeHalf ? roleRamps : other.roleRamps,
+      density: beforeHalf ? density : other.density,
       spacing: _lerpScale(spacing, other.spacing, t),
       radius: _lerpScale(radius, other.radius, t),
       fontSizes: _lerpScale(fontSizes, other.fontSizes, t),
