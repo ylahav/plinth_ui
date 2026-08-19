@@ -26,11 +26,12 @@ the two can be cited against each other.
 ## Status
 
 Seventeen landed: five on 18 Aug 2026, then PR-01, PR-03, PR-16, PR-04,
-PR-12, PR-08, PR-09, PR-13, PR-14, PR-15, PR-11 and PR-17 on 19 Aug.
+PR-12, PR-08, PR-09, PR-13, PR-14, PR-15, PR-11, PR-17 and PR-18 on
+19 Aug.
 **Everything the migration itself found is now closed** — every
-Blocker, every High, every Medium and the one Low. What remains open was
-filed *by* this round's work rather than by the app: PR-18, and PR-19,
-which PR-17's measurements turned up.
+Blocker, every High, every Medium and the one Low. So is everything this
+round's work filed against itself, except **PR-19**, which PR-17's
+measurements turned up and which is the highest-priority item left.
 
 **The 18 Aug five were behaviour-preserving.** Verified by re-running
 the subject app's own harness against the changed packages: 225/225 app
@@ -116,7 +117,7 @@ rather than fixed here.
 | [PR-16](#pr-16--the-built-in-palette-is-not-mantines) | The built-in palette is not Mantine's | core | **High** | **Done** |
 | [PR-17](#pr-17--decide-the-contrast-floor-for-headings-on-tinted-surfaces) | Contrast floor for headings on tinted surfaces | components | **Medium** | **Done** |
 | [PR-19](#pr-19--plinthtext-resolves-contrast-against-the-wrong-background) | `PlinthText` resolves contrast against the wrong background | components | **High** | Open |
-| [PR-18](#pr-18--the-series-palette-is-unverified-for-colour-vision-deficiency) | Series palette unverified for colour-vision deficiency | core | **Medium** | Open |
+| [PR-18](#pr-18--the-series-palette-is-unverified-for-colour-vision-deficiency) | Series palette unverified for colour-vision deficiency | core | **Medium** | **Done** |
 
 ---
 
@@ -276,20 +277,23 @@ the widget layer looks up, not a `Color` the engine picks.
 *Priority.* **High**, and the largest single category of hardcoding
 that survived the migration.
 
-> **Done.** `seriesRamps` (an ordered list of ramp keys) and
-> `seriesKeys` (domain key → position), read through `series(i)`,
-> `seriesFor(key)` and `seriesIndexFor(key)`.
+> **Done**, then **revised by
+> [PR-18](#pr-18--the-series-palette-is-unverified-for-colour-vision-deficiency)**,
+> which found the first sequence unusable for colour-blind readers and
+> changed both the API and the default. What follows describes the
+> shipped result.
 >
-> **The default sequence was chosen by measurement, not taste.** Of the
-> twelve non-neutral ramps, `kDefaultSeriesRamps` is the ten-subset with
-> the largest minimum pairwise CIE76 ΔE — **30.5** — ordered so the
-> minimum ΔE between neighbours is as large as it can be, **112.7**.
-> Neighbours are scored separately because adjacent series are the ones
-> a reader actually compares. `violet` and `green` are dropped: violet
-> collides with `grape`, green with `teal` and `lime`. `gray` is
-> excluded because a neutral among the series makes one look disabled.
-> Both numbers are asserted in the test rather than only claimed here,
-> so reordering the list fails if the palette gets worse.
+> `seriesColors` (an ordered list of `PlinthSeriesColor` — a ramp plus a
+> shade) and `seriesKeys` (domain key → position), read through
+> `series(i)`, `seriesFor(key)` and `seriesIndexFor(key)`.
+>
+> **The default sequence was chosen by measurement, not taste** — and
+> the first measurement was the wrong one. PR-04 optimised for normal
+> vision alone and got 30.5 minimum pairwise ΔE; PR-18 showed that same
+> sequence scores 2.3 under tritanopia. The shipped default is scored
+> across both themes and four vision types at once: **13.5 worst pair,
+> 33.1 worst neighbours.** `gray` is excluded from both sequences,
+> because a neutral among the series makes one look disabled.
 >
 > **The name-not-colour constraint is honoured.** `seriesFor(String)` is
 > the API, so a pure-Dart engine layer emits `'crypto'` and the widget
@@ -304,11 +308,10 @@ that survived the migration.
 >   space collide by pigeonhole, and not hypothetically: **`'groceries'`
 >   and `'transport'` both land on 0.** Any set of categories shown
 >   together must be registered.
-> - **Not verified for colour-vision deficiency.** The separation is
->   measured in ordinary trichromatic vision; nothing simulates
->   deuteranopia, and `red` beside `orange` and `yellow` is exactly
->   where that would show. Filed as
->   [PR-18](#pr-18--the-series-palette-is-unverified-for-colour-vision-deficiency).
+> - **Colour-vision deficiency is now covered**, which it was not when
+>   this requirement first closed. See
+>   [PR-18](#pr-18--the-series-palette-is-unverified-for-colour-vision-deficiency)
+>   for what the gap turned out to be.
 
 ### PR-05 — A `wash` role that survives dark mode
 
@@ -610,7 +613,7 @@ animated. Both are acceptable; the current silence is not.
 >
 > **What still snaps, and why it is not a shortcut:** `brightness`,
 > `primaryColor`, `defaultRadius` and the four lookup maps
-> (`semanticColors`, `roleRamps`, `seriesRamps`, `seriesKeys`). There is
+> (`semanticColors`, `roleRamps`, `seriesColors`, `seriesKeys`). There is
 > no half-step between two brightnesses or two ramp *names*, so these
 > change over at the midpoint.
 >
@@ -710,7 +713,52 @@ CVD-safe sequence outright. Optimising for the 92% by default is a
 choice, not a neutral starting point.
 
 *Priority.* **Medium.** Nothing is broken for most readers, and the
-escape hatch exists — an app can pass its own `seriesRamps` today.
+escape hatch exists — an app can pass its own sequence today.
+
+> **Done, and the worry was an understatement.** Simulating the three
+> dichromacies (Viénot–Brettel–Mollon 1999) and re-scoring PR-04's
+> sequence:
+>
+> | View | min pairwise ΔE | closest pair |
+> |---|---|---|
+> | normal | 30.5 | yellow / orange |
+> | deuteranopia | 6.6 | teal / pink |
+> | protanopia | **3.3** | lime / yellow |
+> | tritanopia | **2.3** | indigo / cyan |
+>
+> **2.3 is roughly the just-noticeable difference.** Two of the ten
+> series were not two colours for a reader with tritanopia. A
+> categorical palette whose one job is separation was failing that job
+> completely, not marginally.
+>
+> **No sequence of ten ramps at a fixed shade can fix it.** The best
+> ten-subset available scores 4.0 in the worst case — the twelve ramps
+> were chosen for hue spread, and hue is the channel dichromats lose.
+>
+> **Letting the shade vary is what fixes it**, because lightness is the
+> channel that remains. That needed an API change, and `seriesRamps`
+> (`List<String>`) became `seriesColors`
+> (`List<PlinthSeriesColor>`, a ramp plus a shade). **Free of charge:**
+> PR-04 shipped on this branch and was never published, so nothing
+> depends on the old shape.
+>
+> The new default is scored across **eight contexts** — both themes ×
+> four vision types, because `shadeFor` mirroring means the dark theme
+> is a different set of colours and had to be optimised jointly:
+> **13.5 worst pair, 33.1 worst neighbours.**
+>
+> **The default is now the CVD-safe sequence**, which settles the
+> question this requirement raised. It is not a close call once
+> measured: the vivid sequence is better for typical colour vision
+> (30.5 against 19.9, both far above any threshold) and *broken* for
+> everyone else (2.3). Trading comfortable for still-comfortable to
+> move broken to working is not a trade-off so much as a bug fix. The
+> old sequence survives as `kVividSeriesColors` for callers who know
+> their audience or whose series carry redundant labels.
+>
+> The simulation is **reimplemented in the test suite**, not just used
+> once to pick values, so the guarantee is asserted on every run rather
+> than being a number somebody wrote down.
 
 ### PR-17 — Decide the contrast floor for headings on tinted surfaces
 

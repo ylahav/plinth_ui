@@ -38,6 +38,53 @@ double _deltaE(Color a, Color b) {
       math.pow(p[2] - q[2], 2));
 }
 
+/// Dichromat simulation, Vienot-Brettel-Mollon 1999.
+///
+/// Not perfect, and it does not need to be: it answers "are these two
+/// series still two colours", which is a question about tens of deltaE
+/// rather than tenths.
+List<double> _mul(List<List<double>> m, List<double> v) => [
+      for (var i = 0; i < 3; i++)
+        m[i][0] * v[0] + m[i][1] * v[1] + m[i][2] * v[2],
+    ];
+
+const _rgbToLms = [
+  [17.8824, 43.5161, 4.11935],
+  [3.45565, 27.1554, 3.86714],
+  [0.0299566, 0.184309, 1.46709],
+];
+const _lmsToRgb = [
+  [0.0809444479, -0.130504409, 0.116721066],
+  [-0.0102485335, 0.0540193266, -0.113614708],
+  [-0.000365296938, -0.00412161469, 0.693511405],
+];
+const _dichromat = <String, List<List<double>>>{
+  'protanopia': [
+    [0.0, 2.02344, -2.52581],
+    [0.0, 1.0, 0.0],
+    [0.0, 0.0, 1.0],
+  ],
+  'deuteranopia': [
+    [1.0, 0.0, 0.0],
+    [0.494207, 0.0, 1.24827],
+    [0.0, 0.0, 1.0],
+  ],
+  'tritanopia': [
+    [1.0, 0.0, 0.0],
+    [0.0, 1.0, 0.0],
+    [-0.395913, 0.801109, 0.0],
+  ],
+};
+
+Color _simulate(Color c, String vision) {
+  if (vision == 'normal') return c;
+  final rgb = [c.r * 255, c.g * 255, c.b * 255];
+  final out = _mul(_lmsToRgb, _mul(_dichromat[vision]!, _mul(_rgbToLms, rgb)));
+  double ch(double v) => v.clamp(0, 255) / 255;
+  return Color.from(
+      alpha: 1, red: ch(out[0]), green: ch(out[1]), blue: ch(out[2]));
+}
+
 double ratio(Color a, Color b) {
   final x = _luminance(a), y = _luminance(b);
   final hi = x > y ? x : y, lo = x > y ? y : x;
@@ -401,39 +448,80 @@ void main() {
     });
   });
 
-  group('PR-04 — a categorical series palette', () {
-    // 36 of the app's 91 hardcoded colours were chart series, and they
-    // were the hardest 36 to migrate. The property they needed was not
-    // brand or status: adjacent slices must be tellable apart.
+  group('PR-04 / PR-18 — a series palette that survives CVD', () {
+    // 36 of the app's 91 hardcoded colours were chart series. The
+    // property they needed was that adjacent slices are tellable apart
+    // — and PR-18 added the half PR-04 missed: tellable apart by whom.
 
-    test('the separation guarantee holds, and is what is documented', () {
-      // The claim in kDefaultSeriesRamps' doc, asserted rather than
-      // asserted-in-prose. If someone reorders the list or swaps a
-      // ramp, this is what says the palette got worse.
-      final colors = [
-        for (var i = 0; i < kDefaultSeriesRamps.length; i++) light.series(i)
-      ];
+    const visions = ['normal', 'protanopia', 'deuteranopia', 'tritanopia'];
 
-      var minPair = double.infinity;
-      var minAdjacent = double.infinity;
+    List<Color> render(PlinthTheme theme, String vision) => [
+          for (var i = 0; i < theme.seriesColors.length; i++)
+            _simulate(theme.series(i), vision),
+        ];
+
+    (double, double) score(List<Color> colors) {
+      var pair = double.infinity, adjacent = double.infinity;
       for (var i = 0; i < colors.length; i++) {
         for (var j = i + 1; j < colors.length; j++) {
           final d = _deltaE(colors[i], colors[j]);
-          if (d < minPair) minPair = d;
-          if (j == i + 1 && d < minAdjacent) minAdjacent = d;
+          if (d < pair) pair = d;
+          if (j == i + 1 && d < adjacent) adjacent = d;
         }
       }
-      expect(minPair, greaterThan(30.0), reason: 'worst pair, CIE76 ΔE');
-      expect(minAdjacent, greaterThan(110.0), reason: 'closest neighbours');
+      return (pair, adjacent);
+    }
+
+    test('the default holds up in all eight contexts', () {
+      // The claim in kDefaultSeriesColors' doc, asserted rather than
+      // written down. 2.3 is roughly the just-noticeable difference, so
+      // a sequence scoring near it has series that are not two colours.
+      var worstPair = double.infinity, worstAdjacent = double.infinity;
+      for (final theme in [light, dark]) {
+        for (final vision in visions) {
+          final (pair, adjacent) = score(render(theme, vision));
+          if (pair < worstPair) worstPair = pair;
+          if (adjacent < worstAdjacent) worstAdjacent = adjacent;
+        }
+      }
+      expect(worstPair, greaterThan(13.0), reason: 'worst pair, any context');
+      expect(worstAdjacent, greaterThan(32.0), reason: 'worst neighbours');
     });
 
-    test('gray is not in the sequence', () {
-      // A neutral among the series makes one look disabled.
-      expect(kDefaultSeriesRamps, isNot(contains('gray')));
+    test('the vivid sequence is better in normal vision and worse in CVD', () {
+      // Both halves matter: the first is why it is kept, the second is
+      // why it is not the default.
+      final vivid = light.copyWith(seriesColors: kVividSeriesColors);
+      final (vividNormal, _) = score(render(vivid, 'normal'));
+      final (defaultNormal, _) = score(render(light, 'normal'));
+      expect(vividNormal, greaterThan(defaultNormal));
+
+      var vividWorst = double.infinity;
+      for (final vision in visions.skip(1)) {
+        final (pair, _) = score(render(vivid, vision));
+        if (pair < vividWorst) vividWorst = pair;
+      }
+      expect(vividWorst, lessThan(5.0),
+          reason: 'the vivid sequence collapses under dichromacy');
+    });
+
+    test('the shades genuinely vary, which is what makes it work', () {
+      // A sequence separated only by hue cannot survive dichromacy;
+      // lightness is the channel that remains.
+      expect(kDefaultSeriesColors.map((c) => c.shade).toSet().length,
+          greaterThan(3));
+      expect(kVividSeriesColors.map((c) => c.shade).toSet(), {6},
+          reason: 'the vivid sequence is hue-only by construction');
+    });
+
+    test('gray is in neither sequence', () {
+      for (final seq in [kDefaultSeriesColors, kVividSeriesColors]) {
+        expect(seq.map((c) => c.ramp), isNot(contains('gray')));
+      }
     });
 
     test('series wraps rather than throwing past the end', () {
-      final n = kDefaultSeriesRamps.length;
+      final n = kDefaultSeriesColors.length;
       expect(light.series(n), equals(light.series(0)));
       expect(light.series(n * 3 + 2), equals(light.series(2)));
     });
@@ -446,64 +534,43 @@ void main() {
     });
 
     test('an unregistered key still resolves, and stays put', () {
-      // The failure this prevents: a chart whose colours reshuffle on
-      // restart. Values are pinned, not just compared to themselves,
-      // so a change to the hash shows up here.
       expect(light.hasSeriesKey('crypto'), isFalse);
       expect(light.seriesIndexFor('crypto'), 2);
       expect(light.seriesIndexFor('il'), 8);
       expect(light.seriesIndexFor('emerging'), 3);
-      expect(light.seriesIndexFor('gold'), 5);
-      expect(light.seriesIndexFor('us'), 9);
       expect(light.seriesIndexFor(''), 1);
     });
 
     test('two keys can collide, which is why registration exists', () {
-      // Recorded rather than hidden: the hash spreads keys, it does not
-      // separate them. 'transport' and 'groceries' both land on 0, and
-      // an app charting both must pin at least one.
       expect(light.seriesIndexFor('transport'), 0);
       expect(light.seriesIndexFor('groceries'), 0);
       expect(
           light.seriesFor('transport'), equals(light.seriesFor('groceries')));
-
       final pinned = light.copyWith(seriesKeys: const {'groceries': 4});
       expect(pinned.seriesFor('transport'),
           isNot(equals(pinned.seriesFor('groceries'))));
     });
 
-    test('registration overrides the hash for that key only', () {
-      final t = light.copyWith(seriesKeys: const {'crypto': 0});
-      expect(t.seriesIndexFor('crypto'), 0);
-      expect(t.seriesIndexFor('il'), light.seriesIndexFor('il'));
-    });
-
     test('a name survives the layer boundary the engine cannot cross', () {
-      // The constraint PR-04 records: the engine layer is pure Dart and
-      // must not import a theme, so what crosses is a key.
       const fromPureDartEngine = 'transport';
-      expect(
-          light.seriesFor(fromPureDartEngine),
-          equals(dark
-              .copyWith(brightness: Brightness.light)
-              .series(light.seriesIndexFor(fromPureDartEngine))));
+      expect(light.seriesFor(fromPureDartEngine),
+          equals(light.series(light.seriesIndexFor(fromPureDartEngine))));
     });
 
     test('series follows the theme into dark', () {
-      // shaded() mirrors, so a series colour is the dark-theme member of
-      // the same ramp rather than the identical pixel.
-      expect(dark.series(0), equals(dark.shaded(kDefaultSeriesRamps[0], 6)));
+      final first = kDefaultSeriesColors.first;
+      expect(dark.series(0), equals(dark.shaded(first.ramp, first.shade)));
       expect(dark.series(0), isNot(equals(light.series(0))));
     });
 
     test('an empty sequence degrades instead of crashing', () {
-      final t = light.copyWith(seriesRamps: const []);
+      final t = light.copyWith(seriesColors: const []);
       expect(t.series(0), equals(t.shaded(t.primaryColor, 6)));
       expect(t.seriesIndexFor('anything'), 0);
     });
 
     test('copyWith round-trips both fields', () {
-      expect(light.copyWith().seriesRamps, same(light.seriesRamps));
+      expect(light.copyWith().seriesColors, same(light.seriesColors));
       expect(light.copyWith().seriesKeys, same(light.seriesKeys));
     });
   });

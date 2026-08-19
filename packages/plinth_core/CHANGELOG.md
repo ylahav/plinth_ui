@@ -101,25 +101,36 @@ changes; from `1.0.0` they cannot.
   how much drift is acceptable, which is the judgement this exists to
   surface rather than make.
 
-- **A categorical series palette** — ask for the *n*th distinguishable
-  colour. (PR-04, the largest single category of hardcoding that
-  survived the migration: **36 of the app's 91 colours were chart
-  series**)
+- **A categorical series palette, built to survive colour-vision
+  deficiency.** (PR-04, PR-18)
 
   ```dart
-  theme.series(0);              // the first series colour
+  theme.series(0);              // the nth series colour
   theme.seriesFor('groceries'); // by domain key
   ```
 
-  Neither a brand ramp nor a status colour. The property is separation,
-  and the default sequence is picked to maximise it rather than chosen
-  by eye: of the twelve non-neutral ramps, `kDefaultSeriesRamps` is the
-  ten-subset with the largest **minimum pairwise CIE76 ΔE (30.5)**,
-  ordered so the **minimum ΔE between neighbours (112.7)** is as large
-  as it can be. Neighbours score separately because adjacent series are
-  the ones a reader compares. `violet` and `green` are dropped — violet
-  collides with `grape`, green with `teal` and `lime` — and `gray` is
-  excluded because a neutral among the series makes one look disabled.
+  36 of the subject app's 91 hardcoded colours were chart series — the
+  largest single category of hardcoding the migration left behind, and
+  a property neither a brand ramp nor a status colour has.
+
+  `kDefaultSeriesColors` is scored across **eight contexts**: the light
+  and dark themes, each under normal vision plus simulated protanopia,
+  deuteranopia and tritanopia (Viénot–Brettel–Mollon 1999). Worst case
+  across all eight: **13.5 ΔE between any two, 33.1 between
+  neighbours.**
+
+  **The shades vary rather than sitting at 6, and that is the whole
+  mechanism.** Dichromats lose hue discrimination but keep lightness
+  discrimination, so a palette separated only by hue collapses for them
+  and one that also moves through lightness does not.
+
+  `kVividSeriesColors` is the hue-only alternative: ten ramps at shade 6
+  with the largest pairwise separation for normal vision (30.5). It is
+  **not** the default because it scores **2.3 under tritanopia and 3.3
+  under protanopia** — 2.3 is about the just-noticeable difference, so
+  two of its series are the same colour to a reader with tritanopia.
+  Use it when colour is decoration beside a label rather than the
+  information itself.
 
   **`seriesFor` takes a name, not a `Color`, and that is the point.**
   The layer that knows a slice is `'crypto'` is usually pure Dart with
@@ -127,17 +138,12 @@ changes; from `1.0.0` they cannot.
   that boundary, a colour cannot without dragging the theme with it.
 
   Register domain keys with `seriesKeys` to pin them. Unregistered keys
-  still resolve, deterministically — an explicit FNV-1a rather than
+  resolve deterministically — an explicit FNV-1a rather than
   `hashCode`, which Dart does not promise to keep stable across runs —
-  so a chart does not reshuffle its colours on restart. **The hash is a
-  floor, not a solution:** ten positions and an unbounded key space
-  collide, and `'groceries'` and `'transport'` both land on 0. Register
-  anything shown together.
-
-  **Not verified for colour-vision deficiency.** The separation is
-  measured in ordinary trichromatic vision, and the warm run — red,
-  yellow, orange — is exactly where deuteranopia would show. Pass your
-  own `seriesRamps` if you need a CVD-safe sequence.
+  so a chart does not reshuffle on restart. **The hash is a floor, not
+  a solution:** ten positions and an unbounded key space collide, and
+  `'groceries'` and `'transport'` both land on 0. Register anything
+  shown together.
 
 ## 1.0.0-beta.2
 

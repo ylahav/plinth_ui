@@ -147,38 +147,97 @@ const Map<PlinthRole, String> kDefaultRoleRamps = {
   PlinthRole.success: 'green',
 };
 
-/// The default categorical sequence, as keys into [PlinthTheme.colors].
+/// One entry in a categorical sequence: a ramp, and the shade to take
+/// from it.
 ///
-/// Ten ramps, chosen and ordered by measurement rather than by taste.
-/// Of the twelve non-neutral ramps, this is the ten-subset with the
-/// largest **minimum pairwise CIE76 ΔE** (30.5), ordered so the
-/// **minimum ΔE between neighbours** is as large as it can be (112.7).
-/// `violet` and `green` are the two left out: violet collides with
-/// `grape`, green with `teal` and `lime`.
+/// The shade varies rather than sitting at 6 for every entry, and that
+/// is the whole reason a colour-blind reader can tell the series apart.
+/// Dichromats lose hue discrimination but keep **lightness**
+/// discrimination, so a palette separated only by hue collapses for
+/// them while one that also moves through lightness does not.
+@immutable
+class PlinthSeriesColor {
+  const PlinthSeriesColor(this.ramp, {this.shade = 6});
+
+  /// The key into [PlinthTheme.colors].
+  final String ramp;
+
+  /// The role-shade, mirrored for dark themes by [PlinthTheme.shadeFor]
+  /// like any other.
+  final int shade;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PlinthSeriesColor && other.ramp == ramp && other.shade == shade;
+
+  @override
+  int get hashCode => Object.hash(ramp, shade);
+}
+
+/// The default categorical sequence — **chosen to survive colour-vision
+/// deficiency**, not just to look well separated.
 ///
-/// Neighbours matter separately from the worst pair because adjacent
-/// series are the ones a reader compares — touching pie slices, stacked
-/// bars, consecutive legend rows.
+/// Scored across **eight contexts**: the light and dark themes, each
+/// under normal vision plus simulated protanopia, deuteranopia and
+/// tritanopia (Viénot–Brettel–Mollon 1999). The worst case across all
+/// eight is what was maximised.
 ///
-/// `gray` is excluded on purpose. A categorical palette that includes
-/// the neutral makes one series look disabled.
+/// | | this sequence | [kVividSeriesColors] |
+/// |---|---|---|
+/// | worst pair, all 8 contexts | **13.5** | **2.3** |
+/// | worst neighbours, all 8 | **33.1** | — |
+/// | worst pair, normal vision | 19.9 | 30.5 |
 ///
-/// **Not verified for colour-vision deficiency.** The separation above
-/// is measured in ordinary trichromatic vision; nothing here simulates
-/// deuteranopia or protanopia, and `red` next to `orange` and `yellow`
-/// is exactly where that would show. Pass your own
-/// [PlinthTheme.seriesRamps] if you need a CVD-safe sequence.
-const List<String> kDefaultSeriesRamps = [
-  'red',
-  'indigo',
-  'teal',
-  'pink',
-  'lime',
-  'grape',
-  'yellow',
-  'blue',
-  'orange',
-  'cyan',
+/// **The comparison is the argument for the default.** The vivid
+/// sequence is better for readers with typical colour vision — 30.5
+/// against 19.9 — and *broken* for everyone else: under tritanopia two
+/// of its series land 2.3 apart, at the threshold where two colours
+/// stop being two colours, and under protanopia 3.3. Trading a
+/// comfortable 30.5 for a still-comfortable 19.9 in order to move 2.3
+/// up to 13.5 is not a close call.
+///
+/// Reach for [kVividSeriesColors] when you know your audience, or when
+/// the series carry a redundant label and colour is decoration rather
+/// than information.
+const List<PlinthSeriesColor> kDefaultSeriesColors = [
+  PlinthSeriesColor('red', shade: 2),
+  PlinthSeriesColor('indigo', shade: 3),
+  PlinthSeriesColor('violet', shade: 6),
+  PlinthSeriesColor('green', shade: 5),
+  PlinthSeriesColor('grape', shade: 2),
+  PlinthSeriesColor('blue', shade: 7),
+  PlinthSeriesColor('yellow', shade: 4),
+  PlinthSeriesColor('orange', shade: 8),
+  PlinthSeriesColor('lime', shade: 2),
+  PlinthSeriesColor('pink', shade: 4),
+];
+
+/// The hue-optimised sequence: maximum separation **for normal colour
+/// vision only**.
+///
+/// Ten ramps at shade 6, the ten-subset of the twelve non-neutral ramps
+/// with the largest minimum pairwise CIE76 ΔE (30.5), ordered so the
+/// closest neighbours are as far apart as possible (112.7).
+///
+/// **It does not survive colour-vision deficiency**: 3.3 under
+/// protanopia and 2.3 under tritanopia, where 2.3 is roughly the
+/// just-noticeable difference. Two of its series are the same colour to
+/// a reader with tritanopia. That is why it is not the default, and why
+/// it is named rather than deleted — it is the right choice when colour
+/// is decoration alongside a label, and the wrong one when colour *is*
+/// the information.
+const List<PlinthSeriesColor> kVividSeriesColors = [
+  PlinthSeriesColor('red'),
+  PlinthSeriesColor('indigo'),
+  PlinthSeriesColor('teal'),
+  PlinthSeriesColor('pink'),
+  PlinthSeriesColor('lime'),
+  PlinthSeriesColor('grape'),
+  PlinthSeriesColor('yellow'),
+  PlinthSeriesColor('blue'),
+  PlinthSeriesColor('orange'),
+  PlinthSeriesColor('cyan'),
 ];
 
 /// A colour named by the role it plays, rather than by its hue.
@@ -264,7 +323,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     required this.colors,
     required this.primaryColor,
     this.semanticColors = const {},
-    this.seriesRamps = kDefaultSeriesRamps,
+    this.seriesColors = kDefaultSeriesColors,
     this.seriesKeys = const {},
     this.roleRamps = kDefaultRoleRamps,
     this.spacing = kDefaultSpacing,
@@ -302,7 +361,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// Read through [rampFor] and [roleShaded].
   final Map<PlinthRole, String> roleRamps;
 
-  /// The ordered categorical palette, as keys into [colors].
+  /// The ordered categorical palette.
   ///
   /// Chart series, legend swatches, tag colours — anywhere the only
   /// thing that matters is that the *n*th thing is tellable apart from
@@ -310,9 +369,9 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// thirteen named ramps answer a different question.
   ///
   /// Read through [series] and [seriesFor] rather than directly.
-  final List<String> seriesRamps;
+  final List<PlinthSeriesColor> seriesColors;
 
-  /// Domain keys pinned to a position in [seriesRamps] — `'groceries'`
+  /// Domain keys pinned to a position in [seriesColors] — `'groceries'`
   /// to 0, `'transport'` to 1.
   ///
   /// Registering a key fixes its colour. An unregistered key still
@@ -606,16 +665,17 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   Color roleShaded(PlinthRole role, int shade) => shaded(rampFor(role), shade);
 
   /// The *n*th categorical colour, wrapping past the end of
-  /// [seriesRamps].
+  /// [seriesColors].
   ///
   /// Wraps rather than throwing or fading, because a chart with more
   /// series than the palette has colours still has to render. Past the
   /// tenth series a repeat is unavoidable and a legend is doing the
-  /// work regardless — see [kDefaultSeriesRamps] for the separation
+  /// work regardless — see [kDefaultSeriesColors] for the separation
   /// this can actually promise.
   Color series(int index) {
-    if (seriesRamps.isEmpty) return shaded(primaryColor, 6);
-    return shaded(seriesRamps[index % seriesRamps.length], 6);
+    if (seriesColors.isEmpty) return shaded(primaryColor, 6);
+    final entry = seriesColors[index % seriesColors.length];
+    return shaded(entry.ramp, entry.shade);
   }
 
   /// The categorical colour for a domain key — `'groceries'`,
@@ -651,12 +711,12 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   int seriesIndexFor(String key) {
     final pinned = seriesKeys[key];
     if (pinned != null) return pinned;
-    if (seriesRamps.isEmpty) return 0;
+    if (seriesColors.isEmpty) return 0;
     var hash = 0x811c9dc5;
     for (final unit in key.codeUnits) {
       hash = ((hash ^ unit) * 0x01000193) & 0xFFFFFFFF;
     }
-    return hash % seriesRamps.length;
+    return hash % seriesColors.length;
   }
 
   /// Whether [seriesKeys] pins [key] to a position.
@@ -828,7 +888,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     Map<String, PlinthColorShades>? colors,
     String? primaryColor,
     Map<String, PlinthSemanticColor>? semanticColors,
-    List<String>? seriesRamps,
+    List<PlinthSeriesColor>? seriesColors,
     Map<String, int>? seriesKeys,
     Map<PlinthRole, String>? roleRamps,
     Map<PlinthSize, double>? spacing,
@@ -853,7 +913,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
       colors: colors ?? this.colors,
       primaryColor: primaryColor ?? this.primaryColor,
       semanticColors: semanticColors ?? this.semanticColors,
-      seriesRamps: seriesRamps ?? this.seriesRamps,
+      seriesColors: seriesColors ?? this.seriesColors,
       seriesKeys: seriesKeys ?? this.seriesKeys,
       roleRamps: roleRamps ?? this.roleRamps,
       spacing: spacing ?? this.spacing,
@@ -887,7 +947,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// **What snaps at the midpoint**, because there is nothing between
   /// the two values: `brightness`, `primaryColor`, `defaultRadius`,
   /// and the four lookup maps (`semanticColors`, `roleRamps`,
-  /// `seriesRamps`, `seriesKeys`).
+  /// `seriesColors`, `seriesKeys`).
   ///
   /// One consequence is worth knowing rather than discovering, and it
   /// applies to the most common transition of all. `defaultTheme` and
@@ -912,7 +972,7 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
       colors: _lerpRamps(colors, other.colors, t),
       primaryColor: beforeHalf ? primaryColor : other.primaryColor,
       semanticColors: beforeHalf ? semanticColors : other.semanticColors,
-      seriesRamps: beforeHalf ? seriesRamps : other.seriesRamps,
+      seriesColors: beforeHalf ? seriesColors : other.seriesColors,
       seriesKeys: beforeHalf ? seriesKeys : other.seriesKeys,
       roleRamps: beforeHalf ? roleRamps : other.roleRamps,
       spacing: _lerpScale(spacing, other.spacing, t),
