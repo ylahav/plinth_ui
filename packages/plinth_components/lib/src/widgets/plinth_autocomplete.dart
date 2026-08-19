@@ -235,83 +235,95 @@ class _PlinthAutocompleteState extends State<PlinthAutocomplete> {
       borderColor = theme.border;
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (widget.label != null) ...[
-          PlinthText(widget.label!, size: widget.size, weight: FontWeight.w600),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        if (widget.description != null) ...[
-          PlinthText(widget.description!,
-              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        CompositedTransformTarget(
-          link: _layerLink,
-          child: Container(
-            key: _fieldKey,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(resolvedRadius),
-              border: Border.all(
-                color: borderColor,
-                width: _isFocused || hasError ? 2 : 1,
+    return Semantics(
+      // The label is rendered as a sibling of the field, which shows it
+      // to sighted users and to nobody else -- the probe found the
+      // field unlabelled despite a label being passed. Naming the group
+      // is what associates the two.
+      label: widget.label,
+      textField: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (widget.label != null) ...[
+            PlinthText(widget.label!,
+                size: widget.size, weight: FontWeight.w600),
+            SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
+          ],
+          if (widget.description != null) ...[
+            PlinthText(widget.description!,
+                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
+            SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
+          ],
+          CompositedTransformTarget(
+            link: _layerLink,
+            child: Container(
+              key: _fieldKey,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(resolvedRadius),
+                border: Border.all(
+                  color: borderColor,
+                  width: _isFocused || hasError ? 2 : 1,
+                ),
+                color: widget.enabled ? theme.surface : theme.surfaceMuted,
               ),
-              color: widget.enabled ? theme.surface : theme.surfaceMuted,
-            ),
-            padding:
-                EdgeInsets.symmetric(horizontal: theme.spacing[widget.size]!),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    focusNode: _focusNode,
-                    enabled: widget.enabled,
-                    style: TextStyle(fontSize: fontSize),
-                    onChanged: (text) {
-                      widget.onChanged(text);
-                      // Rebuild the overlay so the list narrows as they
-                      // type.
-                      _refreshOptions();
-                    },
-                    decoration: InputDecoration(
-                      hintText: widget.placeholder,
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: theme.spacing[widget.size]! * 0.5,
+              padding:
+                  EdgeInsets.symmetric(horizontal: theme.spacing[widget.size]!),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Semantics(
+                      label: widget.label,
+                      child: TextField(
+                        controller: _controller,
+                        focusNode: _focusNode,
+                        enabled: widget.enabled,
+                        style: TextStyle(fontSize: fontSize),
+                        onChanged: (text) {
+                          widget.onChanged(text);
+                          // Rebuild the overlay so the list narrows as they
+                          // type.
+                          _refreshOptions();
+                        },
+                        decoration: InputDecoration(
+                          hintText: widget.placeholder,
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: theme.spacing[widget.size]! * 0.5,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                // The controller is cleared as well as the value
-                // reported: this field owns the text it displays, so
-                // reporting an empty string alone would leave the old
-                // text sitting there.
-                if (widget.clearable &&
-                    _controller.text.isNotEmpty &&
-                    widget.enabled)
-                  PlinthCloseButton(
-                    size: PlinthSize.xs,
-                    semanticLabel: 'Clear search',
-                    onPressed: () {
-                      _controller.clear();
-                      widget.onChanged('');
-                      _refreshOptions();
-                    },
-                  ),
-              ],
+                  // The controller is cleared as well as the value
+                  // reported: this field owns the text it displays, so
+                  // reporting an empty string alone would leave the old
+                  // text sitting there.
+                  if (widget.clearable &&
+                      _controller.text.isNotEmpty &&
+                      widget.enabled)
+                    PlinthCloseButton(
+                      size: PlinthSize.xs,
+                      semanticLabel: 'Clear search',
+                      onPressed: () {
+                        _controller.clear();
+                        widget.onChanged('');
+                        _refreshOptions();
+                      },
+                    ),
+                ],
+              ),
             ),
           ),
-        ),
-        if (hasError) ...[
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthText(widget.error!,
-              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
+          if (hasError) ...[
+            SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
+            PlinthText(widget.error!,
+                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
+          ],
         ],
-      ],
+      ),
     );
   }
 }

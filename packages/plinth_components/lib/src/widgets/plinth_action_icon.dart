@@ -20,6 +20,7 @@ class PlinthActionIcon extends StatelessWidget {
     super.key,
     required this.icon,
     required this.onPressed,
+    this.semanticLabel,
     this.variant = PlinthVariant.light,
     this.size = PlinthSize.md,
     this.color,
@@ -33,6 +34,16 @@ class PlinthActionIcon extends StatelessWidget {
   /// Null disables the control, and from 0.19.0 that is visible rather
   /// than only semantic.
   final VoidCallback? onPressed;
+
+  /// What a screen reader announces this button as.
+  ///
+  /// An icon carries no text, so without this the button is announced
+  /// as an unnamed button — the control is reachable and unidentifiable
+  /// at the same time. There is no sensible default to infer from an
+  /// [Icon], so it is on the caller, and Flutter's own
+  /// `labeledTapTargetGuideline` will fail the widget without it.
+  final String? semanticLabel;
+
   final PlinthVariant variant;
   final PlinthSize size;
   final String? color;
@@ -136,6 +147,7 @@ class PlinthActionIcon extends StatelessWidget {
 
     return Semantics(
       button: true,
+      label: semanticLabel,
       enabled: !disabled && !loading,
       child: Material(
         color: background,

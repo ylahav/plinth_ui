@@ -167,40 +167,46 @@ class _PlinthPinInputState extends State<PlinthPinInput> {
             SizedBox(
               width: boxSize,
               height: boxSize,
-              child: TextField(
-                controller: _controllers[i],
-                focusNode: _nodes[i],
-                textAlign: TextAlign.center,
-                obscureText: widget.obscureText,
-                keyboardType: widget.numbersOnly
-                    ? TextInputType.number
-                    : TextInputType.text,
-                inputFormatters: [
-                  LengthLimitingTextInputFormatter(1),
-                  if (widget.numbersOnly)
-                    FilteringTextInputFormatter.digitsOnly,
-                ],
-                style: TextStyle(fontSize: theme.fontSizes[widget.size]! + 2),
-                decoration: InputDecoration(
-                  counterText: '',
-                  contentPadding: EdgeInsets.zero,
-                  filled: true,
-                  fillColor: theme.surface,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(resolvedRadius),
-                    borderSide: BorderSide(
-                      color: widget.error
-                          ? theme.roleShaded(PlinthRole.error, 6)
-                          : theme.border,
+              // Each box is its own field, so without a name a screen
+              // reader announces four identical unlabelled inputs and
+              // gives no way to tell which one has focus.
+              child: Semantics(
+                label: 'Digit ${i + 1} of ${widget.length}',
+                child: TextField(
+                  controller: _controllers[i],
+                  focusNode: _nodes[i],
+                  textAlign: TextAlign.center,
+                  obscureText: widget.obscureText,
+                  keyboardType: widget.numbersOnly
+                      ? TextInputType.number
+                      : TextInputType.text,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(1),
+                    if (widget.numbersOnly)
+                      FilteringTextInputFormatter.digitsOnly,
+                  ],
+                  style: TextStyle(fontSize: theme.fontSizes[widget.size]! + 2),
+                  decoration: InputDecoration(
+                    counterText: '',
+                    contentPadding: EdgeInsets.zero,
+                    filled: true,
+                    fillColor: theme.surface,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(resolvedRadius),
+                      borderSide: BorderSide(
+                        color: widget.error
+                            ? theme.roleShaded(PlinthRole.error, 6)
+                            : theme.border,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(resolvedRadius),
+                      borderSide: BorderSide(
+                          color: theme.shaded(colorKey, 6), width: 2),
                     ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(resolvedRadius),
-                    borderSide:
-                        BorderSide(color: theme.shaded(colorKey, 6), width: 2),
-                  ),
+                  onChanged: (v) => _onChanged(i, v),
                 ),
-                onChanged: (v) => _onChanged(i, v),
               ),
             ),
           ],

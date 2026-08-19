@@ -15,6 +15,44 @@ changes; from `1.0.0` they cannot.
 
 ### Changed
 
+- **Interactive controls now carry a name and a role.** (B0a, B0b)
+
+  Found by running the accessibility probes rather than by anyone
+  reporting it — see
+  [POST_1_0_ROADMAP § What B0 found](../../docs/POST_1_0_ROADMAP.md#what-b0-found).
+
+  - **`PlinthRating` was the worst in the library**: five tappable
+    stars, none labelled, none with a role. Each region now announces
+    the value it sets — "3 of 5" — and marks itself selected when it is
+    the current one.
+  - **`PlinthPinInput`** — four identical unlabelled fields, now "Digit
+    1 of 4" and so on.
+  - **`PlinthAutocomplete`** — unlabelled *despite* being given a
+    `label`, because the label was rendered as a sibling of the field
+    and reached sighted users only. It is now on the field.
+  - **`PlinthAccordion`, `PlinthBreadcrumbs`, `PlinthStepper`** — were
+    labelled but roleless, so they announced as text rather than as
+    controls. Accordion also reports expanded/collapsed.
+  - **`PlinthAnchor`** now reports as a link.
+
+- **`PlinthActionIcon` gains `semanticLabel`.** It had no such parameter
+  at all, so an icon-only button was announced as an unnamed button.
+  There is no default to infer from an `Icon`, so it stays the caller's
+  responsibility — Flutter's `labeledTapTargetGuideline` fails the
+  widget without it.
+
+- **`PlinthAnchor` was short on two counts, each by a margin only
+  measurement finds.**
+
+  It painted `shaded(colorKey, 6)` — a raw shade for a *foreground* —
+  putting the default blue at **3.56:1** on white, under the body floor.
+  That is the same mistake as PR-17's alert icons and PR-19's
+  `PlinthText`: the **third** component found with it. It now resolves
+  through `readableOn`.
+
+  Its tap target was **23px**, one pixel under WCAG 2.2 SC 2.5.8's
+  24x24. Now 24, centred on the text so nothing around it shifts.
+
 - **Text now resolves its contrast against the background it actually
   sits on.** (PR-19)
 

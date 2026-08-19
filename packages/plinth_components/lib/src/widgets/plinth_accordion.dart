@@ -132,28 +132,35 @@ class _AccordionTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: theme.spacing[PlinthSize.sm]!,
-                vertical: theme.spacing[PlinthSize.sm]!,
-              ),
-              child: Row(
-                children: [
-                  if (item.icon != null) ...[
-                    item.icon!,
-                    SizedBox(width: theme.spacing[PlinthSize.xs]!),
+          Semantics(
+            button: true,
+            // The probe found the trigger labelled but roleless, so it
+            // announced as text: reachable, tappable, and giving no
+            // clue that it is a control or that it opens something.
+            expanded: isOpen,
+            child: InkWell(
+              onTap: onTap,
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: theme.spacing[PlinthSize.sm]!,
+                  vertical: theme.spacing[PlinthSize.sm]!,
+                ),
+                child: Row(
+                  children: [
+                    if (item.icon != null) ...[
+                      item.icon!,
+                      SizedBox(width: theme.spacing[PlinthSize.xs]!),
+                    ],
+                    Expanded(
+                      child: PlinthText(item.title, weight: FontWeight.w600),
+                    ),
+                    AnimatedRotation(
+                      turns: isOpen ? 0.5 : 0,
+                      duration: const Duration(milliseconds: 150),
+                      child: const Icon(Icons.keyboard_arrow_down, size: 20),
+                    ),
                   ],
-                  Expanded(
-                    child: PlinthText(item.title, weight: FontWeight.w600),
-                  ),
-                  AnimatedRotation(
-                    turns: isOpen ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 150),
-                    child: const Icon(Icons.keyboard_arrow_down, size: 20),
-                  ),
-                ],
+                ),
               ),
             ),
           ),

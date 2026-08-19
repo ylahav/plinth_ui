@@ -280,40 +280,43 @@ class _StepCircleAndLabel extends StatelessWidget {
         ),
     ];
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius:
-          BorderRadius.circular(radius == null ? 999 : theme.radius[radius!]!),
-      child: isVertical
-          ? Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                circle,
-                SizedBox(width: theme.spacing[PlinthSize.sm]),
-                Expanded(
-                  child: Padding(
-                    // Nudged down so the label's first line sits on the
-                    // circle's centre line rather than its top edge.
-                    padding: EdgeInsets.only(
-                      top: theme.spacing[PlinthSize.xs]! * 0.5,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: labels,
+    return Semantics(
+      button: onTap != null,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(
+            radius == null ? 999 : theme.radius[radius!]!),
+        child: isVertical
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  circle,
+                  SizedBox(width: theme.spacing[PlinthSize.sm]),
+                  Expanded(
+                    child: Padding(
+                      // Nudged down so the label's first line sits on the
+                      // circle's centre line rather than its top edge.
+                      padding: EdgeInsets.only(
+                        top: theme.spacing[PlinthSize.xs]! * 0.5,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: labels,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            )
-          : Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                circle,
-                SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.5),
-                ...labels,
-              ],
-            ),
+                ],
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  circle,
+                  SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.5),
+                  ...labels,
+                ],
+              ),
+      ),
     );
   }
 }

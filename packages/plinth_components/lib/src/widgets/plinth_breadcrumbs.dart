@@ -89,12 +89,15 @@ class _Crumb extends StatelessWidget {
       );
     }
 
-    return InkWell(
-      onTap: item.onTap,
-      borderRadius: BorderRadius.circular(4),
-      child: Text(
-        item.label,
-        style: TextStyle(fontSize: 14, color: linkColor),
+    return Semantics(
+      link: item.onTap != null,
+      child: InkWell(
+        onTap: item.onTap,
+        borderRadius: BorderRadius.circular(4),
+        child: Text(
+          item.label,
+          style: TextStyle(fontSize: 14, color: linkColor),
+        ),
       ),
     );
   }

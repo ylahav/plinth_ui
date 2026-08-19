@@ -86,6 +86,9 @@ class PlinthRating extends StatelessWidget {
             // the rightmost of the last is `count`.
             onSelect:
                 enabled ? (part) => onChanged!(i - 1 + part / fractions) : null,
+            ratingFor: (part) => i - 1 + part / fractions,
+            total: count,
+            selected: value,
           ),
       ],
     );
@@ -99,6 +102,9 @@ class _Star extends StatelessWidget {
     required this.color,
     required this.fractions,
     required this.onSelect,
+    required this.ratingFor,
+    required this.total,
+    required this.selected,
   });
 
   /// How much of this star is filled, 0 to 1.
@@ -109,6 +115,36 @@ class _Star extends StatelessWidget {
 
   /// Called with the 1-based region index that was tapped.
   final ValueChanged<int>? onSelect;
+
+  /// The rating a given region represents, for naming it.
+  final double Function(int part) ratingFor;
+
+  /// The maximum, so a label can say "of 5" rather than a bare number.
+  final int total;
+
+  /// The current rating, so the chosen region announces as selected.
+  final double selected;
+
+  /// Names a tappable region and marks whether it is the current value.
+  ///
+  /// Without this a rating is a row of anonymous tap targets: the probe
+  /// found five tappable nodes, none labelled and none with a role, so
+  /// a screen-reader user could reach every star and learn nothing from
+  /// any of them — not what tapping does, and not what the rating
+  /// currently is.
+  Widget _labelled({required int part, required Widget child}) {
+    final rating = ratingFor(part);
+    final text = rating == rating.roundToDouble()
+        ? rating.toStringAsFixed(0)
+        : rating.toStringAsFixed(1);
+    return Semantics(
+      button: onSelect != null,
+      inMutuallyExclusiveGroup: true,
+      selected: (selected - rating).abs() < 0.001,
+      label: '$text of $total',
+      child: child,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,10 +178,13 @@ class _Star extends StatelessWidget {
     // inside its own hit path — which is what `find.byIcon(...)` then
     // `tap()` relies on. Only splitting reaches for an overlay.
     if (fractions == 1) {
-      return InkWell(
-        onTap: onSelect == null ? null : () => onSelect!(1),
-        borderRadius: BorderRadius.circular(4),
-        child: content,
+      return _labelled(
+        part: 1,
+        child: InkWell(
+          onTap: onSelect == null ? null : () => onSelect!(1),
+          borderRadius: BorderRadius.circular(4),
+          child: content,
+        ),
       );
     }
 
@@ -161,9 +200,12 @@ class _Star extends StatelessWidget {
               children: [
                 for (var k = 1; k <= fractions; k++)
                   Expanded(
-                    child: InkWell(
-                      onTap: () => onSelect!(k),
-                      borderRadius: BorderRadius.circular(4),
+                    child: _labelled(
+                      part: k,
+                      child: InkWell(
+                        onTap: () => onSelect!(k),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
                   ),
               ],
