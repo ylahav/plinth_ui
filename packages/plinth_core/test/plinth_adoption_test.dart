@@ -42,6 +42,86 @@ void main() {
     });
   });
 
+  group('PR-03 — a supplied brand colour comes back out', () {
+    // The whole point: shade 6 is what every component defaults to, so
+    // "my brand colour" and "what a filled button paints" have to be
+    // the same colour.
+    const brands = {
+      'expense': 0xFFFF3B30,
+      'income': 0xFF34C759,
+      'warn': 0xFFFF9500,
+      'pension': 0xFFAF52DE,
+      'material-green-800': 0xFF2E7D32,
+    };
+
+    for (final entry in brands.entries) {
+      test('${entry.key} is returned exactly at shade 6', () {
+        final base = Color(entry.value);
+        expect(PlinthTheme.generateShades(base)[6], equals(base));
+      });
+    }
+
+    test('the ramp stays monotonic for every brand colour', () {
+      for (final value in brands.values) {
+        final ramp = PlinthTheme.generateShades(Color(value));
+        for (var i = 1; i < 10; i++) {
+          expect(_luminance(ramp[i]), lessThan(_luminance(ramp[i - 1])),
+              reason: 'shade $i of ${value.toRadixString(16)}');
+        }
+      }
+    });
+
+    test('both endpoints stay put, so shade 0 is still a tint', () {
+      // Only the interior stretches. A wash reads as tinted surface
+      // whatever colour was fed in.
+      for (final value in brands.values) {
+        final ramp = PlinthTheme.generateShades(Color(value));
+        expect(ratio(ramp[0], const Color(0xFFFFFFFF)), lessThan(1.5),
+            reason: 'shade 0 of ${value.toRadixString(16)} is not a tint');
+      }
+    });
+
+    test('a near-white or near-black base still anchors', () {
+      // Degenerate but honest: a near-white base has no lighter tint,
+      // so the endpoint widens rather than the anchor moving.
+      for (final v in [0xFFFAFAFA, 0xFF0A0A0A]) {
+        final base = Color(v);
+        expect(PlinthTheme.generateShades(base)[6], equals(base));
+      }
+    });
+  });
+
+  group('PR-16 — the built-in palette is really Mantine', () {
+    // The ramps are seeded with Mantine's own shade-6 values and, before
+    // anchoring, none of them survived the generator: red came back
+    // #E90707 rather than #FA5252, violet #4511DF rather than #7950F2.
+    const mantineShade6 = {
+      'gray': 0xFF868E96,
+      'red': 0xFFFA5252,
+      'pink': 0xFFE64980,
+      'grape': 0xFFBE4BDB,
+      'violet': 0xFF7950F2,
+      'indigo': 0xFF4C6EF5,
+      'blue': 0xFF228BE6,
+      'cyan': 0xFF15AABF,
+      'teal': 0xFF12B886,
+      'green': 0xFF40C057,
+      'lime': 0xFF82C91E,
+      'yellow': 0xFFFAB005,
+      'orange': 0xFFFD7E14,
+    };
+
+    for (final entry in mantineShade6.entries) {
+      test('${entry.key}.6 matches Mantine', () {
+        expect(light.color(entry.key, 6), equals(Color(entry.value)));
+      });
+    }
+
+    test('every documented ramp is covered by this check', () {
+      expect(light.colors.keys.toSet(), equals(mantineShade6.keys.toSet()));
+    });
+  });
+
   group('PR-01 — a semantic token tier', () {
     // The app wrote 110 lines of app_tokens.dart to get this, and it
     // only worked because `colors` accepts arbitrary keys. These pin

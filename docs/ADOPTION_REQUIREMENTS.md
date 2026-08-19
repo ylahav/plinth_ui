@@ -25,14 +25,35 @@ the two can be cited against each other.
 
 ## Status
 
-Six landed as of 19 Aug 2026 (five on 18 Aug, PR-01 on 19 Aug), verified by re-running the subject app's own
-harness against the changed packages: 225/225 app tests, 48 core tests,
-643 component tests, and the T4 palette snapshot **unchanged** — the
-fixes are behaviour-preserving for an adopter already on the old API.
+Eight landed: five on 18 Aug 2026, then PR-01, PR-03 and PR-16 on
+19 Aug.
 
-Golden images still need regenerating on Linux; they are skipped on
-Windows by design, so the one visual check for PR-06 could not run where
-the change was made.
+**The 18 Aug five were behaviour-preserving.** Verified by re-running
+the subject app's own harness against the changed packages: 225/225 app
+tests, 48 core tests, 643 component tests, and the T4 palette snapshot
+**unchanged**.
+
+**The 19 Aug three are not, and the palette snapshot no longer holds.**
+PR-03 anchors the ramp generator, which moves every interior shade of
+all 13 built-in ramps — that is the point of PR-16, since the ramps had
+never actually matched the Mantine values they are seeded with. Shades 0
+and 9 are unmoved (both endpoints are held), so washes and the darkest
+shades render as before; shades 1–8 shift, most visibly on `red` and
+`violet`.
+
+Current: 80 core tests, 643 component tests, `dart analyze` and
+`dart format` clean. One component test changed — `PlinthText`'s
+"resolves a color key at shade 6" asserted `color('red', 6)` and passed
+only because the un-anchored generator over-darkened the ramp; the
+widget correctly routes text through `readableOn`, and Mantine's real
+`red.6` does not clear the body floor on white.
+
+**Golden images must be regenerated on Linux before this can merge.**
+They are skipped on Windows by design, so a local run is green and
+proves nothing about the 42 images; CI will fail on them until
+`.github/workflows/regenerate-goldens.yml` has run. Unlike the 18 Aug
+work, a golden diff here is *expected* rather than a bug — review each
+one rather than accepting the batch.
 
 ## Summary
 
@@ -40,7 +61,7 @@ the change was made.
 |---|---|---|---|---|
 | [PR-01](#pr-01--a-semantic-token-tier) | A semantic token tier | core | **Blocker** | **Done** |
 | [PR-02](#pr-02--publish-the-ramp-generator) | Publish the ramp generator | core | **Blocker** | **Done** |
-| [PR-03](#pr-03--anchor-a-supplied-brand-colour) | Anchor a supplied brand colour | core | **High** | Open |
+| [PR-03](#pr-03--anchor-a-supplied-brand-colour) | Anchor a supplied brand colour | core | **High** | **Done** |
 | [PR-04](#pr-04--a-categorical-series-palette) | A categorical series palette | core | **High** | Open |
 | [PR-05](#pr-05--a-wash-role-that-survives-dark-mode) | A `wash` role that survives dark mode | core | **High** | **Done** |
 | [PR-06](#pr-06--readableons-default-floor-is-wrong) | `readableOn`'s default floor is wrong | core | **High** | **Done** |
@@ -53,6 +74,7 @@ the change was made.
 | [PR-13](#pr-13--a-numerals-stay-ltr-primitive) | A "numerals stay LTR" primitive | components | **Medium** | Open |
 | [PR-14](#pr-14--path-dependencies-are-unusable) | Path dependencies are unusable | both | **Medium** | Open |
 | [PR-15](#pr-15--a-migration-guide-for-the-const-and-context-tax) | A migration guide for the `const`/context tax | docs | **Medium** | Open |
+| [PR-16](#pr-16--the-built-in-palette-is-not-mantines) | The built-in palette is not Mantine's | core | **High** | **Done** |
 
 ---
 
@@ -162,6 +184,29 @@ rest around it. The app's taper is one approach; any is better than
 none.
 
 *Priority.* **High.**
+
+> **Done, and it took the built-in palette with it — see
+> [PR-16](#pr-16--the-built-in-palette-is-not-mantines).**
+>
+> Implemented as a piecewise rescale rather than the app's taper. Each
+> side of the anchor is rescaled independently: shades 0–6 map the
+> stop curve onto `[base, stop0]` and shades 6–9 onto `[stop9, base]`.
+> **Both endpoints are held**, so shade 0 stays a usable tint and shade
+> 9 a usable dark, and only the interior stretches.
+>
+> Rescaling was chosen over shifting because it keeps the ramp
+> monotonic *by construction* for any base colour. A taper cannot
+> promise that — a near-white base shifts shade 1 past shade 0. Where
+> the base sits outside an endpoint (near-white, near-black) the
+> endpoint widens instead of the anchor moving, so `[6] == base` holds
+> even in the degenerate case, at the cost of a spread the colour
+> cannot have anyway.
+>
+> Only lightness needed anchoring: hue was already carried through and
+> `saturationMultipliers[6]` was already `1.0`.
+>
+> **This retires the app's copied generator**, which is what PR-02 was
+> supposed to do and could not.
 
 ### PR-04 — A categorical series palette
 
@@ -412,6 +457,53 @@ documented statement in the class doc that theme transitions are not
 animated. Both are acceptable; the current silence is not.
 
 *Priority.* **Low.**
+
+### PR-16 — The built-in palette is not Mantine's
+
+**The ramps are seeded with Mantine's published shade-6 values and none
+of them survived the generator.**
+
+*Evidence.* Found while implementing
+[PR-03](#pr-03--anchor-a-supplied-brand-colour), not during the
+migration — this one is a defect in the library rather than a gap an
+adopter hit, and it is recorded separately for that reason.
+
+`defaultTheme` seeds each ramp with the corresponding Mantine `.6`
+value. Asking for shade 6 back returned something else every time:
+
+| Ramp | Seed (Mantine `.6`) | `generateShades(seed)[6]` before |
+|---|---|---|
+| `red` | `#FA5252` | `#E90707` |
+| `violet` | `#7950F2` | `#4511DF` |
+| `blue` | `#228BE6` | `#187FD7` |
+| `gray` | `#868E96` | `#6F7880` |
+| `green` | `#40C057` | `#3BB451` |
+| `yellow` | `#FAB005` | `#EBA505` |
+
+So "Mantine-inspired, on Mantine's palette" — which the README and both
+pubspec descriptions claim — was not true of the rendered colours. The
+distortion is worst on `red` and `violet`, the two most saturated seeds,
+and it ran in the same direction every time: **darker and more
+saturated than Mantine.**
+
+*Consequence beyond the mismatch.* The over-darkening was masking a real
+accessibility fact. Mantine's true `red.6` is ~3.6:1 on white and does
+not clear the body-text floor; the old ramp's `#E90707` did, so
+`readableOn` had nothing to correct. With the palette fixed,
+`readableOn` now does the work [PR-06](#pr-06--readableons-default-floor-is-wrong)
+built it for. A component test asserting `color('red', 6)` had been
+passing on that accident.
+
+*Shape.* Closed by PR-03's anchoring — no separate change. Pinned by a
+test asserting all 13 ramps against Mantine's published values, so this
+cannot drift again silently.
+
+*Priority.* **High.** A palette claim in published package metadata that
+the code does not honour.
+
+> **Done.** All 13 ramps now return their Mantine seed at shade 6
+> exactly, pinned per-ramp in `plinth_adoption_test.dart` with a guard
+> asserting the ramp list itself is fully covered.
 
 ---
 

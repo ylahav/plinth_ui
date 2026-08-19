@@ -632,11 +632,46 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
       0.85,
     ];
 
+    // Re-anchor the curve so shade 6 *is* the supplied colour.
+    //
+    // The stops above are absolute, which normalises a base colour onto
+    // the curve rather than anchoring it to it: feeding in `#FA5252`
+    // and asking for shade 6 — the shade every component defaults to —
+    // returned `#E90707`. The best-matching index was not even
+    // consistent, landing anywhere from 5 to 8 depending on hue, so
+    // there was no shade a caller could reliably ask for.
+    //
+    // Both endpoints stay put: shade 0 remains a usable tint and shade
+    // 9 a usable dark, so only the interior stretches. Rescaling each
+    // side rather than shifting the whole curve is what keeps the ramp
+    // monotonic for any base colour, which a taper cannot promise — a
+    // near-white base would otherwise push shade 1 past shade 0.
+    //
+    // Hue is already preserved and `saturationMultipliers[6]` is
+    // already 1.0, so lightness was the only axis that drifted.
+    const anchorIndex = 6;
+    final anchor = baseHsl.lightness;
+    // Widen an endpoint only if the base sits outside it — a near-white
+    // or near-black base cannot have a lighter tint or a darker shade,
+    // and the anchor is worth more than a spread it cannot have.
+    final lightEnd = math.max(lightnessStops.first, anchor);
+    final darkEnd = math.min(lightnessStops.last, anchor);
+    final lightSpan = lightnessStops.first - lightnessStops[anchorIndex];
+    final darkSpan = lightnessStops[anchorIndex] - lightnessStops.last;
+
     return List.generate(10, (i) {
-      final lightness = lightnessStops[i].clamp(0.0, 1.0);
+      final double lightness;
+      if (i <= anchorIndex) {
+        final t = (lightnessStops.first - lightnessStops[i]) / lightSpan;
+        lightness = lightEnd - (lightEnd - anchor) * t;
+      } else {
+        final t = (lightnessStops[i] - lightnessStops.last) / darkSpan;
+        lightness = darkEnd + (anchor - darkEnd) * t;
+      }
       final saturation =
           (baseHsl.saturation * saturationMultipliers[i]).clamp(0.0, 1.0);
-      return HSLColor.fromAHSL(1.0, hue, saturation, lightness).toColor();
+      return HSLColor.fromAHSL(1.0, hue, saturation, lightness.clamp(0.0, 1.0))
+          .toColor();
     });
   }
 

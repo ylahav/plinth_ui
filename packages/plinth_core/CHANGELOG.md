@@ -22,6 +22,45 @@ evidence was gathered.
 
 ### Breaking
 
+- **`generateShades` anchors the supplied colour at shade 6, which
+  repaints every built-in ramp.** (PR-03, PR-16)
+
+  Feed a colour in, ask for shade 6 — the shade every component
+  defaults to — and you now get that colour back. Before, the lightness
+  stops were absolute, so a base was *normalised onto* the curve rather
+  than anchored to it, and the best-matching index was not even
+  consistent (anywhere from 5 to 8 depending on hue). There was no
+  shade a caller could reliably ask for.
+
+  **This is a visible restyle, not a refactor.** The 13 built-in ramps
+  are seeded with Mantine's own published `.6` values and none of them
+  survived the old generator:
+
+  | Ramp | Seed | Was | Now |
+  |---|---|---|---|
+  | `red` | `#FA5252` | `#E90707` | `#FA5252` |
+  | `violet` | `#7950F2` | `#4511DF` | `#7950F2` |
+  | `blue` | `#228BE6` | `#187FD7` | `#228BE6` |
+
+  The distortion ran one way — darker and more saturated than Mantine —
+  so the palette gets lighter and truer. **Shades 0 and 9 do not move**
+  (both endpoints are held), so washes and the darkest shades render as
+  before; shades 1–8 shift, most visibly on `red` and `violet`.
+
+  Two knock-on effects worth expecting:
+
+  - **`readableOn` now does more work.** Mantine's real `red.6` is
+    ~3.6:1 on white and does not clear the body floor, where the old
+    over-darkened `#E90707` did. Text taking a palette colour will
+    darken where it previously did not — which is the PR-06 floor
+    working, not a regression.
+  - **Anything pinned to a literal shade value will move.** If you
+    screenshot-test or hardcode a generated shade, re-baseline it.
+
+  An app supplying its own brand colour can now delete any re-anchoring
+  curve it wrote — which is what publishing `generateShades` was
+  supposed to achieve and could not.
+
 - **`readableOn` now defaults to a body-text contrast floor (4.5:1)
   instead of 3.0:1.** (PR-06) 3.0 is WCAG's *large text* threshold — right
   for a heading, wrong for the table cell most callers are actually

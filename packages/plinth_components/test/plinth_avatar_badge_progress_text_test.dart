@@ -278,13 +278,20 @@ void main() {
       expect(style.fontSize, theme.fontSizes[PlinthSize.xl]);
     });
 
-    testWidgets('resolves a color key at shade 6', (tester) async {
+    testWidgets('resolves a color key to a legible shade', (tester) async {
       await tester.pumpWidget(
         _wrap(const PlinthText('Hello', color: 'red')),
       );
 
       final style = tester.widget<Text>(find.text('Hello')).style!;
-      expect(style.color, theme.color('red', 6));
+      // Not `color('red', 6)`. This is text, so it goes through
+      // readableOn — and once the ramp generator was anchored, shade 6
+      // became Mantine's actual red (#FA5252), which is ~3.6:1 on white
+      // and does not clear the body-text floor. The old assertion
+      // passed only because the un-anchored generator over-darkened
+      // every ramp, hiding the gap.
+      expect(style.color, theme.readableOn('red', theme.surface));
+      expect(style.color, isNot(theme.color('red', 6)));
     });
 
     testWidgets('leaves color null to inherit the ambient style',
