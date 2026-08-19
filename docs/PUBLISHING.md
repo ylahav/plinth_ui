@@ -9,15 +9,38 @@ now covers releasing an update.
 
 | Package | pub.dev (stable) | pub.dev (prerelease) | In this repo |
 |---|---|---|---|
-| `plinth_core` | 0.2.1 | 1.0.0-beta.1 | 1.0.0-beta.2 |
-| `plinth_hooks` | 0.0.2 | 1.0.0-beta.1 | 1.0.0-beta.2 |
-| `plinth_components` | 0.25.0 | 1.0.0-beta.1 | 1.0.0-beta.2 |
+| `plinth_core` | 0.2.1 | **1.0.0-beta.2** | 1.0.0-beta.2 |
+| `plinth_hooks` | 0.0.2 | **1.0.0-beta.2** | 1.0.0-beta.2 |
+| `plinth_components` | 0.25.0 | **1.0.0-beta.2** | 1.0.0-beta.2 |
 
-**`1.0.0-beta.1` is live**, and the stable column still reads 0.x
-because pub.dev never promotes a prerelease to "latest" — `pub add`
-without an explicit constraint still resolves to the 0.x line. That is
-the intended behaviour of a beta, not a failed publish, and it is worth
+**Both betas are live**, and the stable column still reads 0.x because
+pub.dev never promotes a prerelease to "latest" — `pub add` without an
+explicit constraint still resolves to the 0.x line. That is the
+intended behaviour of a beta, not a failed publish, and it is worth
 knowing before reading the listing as evidence of one.
+
+### What the `1.0.0-beta.2` release proved
+
+Ran the sequence below in full, including step 3, and it earned its
+place twice:
+
+- **Propagation is not instant, and the failure looks like a bug.**
+  `/api/packages/<name>` listed `1.0.0-beta.2` *immediately* while
+  `pub get` still reported **"which doesn't match any versions"** for
+  several minutes. Clearing the local listing cache did not help,
+  because the staleness was not local. Two lessons: the API is not
+  evidence that the version is resolvable, and **a failed resolve right
+  after publishing means wait, not re-publish.** It took ~2 minutes for
+  the leaf packages and ~3 for `plinth_components`.
+- **The archive diff was worth running.** The `pubspec_overrides.yaml`
+  hints appeared as documented; diffing both published archives' `lib/`
+  against the working tree came back identical, so the hint was benign
+  *this time* — which is only knowable by checking.
+
+Final check, from a scratch project outside the workspace: a bare
+`plinth_components: ^1.0.0-beta.2` resolved all three at
+`1.0.0-beta.2`. That is the exact condition whose absence shipped the
+broken `plinth_components` 0.6.0.
 
 `plinth_components` depends on the other two by hosted version
 (`plinth_core: ^1.0.0-beta.1`, `plinth_hooks: ^1.0.0-beta.1`), not by
