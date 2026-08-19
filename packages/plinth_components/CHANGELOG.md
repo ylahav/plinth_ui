@@ -44,6 +44,21 @@ changes; from `1.0.0` they cannot.
 
 ### Changed
 
+- **`PlinthPagination` no longer clips its page numbers at large text
+  scales.** (A1c)
+
+  Its cells were a fixed `dimension`. At `textScaler` 2.0 a *single*
+  digit already measured **28x32 inside a 32x32 cell** — flush to the
+  edge, with a two-digit page or any larger scale clipping outright.
+  The size is now a **minimum**: the cell grows to its content, and is
+  unchanged at ordinary scales where the digit has room to spare.
+
+  Most of the library never had this problem. Control heights come from
+  padding rather than being fixed, so they already scaled — Button
+  39→62, Checkbox 32→54, Chip 36→56 between 1.0 and 2.0. Pagination was
+  the exception, which is why the fix is one widget rather than a
+  library-wide sweep.
+
 - **Interactive controls now carry a name and a role.** (B0a, B0b)
 
   Found by running the accessibility probes rather than by anyone

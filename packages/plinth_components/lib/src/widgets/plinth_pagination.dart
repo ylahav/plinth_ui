@@ -113,10 +113,18 @@ class PlinthPagination extends StatelessWidget {
         navButton(Icons.chevron_left, 'Previous page', page > 1, page - 1),
         for (final entry in _buildRange())
           if (entry == '…')
-            SizedBox(
-              width: dimension,
-              height: dimension,
-              child: const Center(child: Text('…')),
+            ConstrainedBox(
+              // Same floor as a cell: the ellipsis is text too, and a
+              // fixed box would clip it for the same reason.
+              constraints: BoxConstraints(
+                minWidth: dimension,
+                minHeight: dimension,
+              ),
+              // Shrink-wrapping, for the same reason as the cell: a
+              // bare Center expands to fill, which would make the gap
+              // between page runs as tall as the viewport.
+              child: const Center(
+                  widthFactor: 1, heightFactor: 1, child: Text('…')),
             )
           else
             _PageCell(
@@ -174,14 +182,28 @@ class _PageCell extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(radius),
         child: Container(
-          width: dimension,
-          height: dimension,
-          alignment: Alignment.center,
+          // A minimum rather than a fixed size. At `textScaler` 2.0 a
+          // single digit already measured 28x32 inside a 32x32 cell --
+          // flush to the edge, with a two-digit page or any larger
+          // scale clipping outright. Constraining the floor lets the
+          // cell grow with its own content and changes nothing at
+          // ordinary scales, where the digit has room to spare.
+          constraints: BoxConstraints(
+            minWidth: dimension,
+            minHeight: dimension,
+          ),
+          padding: EdgeInsets.symmetric(horizontal: dimension * 0.15),
           decoration: BoxDecoration(
             color: selected ? activeColor : Colors.transparent,
             borderRadius: BorderRadius.circular(radius),
           ),
-          child: child,
+          // `alignment:` centres the child *and* expands the box to
+          // fill whatever it is given. The fixed width/height hid that;
+          // the moment the height became a minimum, the cell stretched
+          // to the full 600px of the viewport. A `Center` with both
+          // factors at 1 shrink-wraps instead, so the box grows only to
+          // its content or to the floor, whichever is larger.
+          child: Center(widthFactor: 1, heightFactor: 1, child: child),
         ),
       ),
     );
