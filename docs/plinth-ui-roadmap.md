@@ -58,20 +58,38 @@ So the disagreement resolves unevenly:
 
 - **On the product, the draft was simply working blind** — stale count,
   a wedge already planned, six components it did not know existed.
-- **On the market, it is still the only one of the two that looked.**
-  Nothing in this repo has checked what Forui, Mix or shadcn_ui
-  actually do.
+- **On the market, it was the only one of the two that looked** — and
+  looking properly, in [COMPETITIVE_POSITION.md](COMPETITIVE_POSITION.md),
+  reversed its conclusion about which wedge is available.
 - **On users, neither position holds any more.** The relevant evidence
   is no longer absent, it is *discounted* — one app, whose author is
   also Plinth's author, and the validation plan applies that discount
   explicitly rather than claiming more than it has. **P1 remains the
   only item that would produce undiscounted evidence.**
 
-**Still owed, and not yet done:** the draft's competitive claims about
-Forui, Mix and shadcn_ui are second-hand. Before **T2** ships a
-comparison section, check them against those packages directly — a
-comparison built on a search summary is exactly the kind of unbacked
-claim both documents exist to avoid.
+**Owed, and now done:** the draft's competitive claims about Forui and
+Mix were second-hand. They have been checked against the packages
+themselves — see **[COMPETITIVE_POSITION.md](COMPETITIVE_POSITION.md)**,
+20 Aug 2026 — and the result is worse for the draft than suspected.
+
+**Mix ships `onHovered`, `onPressed`, `onFocused`, `onDisabled`,
+`onDark`, `onLight`, `onBreakpoint` today.** Those are the exact
+identifiers the draft proposed as Plinth's flagship differentiator. Not
+an adjacent idea — the same names, in a package with 416 likes. The
+suspected contradiction above is now a measured one, and the wedge is
+not merely aimed at occupied ground; it is a reimplementation of a
+competitor's public API.
+
+**Forui ships desktop/touch theme variants, a CLI and i18n** — which
+makes the draft's Phase 3 catch-up rather than differentiation, and
+makes `A1c` narrower than an existing competitor's answer.
+
+What survives verification is a *different* wedge: colour resolved
+against a WCAG floor, anchored seed ramps, a semantic role tier, and an
+agreement check against an existing `ColorScheme`. Neither competitor
+documents any of it, and the last one is a difference in kind rather
+than degree — both of them answer "get my tokens into Material", neither
+answers "are the two palettes I already have the same colours?".
 
 ---
 
