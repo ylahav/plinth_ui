@@ -65,15 +65,23 @@ class _PlinthCopyButtonState extends State<PlinthCopyButton> {
         ? theme.roleShaded(PlinthRole.success, 6)
         : theme.shaded(colorKey, 6);
 
-    return InkWell(
-      onTap: _handleTap,
-      borderRadius: BorderRadius.circular(4),
-      child: Padding(
-        padding: const EdgeInsets.all(4),
-        child: Icon(
-          _copied ? Icons.check : Icons.copy_outlined,
-          size: _iconSizes[widget.size],
-          color: iconColor,
+    return Semantics(
+      button: true,
+      // Icon-only, and the icon is the only feedback that the copy
+      // happened — so without a label a screen-reader user gets an
+      // unnamed button and no confirmation that pressing it did
+      // anything. The label carries the state the tick conveys visually.
+      label: _copied ? 'Copied' : 'Copy',
+      child: InkWell(
+        onTap: _handleTap,
+        borderRadius: BorderRadius.circular(4),
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: Icon(
+            _copied ? Icons.check : Icons.copy_outlined,
+            size: _iconSizes[widget.size],
+            color: iconColor,
+          ),
         ),
       ),
     );

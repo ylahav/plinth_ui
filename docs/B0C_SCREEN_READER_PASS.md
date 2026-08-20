@@ -21,6 +21,18 @@ document was written — 44 of them. If you had run this pass earlier you
 would have heard 44 unnamed buttons and concluded the library was
 broken, when it was the demo. They now carry labels.
 
+**A page-level sweep ran first**, walking the semantics tree of all 25
+demo pages in traversal order — the closest thing to this pass that a
+test can do. It found **14 unlabelled tap targets out of 399**, four of
+them library bugs now fixed (copy button, password toggle, number
+steppers, carousel arrows). **Three remain**, all in the demo's own
+composed blocks: one in Navbars and two in Buttons. Expect to hear them.
+
+That sweep is not this pass. It cannot tell you whether the order makes
+sense, whether an announcement is exhausting to listen to, or whether
+"1 of 5" is clearer than what a real reader says. It only means you will
+be listening for judgement calls rather than for missing names.
+
 ## What to check, and what you should hear
 
 ### 1. The controls that had nothing at all

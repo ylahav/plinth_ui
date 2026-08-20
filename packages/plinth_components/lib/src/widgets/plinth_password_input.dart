@@ -127,19 +127,27 @@ class _PlinthPasswordInputState extends State<PlinthPasswordInput> {
                   ),
                 ),
               ),
-              InkWell(
-                onTap: widget.enabled
-                    ? () => setState(() => _visible = !_visible)
-                    : null,
-                borderRadius: BorderRadius.circular(4),
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Icon(
-                    _visible
-                        ? Icons.visibility_off_outlined
-                        : Icons.visibility_outlined,
-                    size: 18,
-                    color: theme.textMuted,
+              Semantics(
+                button: true,
+                // Icon-only, so without this a screen reader reaches the
+                // control and cannot say what it does. The label states
+                // the action rather than the state, which is what a
+                // button should announce.
+                label: _visible ? 'Hide password' : 'Show password',
+                child: InkWell(
+                  onTap: widget.enabled
+                      ? () => setState(() => _visible = !_visible)
+                      : null,
+                  borderRadius: BorderRadius.circular(4),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      _visible
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      size: 18,
+                      color: theme.textMuted,
+                    ),
                   ),
                 ),
               ),

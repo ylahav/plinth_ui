@@ -59,6 +59,27 @@ changes; from `1.0.0` they cannot.
 
 ### Changed
 
+- **Four more icon-only controls now say what they do.**
+
+  `PlinthCopyButton`, `PlinthPasswordInput`'s show/hide toggle,
+  `PlinthNumberInput`'s steppers, and `PlinthCarousel`'s arrows all
+  reached a screen reader as unnamed buttons.
+
+  The copy button's label carries state as well as action — "Copy" then
+  "Copied" — because the tick is the *only* confirmation the press did
+  anything, and it is invisible to a reader.
+
+  The carousel arrows were the interesting one: they already had a
+  `Semantics(label:)` **around** `PlinthActionIcon`, which produced a
+  second node while the button kept its own unnamed one. The label now
+  goes *on* the button.
+
+  **Found by walking a whole page rather than a component.** Every
+  earlier semantics fix tested widgets in isolation; a screen reader
+  traverses a composed page. Doing that across the demo's 25 pages found
+  14 unlabelled tap targets among 399, of which these four were the
+  library's.
+
 - **Every form field now exposes its label to assistive technology.**
 
   Nine widgets rendered their label as a *sibling* of the field, which

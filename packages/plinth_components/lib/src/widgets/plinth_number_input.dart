@@ -184,11 +184,13 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
               ),
               _StepButton(
                 icon: Icons.remove,
+                semanticLabel: 'Decrease',
                 enabled: widget.enabled && !atMin,
                 onTap: () => _step(-widget.step),
               ),
               _StepButton(
                 icon: Icons.add,
+                semanticLabel: 'Increase',
                 enabled: widget.enabled && !atMax,
                 onTap: () => _step(widget.step),
               ),
@@ -207,25 +209,37 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
 
 class _StepButton extends StatelessWidget {
   const _StepButton(
-      {required this.icon, required this.enabled, required this.onTap});
+      {required this.icon,
+      required this.enabled,
+      required this.onTap,
+      required this.semanticLabel});
 
   final IconData icon;
   final bool enabled;
   final VoidCallback onTap;
 
+  /// Icon-only, so without this the steppers announce as two unnamed
+  /// controls sitting next to a field.
+  final String semanticLabel;
+
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
 
-    return InkWell(
-      onTap: enabled ? onTap : null,
-      borderRadius: BorderRadius.circular(4),
-      child: Padding(
-        padding: const EdgeInsets.all(4),
-        child: Icon(
-          icon,
-          size: 16,
-          color: enabled ? theme.textMuted : theme.textDisabled,
+    return Semantics(
+      button: true,
+      enabled: enabled,
+      label: semanticLabel,
+      child: InkWell(
+        onTap: enabled ? onTap : null,
+        borderRadius: BorderRadius.circular(4),
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: Icon(
+            icon,
+            size: 16,
+            color: enabled ? theme.textMuted : theme.textDisabled,
+          ),
         ),
       ),
     );

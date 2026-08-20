@@ -301,17 +301,18 @@ class _PlinthCarouselState extends State<PlinthCarousel> {
       alignment: alignment,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Semantics(
-          button: true,
-          label: label,
-          textDirection: TextDirection.ltr,
-          child: PlinthActionIcon(
-            icon: Icon(icon),
-            onPressed: onPressed,
-            variant: PlinthVariant.filled,
-            color: widget.color,
-            circle: true,
-          ),
+        // The label goes *on* the button rather than around it. An
+        // outer Semantics produced a second node while PlinthActionIcon
+        // kept its own unnamed one, so the arrow announced as an
+        // unlabelled button -- caught by walking a whole page rather
+        // than the component alone.
+        child: PlinthActionIcon(
+          semanticLabel: label,
+          icon: Icon(icon),
+          onPressed: onPressed,
+          variant: PlinthVariant.filled,
+          color: widget.color,
+          circle: true,
         ),
       ),
     );

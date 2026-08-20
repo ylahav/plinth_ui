@@ -71,12 +71,13 @@ void main() {
     testWidgets('without loop the arrows stop at each end', (tester) async {
       await tester.pumpWidget(_wrap(PlinthCarousel(slides: _slides(2))));
 
-      PlinthActionIcon iconFor(String label) => tester.widget<PlinthActionIcon>(
-            find.descendant(
-              of: find.bySemanticsLabel(label),
-              matching: find.byType(PlinthActionIcon),
-            ),
-          );
+      // The label is *on* the button, not on a wrapper around it. It
+      // used to be a `Semantics` ancestor, which produced a second node
+      // and left the button itself announcing as unlabelled — caught by
+      // walking a whole demo page rather than the component alone.
+      PlinthActionIcon iconFor(String label) => tester
+          .widgetList<PlinthActionIcon>(find.byType(PlinthActionIcon))
+          .firstWhere((w) => w.semanticLabel == label);
 
       // A null onPressed is how this library renders a disabled
       // control, so it is the honest thing to assert.
