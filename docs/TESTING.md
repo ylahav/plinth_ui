@@ -313,6 +313,45 @@ as the source of truth for whether golden tests actually pass. If a
 local golden failure is the *only* failure and CI is green, there's
 nothing to fix.
 
+### The blind spot a golden covers that unit tests structurally cannot
+
+Worth writing down as a worked example, because the failure is not
+"nobody wrote a test" — six tests existed, all passed, and the code was
+broken.
+
+`PlinthTapTarget` (the density floor, A1c) was first written to grow the
+*hit area* while the painted control stayed its own size, the way
+Flutter's `MaterialTapTargetSize` behaves. Doing that at the widget
+level means centring the child, and **centring shrink-wraps**. A
+`PlinthButton(fullWidth: true)` is a `SizedBox(width: double.infinity)`;
+shrink-wrapping an infinite width gives you the width of the label. Every
+full-width button in the library silently collapsed.
+
+Six density tests passed against that. They were not lazy tests — they
+checked all three densities, every affected component, and the exact
+unchanged heights at `standard`. **They all built the button the same
+way**, naturally sized, because that is the obvious way to build one.
+A blind spot shared by every test in a group is invisible from inside
+the group.
+
+`plinth_button_loading.png` caught it, because that image happens to
+render a full-width button.
+
+The general shape, and the reason the golden suite earns its cost:
+
+- **A unit test checks the case you thought of.** Add ten more and you
+  usually get ten variations of the same thought.
+- **A golden checks the case you rendered**, including every property
+  you were not thinking about — width, alignment, what the neighbours
+  did — for as long as the image exists.
+
+So when a change touches *layout* rather than logic, the question is not
+"did I write a test" but **"does any committed image contain a widget in
+a configuration my tests do not build?"** Here the answer was yes, by
+luck. `PlinthHighlight` and `PlinthAnchor` were both changed this cycle
+with **no golden covering either**, which is the same gap without the
+luck.
+
 ## 8. Continuous integration
 
 `.github/workflows/ci.yml` runs the exact sequence documented above —
