@@ -18,23 +18,32 @@ plinth_ui/
   example/                  # Showcase app — run this to see the components live
   widgetbook/               # Isolated component gallery (manual/non-codegen setup)
   docs/
-    COMPONENTS.md            # Per-component prop reference
-    SHOWCASE.md               # The example app's composed blocks, and what's missing
-    TESTING.md                # How to verify this locally — SDK setup through golden tests
-    PRE_1_0_AUDIT.md          # How complete each component is, against Mantine's own props
+    ROADMAP.md                # The single plan — who it is for, what is
+    │                           done, what is next, and what is declined
+    COMPONENTS.md             # Per-component prop reference
     ADOPTING_TOKENS.md        # What adopting tokens costs an app, and
-    │                          the five patterns every adopter hits
-    POST_1_0_ROADMAP.md       # Who the packages are for, and the token,
-    │                          interop and accessibility work that follows
-    PHASE_MINUS_1_FINDINGS.md # plinth_core tried against a real app,
-    │                          before any of that work starts
+    │                           the five patterns every adopter hits
+    TESTING.md                # How to verify this locally — SDK setup
+    │                           through golden tests
+    PUBLISHING.md             # Release order, and the mistake that has
+    │                           already shipped once
+    SHOWCASE.md               # The example app's composed blocks
+    ADOPTION_REQUIREMENTS.md  # What a real app needed and could not get.
+    │                           All 19 closed
+    PHASE_MINUS_1_FINDINGS.md # What happened when plinth_core was tried
+    │                           against that app — including the
+    │                           predictions it falsified
+    APP_VALIDATION_PLAN.md    # That app as a standing harness
+    PRE_1_0_AUDIT.md          # How complete each component is
+    B0C_SCREEN_READER_PASS.md # The one accessibility task a person has
+    │                           to run
 ```
 
 [![CI](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml/badge.svg)](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml)
 
 🌐 **[Live demo](https://ylahav.github.io/plinth_ui/)** · 🎛️ **[Widgetbook gallery](https://ylahav.github.io/plinth_ui/widgetbook/)**
 
-📖 **[Component reference](docs/COMPONENTS.md)** · 🧭 **[Adopting tokens](docs/ADOPTING_TOKENS.md)** · 🧱 **[Showcase blocks](docs/SHOWCASE.md)** · 🧪 **[Testing guide](docs/TESTING.md)** · 🔍 **[Pre-1.0 audit](docs/PRE_1_0_AUDIT.md)** · 🗺️ **[Post-1.0 roadmap](docs/POST_1_0_ROADMAP.md)**
+📖 **[Component reference](docs/COMPONENTS.md)** · 🧭 **[Adopting tokens](docs/ADOPTING_TOKENS.md)** · 🧱 **[Showcase blocks](docs/SHOWCASE.md)** · 🧪 **[Testing guide](docs/TESTING.md)** · 🔍 **[Pre-1.0 audit](docs/PRE_1_0_AUDIT.md)** · 🗺️ **[Roadmap](docs/ROADMAP.md)**
 
 Both are the real apps in this repo, built for the web and deployed on
 every push to `main` by `.github/workflows/pages.yml`. The demo is the

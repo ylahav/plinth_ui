@@ -213,7 +213,7 @@ changes gets a CHANGELOG entry saying exactly that.
 `plinth_hooks` alone; it exists because `plinth_components` needed a
 disclosure controller."** That premise was true of `plinth_core` too
 when this was written, and it is exactly what
-[POST_1_0_ROADMAP.md](POST_1_0_ROADMAP.md) decided to change —
+[ROADMAP.md](ROADMAP.md) decided to change —
 `plinth_core` becomes the headline product and `plinth_components`
 the reference implementation.
 
@@ -243,7 +243,7 @@ turns out to dominate** — which is a fact to observe, not to predict.
 
 Left in place rather than deleted, so the record shows the question was
 answered rather than forgotten. Tracked as **V1** in
-[POST_1_0_ROADMAP.md](POST_1_0_ROADMAP.md).
+[ROADMAP.md](ROADMAP.md).
 
 ### The `1.0.0-beta.1` rehearsal
 

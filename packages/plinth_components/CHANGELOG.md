@@ -96,7 +96,7 @@ changes; from `1.0.0` they cannot.
 
   Found by running the accessibility probes rather than by anyone
   reporting it — see
-  [POST_1_0_ROADMAP § What B0 found](../../docs/POST_1_0_ROADMAP.md#what-b0-found).
+  [the roadmap](../../docs/ROADMAP.md).
 
   - **`PlinthRating` was the worst in the library**: five tappable
     stars, none labelled, none with a role. Each region now announces

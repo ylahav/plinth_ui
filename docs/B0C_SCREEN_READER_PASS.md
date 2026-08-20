@@ -82,7 +82,7 @@ but whether the result still looks like the alert's colour.
 
 `PHASE_MINUS_1_FINDINGS.md`'s style: what was predicted, what happened,
 and prefer the findings that surprised. Then tick `B0c` in
-`POST_1_0_ROADMAP.md`.
+`ROADMAP.md`.
 
 **If this comes back clean**, the accessibility work has been heard by
 something other than a test, and `1.0.0` stops being a promise made on

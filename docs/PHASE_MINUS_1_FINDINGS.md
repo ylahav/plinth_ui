@@ -1,7 +1,7 @@
 # Phase −1 findings — `plinth_core` against a real app
 
 Results, not plan. The plan is
-[POST_1_0_ROADMAP.md § Phase −1](POST_1_0_ROADMAP.md#phase-1--validate-against-one-real-app);
+[ROADMAP.md § Phase −1](ROADMAP.md);
 this file is what actually happened.
 
 **Status:** run 18 Aug 2026. The experiment did **not** stop early — see

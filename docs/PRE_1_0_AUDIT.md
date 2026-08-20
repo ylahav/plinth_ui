@@ -383,7 +383,7 @@ and the answer is "complete". The gaps that remain are in the token
 layer, in accessibility evidence, in `plinth_hooks`, and in the eleven
 Mantine packages scoped out at the top of this file. Those are
 inventoried and sequenced in
-[POST_1_0_ROADMAP.md](POST_1_0_ROADMAP.md).
+[ROADMAP.md](ROADMAP.md).
 
 ### What the overlay images are actually for
 

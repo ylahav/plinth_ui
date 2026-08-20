@@ -474,7 +474,7 @@ constructor will be ignored by the audience it was written for.
 roadmap rather than sit beside it.
 
 > **Done**, and it displaced `toThemeData()` rather than sitting beside
-> it — `A8` in [POST_1_0_ROADMAP.md](POST_1_0_ROADMAP.md) is struck out
+> it — `A8` in [ROADMAP.md](ROADMAP.md) is struck out
 > and `A8'` is this.
 >
 > Shipped as an extension, `PlinthMaterialBridge`, in both directions:
