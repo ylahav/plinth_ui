@@ -224,10 +224,17 @@ Heights at default size: Button 39, TextInput 40, ActionIcon 36, Chip
 36, Checkbox/Switch/Radio/Pagination 32, CloseButton 24, Anchor 23.
 
 **So Plinth is a web/desktop-density library that does not meet mobile
-touch guidelines at default size** — which is what matching Mantine's
-sizing implies, and is a positioning question rather than a pile of
-bugs. It is the argument for **A1c** (control sizing fed by a density
-axis), and A1c is an **L**.
+touch guidelines at default size.** That came from Mantine's sizing, but
+inheriting it is a choice rather than an obligation — Mantine is a
+starting point here, not a specification, and Flutter ships to phones in
+a way a web library never had to reckon with.
+
+Kept at web density **by measurement, not by inheritance**: every
+control already clears WCAG 2.2 AA's 24×24, and a dense desktop table is
+a real audience whose rows should not all become 48px. The mobile answer
+is opt-in through the density axis (**A1c**) rather than a default, and
+that is the part worth revisiting if the audience evidence ever says
+phones first.
 
 Three genuine defects, separate from the density question:
 
@@ -412,9 +419,23 @@ this project has had was found by looking at rendered output.
 
 ## Workstream D — Components, and what is declined
 
-`plinth_components` stays at parity with `@mantine/core` and stays the
-evidence that the tokens work. What changed is that nothing here is a
-priority for either target audience.
+`plinth_components` **takes Mantine as a starting point, not a
+specification.** 112 of its components track `@mantine/core` because
+Mantine's answer was the right one; the rest exist because Flutter asked
+a question Mantine never had to — `PlinthLtr` for content that must not
+follow an RTL page, `PlinthFocusTrap` for an `OverlayEntry` that shares
+its route's focus scope, `PlinthTapTarget` for a platform with two
+different minimum touch sizes.
+
+**Where the two disagree, Flutter wins.** That has already happened and
+is worth naming so it is not read as drift: filled buttons in blue and
+red carry a dark label because white on Mantine's own `blue.6` is 3.56:1
+and fails AA. The result looks less like Mantine and is more correct on
+a platform with a system-level accessibility contract. That is the trade
+this library takes on purpose.
+
+What changed with the audience answer is that nothing here is a priority
+for either target audience.
 
 | Item | Call |
 |---|---|
@@ -593,8 +614,9 @@ Claims a team could check, not features.
 
 **Today, unqualified:**
 
-> 112 components at parity with `@mantine/core`, on a shared token
-> system, with 43 golden images and 65 test files behind them.
+> 115 components on a shared token system — 112 tracking
+> `@mantine/core`, three answering questions only Flutter has — with 43
+> golden images and 65 test files behind them.
 
 **After Phase 1:**
 

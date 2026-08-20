@@ -85,7 +85,7 @@ a re-estimate.
 | 71 components | **112** — 115 widget files, 114 exports. The count in `pubspec.yaml` and the README is the audited one |
 | "Target: 75+ components before publishing the description" | **Cleared long ago, and retired as a goal.** POST_1_0_ROADMAP: *"A count borrowed from another project's marketing was never a goal"* |
 | Phase 2 wedge: a variant layer to build | Already planned, better specified, as **A0b + A1e + A3** — see the mapping below |
-| Phase 3: extract tokens into a standalone `plinth_tokens` package | **Unnecessary.** `plinth_core` is 476 lines, depends only on `flutter`, and is separately published. It *is* a standalone token package today — it is just not documented as one |
+| Phase 3: extract tokens into a standalone `plinth_tokens` package | **Unnecessary.** `plinth_core` depends only on `flutter` and is separately published — it *is* a standalone token package. It was 476 lines when this was written and is **1,350** now |
 | Phase 4: six missing components | **All six ship.** `plinth_table`, `plinth_pagination`, `plinth_autocomplete` (and `plinth_combobox`), `plinth_app_shell`, `plinth_color_input`, `plinth_carousel` |
 
 One more worth stating plainly, because the public copy leaned on it:
@@ -109,10 +109,10 @@ app and their own widgets.
 and the component library is the evidence it works at scale. The draft's
 error was never *mentioning* the breadth — it was making breadth the
 reason to adopt. A team evaluating a token system wants proof it
-survives contact with 112 real components; that is exactly what
+survives contact with 115 real components; that is exactly what
 `plinth_components` is for.
 
-> **Plinth is a design-token engine for Flutter — and 112 components
+> **Plinth is a design-token engine for Flutter — and 115 components
 > built on it, which is how you can tell it holds up.**
 
 That framing keeps what each roadmap was actually right about:
@@ -133,11 +133,11 @@ there is one source to apply from.
 **pub.dev** (`plinth_core`, 60–180 chars):
 
 > A design-token engine for Flutter: curve-based colour ramps, WCAG
-> contrast built in, and 112 components proving it at scale.
+> contrast built in, and 115 components proving it at scale.
 
 **GitHub repo description:**
 
-> A design-token engine for Flutter, with the 112-component library
+> A design-token engine for Flutter, with the 115-component library
 > that proves it works — curve-based ramps from one seed colour,
 > WCAG-checked, light and dark, fully tested and CI-verified.
 
@@ -214,8 +214,8 @@ survives, restated against real tasks:
 
 **Do not publish state-variant claims until `A0b` and `A1e` have
 shipped.** Today's checkable claim is the one POST_1_0_ROADMAP already
-records: 112 components at parity with `@mantine/core`, on a shared
-token system, with 42 golden images and 59 test files behind them.
+records: 115 components on a shared
+token system, with 43 golden images and 65 test files behind them.
 
 The token-engine framing above is publishable now — it describes what
 `plinth_core` is, not what it will become. The hover/press/breakpoint
