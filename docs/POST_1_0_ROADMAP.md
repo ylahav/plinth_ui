@@ -297,6 +297,14 @@ identify is worse than one you cannot reach.
 - **B1 focus containment**, unchanged at 0 of 116 files.
 - **A1c density**, unchanged.
 
+### What B0's fixes have and have not been checked by
+
+Everything in B0a, B0b, B1 and the label sweep is verified by tests and
+by simulated semantics trees. **None of it has been heard.** That is the
+whole of B0c, it is the one task here a person has to do, and it is the
+last thing between the accessibility work and a claim that rests on more
+than static analysis.
+
 ### What this means for 1.0.0
 
 `1.0.0` promises no breaking change without a `2.0.0`, and this repo has
@@ -323,7 +331,7 @@ plan. A team cannot retrofit it, and `highContrast` / `boldText` /
 
 - [x] **B0a** **RAN — see § What B0 found.** Semantics probe on the 11 composite controls with neither explicit nor inherited semantics: Select, Autocomplete, MultiSelect, Menu, Menubar, Accordion, PinInput, Rating, Breadcrumbs, Stepper, Drawer. 37 of 115 files reference `Semantics`; some absences are correct (layout), some inherited (Material-wrapping). **M.** Record the result either way — "already correct, here is the probe" is as useful an entry as a fix.
 - [x] **B0b** **RAN — see § What B0 found.** Run `textContrastGuideline`, `androidTapTargetGuideline` and `labeledTapTargetGuideline` across the library; add the passing set to CI. **M.** Currently **1 of 59 test files** asserts anything about accessibility.
-- [ ] **B0c** Manual NVDA and VoiceOver pass against the deployed demo. **M.** The only task here that cannot be satisfied by writing code.
+- [ ] **B0c** Manual NVDA and VoiceOver pass against the deployed demo. **M.** The only task here that cannot be satisfied by writing code — **still open, and the only thing in Workstream B that is.** A script with the expected announcement for every control fixed this cycle is in [B0C_SCREEN_READER_PASS.md](B0C_SCREEN_READER_PASS.md); the demo's own 44 unlabelled action icons were fixed first, so the pass measures the library rather than the gallery.
 - [x] **B0d** **RAN — clean, 0 of 232 gallery use cases threw in RTL; kept as `widgetbook/test/gallery_rtl_smoke_test.dart`.** RTL golden pass. **S** to run; 7 of 115 files touch `Directionality`, so the other 108 are unverified rather than known-broken.
 - [x] **B1** **DONE, and smaller than this entry assumed.** Focus containment. The premise — "Drawer first, as a reusable trap ... Modal already gets it from `showGeneralDialog`" — was half wrong: **`PlinthDrawer` uses `showGeneralDialog` too**, so it was already contained and would have been the one overlay that did not need the work. Measured rather than assumed; see below.
 

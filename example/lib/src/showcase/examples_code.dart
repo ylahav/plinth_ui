@@ -44,6 +44,7 @@ PlinthPaper(
           const PlinthText('Dashboard', weight: FontWeight.w600),
           const Spacer(),
           PlinthActionIcon(
+  semanticLabel: 'Notifications',
             icon: const Icon(Icons.notifications_none, size: 18),
             onPressed: () {},
             variant: PlinthVariant.subtle,
@@ -311,11 +312,13 @@ SizedBox(
                 gap: PlinthSize.xs,
                 children: [
                   PlinthActionIcon(
+  semanticLabel: 'Show code',
                     icon: const Icon(Icons.code, size: 16),
                     onPressed: () {},
                     variant: PlinthVariant.subtle,
                   ),
                   PlinthActionIcon(
+  semanticLabel: 'Copy link',
                     icon: const Icon(Icons.link, size: 16),
                     onPressed: () {},
                     variant: PlinthVariant.subtle,
@@ -818,11 +821,13 @@ return SizedBox(
               gap: PlinthSize.xs,
               children: [
                 PlinthActionIcon(
+  semanticLabel: 'Show code',
                   icon: const Icon(Icons.code, size: 16),
                   onPressed: () {},
                   variant: PlinthVariant.subtle,
                 ),
                 PlinthActionIcon(
+  semanticLabel: 'Subscribe',
                   icon: const Icon(Icons.rss_feed, size: 16),
                   onPressed: () {},
                   variant: PlinthVariant.subtle,
@@ -962,6 +967,7 @@ return SizedBox(
           ),
         ),
         PlinthActionIcon(
+  semanticLabel: 'Expand',
           icon: const Icon(Icons.unfold_more, size: 16),
           variant: PlinthVariant.subtle,
           onPressed: () {},
@@ -1129,6 +1135,7 @@ return SizedBox(
                 size: PlinthSize.xs, color: 'gray'),
             const Spacer(),
             PlinthActionIcon(
+  semanticLabel: 'More actions',
               icon: const Icon(Icons.more_horiz, size: 16),
               variant: PlinthVariant.subtle,
               onPressed: () {},
@@ -1295,6 +1302,7 @@ return SizedBox(
             PlinthText(member.role, size: PlinthSize.sm),
             PlinthBadge(member.status, color: member.tone),
             PlinthActionIcon(
+  semanticLabel: 'More actions',
               icon: const Icon(Icons.more_horiz, size: 16),
               variant: PlinthVariant.subtle,
               onPressed: () {},
@@ -1460,11 +1468,13 @@ return SizedBox(
           wrap: false,
           children: [
             PlinthActionIcon(
+  semanticLabel: 'Undo',
               icon: const Icon(Icons.undo, size: 16),
               variant: PlinthVariant.subtle,
               onPressed: () {},
             ),
             const PlinthActionIcon(
+  semanticLabel: 'Redo',
               icon: Icon(Icons.redo, size: 16),
               variant: PlinthVariant.subtle,
               onPressed: null,
@@ -2288,6 +2298,7 @@ return SizedBox(
               ),
             ),
             PlinthActionIcon(
+  semanticLabel: 'Log out',
               icon: const Icon(Icons.logout, size: 16),
               variant: PlinthVariant.subtle,
               onPressed: () {},
@@ -2748,6 +2759,7 @@ PlinthCard(
           const PlinthBadge('Travel'),
           const Spacer(),
           PlinthActionIcon(
+  semanticLabel: 'Bookmark',
             icon: const Icon(Icons.bookmark_border, size: 16),
             variant: PlinthVariant.subtle,
             onPressed: () {},

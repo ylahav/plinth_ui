@@ -51,6 +51,7 @@ class NavbarWithAvatarExample extends StatelessWidget {
           const PlinthText('Dashboard', weight: FontWeight.w600),
           const Spacer(),
           PlinthActionIcon(
+            semanticLabel: 'Notifications',
             icon: const Icon(Icons.notifications_none, size: 18),
             onPressed: () {},
             variant: PlinthVariant.subtle,
@@ -411,11 +412,13 @@ class AuthorCardExample extends StatelessWidget {
                 gap: PlinthSize.xs,
                 children: [
                   PlinthActionIcon(
+                    semanticLabel: 'Show code',
                     icon: const Icon(Icons.code, size: 16),
                     onPressed: () {},
                     variant: PlinthVariant.subtle,
                   ),
                   PlinthActionIcon(
+                    semanticLabel: 'Copy link',
                     icon: const Icon(Icons.link, size: 16),
                     onPressed: () {},
                     variant: PlinthVariant.subtle,
@@ -827,11 +830,13 @@ class FooterWithLinkColumnsExample extends StatelessWidget {
                   gap: PlinthSize.xs,
                   children: [
                     PlinthActionIcon(
+                      semanticLabel: 'Show code',
                       icon: const Icon(Icons.code, size: 16),
                       onPressed: () {},
                       variant: PlinthVariant.subtle,
                     ),
                     PlinthActionIcon(
+                      semanticLabel: 'Subscribe',
                       icon: const Icon(Icons.rss_feed, size: 16),
                       onPressed: () {},
                       variant: PlinthVariant.subtle,
@@ -993,6 +998,7 @@ class UserButtonExample extends StatelessWidget {
               ),
             ),
             PlinthActionIcon(
+              semanticLabel: 'Expand',
               icon: const Icon(Icons.unfold_more, size: 16),
               variant: PlinthVariant.subtle,
               onPressed: () {},
@@ -1194,6 +1200,7 @@ class SingleCommentExample extends StatelessWidget {
                     size: PlinthSize.xs, color: 'gray'),
                 const Spacer(),
                 PlinthActionIcon(
+                  semanticLabel: 'More actions',
                   icon: const Icon(Icons.more_horiz, size: 16),
                   variant: PlinthVariant.subtle,
                   onPressed: () {},
@@ -1457,6 +1464,7 @@ class MemberTableExample extends StatelessWidget {
                 PlinthText(member.role, size: PlinthSize.sm),
                 PlinthBadge(member.status, color: member.tone),
                 PlinthActionIcon(
+                  semanticLabel: 'More actions',
                   icon: const Icon(Icons.more_horiz, size: 16),
                   variant: PlinthVariant.subtle,
                   onPressed: () {},
@@ -1670,11 +1678,13 @@ class ToolbarActionsExample extends StatelessWidget {
               wrap: false,
               children: [
                 PlinthActionIcon(
+                  semanticLabel: 'Undo',
                   icon: const Icon(Icons.undo, size: 16),
                   variant: PlinthVariant.subtle,
                   onPressed: () {},
                 ),
                 const PlinthActionIcon(
+                  semanticLabel: 'Redo',
                   icon: Icon(Icons.redo, size: 16),
                   variant: PlinthVariant.subtle,
                   onPressed: null,
@@ -2758,6 +2768,7 @@ class NavbarWithSearchExample extends StatelessWidget {
           const PlinthKbd('K'),
           const SizedBox(width: 16),
           PlinthActionIcon(
+            semanticLabel: 'Settings',
             icon: const Icon(Icons.settings_outlined, size: 18),
             variant: PlinthVariant.subtle,
             onPressed: () {},
@@ -2904,6 +2915,7 @@ class StickyHeaderExample extends StatelessWidget {
                     child: PlinthText('Changelog', weight: FontWeight.w700),
                   ),
                   PlinthActionIcon(
+                    semanticLabel: 'Close',
                     icon: const Icon(Icons.close, size: 16),
                     variant: PlinthVariant.subtle,
                     onPressed: () {},
@@ -3197,6 +3209,7 @@ class MediaCardExample extends StatelessWidget {
                 const PlinthBadge('Photography'),
                 const Spacer(),
                 PlinthActionIcon(
+                  semanticLabel: 'Bookmark',
                   icon: const Icon(Icons.bookmark_border, size: 16),
                   variant: PlinthVariant.subtle,
                   onPressed: () {},
@@ -4864,12 +4877,17 @@ class FooterWithNewsletterExample extends StatelessWidget {
               PlinthGroup(
                 gap: PlinthSize.xs,
                 children: [
-                  for (final icon in [
-                    Icons.code,
-                    Icons.chat_bubble_outline,
-                    Icons.alternate_email,
+                  // Paired with their labels rather than looped over
+                  // bare: an icon-only button announces as nothing
+                  // without one, and three of them in a row announce as
+                  // nothing three times.
+                  for (final (icon, label) in [
+                    (Icons.code, 'Source'),
+                    (Icons.chat_bubble_outline, 'Chat'),
+                    (Icons.alternate_email, 'Email'),
                   ])
                     PlinthActionIcon(
+                      semanticLabel: label,
                       icon: Icon(icon, size: 16),
                       variant: PlinthVariant.subtle,
                       onPressed: () {},
@@ -5440,6 +5458,7 @@ class NavbarWithFooterUserExample extends StatelessWidget {
                   ),
                 ),
                 PlinthActionIcon(
+                  semanticLabel: 'Log out',
                   icon: const Icon(Icons.logout, size: 16),
                   variant: PlinthVariant.subtle,
                   onPressed: () {},

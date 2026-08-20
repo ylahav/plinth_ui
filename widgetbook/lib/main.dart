@@ -615,6 +615,7 @@ final List<WidgetbookNode> plinthDirectories = [
               final circle = context.knobs.boolean(label: 'circle');
               return _themed(
                 PlinthActionIcon(
+                  semanticLabel: 'Settings',
                   icon: Icon(icon ?? Icons.settings),
                   variant: _variantKnob(context, initial: PlinthVariant.light),
                   size: _sizeKnob(context),
@@ -642,6 +643,7 @@ final List<WidgetbookNode> plinthDirectories = [
                 children: [
                   for (final v in PlinthVariant.values)
                     PlinthActionIcon(
+                      semanticLabel: 'Favourite',
                       icon: const Icon(Icons.star),
                       variant: v,
                       onPressed: () {},
@@ -654,6 +656,7 @@ final List<WidgetbookNode> plinthDirectories = [
             name: 'Circle',
             builder: (context) => _themed(
               PlinthActionIcon(
+                semanticLabel: 'Share',
                 icon: const Icon(Icons.share_outlined),
                 variant: PlinthVariant.filled,
                 circle: true,
@@ -4463,6 +4466,7 @@ final List<WidgetbookNode> plinthDirectories = [
                     position: position,
                     width: width,
                     target: PlinthActionIcon(
+                      semanticLabel: 'More actions',
                       icon: const Icon(Icons.more_vert, size: 18),
                       variant: PlinthVariant.subtle,
                       onPressed: () {},
@@ -4639,6 +4643,7 @@ final List<WidgetbookNode> plinthDirectories = [
                         left: isLeft ? inset : null,
                         right: isLeft ? null : inset,
                         child: PlinthActionIcon(
+                          semanticLabel: 'Move up',
                           icon: const Icon(Icons.arrow_upward),
                           circle: true,
                           onPressed: () {},
@@ -4822,6 +4827,7 @@ final List<WidgetbookNode> plinthDirectories = [
                         PlinthText(row.role, size: PlinthSize.sm),
                         PlinthBadge(row.status, color: row.tone),
                         PlinthActionIcon(
+                          semanticLabel: 'More actions',
                           icon: const Icon(Icons.more_horiz, size: 16),
                           variant: PlinthVariant.subtle,
                           onPressed: () {},
@@ -6665,6 +6671,7 @@ final List<WidgetbookNode> plinthDirectories = [
             name: 'Icon button with a hidden label',
             builder: (context) => _themed(
               PlinthActionIcon(
+                semanticLabel: 'Close',
                 icon: const Stack(
                   children: [
                     Icon(Icons.close),

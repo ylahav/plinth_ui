@@ -376,11 +376,13 @@ PlinthRating(
 Row(
   children: [
     PlinthActionIcon(
+  semanticLabel: 'Edit',
       icon: const Icon(Icons.edit_outlined),
       onPressed: () {},
     ),
     const SizedBox(width: 8),
     PlinthActionIcon(
+  semanticLabel: 'Delete',
       icon: const Icon(Icons.delete_outline),
       color: 'red',
       variant: PlinthVariant.outline,
@@ -388,6 +390,7 @@ Row(
     ),
     const SizedBox(width: 8),
     PlinthActionIcon(
+  semanticLabel: 'Share',
       icon: const Icon(Icons.share_outlined),
       variant: PlinthVariant.filled,
       circle: true,
@@ -531,6 +534,7 @@ SizedBox(
         bottom: 12,
         right: 12,
         child: PlinthActionIcon(
+  semanticLabel: 'Move up',
           icon: const Icon(Icons.arrow_upward),
           variant: PlinthVariant.filled,
           circle: true,
@@ -718,6 +722,7 @@ Row(
   crossAxisAlignment: CrossAxisAlignment.center,
   children: [
     PlinthActionIcon(
+  semanticLabel: 'Close',
       icon: const Stack(
         children: [
           Icon(Icons.close),
