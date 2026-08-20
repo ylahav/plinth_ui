@@ -1,6 +1,6 @@
 name: plinth_components
 description: >-
-  A Mantine-inspired component library for Flutter: 112 themeable,
+  A Mantine-inspired component library for Flutter: 115 themeable,
   accessible widgets on a shared design-token foundation, on Mantine's
   own colour ramps, with light and dark themes and WCAG-checked colour.
 version: 1.0.0-beta.2

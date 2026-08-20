@@ -145,7 +145,7 @@ pixel values, so `spacing`, `radius`, and `fontSizes` can be retuned in
 one place.
 
 **[docs/COMPONENTS.md](docs/COMPONENTS.md)** is the full prop reference
-for all 112 components, and the theme-token table there explains which
+for all 115 components, and the theme-token table there explains which
 color method to reach for (`shaded`, `contrastingOn`, `readableOn`)
 when you build your own widget on the same foundation.
 
@@ -322,7 +322,7 @@ the sidebar.
   shared between them (a blue button is the same blue either way); only
   the chrome inverts. See
   **[docs/COMPONENTS.md § Theme tokens](docs/COMPONENTS.md#theme-tokens)**.
-- **112 components** across Primitives, Forms, Feedback, Data Display,
+- **115 components** across Primitives, Forms, Feedback, Data Display,
   Navigation, Surfaces, and Overlays — full list with props in
   **[docs/COMPONENTS.md](docs/COMPONENTS.md)**, kept current every round
   rather than duplicated here. A few architectural patterns worth
@@ -343,7 +343,7 @@ the sidebar.
     caller rather than managing it internally.
 - **Widgetbook gallery** (`widgetbook/`) — manual (non-codegen)
   registration of every component's key states as browsable use cases,
-  with a knob-driven **Playground** for 107 of the 112 components
+  with a knob-driven **Playground** for 107 of the 115 components
   alongside the static variant grids (the two answer different
   questions: a playground explores combinations, a grid compares
   options side by side). A smoke test builds all 225 use cases in CI,
@@ -353,7 +353,7 @@ the sidebar.
 - **Tests** — pure-logic tests for `PlinthTheme`'s shade generator and
   `PlinthDisclosureController`, a golden (visual regression) test suite
   for `PlinthButton` (variants, a color override, disabled state, all
-  sizes), and widget behavior tests across 44 test files. **Every
+  sizes), and widget behavior tests across 65 test files. **Every
   public component has at least one test** — the only untested class is
   `PlinthOverlayHost`, which is internal and exercised indirectly
   through `PlinthModalHost`/`PlinthDrawerHost`.
@@ -376,7 +376,7 @@ the sidebar.
   that place things by arithmetic rather than by layout —
   `PlinthRollingNumber`, the two arc progress widgets,
   `PlinthAngleSlider`, `PlinthOverflowList` and the colour sliders.
-  24 images. That last group exists because a behaviour test can only
+  43 images. That last group exists because a behaviour test can only
   confirm the number that went in: `PlinthRollingNumber` shipped
   rendering 58,210 as nearly 68,210 while 494 tests passed.
   The reference images are Linux-rendered to match CI, so they can only
@@ -437,7 +437,7 @@ intentional rather than bugs:
 - ~~Extend golden test coverage beyond `PlinthButton`~~ — done, twice.
   `PlinthTextInput` and `PlinthAlert` first, then the components that
   compute their own offsets and angles, which is where the two real
-  visual bugs found so far both lived. 24 images. The remaining
+  visual bugs found so far both lived. 43 images. The remaining
   candidates are lower value: `PlinthBadge`'s variants and
   `PlinthLoader`'s three types are conditional but not computed, so a
   behaviour test already reaches most of what could break.
@@ -453,9 +453,16 @@ intentional rather than bugs:
   behind except Inputs. Nothing is blocked on a missing component. See
   **[docs/SHOWCASE.md](docs/SHOWCASE.md)**.
 - ~~Bring the example app's component tour up to date~~ — done. All
-  112 components have a section, and `example/test/section_coverage_test.dart`
-  now holds the section list against the snippet map so the two can't
-  drift apart silently.
+  112 Mantine-parity components have a section, and
+  `example/test/section_coverage_test.dart` now holds the section list
+  against the snippet map so the two can't drift apart silently.
+
+  The three Flutter-specific additions — `PlinthLtr`, `PlinthFocusTrap`,
+  `PlinthTapTarget` — deliberately have no tour section. Each is
+  behaviour rather than appearance (a pinned text direction, a focus
+  boundary, a minimum hit area), and a section showing one would be a
+  screenshot of nothing. `PlinthLtr` has a Widgetbook use case, where a
+  side-by-side comparison actually shows something.
 - ~~Make a local `flutter test` quiet again~~ — done. The golden tests
   carry `@Tags(['golden'])` and `dart_test.yaml` excludes that tag on
   Windows and macOS only, so they still run in CI. Note this also means

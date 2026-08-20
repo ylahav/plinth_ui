@@ -70,6 +70,26 @@ Distinct from `semanticColors`, which is *your* role namespace
 `roleRamps` map falls back per role, so remapping one leaves the others
 alone.
 
+**Density** — `theme.density`, a minimum tap target. Plinth sizes like
+the web library it is modelled on: measured across eleven controls at
+default size, every one clears WCAG 2.2 AA's 24×24 and **none** clears
+iOS's 44 or Android's 48. That is right for a dense desktop table and
+wrong for a phone, so it is a choice rather than a default:
+
+| | floor | |
+|---|---|---|
+| `PlinthDensity.standard` | 24 | WCAG 2.2 SC 2.5.8 — the default |
+| `PlinthDensity.comfortable` | 44 | iOS HIG |
+| `PlinthDensity.touch` | 48 | Android Material |
+
+```dart
+PlinthTheme.defaultTheme.copyWith(density: PlinthDensity.touch)
+```
+
+`standard` is a no-op — every control already cleared 24 — so raising it
+is the only thing that changes anything. It floors the target only;
+nothing here changes type size or padding.
+
 **Chrome tokens** — the neutrals the ramps don't cover, and what makes
 a dark theme a value swap rather than a rewrite:
 
@@ -1646,6 +1666,41 @@ All five controller-based overlay components share `PlinthDisclosureController`
 (`plinth_hooks`) for open/close state — `open()`, `close()`, `toggle()`,
 `isOpen`. Always call `.dispose()` on the controller when its owning
 State is disposed.
+
+### `PlinthFocusTrap`
+`child`, `onEscape`, `autofocus` (default true). Keeps keyboard focus
+inside an overlay and gives it back when the overlay closes.
+
+You need this only for a panel mounted in an `OverlayEntry`. A route
+gets a `FocusScope` from Flutter for free, so `PlinthModal` and
+`PlinthDrawer` already contain Tab; an `OverlayEntry` shares the page's
+scope, so focus walks straight out onto content the user cannot see —
+measured, before this existed, on Popover, Menu and Combobox.
+`PlinthPopover` uses it, which covers everything built on it.
+
+```dart
+PlinthFocusTrap(onEscape: controller.close, child: myPanel)
+```
+
+Focus moves in on open, **returns to the trigger on close** — the half a
+trap is usually missing — and Escape calls `onEscape`.
+
+Not for a dropdown that keeps focus in its text field while a list is
+open; that wants arrow-key roving, and trapping it would make it worse.
+
+### `PlinthTapTarget`
+`child`. Gives its child at least `theme.density.minTapTarget` in both
+directions.
+
+Plinth sizes like the web library it is modelled on: measured across
+eleven controls, all clear WCAG 2.2 AA's 24×24 and none clears iOS's 44
+or Android's 48. Set `PlinthDensity.touch` on the theme and the controls
+that use this grow to meet it. The control itself grows rather than
+gaining transparent padding — see `PlinthDensity` in the theme-token
+section.
+
+Exported because an app's own controls need the same floor and cannot
+reach it otherwise.
 
 ### `PlinthAffix`
 `child`, `top`, `right`, `bottom`, `left`. The one overlay-adjacent

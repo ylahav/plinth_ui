@@ -7,6 +7,13 @@ and `plinth_components`. Findings from these tracks are collected as numbered re
 this repo) and [PHASE_MINUS_1_FINDINGS.md](PHASE_MINUS_1_FINDINGS.md)
 (the first run of track T2 below).
 
+> **Status, 20 Aug 2026.** Track T2 has run once, and produced the
+> fifteen requirements in ADOPTION_REQUIREMENTS.md — **all now closed**,
+> along with four more that closing them exposed. The harness itself is
+> still live: the value of a standing harness is the *second* run,
+> against packages that have changed underneath it. Nothing here is
+> historical.
+
 **The distinction that matters:** TESTING.md tests Plinth against
 itself. This plan tests Plinth against something that does not care
 about Plinth — an app with its own deadlines, its own palette, its own
@@ -63,7 +70,7 @@ among the most accessibility-sensitive widgets in the set, and this app
 will never tell you anything about them.
 
 So: this app is a *depth* instrument, not a *breadth* one. It cannot
-replace the 59 test files in `packages/*/test`. It tests things those
+replace the 65 test files in `packages/*/test`. It tests things those
 files structurally cannot.
 
 About 19 more of the 83 could be adopted honestly, taking coverage to ~43% —

@@ -85,7 +85,8 @@ entry is what happens when a list is never re-read.
 
 ## Where `plinth_core` stands today
 
-476 lines. Its only dependency is `flutter` — no dependency on
+**1,350 lines** as of 20 Aug 2026, up from 476 when this was written.
+Its only dependency is `flutter` — no dependency on
 `plinth_components` or `plinth_hooks` — and it is already separately
 published. **It is a standalone token package today**, simply not built
 or documented as one. Its pubspec description reads *"…for Plinth UI"*,
@@ -146,7 +147,7 @@ will move pixels.
 - [ ] **A2a** Migrate ~30 `Duration` literals. **M**
 - [ ] **A1b** Typography — `fontWeights`, `headings`, `fontFamily`. **S**, plus a decision: bundle a typeface as a pubspec asset, or name one and document the fallback. Flutter has no CDN `@font-face`.
 - [ ] **A2b** Migrate 58 `FontWeight` literals; move `PlinthTitle`'s private `_titleStyles` map onto `headings`. **M**
-- [ ] **A1c** Control sizing — `controlHeight` / `controlPadding` as **textScaler-aware minimums, not constants**, fed by a `density` axis. **L.** The most design-heavy axis; see the Flutter section.
+- [x] **A1c** **DONE — and it moved one control, not every control.** See the note under § What B0 found. Control sizing — `controlHeight` / `controlPadding` as **textScaler-aware minimums, not constants**, fed by a `density` axis. **L.** The most design-heavy axis; see the Flutter section.
 - [ ] **A2c** Migrate the 87 multiplier sites. **L — the riskiest task here.** Per component family, goldens after each, and add one golden pinned at a large `textScaler`.
 - [ ] **A1d** Elevation, border width, opacity. **S.** Spacing tokens return `EdgeInsetsDirectional`, so RTL is correct by construction.
 - [ ] **A2d** Migrate 11 `BoxShadow`s and the 20+ alpha literals. **M**
@@ -330,7 +331,7 @@ plan. A team cannot retrofit it, and `highContrast` / `boldText` /
 `textScaler` are token concerns as much as widget ones.
 
 - [x] **B0a** **RAN — see § What B0 found.** Semantics probe on the 11 composite controls with neither explicit nor inherited semantics: Select, Autocomplete, MultiSelect, Menu, Menubar, Accordion, PinInput, Rating, Breadcrumbs, Stepper, Drawer. 37 of 115 files reference `Semantics`; some absences are correct (layout), some inherited (Material-wrapping). **M.** Record the result either way — "already correct, here is the probe" is as useful an entry as a fix.
-- [x] **B0b** **RAN — see § What B0 found.** Run `textContrastGuideline`, `androidTapTargetGuideline` and `labeledTapTargetGuideline` across the library; add the passing set to CI. **M.** Currently **1 of 59 test files** asserts anything about accessibility.
+- [x] **B0b** **RAN — see § What B0 found.** Run `textContrastGuideline`, `androidTapTargetGuideline` and `labeledTapTargetGuideline` across the library; add the passing set to CI. **M.** Currently **1 of 59 test files** asserted anything about accessibility.
 - [ ] **B0c** Manual NVDA and VoiceOver pass against the deployed demo. **M.** The only task here that cannot be satisfied by writing code — **still open, and the only thing in Workstream B that is.** A script with the expected announcement for every control fixed this cycle is in [B0C_SCREEN_READER_PASS.md](B0C_SCREEN_READER_PASS.md); the demo's own 44 unlabelled action icons were fixed first, so the pass measures the library rather than the gallery.
 - [x] **B0d** **RAN — clean, 0 of 232 gallery use cases threw in RTL; kept as `widgetbook/test/gallery_rtl_smoke_test.dart`.** RTL golden pass. **S** to run; 7 of 115 files touch `Directionality`, so the other 108 are unverified rather than known-broken.
 - [x] **B1** **DONE, and smaller than this entry assumed.** Focus containment. The premise — "Drawer first, as a reusable trap ... Modal already gets it from `showGeneralDialog`" — was half wrong: **`PlinthDrawer` uses `showGeneralDialog` too**, so it was already contained and would have been the one overlay that did not need the work. Measured rather than assumed; see below.
@@ -433,6 +434,36 @@ modules, per-component tree-shaking, the polymorphic `component` prop,
 
 ---
 
+## State of play, 20 Aug 2026
+
+The phases below were written before any of them ran, and the work did
+not happen in their order. Recorded here rather than rewritten into
+them, because the sequence that *was* planned is evidence about how well
+this document predicts.
+
+**Done, across two days:**
+
+| | |
+|---|---|
+| **Phase −1** | Ran. 15 requirements, all closed, plus 4 that closing them exposed |
+| **A8'** | Material reconciliation — replaced `A8`, which Phase −1 falsified |
+| **A1c** | Control sizing and density — measured as one control, not every control |
+| **B0a / B0b / B0d** | Ran and recorded. **B0c is the only accessibility task left, and it needs a person** |
+| **B1** | Focus containment — smaller than this document assumed; Drawer never needed it |
+
+**Not done, and unchanged:** `A0a` (the token hierarchy, still the gate
+on Workstream E), `A0b`, the rest of `A1*`/`A2*`, all of Workstream E,
+`B2`–`B4`.
+
+**What that reordering says about the plan.** Phases 1 through 4 were
+sequenced by dependency, and what actually got built was sequenced by
+*evidence* — the adoption requirements first, because a real app had
+hit them, then the accessibility probes because they were cheap and
+produced knowledge. Four of the five completed items were re-scoped by
+measurement before being built, and two (`A8`, `B1`) turned out to be
+aimed at the wrong target. The phase order was not wrong so much as
+speculative in the same way `A8`'s ranking was.
+
 ## Sequencing
 
 ### Phase −1 — Validate against one real app ✅ RAN, 18 Aug 2026
@@ -471,7 +502,7 @@ Results go in [PHASE_MINUS_1_FINDINGS.md](PHASE_MINUS_1_FINDINGS.md),
 not here — this file is the plan, that one is what happened.
 
 **The task:** theme it with `plinth_core` as it exists today. Not to
-succeed — `plinth_core` is 476 lines and has no `toThemeData()`, so it
+succeed — `plinth_core` was 476 lines and had no `toThemeData()`, so it
 will stop being useful quickly. **Where it stops is the data.**
 
 #### What this plan predicts, so the experiment can falsify it
@@ -537,7 +568,7 @@ produces knowledge rather than code — already ran in Phase 1.
 
 The README, pubspec descriptions and pub.dev listings, once there is
 something to reposition *around*. **Deliberately last:** `plinth_core`
-is 476 lines today, and announcing a token foundation before building
+was 476 lines when this was written, and announcing a token foundation before building
 one is precisely the unbacked claim this document exists to avoid.
 
 Then the optional items from Workstream D, if anyone asks for them.
@@ -563,7 +594,7 @@ Claims a team could check, not features.
 **Today, unqualified:**
 
 > 112 components at parity with `@mantine/core`, on a shared token
-> system, with 42 golden images and 59 test files behind them.
+> system, with 43 golden images and 65 test files behind them.
 
 **After Phase 1:**
 
