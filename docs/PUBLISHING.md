@@ -7,17 +7,28 @@ now covers releasing an update.
 
 ## Current state
 
-| Package | pub.dev (stable) | pub.dev (prerelease) | In this repo |
-|---|---|---|---|
-| `plinth_core` | 0.2.1 | **1.0.0-beta.2** | 1.0.0-beta.2 |
-| `plinth_hooks` | 0.0.2 | **1.0.0-beta.2** | 1.0.0-beta.2 |
-| `plinth_components` | 0.25.0 | **1.0.0-beta.2** | 1.0.0-beta.2 |
+| Package | pub.dev | In this repo |
+|---|---|---|
+| `plinth_core` | **1.0.0** | 1.0.0 |
+| `plinth_hooks` | **1.0.0** | 1.0.0 |
+| `plinth_components` | **1.0.0** | 1.0.0 |
 
-**Both betas are live**, and the stable column still reads 0.x because
-pub.dev never promotes a prerelease to "latest" — `pub add` without an
-explicit constraint still resolves to the 0.x line. That is the
-intended behaviour of a beta, not a failed publish, and it is worth
-knowing before reading the listing as evidence of one.
+**1.0.0 shipped 20 Aug 2026.** `flutter pub add plinth_components` now
+resolves to it without an explicit constraint, which the two betas never
+did — pub.dev does not promote a prerelease to "latest".
+
+### What the `1.0.0` release proved
+
+The sequence held, and the two things it caught last time it caught
+again: propagation took three attempts before `plinth_components`
+resolved, and the archive diff came back identical so the
+`pubspec_overrides` hints were benign.
+
+One practical note for next time. The archive-diff step is easier than
+the documented recipe suggests: after the resolve check, the real
+published packages are already sitting in the pub cache at
+`hosted/pub.dev/<name>-<version>/`, so diff against that instead of
+downloading a tarball.
 
 ### What the `1.0.0-beta.2` release proved
 
