@@ -2,6 +2,11 @@
 
 *Last checked 20 Aug 2026, against `1.0.0-beta.2`.*
 
+> Task IDs like `B0c` appear only where something outside this file
+> cites them — commit messages, or
+> [B0C_SCREEN_READER_PASS.md](B0C_SCREEN_READER_PASS.md). Everything
+> else is named rather than numbered, on purpose.
+
 The single plan. Evidence lives in
 [ADOPTION_REQUIREMENTS.md](ADOPTION_REQUIREMENTS.md) (what a real app
 needed) and [PHASE_MINUS_1_FINDINGS.md](PHASE_MINUS_1_FINDINGS.md) (what
@@ -54,8 +59,8 @@ you already have.** Four things neither competitor documents:
 - **Interaction-state variants.** Mix ships `onHovered`, `onPressed`,
   `onFocused`, `onDisabled`, `onDark`, `onLight`, `onBreakpoint` today —
   the exact names an earlier draft of this roadmap proposed as our
-  flagship. Build them (`A0b`, `A1e`, `A3`) as table stakes; do not
-  claim them.
+  flagship. Build them — component tokens, interaction-state tokens,
+  breakpoints in the core — as table stakes; do not claim them.
 - **Density.** Forui ships desktop/touch theme variants with per-platform
   font sizes and padding. Ours floors the tap target only, so it is the
   narrower answer.
@@ -66,8 +71,8 @@ you already have.** Four things neither competitor documents:
 **Adoption is the open question, not features.** Two mature packages
 hold adjacent ground with real usage, and none of the above is visible
 from a pub.dev listing. Plinth is two weeks old, so its own numbers say
-nothing yet either way — which is exactly why `P1` (one real app
-somebody else built) is worth more than any further feature.
+nothing yet either way — which is exactly why **one real app somebody
+else built** is worth more than any further feature.
 
 ---
 
@@ -76,53 +81,74 @@ somebody else built) is worth more than any further feature.
 | | |
 |---|---|
 | **All 19 adoption requirements** | Everything the real-app migration found, plus four that fixing them exposed |
-| **A8′** Material reconciliation | Replaced `A8` (`toThemeData`), which the migration falsified — it was never reached for |
-| **A1c** Control sizing + density | Measured as one control, not every control |
-| **B0a / B0b / B0d** | Accessibility probes run and recorded |
-| **B1** Focus containment | `PlinthFocusTrap`; smaller than planned — Drawer never needed it |
+| **Material reconciliation** | Replaced a planned `toThemeData()`, which the migration falsified — it was never reached for |
+| **Control sizing + density** | Measured as one control, not every control |
+| **Accessibility probes** (`B0a`, `B0b`, `B0d`) | Run and recorded |
+| **Focus containment** | `PlinthFocusTrap`; smaller than planned — Drawer never needed it |
 
 ## Next
 
-**1. `B0c` — the screen-reader pass.** The only thing left before 1.0,
+**1. The screen-reader pass** (`B0c`). The only thing left before 1.0,
 and the only task here a person has to do rather than a test.
 Everything above is verified by tests and simulated semantics trees and
 **has never been heard.** Script: [B0C_SCREEN_READER_PASS.md](B0C_SCREEN_READER_PASS.md).
 
-**2. `A0a` — the token hierarchy.** Formalise primitive / semantic /
+**2. The token hierarchy.** Formalise primitive / semantic /
 component tiers. The gate on everything in interop, and the last
 structural piece.
 
-**3. `E1` — DTCG import.** `PlinthTheme.fromDtcg(json)`. **Re-ranked up:**
+**3. DTCG import.** `PlinthTheme.fromDtcg(json)`. **Re-ranked up:**
 it is the one planned item neither competitor has, which makes it the
 strongest remaining differentiator rather than only an audience-B
-enabler. Depends on `A0a`.
+enabler. Depends on the token hierarchy above.
 
-**4. `P1` — one real app, built by somebody else.** The only thing that
+**4. One real app, built by somebody else.** The only thing that
 produces undiscounted evidence. The validation app's author is also
 Plinth's author, and that discount is applied everywhere it is cited.
 
 ## Later
 
-**Tokens.** `A0b` component tokens; `A1a`–`A1f` and their `A2*` migration
-pairs (motion, typography, control sizing, elevation, interaction state,
-platform flags); `A3`–`A7`.
+**None of this blocks 1.0.** Ordered roughly by value, not by phase.
 
-**Interop.** `E2` DTCG export, `E3` theme validation in CI, `E4` token
-explorer, `E5` golden helpers for users.
+### Adopter tooling
 
-**Accessibility.** `B2` roving focus — starting with extracting the
-logic welded inside `PlinthTabs`. Note the dropdown family leaks Tab and
-a focus *trap* is the wrong fix: focus belongs in the text field with
-arrow keys moving a highlighted option. `B3`, `B4`.
+| | What it is | Notes |
+|---|---|---|
+| **CLI** | `plinth theme create` — scaffold a light/dark theme from one seed colour | A thin shell over `PlinthTheme.fromSeed`, which does not exist yet either. Forui already ships a CLI, so this is catch-up |
+| **i18n / l10n** | Translatable strings in the components that have them | **A hard blocker for non-English-first teams**, and the one item here with no ticket anywhere before now. Distinct from RTL, which already works — RTL is layout, this is strings and formats |
+| **Theme previewer** | Try seed colours against real components in a browser before installing | Mostly the token explorer below, with a component view attached. Reuse the Widgetbook build |
 
-**Adopter DX.** `X1` CLI (`plinth theme create`, thin shell over `A5`);
-`X2` in-browser theme previewer (largely `E4`); `X3` i18n — genuinely
-untracked, and a hard blocker for non-English-first teams. All three are
-**post-1.0**; none blocks the version.
+### Tokens
 
-**Trust and distribution.** `T2` comparison piece (writable now, on the
-verified facts); `T3` surface `plinth_hooks`; `T4` badges; `T5`
-Discussions; `P2` Flutter Gems and awesome-flutter; `P3`, `P4`.
+| | What it is |
+|---|---|
+| **Component tokens** | `button.primary.background`, with hover / pressed / focus / disabled states. How a team styles *their own* widgets from Plinth |
+| **The missing axes** | Motion, typography, elevation, opacity, border width, interaction state, platform flags (`boldText`, `highContrast`). Each lands as a token, then a migration of the literals it replaces |
+| **Nested overrides** | A theme override for one subtree — sections, embedded brands |
+| **`fromSeed`** | Promote the ramp generator to a public constructor |
+
+### Interop
+
+| | What it is |
+|---|---|
+| **DTCG export** | Emit tokens a web codebase can consume, the reverse of the import above |
+| **Theme validation** | Ship the contrast machinery as something a team runs in CI against *its own* tokens |
+| **Token explorer** | Every token, its value per theme, and which components read it |
+| **Golden helpers** | Let an adopter pin their own token usage the way this repo pins its own |
+
+### Accessibility
+
+| | What it is |
+|---|---|
+| **Roving focus** | Arrow-key navigation within a control. Starts by extracting the logic welded inside `PlinthTabs`. **This is the right fix for the dropdown family**, which leaks Tab — a focus *trap* there would be wrong, because focus belongs in the text field while arrows move a highlighted option |
+| **Whatever B0c finds** | Sized once the screen-reader pass has run |
+
+### Trust and distribution
+
+Comparison piece (writable now, on verified facts); surface
+`plinth_hooks`, which exists and is under-marketed; pub points and
+coverage badges; GitHub Discussions; Flutter Gems and awesome-flutter
+submissions; adoption milestones as they happen.
 
 ## Not doing
 
@@ -132,7 +158,7 @@ Discussions; `P2` Flutter Gems and awesome-flutter; `P3`, `P4`.
 | `plinth_form`, `plinth_dates` | Both audiences already have forms and dates |
 | Charts, rich text | Separate projects |
 | ~30 DOM-only hooks | Web-only, in a library that is not |
-| Most of `plinth_hooks` | A team has its own state utilities. `use-focus-trap` and `use-roving-index` survive because `B2` needs them |
+| Most of `plinth_hooks` | A team has its own state utilities. `use-focus-trap` and `use-roving-index` survive because roving focus needs them |
 | A component count target | Borrowed from another project's marketing. Components get built when an app needs one |
 
 ---
