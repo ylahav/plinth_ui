@@ -11,6 +11,20 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.0.0
+
+**No changes to this package.** The version moves because the three
+packages are released in lockstep.
+
+`PlinthDisclosureController` has been unchanged since `0.0.2` and is
+what the overlay components take. The rest of what a Mantine-style hooks
+package would carry is deliberately not here — a team adopting Plinth
+has its own state utilities. See
+[the roadmap](../../docs/ROADMAP.md) for what survives that call.
+
+**What 1.0.0 promises:** no breaking *source* change without a 2.0.0.
+See [PUBLISHING.md](../../docs/PUBLISHING.md#what-100-promises).
+
 ## 1.0.0-beta.2
 
 **No changes to this package.** The version moves because the three

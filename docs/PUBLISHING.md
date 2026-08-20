@@ -318,14 +318,41 @@ failure described at the top of this file.
 ### What 1.0.0 promises
 
 Worth writing down before it is claimed, because a major version is a
-statement about the future rather than the present: **no breaking
-change without a 2.0.0.** The 0.x line explicitly allowed breaking
-changes in minor bumps, and its CHANGELOG header says so. That freedom
-ends at 1.0.0.
+statement about the future rather than the present.
 
-The naming pass in 0.20.0 was deliberately the last breaking change
-planned before this, which is what makes the promise credible rather
-than optimistic.
+**The promise is about the API: no breaking source change without a
+2.0.0.** Constructors, parameters, types and names. Code that compiles
+against `1.x` keeps compiling against every later `1.x`.
+
+**Rendered output is not covered, and that is deliberate rather than a
+loophole.** A minor release may change colours, sizes, spacing or what a
+screen reader announces, where the change is a correction. This library
+has already shipped several of those and will ship more:
+
+- `readableOn`'s floor moved from 3.0 to 4.5 because 3.0 is WCAG's
+  *large text* threshold and most callers are painting a table cell.
+- Anchoring the ramp generator repainted all 13 palettes, because they
+  had never matched the values they were seeded with.
+- Alert icons were failing 3:1 on 7 of 13 ramps.
+- Eight controls announced as unnamed buttons.
+
+**Not one of those could have waited for a 2.0.0**, and a promise that
+would have forced them to wait is a promise that keeps the library
+wrong. The honest version is the narrower one.
+
+What this costs you, stated plainly: **pin goldens against a version,
+not a range.** If you screenshot-test a Plinth UI, treat a minor bump as
+something to re-baseline and review, the same way this repo does. The
+CHANGELOG calls out every visual change under **Changed**, with the
+measurement behind it.
+
+**`B0c` — the manual screen-reader pass — had not run when 1.0.0
+shipped.** Everything accessibility-related is verified by tests and
+simulated semantics trees and has not been heard aloud. Findings from it
+land as corrections under this policy, in a `1.x`.
+
+The naming pass in 0.20.0 was the last breaking *API* change, which is
+what makes the API half of this credible rather than optimistic.
 
 **That stopped being true, and it is why `1.0.0-beta.2` exists.**
 Migrating a real app onto the packages

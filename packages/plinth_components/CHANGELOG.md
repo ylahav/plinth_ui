@@ -11,7 +11,23 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
-## Unreleased
+## 1.0.0
+
+**The first stable release.** Everything below shipped across the two
+betas and is collected here; the sections after this entry are the
+betas themselves, kept for anyone tracking what moved when.
+
+**What 1.0.0 promises:** no breaking *source* change without a 2.0.0.
+Rendered output is not covered — a minor may correct a colour, a size or
+an announcement, which this library has already done several times and
+will do again. See
+[PUBLISHING.md](../../docs/PUBLISHING.md#what-100-promises). Pin goldens
+to a version, not a range.
+
+**`B0c`, the manual screen-reader pass, had not run when this shipped.**
+Everything accessibility-related is verified by tests and simulated
+semantics trees and has not been heard aloud. Its findings will land as
+corrections in a `1.x`.
 
 ### Added
 
