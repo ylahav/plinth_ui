@@ -209,67 +209,75 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
         CompositedTransformTarget(
           key: _fieldKey,
           link: _layerLink,
-          child: InkWell(
-            // Kept as-is: existing tests and callers target this key.
-            key: const Key('plinth_multi_select_field'),
-            onTap: _toggleDropdown,
-            borderRadius: BorderRadius.circular(resolvedRadius),
-            child: Container(
-              constraints:
-                  BoxConstraints(minHeight: theme.spacing[widget.size]! * 2.2),
-              padding: EdgeInsets.symmetric(
-                horizontal: theme.spacing[PlinthSize.xs]!,
-                vertical: theme.spacing[PlinthSize.xs]! * 0.6,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(resolvedRadius),
-                border: Border.all(color: borderColor, width: hasError ? 2 : 1),
-                color: widget.enabled ? theme.surface : theme.surfaceMuted,
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: widget.value.isEmpty
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 4, vertical: 6),
-                            child: Text(
-                              widget.placeholder ?? '',
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: theme.fontSizes[widget.size]),
+          // The label is a sibling of the field, so it reaches sighted
+          // users and nobody else. `PlinthTreeSelect` already did this;
+          // this is the same shape.
+          child: Semantics(
+            button: true,
+            label: widget.label,
+            child: InkWell(
+              // Kept as-is: existing tests and callers target this key.
+              key: const Key('plinth_multi_select_field'),
+              onTap: _toggleDropdown,
+              borderRadius: BorderRadius.circular(resolvedRadius),
+              child: Container(
+                constraints: BoxConstraints(
+                    minHeight: theme.spacing[widget.size]! * 2.2),
+                padding: EdgeInsets.symmetric(
+                  horizontal: theme.spacing[PlinthSize.xs]!,
+                  vertical: theme.spacing[PlinthSize.xs]! * 0.6,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(resolvedRadius),
+                  border:
+                      Border.all(color: borderColor, width: hasError ? 2 : 1),
+                  color: widget.enabled ? theme.surface : theme.surfaceMuted,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: widget.value.isEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 4, vertical: 6),
+                              child: Text(
+                                widget.placeholder ?? '',
+                                style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: theme.fontSizes[widget.size]),
+                              ),
+                            )
+                          : Wrap(
+                              spacing: 4,
+                              runSpacing: 4,
+                              children: [
+                                for (final v in widget.value)
+                                  PlinthPill(
+                                    selectedLabels[v] ?? '$v',
+                                    size: widget.size == PlinthSize.xs
+                                        ? PlinthSize.xs
+                                        : PlinthSize.sm,
+                                    color: colorKey,
+                                    onRemove: widget.enabled
+                                        ? () => _removeValue(v)
+                                        : null,
+                                  ),
+                              ],
                             ),
-                          )
-                        : Wrap(
-                            spacing: 4,
-                            runSpacing: 4,
-                            children: [
-                              for (final v in widget.value)
-                                PlinthPill(
-                                  selectedLabels[v] ?? '$v',
-                                  size: widget.size == PlinthSize.xs
-                                      ? PlinthSize.xs
-                                      : PlinthSize.sm,
-                                  color: colorKey,
-                                  onRemove: widget.enabled
-                                      ? () => _removeValue(v)
-                                      : null,
-                                ),
-                            ],
-                          ),
-                  ),
-                  // Each pill removes itself; this empties the field in
-                  // one move, which is the difference between undoing a
-                  // choice and starting the filter over.
-                  if (widget.clearable &&
-                      widget.value.isNotEmpty &&
-                      widget.enabled)
-                    PlinthCloseButton(
-                      size: PlinthSize.xs,
-                      semanticLabel: 'Clear all selections',
-                      onPressed: () => widget.onChanged(const []),
                     ),
-                ],
+                    // Each pill removes itself; this empties the field in
+                    // one move, which is the difference between undoing a
+                    // choice and starting the filter over.
+                    if (widget.clearable &&
+                        widget.value.isNotEmpty &&
+                        widget.enabled)
+                      PlinthCloseButton(
+                        size: PlinthSize.xs,
+                        semanticLabel: 'Clear all selections',
+                        onPressed: () => widget.onChanged(const []),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),

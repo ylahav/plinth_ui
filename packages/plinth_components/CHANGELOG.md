@@ -59,6 +59,24 @@ changes; from `1.0.0` they cannot.
 
 ### Changed
 
+- **Every form field now exposes its label to assistive technology.**
+
+  Nine widgets rendered their label as a *sibling* of the field, which
+  shows it to sighted users and to nobody else: `PlinthTextInput`,
+  `PlinthTextarea`, `PlinthNumberInput`, `PlinthPasswordInput`,
+  `PlinthTagsInput`, `PlinthAutocomplete`, `PlinthSelect`,
+  `PlinthMultiSelect`. A screen reader reached each one as an unnamed
+  field.
+
+  `PlinthTreeSelect` already did this correctly and is the shape the
+  rest now follow — the label on the control, alongside its value, so a
+  select announces both.
+
+  Found by probing rather than reported: `PlinthAutocomplete` turned up
+  unlabelled *despite* being given a `label`, and a grep for the same
+  pattern found eight more with no `Semantics` in the file at all.
+  Pinned per widget, so a new field cannot quietly join them.
+
 - **`PlinthPagination` no longer clips its page numbers at large text
   scales.** (A1c)
 

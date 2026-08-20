@@ -105,39 +105,45 @@ class PlinthSelect<T> extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<T>(
-                      isExpanded: true,
-                      value: value,
-                      hint: placeholder != null
-                          ? Text(
-                              placeholder!,
-                              style: TextStyle(
-                                  fontSize: fontSize, color: Colors.grey),
-                            )
-                          : null,
-                      icon: const Icon(Icons.keyboard_arrow_down, size: 18),
-                      onChanged: enabled ? onChanged : null,
-                      items: [
-                        for (final option in options)
-                          DropdownMenuItem<T>(
-                            value: option.value,
-                            child: Text(option.label,
-                                style: TextStyle(fontSize: fontSize)),
-                          ),
-                      ],
-                      selectedItemBuilder: (context) => [
-                        for (final option in options)
-                          Padding(
-                            padding:
-                                EdgeInsets.symmetric(vertical: verticalPadding),
-                            child: Text(
-                              option.label,
-                              style: TextStyle(fontSize: fontSize),
-                              overflow: TextOverflow.ellipsis,
+                  // The label sits above the field as a sibling, so it
+                  // reaches sighted users and nobody else. Naming the
+                  // dropdown associates the two.
+                  child: Semantics(
+                    label: label,
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<T>(
+                        isExpanded: true,
+                        value: value,
+                        hint: placeholder != null
+                            ? Text(
+                                placeholder!,
+                                style: TextStyle(
+                                    fontSize: fontSize, color: Colors.grey),
+                              )
+                            : null,
+                        icon: const Icon(Icons.keyboard_arrow_down, size: 18),
+                        onChanged: enabled ? onChanged : null,
+                        items: [
+                          for (final option in options)
+                            DropdownMenuItem<T>(
+                              value: option.value,
+                              child: Text(option.label,
+                                  style: TextStyle(fontSize: fontSize)),
                             ),
-                          ),
-                      ],
+                        ],
+                        selectedItemBuilder: (context) => [
+                          for (final option in options)
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: verticalPadding),
+                              child: Text(
+                                option.label,
+                                style: TextStyle(fontSize: fontSize),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

@@ -148,21 +148,24 @@ class _PlinthTextInputState extends State<PlinthTextInput> {
                 SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
               ],
               Expanded(
-                child: TextField(
-                  controller: widget.controller,
-                  focusNode: _focusNode,
-                  onChanged: widget.onChanged,
-                  obscureText: widget.obscureText,
-                  enabled: widget.enabled,
-                  inputFormatters: widget.inputFormatters,
-                  keyboardType: widget.keyboardType,
-                  style: TextStyle(fontSize: fontSize),
-                  decoration: InputDecoration(
-                    hintText: widget.placeholder,
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: verticalPadding),
+                child: Semantics(
+                  label: widget.label,
+                  child: TextField(
+                    controller: widget.controller,
+                    focusNode: _focusNode,
+                    onChanged: widget.onChanged,
+                    obscureText: widget.obscureText,
+                    enabled: widget.enabled,
+                    inputFormatters: widget.inputFormatters,
+                    keyboardType: widget.keyboardType,
+                    style: TextStyle(fontSize: fontSize),
+                    decoration: InputDecoration(
+                      hintText: widget.placeholder,
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: verticalPadding),
+                    ),
                   ),
                 ),
               ),

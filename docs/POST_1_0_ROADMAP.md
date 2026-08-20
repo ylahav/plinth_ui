@@ -287,12 +287,13 @@ identify is worse than one you cannot reach.
 
 **Still open, and deliberately not touched here:**
 
-- **The form-label pattern is wider than B0a's list.** Eight more
-  widgets — `PlinthSelect`, `PlinthMultiSelect`, `PlinthTextarea`,
-  `PlinthNumberInput`, `PlinthPasswordInput`, `PlinthPillsInput`,
-  `PlinthTagsInput`, `PlinthTreeSelect` — render a visual label with no
-  `Semantics` in the file at all. `PlinthAutocomplete` was one of nine,
-  not one of one. Same fix, eight more times.
+- ~~**The form-label pattern is wider than B0a's list.**~~ **Done.**
+  Nine widgets in total, now pinned by
+  `plinth_components/test/plinth_form_labels_test.dart`. Two
+  corrections to the original entry: `PlinthTreeSelect` was already
+  correct and became the model the others follow, and `PlinthPillsInput`
+  holds no field of its own — it is "the chrome, not the behaviour", so
+  the caller supplies the input and owns its label.
 - **B1 focus containment**, unchanged at 0 of 116 files.
 - **A1c density**, unchanged.
 

@@ -108,19 +108,22 @@ class _PlinthPasswordInputState extends State<PlinthPasswordInput> {
           child: Row(
             children: [
               Expanded(
-                child: TextField(
-                  controller: widget.controller,
-                  focusNode: _focusNode,
-                  onChanged: widget.onChanged,
-                  obscureText: !_visible,
-                  enabled: widget.enabled,
-                  style: TextStyle(fontSize: fontSize),
-                  decoration: InputDecoration(
-                    hintText: widget.placeholder,
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: verticalPadding),
+                child: Semantics(
+                  label: widget.label,
+                  child: TextField(
+                    controller: widget.controller,
+                    focusNode: _focusNode,
+                    onChanged: widget.onChanged,
+                    obscureText: !_visible,
+                    enabled: widget.enabled,
+                    style: TextStyle(fontSize: fontSize),
+                    decoration: InputDecoration(
+                      hintText: widget.placeholder,
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: verticalPadding),
+                    ),
                   ),
                 ),
               ),

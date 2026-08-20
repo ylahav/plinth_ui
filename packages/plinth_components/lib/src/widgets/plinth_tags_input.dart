@@ -195,26 +195,30 @@ class _PlinthTagsInputState extends State<PlinthTagsInput> {
                   width: 120,
                   child: Focus(
                     onKeyEvent: _onKey,
-                    child: TextField(
-                      controller: _controller,
-                      focusNode: _focusNode,
-                      enabled: widget.enabled && !_atLimit,
-                      style: TextStyle(fontSize: fontSize),
-                      onChanged: _onChanged,
-                      onSubmitted: _commit,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        border: InputBorder.none,
-                        hintText: widget.value.isEmpty
-                            ? widget.placeholder
-                            : _atLimit
-                                ? null
-                                : '',
-                        hintStyle: TextStyle(
-                          color: theme.textMuted,
-                          fontSize: fontSize,
+                    child: Semantics(
+                      label: widget.label,
+                      child: TextField(
+                        controller: _controller,
+                        focusNode: _focusNode,
+                        enabled: widget.enabled && !_atLimit,
+                        style: TextStyle(fontSize: fontSize),
+                        onChanged: _onChanged,
+                        onSubmitted: _commit,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          border: InputBorder.none,
+                          hintText: widget.value.isEmpty
+                              ? widget.placeholder
+                              : _atLimit
+                                  ? null
+                                  : '',
+                          hintStyle: TextStyle(
+                            color: theme.textMuted,
+                            fontSize: fontSize,
+                          ),
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 6),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 6),
                       ),
                     ),
                   ),
