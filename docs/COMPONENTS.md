@@ -539,6 +539,28 @@ control. Uses the standard "clip to a near-zero size" technique rather
 than `Opacity`/`Visibility.invisible`, which some screen readers still
 treat as hidden from *them* too.
 
+### `PlinthLiveRegion`
+`message`, `child`. Marks `child` as text a screen reader should visit
+when `message` changes, without focus having moved — a validation
+error, a notification, a status line. Pass the message as well as the
+widget rendering it: `null` and `''` return `child` untouched, since a
+live region with nothing in it is a node a reader visits to hear
+silence. Carries `container: true`, so the flag lands on a node as wide
+as the message rather than merging into the whole field. Where the
+event has no lasting visual — loading finishing, and its overlay
+leaving the tree — use `PlinthAnnounce.say` instead.
+
+### `PlinthAnnounceWhen`
+`when`, `message`, `child`. Speaks `message` once, at the moment `when`
+turns true — the edge neither `PlinthLiveRegion` nor a plain label
+covers. A live region is wrong for anything that changes continuously
+(a progress bar marked live narrates every frame of its own animation),
+but the moment it finishes is worth a word. **Never fires on first
+build**, which is why it holds state: a bar rendered at 100% is usually
+a statistic, and announcing "complete" for a number that was already
+there reports an event that never happened. A null or empty `message`
+does nothing, so it can be wrapped on unconditionally.
+
 ### `PlinthBlockquote`
 `quote`, `citation`, `color`, `icon`. Colored left border with italic
 quote text and an optional citation line.
@@ -1034,13 +1056,27 @@ uppercase by default, pill-shaped (`borderRadius: 999`).
 
 ### `PlinthAlert`
 `title` (optional), `child`, `color` (default `'blue'`), `icon`, `onClose`
-(non-null shows a close button), `radius`. Background at shade 0, accent
-(icon/title/border) at shade 6.
+(non-null shows a close button), `radius`, `live` (default true).
+Background at shade 0, accent (icon/title/border) at shade 6. `live`
+makes the title and body a live region, so an alert raised by a failed
+submit is spoken when it appears rather than only when a reader arrives;
+the dismiss button is left out of it. Pass `live: false` for a standing
+informational banner that is simply part of the page. Dismissal is
+silent on purpose.
 
 ### `PlinthProgress` + `PlinthProgressSection`
 `value` (0.0–1.0, asserted in range), `color`, `size` (controls track
-height), `radius`, `trackColor`. Fill animates smoothly on value change
-via an internal `AnimatedFractionallySizedBox` helper.
+height), `radius`, `trackColor`, `semanticLabel`, `completeLabel`. Fill
+animates smoothly on value change via an internal
+`AnimatedFractionallySizedBox` helper.
+
+A single-value bar now reads its percentage as a semantic *value*
+rather than as nothing; `semanticLabel` names it so the number arrives
+in context. The bar is **not** a live region — marked live it would
+narrate every frame of its own animation — so `completeLabel` is the
+only thing spoken, once, on reaching 1.0. It is opt-in and never fires
+on first build, because a bar sitting at 100% is usually a statistic
+rather than something that just finished.
 
 `PlinthProgress.sections(sections: [...])` draws a part-to-whole bar
 instead — traffic split by source, storage by file type. Each
@@ -1099,12 +1135,16 @@ than a page.
 
 ### `PlinthNotification`
 `title` (optional), `child`, `color` (default `'blue'`), `icon`, `onClose`,
-`radius`. Distinct from `PlinthAlert`: Alert is an inline callout meant to
+`radius`, `live` (default true). Distinct from `PlinthAlert`: Alert is an inline callout meant to
 sit in normal page layout flow; Notification is meant to float. Use the
 static `PlinthNotification.show(context, ...)` to push it as a `SnackBar`
 via `ScaffoldMessenger` — inherits Flutter's own stacking, auto-dismiss
 timing, and swipe-to-dismiss rather than reimplementing a toast stack.
-`onClose` is wired up automatically when shown via `show()`.
+`onClose` is wired up automatically when shown via `show()`, and so is
+`live: false` — Flutter's `SnackBar` already wraps its content in the
+same live region, so the shown path needs no help and a second region
+inside the first would risk saying it twice. The `live` default serves
+the other path: a notification placed in a tree by hand.
 
 `PlinthNotification.showOn(messenger, ...)` takes a
 `ScaffoldMessengerState` you already hold, for the standard idiom of
@@ -1126,8 +1166,12 @@ message. Which of those you want is the caller's call. `show` is
 
 ### `PlinthLoader`
 `type` (`PlinthLoaderType`: `oval, dots, bars` — default `oval`), `size`,
-`color`, `colorValue`, `dimension`. The loading indicator on its own, for
-a button mid-submit or an empty panel awaiting its first fetch.
+`color`, `colorValue`, `dimension`, `semanticLabel` (default
+`'Loading'`). The loading indicator on its own, for a button mid-submit
+or an empty panel awaiting its first fetch. `semanticLabel` is a plain
+label rather than a live region: a loader usually sits inside something
+whose own change is already spoken, and a second voice would say the
+same thing twice. Pass `''` where even the label is noise.
 `PlinthLoadingOverlay` already shows a spinner, but only as part of
 covering existing content.
 
@@ -1186,12 +1230,20 @@ shimmer-gradient + `AnimationController` — simpler lifecycle, same
 one block that's either fully shown or height-clipped.
 
 ### `PlinthLoadingOverlay`
-`child`, `visible`, `color`. Dims `child` and shows a centered spinner on
-top when `visible`, blocking interaction underneath via `IgnorePointer`
-rather than removing `child` from the tree — layout stays stable across
-the loading toggle. Distinct from `PlinthSkeleton`: this overlays
-*existing* content during an async operation, rather than standing in for
-content that doesn't exist yet.
+`child`, `visible`, `color`, `loadingLabel` (default `'Loading'`),
+`completeLabel` (default `'Loading complete'`). Dims `child` and shows a
+centered spinner on top when `visible`, blocking interaction underneath
+via `IgnorePointer` rather than removing `child` from the tree — layout
+stays stable across the loading toggle. Distinct from `PlinthSkeleton`:
+this overlays *existing* content during an async operation, rather than
+standing in for content that doesn't exist yet.
+
+The two labels are spoken by different mechanisms, and have to be.
+Arrival is a live region, which works on every platform. Completion
+cannot be: the overlay is removed, so there is no node left to speak
+from — it goes through `PlinthAnnounce.say`, which Android declines by
+its own policy on announcements. Either label can be `''` to say
+nothing.
 
 ### `PlinthOverlay`
 `child`, `color` (default black), `opacity` (default `0.6`),

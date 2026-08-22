@@ -95,6 +95,7 @@ nothing that happens while the user holds still is ever spoken —
 validation messages, notifications, loading completion. B0c found this
 through the pin input, where it is now fixed; everywhere else it is
 open. **The one accessibility claim still resting on nothing.**
+Task list: [F3_ANNOUNCEMENTS.md](F3_ANNOUNCEMENTS.md).
 
 **2. The token hierarchy.** Formalise primitive / semantic /
 component tiers. The gate on everything in interop, and the last
