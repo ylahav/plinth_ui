@@ -470,7 +470,35 @@ class PlinthWidgetbookApp extends StatelessWidget {
 /// [PlinthWidgetbookApp.build], so `test/gallery_smoke_test.dart` can
 /// walk the tree and build each use case without standing up the whole
 /// Widgetbook UI.
-final List<WidgetbookNode> plinthDirectories = [
+final List<WidgetbookNode> plinthDirectories =
+    _componentsAlphabetical(_plinthDirectories);
+
+/// Sorts the components inside each category by name, leaving the
+/// category order and each component's use cases alone.
+///
+/// The literal below is in the order the components were built, which
+/// is no order a reader can predict: Forms alone holds 32 entries, so
+/// finding one meant reading all of them. Sorting here rather than
+/// reordering the literal keeps the diff to this function and makes it
+/// impossible to drop a component while shuffling several thousand
+/// lines.
+///
+/// Categories stay put. There are eight, all visible at once, and their
+/// order is a deliberate progression rather than a list to search.
+///
+/// Use cases stay put too, and that one matters: their order carries
+/// meaning — 'Default' and 'Interactive' first, variants after — and
+/// alphabetising would file 'Disabled' ahead of 'Default'.
+List<WidgetbookNode> _componentsAlphabetical(List<WidgetbookNode> nodes) {
+  return nodes.map((node) {
+    if (node is! WidgetbookCategory) return node;
+    final children = _componentsAlphabetical(node.children ?? const [])
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    return node.copyWith(children: children);
+  }).toList();
+}
+
+final List<WidgetbookNode> _plinthDirectories = [
   WidgetbookCategory(
     name: 'Buttons & Actions',
     children: [
