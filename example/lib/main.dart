@@ -215,6 +215,20 @@ class _ShowcasePageState extends State<ShowcasePage> {
 
   static const List<String> _sectionOrder = componentSectionOrder;
 
+  /// The sidebar's own order, sorted by name.
+  ///
+  /// Separate from [_sectionOrder] on purpose. That list is the order
+  /// the sections appear in down the page, which `_sectionTitle` reads
+  /// to know which one is first; sorting it in place would hand the
+  /// first-section styling to whatever sorts earliest and leave the
+  /// actual first section looking like a continuation.
+  ///
+  /// So the page keeps its authored order and only the menu is sorted —
+  /// which is all that was wrong. A menu of 115 entries in build order
+  /// cannot be searched by eye.
+  static final List<String> _sidebarOrder = [...componentSectionOrder]
+    ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+
   @override
   void initState() {
     super.initState();
@@ -461,7 +475,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
               ],
             ),
           ),
-        for (final name in _sectionOrder)
+        for (final name in _sidebarOrder)
           ListTile(
             dense: true,
             title: Text(name, style: const TextStyle(fontSize: 13.5)),
