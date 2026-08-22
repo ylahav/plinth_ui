@@ -33,6 +33,81 @@ sense, whether an announcement is exhausting to listen to, or whether
 "1 of 5" is clearer than what a real reader says. It only means you will
 be listening for judgement calls rather than for missing names.
 
+## How to actually run it
+
+### Before anything: turn Flutter's semantics on
+
+**Flutter web ships its accessibility tree switched off.** The page
+contains an invisible `<flt-semantics-placeholder>` button labelled
+**"Enable accessibility"**, and until a screen reader activates it,
+Flutter's semantics are *not in the DOM at all*.
+
+Skip this and every control on the page is silent — you would conclude
+the library has no accessibility whatsoever, and you would be measuring
+the placeholder. It is the first focusable element on the page:
+**Tab once from the top and press Enter.**
+
+Check it worked by tabbing again — you should hear a real control name,
+not silence.
+
+### NVDA, on Windows
+
+1. Install from [nvaccess.org](https://www.nvaccess.org/download/). The
+   **portable copy** works and needs no install.
+2. `Ctrl` stops speech mid-sentence. Use it constantly.
+3. The NVDA modifier key is `Insert` (or `CapsLock`, if you chose that
+   at install).
+
+**Turn on the Speech Viewer before you start** — NVDA menu (`NVDA+N`) →
+*Tools* → *Speech Viewer*. It prints everything spoken as text in a
+window you can read and copy.
+
+That single setting is what makes this pass worth doing rather than
+exhausting: you can paste real transcripts into the findings instead of
+writing down what you think you heard, and a transcript is checkable
+by someone who was not there.
+
+| Key | What it does |
+|---|---|
+| `Tab` / `Shift+Tab` | Next / previous focusable control — **the main tool here** |
+| `NVDA+F7` | Elements list: every button, link and form field with its name. Fastest way to spot an unnamed one |
+| `NVDA+↓` | Read continuously from here |
+| `Ctrl` | Stop talking |
+
+### VoiceOver, on macOS
+
+`Cmd+F5` toggles it. The VO modifier is `Ctrl+Option`.
+
+| Key | What it does |
+|---|---|
+| `Tab` | Next focusable control |
+| `VO+→` | Next item, including things Tab skips |
+| `VO+U` | Rotor — browse by control type |
+| `Ctrl` | Stop talking |
+
+### One Flutter-specific thing to expect
+
+Flutter does not emit HTML `<label>` elements, so a text field announces
+as **"edit, blank"** when it has no accessible name of its own.
+
+**That is the exact thing nine widgets were fixed for**, and it makes a
+sharp test. Tab to any Plinth form field and you should hear the label
+*with* the field — "Email, edit, blank". If you hear a bare "edit,
+blank", the label is not reaching the DOM and the fix did not work in a
+real browser, whatever the tests say.
+
+### Suggested route, about 30 minutes
+
+1. Open the demo, Tab once, Enter — accessibility on.
+2. `NVDA+F7` on two or three pages. Anything with an empty name is a
+   finding, and this catches them far faster than listening.
+3. Then Tab through one whole page slowly, listening for order and for
+   announcements that are technically correct and unusable.
+4. Open a menu and a popover: Tab must not escape, Escape must close,
+   focus must come back to the trigger.
+5. Rating and the PIN input by hand — they were the worst, and the fix
+   is the least like anything else.
+
 ## What to check, and what you should hear
 
 ### 1. The controls that had nothing at all
@@ -85,6 +160,7 @@ but whether the result still looks like the alert's colour.
 ## What counts as a failure
 
 - Any control announced as "button" or "" with no name.
+- A text field that says "edit, blank" with no name in front of it.
 - A form field whose label you only hear as separate static text.
 - Tab leaving an open menu or popover.
 - An announcement that is technically present but unusable out loud —
@@ -93,8 +169,15 @@ but whether the result still looks like the alert's colour.
 ## Where the results go
 
 `PHASE_MINUS_1_FINDINGS.md`'s style: what was predicted, what happened,
-and prefer the findings that surprised. Then tick `B0c` in
-`ROADMAP.md`.
+and prefer the findings that surprised. Paste the Speech Viewer
+transcript for anything that failed — a quotation is worth more than a
+description, and it lets a fix be checked against the same words.
+
+Then tick `B0c` in `ROADMAP.md`.
+
+Findings ship as `1.x` corrections: `1.0.0` promises the API, not
+rendered output or announcements. Batch them with the README and topics
+changes already sitting unpublished on `main`.
 
 **If this comes back clean**, the accessibility work has been heard by
 something other than a test, and `1.0.0` stops being a promise made on
