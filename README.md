@@ -1,43 +1,22 @@
 # Plinth UI
 
-A Mantine-inspired component library for Flutter — themeable widgets built
-on a shared design-token foundation.
+**A design-token engine for Flutter — and 115 components built on it, so
+you can see that it holds up.**
 
-## Structure
+- **Colour resolves against a WCAG contrast floor**, not a fixed shade.
+  Ask for a palette colour as *text* and you get a shade that clears
+  4.5:1 against the background it actually sits on.
+- **Ramps are anchored to your own colour.** Feed in `#FF3B30`, ask for
+  shade 6, get `#FF3B30` back — not something near it.
+- **Name colours by role** — `expense`, `income`, `brand` — rather than
+  by hue, each with its own contrast floor.
+- **Keep your existing `ThemeData`.** `colorSchemeDisagreements` reports
+  where your `ColorScheme` and your tokens disagree, instead of asking
+  you to replace one with the other.
 
-```
-plinth_ui/
-  melos.yaml               # workspace config
-  .github/workflows/ci.yml # analyze + format + test on every push/PR (see below)
-  .github/workflows/regenerate-goldens.yml # manual — regenerates goldens on Linux to match CI
-  packages/
-    plinth_core/            # PlinthTheme, design tokens (colors, spacing, radius)
-    plinth_components/       # Widgets — see docs/COMPONENTS.md for the full,
-    │                          up-to-date list with props for each one
-    plinth_hooks/             # PlinthDisclosureController (useDisclosure equivalent)
-  example/                  # Showcase app — run this to see the components live
-  widgetbook/               # Isolated component gallery (manual/non-codegen setup)
-  docs/
-    ROADMAP.md                # The single plan — who it is for, what is
-    │                           done, what is next, and what is declined
-    COMPONENTS.md             # Per-component prop reference
-    ADOPTING_TOKENS.md        # What adopting tokens costs an app, and
-    │                           the five patterns every adopter hits
-    TESTING.md                # How to verify this locally — SDK setup
-    │                           through golden tests
-    PUBLISHING.md             # Release order, and the mistake that has
-    │                           already shipped once
-    SHOWCASE.md               # The example app's composed blocks
-    ADOPTION_REQUIREMENTS.md  # What a real app needed and could not get.
-    │                           All 19 closed
-    PHASE_MINUS_1_FINDINGS.md # What happened when plinth_core was tried
-    │                           against that app — including the
-    │                           predictions it falsified
-    APP_VALIDATION_PLAN.md    # That app as a standing harness
-    PRE_1_0_AUDIT.md          # How complete each component is
-    B0C_SCREEN_READER_PASS.md # The one accessibility task a person has
-    │                           to run
-```
+Mantine-inspired rather than a port: 112 components track
+`@mantine/core` because its answer was right, and three exist because
+Flutter asked a question a web library never had to.
 
 [![CI](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml/badge.svg)](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml)
 
@@ -166,8 +145,8 @@ a path dependency **does not work**, and the error is not obviously
 about what it is about:
 
 ```
-Because your_app depends on plinth_components ^1.0.0-beta.2 which
-depends on plinth_core ^1.0.0-beta.2, plinth_core from hosted is
+Because your_app depends on plinth_components ^1.0.1 which
+depends on plinth_core ^1.0.1, plinth_core from hosted is
 required. So, because your_app depends on plinth_core from path,
 version solving failed.
 ```
@@ -178,7 +157,7 @@ This is the first thing an adopter hits, before writing any Dart. Use
 ```yaml
 # your_app/pubspec.yaml
 dependencies:
-  plinth_components: ^1.0.0-beta.2
+  plinth_components: ^1.0.1
 
 dependency_overrides:
   plinth_core:
@@ -208,6 +187,43 @@ Encouraging data point from doing this for real: `plinth_components
 stayed genuinely backward compatible.
 
 ## Working on Plinth itself
+
+### Repository layout
+
+```
+plinth_ui/
+  melos.yaml               # workspace config
+  .github/workflows/ci.yml # analyze + format + test on every push/PR (see below)
+  .github/workflows/regenerate-goldens.yml # manual — regenerates goldens on Linux to match CI
+  packages/
+    plinth_core/            # PlinthTheme, design tokens (colors, spacing, radius)
+    plinth_components/       # Widgets — see docs/COMPONENTS.md for the full,
+    │                          up-to-date list with props for each one
+    plinth_hooks/             # PlinthDisclosureController (useDisclosure equivalent)
+  example/                  # Showcase app — run this to see the components live
+  widgetbook/               # Isolated component gallery (manual/non-codegen setup)
+  docs/
+    ROADMAP.md                # The single plan — who it is for, what is
+    │                           done, what is next, and what is declined
+    COMPONENTS.md             # Per-component prop reference
+    ADOPTING_TOKENS.md        # What adopting tokens costs an app, and
+    │                           the five patterns every adopter hits
+    TESTING.md                # How to verify this locally — SDK setup
+    │                           through golden tests
+    PUBLISHING.md             # Release order, and the mistake that has
+    │                           already shipped once
+    SHOWCASE.md               # The example app's composed blocks
+    ADOPTION_REQUIREMENTS.md  # What a real app needed and could not get.
+    │                           All 19 closed
+    PHASE_MINUS_1_FINDINGS.md # What happened when plinth_core was tried
+    │                           against that app — including the
+    │                           predictions it falsified
+    APP_VALIDATION_PLAN.md    # That app as a standing harness
+    PRE_1_0_AUDIT.md          # How complete each component is
+    B0C_SCREEN_READER_PASS.md # The one accessibility task a person has
+    │                           to run
+```
+
 
 Clone, bootstrap, and run one of the two demo apps:
 

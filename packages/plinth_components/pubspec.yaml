@@ -11,13 +11,15 @@ repository: https://github.com/ylahav/plinth_ui
 issue_tracker: https://github.com/ylahav/plinth_ui/issues
 
 # Max five, lowercase, hyphens allowed. These are what someone
-# browsing pub.dev by subject would actually search.
+# browsing pub.dev by subject would actually search — a mix of the
+# obvious ones that carry traffic and the narrow one that says what is
+# different here.
 topics:
   - ui
   - widgets
   - design-system
-  - components
   - theming
+  - accessibility
 
 # Rendered by example/tool/generate_screenshots.dart rather than
 # captured by hand, so they can be regenerated when the theme changes.

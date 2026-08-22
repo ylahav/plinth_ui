@@ -5,6 +5,13 @@ homepage: https://github.com/ylahav/plinth_ui
 repository: https://github.com/ylahav/plinth_ui
 issue_tracker: https://github.com/ylahav/plinth_ui/issues
 
+# Max five. Kept narrow and honest: this package is one disclosure
+# controller, not a hooks library.
+topics:
+  - hooks
+  - state-management
+  - ui
+
 environment:
   sdk: ">=3.4.0 <4.0.0"
   flutter: ">=3.22.0"
