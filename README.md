@@ -30,6 +30,28 @@ curated tour — every component, plus the composed blocks, each with its
 source. The gallery is the exhaustive one: every state of every
 component, with knobs to poke at them.
 
+> **Testing either demo with a screen reader?** Press `Tab` once from
+> the top of the page and `Enter` before anything else.
+>
+> Flutter web builds its accessibility tree only on demand, behind an
+> invisible "Enable accessibility" button, and until that is activated
+> the semantics are not in the page at all — every control is silent.
+> The web gives no way to detect a screen reader (deliberately: it
+> would fingerprint users and disclose a disability to every site), so
+> Flutter uses a button no mouse will ever find and every screen reader
+> will, and treats reaching it as the signal.
+>
+> These demos are left at that default on purpose, so they behave like
+> any Flutter web app rather than flattering this one. An app that
+> would rather always pay the cost can call
+> `SemanticsBinding.instance.ensureSemantics()` at startup and skip the
+> button entirely.
+>
+> It needs redoing after every reload. Full instructions, including how
+> to confirm it worked without a screen reader, are in
+> [B0C_SCREEN_READER_PASS.md](docs/B0C_SCREEN_READER_PASS.md); what was
+> heard when it was run is in [B0C_FINDINGS.md](docs/B0C_FINDINGS.md).
+
 ## Using Plinth in your app
 
 All three packages are published on pub.dev. `plinth_components` is the
