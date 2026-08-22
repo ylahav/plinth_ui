@@ -98,6 +98,30 @@ has just reloaded, or when you are re-checking one page repeatedly.
 refresh or a navigation, and forgetting is the most likely way to record
 a false failure.
 
+#### In the Widgetbook gallery, use `?preview`
+
+The gallery is a single Flutter app, so it has one placeholder button
+and the steps above are unchanged. What changes is what `Tab` does
+afterwards.
+
+Widgetbook's own navigation tree is Flutter too, so with semantics on
+`Tab` walks every category, component and use case in the gallery before
+reaching the one under test. Almost everything you hear is Widgetbook's.
+
+Widgetbook renders the use case alone when the URL carries `preview`,
+dropping the tree and the knobs panel:
+
+1. Navigate to the use case normally. The URL gains `?path=...`.
+2. **Choose light or dark now.** The addons panel is gone in preview
+   mode, but addon state rides in the URL, so the theme selected at this
+   point is the one you keep.
+3. Append **`&preview`** and reload.
+4. **Re-enable accessibility** — the reload cleared it.
+5. `Tab`. The first stop is the component.
+
+Everything spoken from here belongs to Plinth, which is what makes a
+pasted transcript worth anything.
+
 ### NVDA, on Windows
 
 1. Install from [nvaccess.org](https://www.nvaccess.org/download/). The
