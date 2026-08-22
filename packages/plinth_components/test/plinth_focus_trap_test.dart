@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_components/plinth_components.dart';
-import 'package:plinth_hooks/plinth_hooks.dart';
 
 /// Opens [overlay] over a page that has its own focusable control, then
 /// reports whether Tab ever reaches that control.

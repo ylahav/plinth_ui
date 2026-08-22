@@ -5,7 +5,7 @@ Design tokens and theme foundation for [Plinth UI](https://github.com/ylahav/pli
 component reads from.
 
 This package is the theme layer only. For the actual widgets
-(buttons, inputs, cards, and 45+ others), see
+(buttons, inputs, cards, and 112 others), see
 [`plinth_components`](https://pub.dev/packages/plinth_components).
 
 ## Usage

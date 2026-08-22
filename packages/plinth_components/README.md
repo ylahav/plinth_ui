@@ -1,6 +1,6 @@
 # plinth_components
 
-51 themeable Flutter widgets — [Plinth UI](https://github.com/ylahav/plinth_ui),
+115 themeable Flutter widgets — [Plinth UI](https://github.com/ylahav/plinth_ui),
 a component library in the spirit of [Mantine](https://mantine.dev).
 
 Every component reads its color, spacing, and radius from a single
