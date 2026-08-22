@@ -1,6 +1,6 @@
 # Plinth UI — Roadmap
 
-*Last checked 20 Aug 2026, against `1.0.0-beta.2`.*
+*Last checked 22 Aug 2026, against `1.0.1`.*
 
 > Task IDs like `B0c` appear only where something outside this file
 > cites them — commit messages, or
@@ -84,14 +84,17 @@ else built** is worth more than any further feature.
 | **Material reconciliation** | Replaced a planned `toThemeData()`, which the migration falsified — it was never reached for |
 | **Control sizing + density** | Measured as one control, not every control |
 | **Accessibility probes** (`B0a`, `B0b`, `B0d`) | Run and recorded |
+| **The screen-reader pass** (`B0c`) | Run 22 Aug 2026. Two defects, both fixed; the nine form labels hold up in a real browser. [B0C_FINDINGS.md](B0C_FINDINGS.md) |
 | **Focus containment** | `PlinthFocusTrap`; smaller than planned — Drawer never needed it |
 
 ## Next
 
-**1. The screen-reader pass** (`B0c`). The only thing left before 1.0,
-and the only task here a person has to do rather than a test.
-Everything above is verified by tests and simulated semantics trees and
-**has never been heard.** Script: [B0C_SCREEN_READER_PASS.md](B0C_SCREEN_READER_PASS.md).
+**1. Announce what changes.** `liveRegion` and
+`SemanticsService.announce` appear **nowhere** in the library, so
+nothing that happens while the user holds still is ever spoken —
+validation messages, notifications, loading completion. B0c found this
+through the pin input, where it is now fixed; everywhere else it is
+open. **The one accessibility claim still resting on nothing.**
 
 **2. The token hierarchy.** Formalise primitive / semantic /
 component tiers. The gate on everything in interop, and the last
@@ -141,7 +144,7 @@ Plinth's author, and that discount is applied everywhere it is cited.
 | | What it is |
 |---|---|
 | **Roving focus** | Arrow-key navigation within a control. Starts by extracting the logic welded inside `PlinthTabs`. **This is the right fix for the dropdown family**, which leaks Tab — a focus *trap* there would be wrong, because focus belongs in the text field while arrows move a highlighted option |
-| **Whatever B0c finds** | Sized once the screen-reader pass has run |
+| **Announcements beyond the pin input** | B0c's `F-3`, promoted to *Next* above. Listed here too because the migration — every validation message, notification and loading state in the library — is the long part |
 
 ### Trust and distribution
 
@@ -206,6 +209,9 @@ Today's checkable claim: *115 components on a shared token system — 112
 tracking `@mantine/core`, three answering questions only Flutter has —
 with 43 golden images and 65 test files behind them.*
 
-The token-engine framing is publishable once `B0c` is clean. Before
-that, every accessibility claim rests on tests and simulated semantics
-trees, which is not the same as having been heard.
+**`B0c` has run**, so the token-engine framing is publishable: the
+accessibility work has been heard, not only asserted against simulated
+semantics trees.
+
+The claim that is still not available: that nothing changing on screen
+goes unannounced. That is `F-3`, and it is open.

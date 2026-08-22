@@ -11,6 +11,12 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.1.0
+
+No change in this package. Released in lockstep with
+`plinth_components` 1.1.0, which carries the fixes from the
+[B0c screen-reader pass](../../docs/B0C_FINDINGS.md).
+
 ## 1.0.1
 
 **No changes to this package.** The version moves because the three

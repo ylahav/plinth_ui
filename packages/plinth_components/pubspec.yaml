@@ -3,7 +3,7 @@ description: >-
   A Mantine-inspired component library for Flutter: 115 themeable,
   accessible widgets on a shared design-token foundation, with
   WCAG-checked colour.
-version: 1.0.1
+version: 1.1.0
 # The live demo rather than the source: `repository` already covers
 # the code, and someone reading the listing wants to try it.
 homepage: https://ylahav.github.io/plinth_ui/
@@ -56,8 +56,8 @@ dependencies:
   #
   # The prerelease in the lower bound is deliberate: it carries through
   # to 1.0.0 final without another edit.
-  plinth_core: ^1.0.1
-  plinth_hooks: ^1.0.1
+  plinth_core: ^1.1.0
+  plinth_hooks: ^1.1.0
 
 dev_dependencies:
   flutter_test:

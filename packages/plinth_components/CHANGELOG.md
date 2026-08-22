@@ -11,6 +11,55 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.1.0
+
+**The first release shaped by hearing the library rather than testing
+it.** [B0c](../../docs/B0C_FINDINGS.md) — the screen-reader pass — ran
+on 22 Aug 2026 against NVDA. Two defects out of roughly seventeen
+controls, both here.
+
+### Added
+
+- **`PlinthPinInput.statusText`** — the outcome of the code, shown
+  under the boxes and announced when it appears. Marked `liveRegion`,
+  so a screen reader speaks it on arrival without focus having to move.
+
+  Before this the result was carried entirely by `error` recolouring a
+  border: the last digit went in, `onCompleted` fired, focus stayed
+  put, and nothing was said. It reads success as well as failure —
+  `statusText: 'Code verified'` announces exactly as
+  `'Incorrect code'` does.
+
+  `error` is unchanged and still styles the boxes. Pair the two.
+
+### Fixed
+
+- **A read-only `PlinthRating` recited the scale instead of stating the
+  value.** With `onChanged` null nothing is focusable, which is correct
+  — it is not a control — but the five per-star labels survived the
+  buttons that gave them meaning, so browsing it read
+  *"1 of 5, 2 of 5, 3 of 5, 4 of 5, 5 of 5"* for a rating of 3.5.
+
+  It now emits a single node: `label: "Rating"`, `value: "3.5 of 5"`.
+  The interactive form is unchanged.
+
+  No test had caught it because the semantics tests only ever built the
+  interactive form; the read-only one was checked for star rendering
+  and never for what it said.
+
+- **`PlinthPinInput` signalled failure with colour alone**, which is a
+  WCAG 1.4.1 failure independent of screen readers. The contrast suite
+  could not see it: a red border passes the 3:1 non-text check
+  comfortably, since that check asks whether a border is visible, not
+  whether it is the only thing communicating.
+
+### Known gap
+
+`liveRegion` and `SemanticsService.announce` still appear nowhere else
+in this package, so validation messages, notifications and loading
+completion elsewhere remain silent when they change. Fixed here where
+B0c found it; tracked as `F-3` on the [roadmap](../../docs/ROADMAP.md).
+
 ## 1.0.1
 
 ### Fixed

@@ -137,14 +137,14 @@ packages:
       path: "../plinth_core"
       relative: true
     source: path
-    version: "1.0.1"
+    version: "1.1.0"
   plinth_hooks:
     dependency: "direct main"
     description:
       path: "../plinth_hooks"
       relative: true
     source: path
-    version: "1.0.1"
+    version: "1.1.0"
   sky_engine:
     dependency: transitive
     description: flutter
