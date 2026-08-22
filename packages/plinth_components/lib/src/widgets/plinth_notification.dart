@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_announce.dart';
 import 'plinth_close_button.dart';
 import 'plinth_text.dart';
 
@@ -33,6 +34,7 @@ class PlinthNotification extends StatelessWidget {
     this.icon,
     this.onClose,
     this.radius,
+    this.live = true,
   });
 
   final String? title;
@@ -46,6 +48,29 @@ class PlinthNotification extends StatelessWidget {
   final VoidCallback? onClose;
 
   final PlinthSize? radius;
+
+  /// Whether a screen reader should be told when this appears, rather
+  /// than only when a reader arrives at it.
+  ///
+  /// Defaults to true — a notification exists *because* something
+  /// happened, and the user is by definition looking elsewhere.
+  ///
+  /// [show] and [showOn] pass false, and that is not an oversight:
+  /// Flutter's own `SnackBar` already wraps its content in the same
+  /// `Semantics(container: true, liveRegion: true)`, so the shown path
+  /// is announced without help and a second region inside the first
+  /// would only risk saying it twice. The default serves the other
+  /// path — a `PlinthNotification` placed in a tree by hand, which
+  /// nothing else covers.
+  ///
+  /// Only the title and body are covered; the dismiss button is a
+  /// control, and including it would re-speak "Dismiss notification"
+  /// alongside the message.
+  ///
+  /// **Dismissal is silent, deliberately.** The user pressed the
+  /// button, or the timer ran out on a message they were free to
+  /// ignore. Neither is worth interrupting for.
+  final bool live;
 
   /// Shows this notification as a floating `SnackBar` via
   /// [ScaffoldMessenger]. Requires a `Scaffold` (or `MaterialApp`'s
@@ -121,11 +146,16 @@ class PlinthNotification extends StatelessWidget {
           icon: icon,
           radius: radius,
           onClose: () => controller.close(),
+          // SnackBar is already a live region — see [live].
+          live: false,
           child: child,
         ),
       ),
     );
   }
+
+  Widget _spoken(Widget content) =>
+      live ? PlinthLiveRegion.always(child: content) : content;
 
   @override
   Widget build(BuildContext context) {
@@ -161,18 +191,20 @@ class PlinthNotification extends StatelessWidget {
               SizedBox(width: theme.spacing[PlinthSize.sm]),
             ],
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (title != null)
-                    PlinthText(title!, weight: FontWeight.w700),
-                  if (title != null)
-                    SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.5),
-                  DefaultTextStyle.merge(
-                    style: TextStyle(color: theme.text, fontSize: 14),
-                    child: child,
-                  ),
-                ],
+              child: _spoken(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (title != null)
+                      PlinthText(title!, weight: FontWeight.w700),
+                    if (title != null)
+                      SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.5),
+                    DefaultTextStyle.merge(
+                      style: TextStyle(color: theme.text, fontSize: 14),
+                      child: child,
+                    ),
+                  ],
+                ),
               ),
             ),
             if (onClose != null) ...[

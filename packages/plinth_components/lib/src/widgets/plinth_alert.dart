@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_announce.dart';
 import 'plinth_close_button.dart';
 import 'plinth_text.dart';
 
@@ -25,6 +26,7 @@ class PlinthAlert extends StatelessWidget {
     this.icon,
     this.onClose,
     this.radius,
+    this.live = true,
   });
 
   final String? title;
@@ -40,6 +42,30 @@ class PlinthAlert extends StatelessWidget {
   final VoidCallback? onClose;
 
   final PlinthSize? radius;
+
+  /// Whether a screen reader should be told when this appears, rather
+  /// than only when a reader arrives at it.
+  ///
+  /// Defaults to true, because the usual alert is raised by something
+  /// the user just did — a failed submit — and that is exactly the
+  /// change `F-3` found nothing in this library ever spoke. Only the
+  /// title and body are covered; the dismiss button is a control, and
+  /// including it would re-speak "Dismiss alert" alongside the
+  /// message.
+  ///
+  /// Pass false for a callout that is simply part of the page — a
+  /// standing informational banner present on first paint. On the web
+  /// that costs little either way, since a live region registered
+  /// during the initial render announces nothing until it changes; on
+  /// other platforms it is the difference between a quiet page and one
+  /// that reads its own furniture aloud.
+  ///
+  /// **Dismissal is silent, deliberately.** The user pressed the
+  /// button; telling them what they just did is noise.
+  final bool live;
+
+  Widget _spoken(Widget content) =>
+      live ? PlinthLiveRegion.always(child: content) : content;
 
   @override
   Widget build(BuildContext context) {
@@ -74,22 +100,24 @@ class PlinthAlert extends StatelessWidget {
             SizedBox(width: theme.spacing[PlinthSize.sm]),
           ],
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (title != null)
-                  PlinthText(title!,
-                      weight: FontWeight.w700,
-                      color: color,
-                      // The title sits on the tint, not on the surface.
-                      on: backgroundColor),
-                if (title != null)
-                  SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.5),
-                DefaultTextStyle.merge(
-                  style: TextStyle(color: theme.text, fontSize: 14),
-                  child: child,
-                ),
-              ],
+            child: _spoken(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (title != null)
+                    PlinthText(title!,
+                        weight: FontWeight.w700,
+                        color: color,
+                        // The title sits on the tint, not on the surface.
+                        on: backgroundColor),
+                  if (title != null)
+                    SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.5),
+                  DefaultTextStyle.merge(
+                    style: TextStyle(color: theme.text, fontSize: 14),
+                    child: child,
+                  ),
+                ],
+              ),
             ),
           ),
           if (onClose != null) ...[

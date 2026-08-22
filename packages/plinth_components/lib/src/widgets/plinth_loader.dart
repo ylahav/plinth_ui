@@ -37,6 +37,7 @@ class PlinthLoader extends StatefulWidget {
     this.color,
     this.colorValue,
     this.dimension,
+    this.semanticLabel = 'Loading',
   });
 
   final PlinthLoaderType type;
@@ -61,6 +62,16 @@ class PlinthLoader extends StatefulWidget {
   /// something on the size scale — a button's line height, say, so the
   /// button doesn't change height when it starts loading.
   final double? dimension;
+
+  /// What a screen reader reads here. A spinner is a picture of
+  /// waiting; without this it is nothing at all.
+  ///
+  /// Not a live region, unlike [PlinthLoadingOverlay]. A loader
+  /// usually appears *inside* something whose own change is already
+  /// spoken — a button going busy, a panel being replaced — and a
+  /// second voice for the spinner would say the same thing twice.
+  /// Pass an empty string where even the label is noise.
+  final String semanticLabel;
 
   @override
   State<PlinthLoader> createState() => _PlinthLoaderState();
@@ -120,7 +131,7 @@ class _PlinthLoaderState extends State<PlinthLoader>
         theme.shaded(widget.color ?? theme.primaryColor, 6);
     final extent = widget.dimension ?? _loaderSizes[widget.size]!;
 
-    return switch (widget.type) {
+    final loader = switch (widget.type) {
       // The oval type defers to Flutter's own indicator rather than
       // reimplementing an arc sweep, the same rationale as PlinthSlider
       // wrapping Slider.
@@ -158,6 +169,10 @@ class _PlinthLoaderState extends State<PlinthLoader>
           ),
         ),
     };
+
+    return widget.semanticLabel.isEmpty
+        ? loader
+        : Semantics(label: widget.semanticLabel, child: loader);
   }
 }
 
