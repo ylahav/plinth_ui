@@ -229,6 +229,24 @@ Alert and notification icons and titles moved a long way this cycle. The
 question is not whether they pass a ratio — that is asserted in tests —
 but whether the result still looks like the alert's colour.
 
+## What is not a failure
+
+**On Windows desktop**, the console prints
+`Failed to update ui::AXTree, error: N will not be in the tree and is
+not the new root` when the mouse crosses tooltipped elements.
+
+That is [flutter/flutter#182444](https://github.com/flutter/flutter/issues/182444),
+an open P2 engine bug, and it is not ours. `ListView`'s two-pane
+semantics create a synthetic node while `Tooltip`'s `OverlayPortal`
+grafts overlay children in; a detached node is filtered before the
+traversal parent is notified, so the Windows tree keeps a stale
+reference. Plinth meets both halves by wrapping Flutter's own `Tooltip`
+and putting the showcase sidebar in a `ListView`.
+
+Windows desktop only. Flutter web builds semantics as DOM elements
+through an unrelated path, so a pass run in a browser never sees it —
+which is the pass this document describes.
+
 ## What counts as a failure
 
 - Any control announced as "button" or "" with no name.
