@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_announce.dart';
+
 /// A half-ring gauge, matching Mantine's `SemiCircleProgress`.
 ///
 /// The same idea as [PlinthRingProgress] drawn as a 180° arc, which
@@ -25,6 +27,8 @@ class PlinthSemiCircleProgress extends StatelessWidget {
     this.thickness = 12,
     this.trackColor,
     this.label,
+    this.semanticLabel,
+    this.completeLabel,
   }) : assert(value >= 0 && value <= 1, 'value must be between 0 and 1');
 
   /// Fraction filled, from 0.0 to 1.0.
@@ -45,6 +49,13 @@ class PlinthSemiCircleProgress extends StatelessWidget {
   /// Centred content, typically the percentage.
   final Widget? label;
 
+  /// Names the gauge for a screen reader.
+  final String? semanticLabel;
+
+  /// Spoken once, at the moment [value] reaches 1. Opt-in, and never
+  /// on first build — see [PlinthProgress.completeLabel].
+  final String? completeLabel;
+
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
@@ -53,7 +64,7 @@ class PlinthSemiCircleProgress extends StatelessWidget {
     // over itself, the same guard PlinthRingProgress needs.
     final stroke = math.min(thickness, diameter / 2);
 
-    return SizedBox(
+    final gauge = SizedBox(
       width: diameter,
       // Half the diameter plus the stroke, so the arc isn't clipped at
       // its thickest point.
@@ -79,6 +90,18 @@ class PlinthSemiCircleProgress extends StatelessWidget {
               ),
             ),
         ],
+      ),
+    );
+
+    return PlinthAnnounceWhen(
+      when: value >= 1,
+      message: completeLabel,
+      child: Semantics(
+        label: semanticLabel,
+        // As in the ring: the centre label is usually the percentage,
+        // and a value beside it would read the same number twice.
+        value: label == null ? '${(value * 100).round()}%' : null,
+        child: gauge,
       ),
     );
   }

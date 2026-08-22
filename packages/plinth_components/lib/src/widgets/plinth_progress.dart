@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_announce.dart';
+
 /// One part of a multi-section [PlinthProgress] or
 /// [PlinthRingProgress], matching Mantine's `Progress.Section`.
 ///
@@ -54,6 +56,8 @@ class PlinthProgress extends StatelessWidget {
     this.size = PlinthSize.md,
     this.radius,
     this.trackColor,
+    this.semanticLabel,
+    this.completeLabel,
   })  : sections = null,
         assert(value >= 0 && value <= 1, 'value must be between 0 and 1');
 
@@ -68,6 +72,8 @@ class PlinthProgress extends StatelessWidget {
     this.size = PlinthSize.md,
     this.radius,
     this.trackColor,
+    this.semanticLabel,
+    this.completeLabel,
   })  : sections = sections,
         value = 0,
         color = null,
@@ -90,6 +96,27 @@ class PlinthProgress extends StatelessWidget {
   /// Background track color. Defaults to a light gray.
   final Color? trackColor;
 
+  /// Names the bar for a screen reader — `'Upload'`, `'Storage used'`.
+  ///
+  /// Without it a single-value bar reads as a bare percentage, which
+  /// is better than the nothing it read before but still arrives out
+  /// of context.
+  final String? semanticLabel;
+
+  /// Spoken once, at the moment [value] reaches 1.
+  ///
+  /// Opt-in, and deliberately so: most progress bars are statistics
+  /// rather than running operations, and a bar sitting at 100% because
+  /// that is what the number is should not claim something just
+  /// finished. Only a transition speaks, and only when this is set.
+  ///
+  /// The fill itself is **not** a live region. A bar marked live
+  /// narrates every frame of its own animation, which is the fastest
+  /// way to make somebody switch announcements off entirely. The value
+  /// is there to be read when a reader visits; only the finish is
+  /// worth interrupting for.
+  final String? completeLabel;
+
   static const Map<PlinthSize, double> _heights = {
     PlinthSize.xs: 4,
     PlinthSize.sm: 6,
@@ -106,7 +133,7 @@ class PlinthProgress extends StatelessWidget {
     final height = _heights[size]!;
     final resolvedRadius = theme.radius[radius ?? PlinthSize.xl]!;
 
-    return ClipRRect(
+    final Widget bar = ClipRRect(
       borderRadius: BorderRadius.circular(resolvedRadius),
       child: Container(
         height: height,
@@ -125,6 +152,20 @@ class PlinthProgress extends StatelessWidget {
                 ),
               ),
       ),
+    );
+
+    return PlinthAnnounceWhen(
+      when: sections == null && value >= 1,
+      message: completeLabel,
+      // The sectioned bar already reads its parts; only the
+      // single-value one has a percentage nobody else says.
+      child: sections != null
+          ? bar
+          : Semantics(
+              label: semanticLabel,
+              value: '${(value * 100).round()}%',
+              child: bar,
+            ),
     );
   }
 

@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_announce.dart';
+
 import 'plinth_progress.dart' show PlinthProgressSection;
 
 /// A circular progress indicator matching Mantine's `RingProgress`.
@@ -27,6 +29,8 @@ class PlinthRingProgress extends StatelessWidget {
     this.thickness = 8,
     this.trackColor,
     this.label,
+    this.semanticLabel,
+    this.completeLabel,
   })  : sections = null,
         assert(value >= 0 && value <= 1, 'value must be between 0 and 1');
 
@@ -40,6 +44,8 @@ class PlinthRingProgress extends StatelessWidget {
     this.thickness = 8,
     this.trackColor,
     this.label,
+    this.semanticLabel,
+    this.completeLabel,
   })  : sections = sections,
         value = 0,
         color = null,
@@ -69,6 +75,15 @@ class PlinthRingProgress extends StatelessWidget {
 
   /// Optional content centered inside the ring, e.g. a percentage label.
   final Widget? label;
+
+  /// Names the ring for a screen reader — `'Upload'`, `'Disk used'`.
+  final String? semanticLabel;
+
+  /// Spoken once, at the moment [value] reaches 1. Opt-in, and never
+  /// on first build — see [PlinthProgress.completeLabel] for why a
+  /// ring already sitting at 100% must not claim to have just
+  /// finished.
+  final String? completeLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -111,9 +126,22 @@ class PlinthRingProgress extends StatelessWidget {
         textDirection: TextDirection.ltr,
         child: ring,
       );
+    } else if (sections == null) {
+      ring = Semantics(
+        label: semanticLabel,
+        // Only when nothing in the middle already says it. The usual
+        // centre label *is* the percentage, and a value beside it
+        // would read the same number twice.
+        value: label == null ? '${(value * 100).round()}%' : null,
+        child: ring,
+      );
     }
 
-    return ring;
+    return PlinthAnnounceWhen(
+      when: sections == null && value >= 1,
+      message: completeLabel,
+      child: ring,
+    );
   }
 }
 
