@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_announce.dart';
 import 'plinth_text.dart';
 
 /// A numeric input matching Mantine's `NumberInput`: a text field
@@ -199,8 +200,11 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
         ),
         if (hasError) ...[
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthText(widget.error!,
-              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
+          PlinthLiveRegion(
+            message: widget.error,
+            child: PlinthText(widget.error!,
+                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
+          ),
         ],
       ],
     );

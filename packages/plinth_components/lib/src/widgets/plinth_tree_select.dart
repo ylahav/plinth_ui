@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 import 'package:plinth_hooks/plinth_hooks.dart';
 
+import 'plinth_announce.dart';
 import 'plinth_popover.dart';
 import 'plinth_scroll_area.dart';
 import 'plinth_text.dart';
@@ -236,8 +237,11 @@ class _PlinthTreeSelectState extends State<PlinthTreeSelect> {
         ),
         if (hasError) ...[
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthText(widget.error!,
-              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
+          PlinthLiveRegion(
+            message: widget.error,
+            child: PlinthText(widget.error!,
+                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
+          ),
         ],
       ],
     );

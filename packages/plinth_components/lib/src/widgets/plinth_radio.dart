@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_announce.dart';
 import 'plinth_stack.dart';
 import 'plinth_text.dart';
 
@@ -109,9 +110,12 @@ class PlinthRadio<T> extends StatelessWidget {
                             size: PlinthSize.xs,
                             color: theme.rampFor(PlinthRole.neutral)),
                       if (error != null && error!.isNotEmpty)
-                        PlinthText(error!,
-                            size: PlinthSize.xs,
-                            color: theme.rampFor(PlinthRole.error)),
+                        PlinthLiveRegion(
+                          message: error,
+                          child: PlinthText(error!,
+                              size: PlinthSize.xs,
+                              color: theme.rampFor(PlinthRole.error)),
+                        ),
                     ],
                   ),
                 ),

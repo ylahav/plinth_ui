@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_announce.dart';
 import 'plinth_text.dart';
 
 /// A password field matching Mantine's `PasswordInput`: shares
@@ -156,8 +157,11 @@ class _PlinthPasswordInputState extends State<PlinthPasswordInput> {
         ),
         if (hasError) ...[
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthText(widget.error!,
-              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
+          PlinthLiveRegion(
+            message: widget.error,
+            child: PlinthText(widget.error!,
+                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
+          ),
         ],
       ],
     );

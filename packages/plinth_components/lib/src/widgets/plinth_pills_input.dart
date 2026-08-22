@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_announce.dart';
 import 'plinth_text.dart';
 
 /// A field that holds [PlinthPill]s, matching Mantine's `PillsInput`.
@@ -133,8 +134,11 @@ class PlinthPillsInput extends StatelessWidget {
         ),
         if (hasError) ...[
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthText(error!,
-              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
+          PlinthLiveRegion(
+            message: error,
+            child: PlinthText(error!,
+                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
+          ),
         ],
       ],
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_announce.dart';
 import 'plinth_text.dart';
 
 /// A multi-line text field matching Mantine's `Textarea`. Shares
@@ -140,8 +141,11 @@ class _PlinthTextareaState extends State<PlinthTextarea> {
         ),
         if (hasError) ...[
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthText(widget.error!,
-              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
+          PlinthLiveRegion(
+            message: widget.error,
+            child: PlinthText(widget.error!,
+                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
+          ),
         ],
       ],
     );

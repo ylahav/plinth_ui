@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_announce.dart';
 import 'plinth_text.dart';
 
 /// A segmented code/PIN input matching Mantine's `PinInput`: one box
@@ -171,11 +172,15 @@ class _PlinthPinInputState extends State<PlinthPinInput> {
         _boxes(theme, boxSize, colorKey, resolvedRadius),
         if (status != null && status.isNotEmpty) ...[
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.5),
-          // liveRegion is what makes this audible. The message appears
-          // without focus moving, so a reader has no reason to look at
-          // it unless told; this is the flag that tells it.
-          Semantics(
-            liveRegion: true,
+          // The live region is what makes this audible. The message
+          // appears without focus moving, so a reader has no reason to
+          // look at it unless told; this is what tells it.
+          //
+          // Was a hand-written Semantics(liveRegion: true) — the one
+          // B0c heard — and is now the shared primitive, so the family
+          // has one shape rather than this one and sixteen others.
+          PlinthLiveRegion(
+            message: status,
             child: PlinthText(
               status,
               size: PlinthSize.xs,
