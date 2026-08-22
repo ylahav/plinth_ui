@@ -11,6 +11,13 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.0.1
+
+**No changes to this package.** The version moves because the three
+packages are released in lockstep. The other two shipped a pubspec
+description that exceeded pub.dev's 180-character limit; this one did
+not, which is why it kept 160 pub points while they dropped to 150.
+
 ## 1.0.0
 
 **No changes to this package.** The version moves because the three

@@ -11,6 +11,16 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.0.1
+
+### Fixed
+
+- **The pubspec description was 202 characters, and pub.dev caps it at
+  180.** That cost 10 pub points — `Provide a valid pubspec.yaml` scored
+  0/10 — dropping the package from 160 to 150.
+
+  No code changed. The description says the same things more briefly.
+
 ## 1.0.0
 
 **The first stable release.** Everything below shipped across the two

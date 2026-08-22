@@ -71,6 +71,25 @@ That is easy to reintroduce by accident: removing the line locally to
 publish, then committing it back. `dart pub publish` confirms
 interactively regardless, so the guard was never buying much.
 
+## Keep the description between 60 and 180 characters
+
+pub.dev scores `Provide a valid pubspec.yaml` at 0/10 if the
+`description` is outside that range, which costs **10 pub points** —
+the difference between 160 and 150.
+
+`1.0.0` shipped with 202 and 203 characters on `plinth_core` and
+`plinth_components`, because both were rewritten for accuracy just
+before the release and nobody counted. `plinth_hooks` kept 160 for the
+sole reason that its description was never edited. Fixed in `1.0.1`.
+
+The dry run does **not** warn about this — the score is computed by pana
+after publishing, so the first sign is the listing, where `Provide a
+valid pubspec.yaml` at 0/10 means this and almost nothing else.
+
+To check beforehand, count the *joined* text: a folded `>-` description
+is several lines in the file and one string to pana, with the lines
+joined by single spaces. Counting the file's characters will not match.
+
 ## ⚠️ Publish in dependency order, or you ship a broken version
 
 **This has already gone wrong once.** `plinth_components` 0.6.0 was

@@ -11,6 +11,18 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.0.1
+
+### Fixed
+
+- **The pubspec description was 203 characters, and pub.dev caps it at
+  180.** Same 10-point loss as `plinth_core`, and the same cause: both
+  descriptions were rewritten for accuracy shortly before 1.0.0 without
+  checking the length. `plinth_hooks` scored 160 throughout because its
+  description was never touched.
+
+  No code changed.
+
 ## 1.0.0
 
 **The first stable release.** Everything below shipped across the two

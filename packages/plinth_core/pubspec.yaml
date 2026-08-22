@@ -1,9 +1,9 @@
 name: plinth_core
 description: >-
-  Design tokens and theme foundation for Plinth UI: seed a 10-shade
-  colour ramp from any brand colour, name colours by role, and resolve
-  text against WCAG contrast floors. Spacing, radius and type scales.
-version: 1.0.0
+  Design tokens for Plinth UI: seed a 10-shade colour ramp from any
+  brand colour, name colours by role, resolve text against WCAG
+  contrast floors.
+version: 1.0.1
 homepage: https://github.com/ylahav/plinth_ui
 repository: https://github.com/ylahav/plinth_ui
 issue_tracker: https://github.com/ylahav/plinth_ui/issues
