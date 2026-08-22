@@ -38,17 +38,65 @@ be listening for judgement calls rather than for missing names.
 ### Before anything: turn Flutter's semantics on
 
 **Flutter web ships its accessibility tree switched off.** The page
-contains an invisible `<flt-semantics-placeholder>` button labelled
-**"Enable accessibility"**, and until a screen reader activates it,
-Flutter's semantics are *not in the DOM at all*.
+contains a button labelled **"Enable accessibility"** that is invisible
+on screen but present in the DOM, and until it is activated Flutter's
+semantics are *not in the DOM at all*.
 
-Skip this and every control on the page is silent — you would conclude
-the library has no accessibility whatsoever, and you would be measuring
-the placeholder. It is the first focusable element on the page:
-**Tab once from the top and press Enter.**
+Skip this and every control is silent. You would conclude the library
+has no accessibility whatsoever, when what you measured was the
+placeholder.
 
-Check it worked by tabbing again — you should hear a real control name,
-not silence.
+**Do this before anything else, and confirm it worked.**
+
+#### The normal way — with NVDA running
+
+1. **Start NVDA first**, then open the demo. Order matters: the button
+   is placed for a screen reader, and some Flutter versions enable
+   semantics automatically once one is detected.
+2. **Click once on the page itself** — anywhere in the white area. This
+   moves focus out of the browser's address bar and into the document.
+3. Press **`Tab`**. NVDA should say something like
+   **"Enable accessibility button"**.
+4. Press **`Enter`**.
+
+If step 3 says something else — a link, a heading, the demo's own first
+control — then either semantics are already on, or focus is not where
+you think. Check with the next section rather than guessing.
+
+#### Confirm it worked — no screen reader needed
+
+Press **`F12`** for devtools, open the **Elements** tab, and press
+`Ctrl+F` to search the DOM for:
+
+```
+flt-semantics
+```
+
+- **Only `<flt-semantics-placeholder>`** — accessibility is still
+  **off**. The button has not been activated.
+- **A tree of `<flt-semantics>` elements** — it is **on**, and those
+  elements are the accessible DOM Flutter builds from the semantics
+  tree. Each control you have been reading about in this document is one
+  of them.
+
+This is worth doing once even if step 4 seemed to work, because it turns
+"I think it is on" into something you can see.
+
+#### If Tab will not find the button
+
+Open the devtools **Console** (`F12` → Console) and run:
+
+```js
+document.querySelector('flt-semantics-placeholder')?.click();
+```
+
+Then re-run the `flt-semantics` search above. This activates the same
+button directly and avoids fighting focus order — useful when the page
+has just reloaded, or when you are re-checking one page repeatedly.
+
+**Re-enable after every page load.** It does not persist across a
+refresh or a navigation, and forgetting is the most likely way to record
+a false failure.
 
 ### NVDA, on Windows
 
