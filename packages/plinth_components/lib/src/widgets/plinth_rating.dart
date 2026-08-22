@@ -71,7 +71,7 @@ class PlinthRating extends StatelessWidget {
     final starSize = _starSizes[size]!;
     final enabled = onChanged != null;
 
-    return Row(
+    final row = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         for (var i = 1; i <= count; i++)
@@ -92,8 +92,31 @@ class PlinthRating extends StatelessWidget {
           ),
       ],
     );
+
+    if (enabled) return row;
+
+    // A read-only rating is not a control: nothing in it is a tab stop,
+    // so it is reached by browsing rather than by Tab. Left as five
+    // labelled nodes it then reads "1 of 5, 2 of 5, 3 of 5, 4 of 5,
+    // 5 of 5" — every point on the scale, and never the one that
+    // matters. B0c heard exactly that.
+    //
+    // One node stating the value is the whole of what a reader needs,
+    // so the stars are excluded and the widget speaks for itself.
+    return Semantics(
+      container: true,
+      label: 'Rating',
+      value: '${_ratingText(value)} of $count',
+      child: ExcludeSemantics(child: row),
+    );
   }
 }
+
+/// Trims a rating to the shortest honest reading: whole numbers lose the
+/// decimal, so a 4 announces as "4 of 5" rather than "4.0 of 5".
+String _ratingText(double rating) => rating == rating.roundToDouble()
+    ? rating.toStringAsFixed(0)
+    : rating.toStringAsFixed(1);
 
 class _Star extends StatelessWidget {
   const _Star({
@@ -134,9 +157,7 @@ class _Star extends StatelessWidget {
   /// currently is.
   Widget _labelled({required int part, required Widget child}) {
     final rating = ratingFor(part);
-    final text = rating == rating.roundToDouble()
-        ? rating.toStringAsFixed(0)
-        : rating.toStringAsFixed(1);
+    final text = _ratingText(rating);
     return Semantics(
       button: onSelect != null,
       inMutuallyExclusiveGroup: true,

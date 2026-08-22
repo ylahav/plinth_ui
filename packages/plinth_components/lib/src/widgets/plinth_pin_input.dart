@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_text.dart';
+
 /// A segmented code/PIN input matching Mantine's `PinInput`: one box
 /// per character, auto-advancing focus as each digit is typed and
 /// auto-retreating on backspace from an empty box.
@@ -26,6 +28,7 @@ class PlinthPinInput extends StatefulWidget {
     this.size = PlinthSize.md,
     this.color,
     this.error = false,
+    this.statusText,
     this.radius,
   });
 
@@ -43,7 +46,20 @@ class PlinthPinInput extends StatefulWidget {
 
   final PlinthSize size;
   final String? color;
+
+  /// Styles the boxes as invalid. Colour only — pair it with
+  /// [statusText] so the state has a reading as well as a look.
   final bool error;
+
+  /// The outcome of the code, shown under the boxes and announced when
+  /// it appears: 'Incorrect code', 'Code verified'.
+  ///
+  /// Without this the result of entering the last digit was carried
+  /// entirely by [error] recolouring the border, which says nothing to
+  /// a screen reader — the boxes are full, focus has not moved, and
+  /// nothing is spoken — and nothing to anyone who cannot separate the
+  /// two border colours either.
+  final String? statusText;
 
   /// Overrides the theme's default radius for this one instance.
   final PlinthSize? radius;
@@ -146,6 +162,37 @@ class _PlinthPinInputState extends State<PlinthPinInput> {
     // wrapper never competes for or steals focus from the boxes —
     // it only intercepts key events that bubble up from whichever
     // box currently has focus.
+    final status = widget.statusText;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _boxes(theme, boxSize, colorKey, resolvedRadius),
+        if (status != null && status.isNotEmpty) ...[
+          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.5),
+          // liveRegion is what makes this audible. The message appears
+          // without focus moving, so a reader has no reason to look at
+          // it unless told; this is the flag that tells it.
+          Semantics(
+            liveRegion: true,
+            child: PlinthText(
+              status,
+              size: PlinthSize.xs,
+              color: widget.error ? theme.rampFor(PlinthRole.error) : null,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _boxes(
+    PlinthTheme theme,
+    double boxSize,
+    String colorKey,
+    double resolvedRadius,
+  ) {
     return Focus(
       canRequestFocus: false,
       skipTraversal: true,

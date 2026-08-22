@@ -1623,6 +1623,10 @@ final List<WidgetbookNode> _plinthDirectories = [
               final numbersOnly = context.knobs
                   .boolean(label: 'numbersOnly', initialValue: true);
               final error = context.knobs.boolean(label: 'error');
+              final statusText = context.knobs.string(
+                label: 'statusText',
+                initialValue: '',
+              );
               final size = _sizeKnob(context);
               final color = _colorKnob(context);
               return _themed(
@@ -1639,6 +1643,7 @@ final List<WidgetbookNode> _plinthDirectories = [
                     obscureText: obscureText,
                     numbersOnly: numbersOnly,
                     error: error,
+                    statusText: statusText,
                     onChanged: onChanged,
                     size: size,
                     color: color,
@@ -1646,6 +1651,33 @@ final List<WidgetbookNode> _plinthDirectories = [
                 ),
               );
             },
+          ),
+          WidgetbookUseCase(
+            // The state B0c found silent: the last digit goes in, the
+            // border changes colour, and nothing is said. statusText
+            // is a live region, so it is spoken on arrival without
+            // focus having to move.
+            name: 'Result announced',
+            builder: (context) => _themed(
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  PlinthPinInput(
+                    length: 6,
+                    value: '123456',
+                    error: true,
+                    statusText: 'Incorrect code',
+                  ),
+                  SizedBox(height: 24),
+                  PlinthPinInput(
+                    length: 6,
+                    value: '123456',
+                    statusText: 'Code verified',
+                  ),
+                ],
+              ),
+            ),
           ),
           WidgetbookUseCase(
             name: 'Interactive',
