@@ -23,7 +23,8 @@ Iterable<SemanticsNode> _walk(SemanticsNode node) sync* {
 }
 
 Future<List<SemanticsNode>> _tree(WidgetTester tester, Widget child) async {
-  await tester.pumpWidget(MaterialApp(home: Scaffold(body: Center(child: child))));
+  await tester
+      .pumpWidget(MaterialApp(home: Scaffold(body: Center(child: child))));
   await tester.pumpAndSettle();
   final root = tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!;
   return _walk(root).toList();
@@ -73,7 +74,8 @@ void main() {
       final handle = tester.ensureSemantics();
       final nodes = await _tree(
         tester,
-        const PlinthPinInput(length: 6, error: true, statusText: 'Incorrect code'),
+        const PlinthPinInput(
+            length: 6, error: true, statusText: 'Incorrect code'),
       );
 
       final status = nodes.firstWhere((n) => n.label == 'Incorrect code',
