@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -3401,6 +3402,72 @@ final List<WidgetbookNode> _plinthDirectories = [
               ),
             ),
           ),
+          WidgetbookUseCase(
+            // The only alert use case that can demonstrate `F-3`, and
+            // the reason the others cannot: a live region announces a
+            // *change*, so an alert built into the first frame is
+            // registered before anything changes and stays quiet by
+            // design. Raised here, it arrives after the page -- which
+            // is the case a screen reader speaks.
+            //
+            // Raise both and listen to the difference. The first is the
+            // default; the second opts out with `live: false`, because
+            // a standing banner is part of the page rather than news.
+            name: 'Raised by an action',
+            builder: (context) => _themed(
+              _Local<int>(
+                initial: 0,
+                builder: (raised, onChanged) => SizedBox(
+                  width: 460,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          PlinthButton(
+                            color: 'red',
+                            onPressed: () => onChanged(1),
+                            child: const Text('Raise alert'),
+                          ),
+                          PlinthButton(
+                            variant: PlinthVariant.outline,
+                            onPressed: () => onChanged(2),
+                            child: const Text('Raise banner (live: false)'),
+                          ),
+                          PlinthButton(
+                            variant: PlinthVariant.subtle,
+                            onPressed: () => onChanged(0),
+                            child: const Text('Clear'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      if (raised == 1)
+                        PlinthAlert(
+                          title: 'Something went wrong',
+                          color: 'red',
+                          icon: const Icon(Icons.error_outline),
+                          onClose: () => onChanged(0),
+                          child:
+                              const Text('Please try again in a few minutes.'),
+                        ),
+                      if (raised == 2)
+                        const PlinthAlert(
+                          live: false,
+                          title: 'Scheduled maintenance',
+                          color: 'blue',
+                          icon: Icon(Icons.info_outline),
+                          child: Text('Sunday, 02:00-04:00 UTC.'),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
       WidgetbookComponent(
@@ -3468,6 +3535,15 @@ final List<WidgetbookNode> _plinthDirectories = [
                 ),
               ),
             ),
+          ),
+          WidgetbookUseCase(
+            // Progress is the one surface in `F-3` that must *not* be a
+            // live region: marked live, a bar narrates every frame of
+            // its own animation. Only the finish speaks, and only when
+            // completeLabel is set -- which is why the static use cases
+            // above say nothing, and why this one has to run.
+            name: 'Announced on completion',
+            builder: (context) => _themed(const _ProgressRunDemo()),
           ),
         ],
       ),
@@ -7280,6 +7356,65 @@ class _PinInputDemoState extends State<_PinInputDemo> {
       length: 4,
       value: _value,
       onChanged: (v) => setState(() => _value = v),
+    );
+  }
+}
+
+/// Runs a bar from 0 to 1, so `completeLabel` has an edge to fire on.
+///
+/// The static progress use cases cannot demonstrate it, and not by
+/// omission: a bar rendered at 100% is a statistic, and
+/// `PlinthAnnounceWhen` deliberately never speaks on first build.
+/// Something has to actually finish.
+class _ProgressRunDemo extends StatefulWidget {
+  const _ProgressRunDemo();
+
+  @override
+  State<_ProgressRunDemo> createState() => _ProgressRunDemoState();
+}
+
+class _ProgressRunDemoState extends State<_ProgressRunDemo> {
+  double _value = 0;
+  Timer? _timer;
+
+  void _run() {
+    _timer?.cancel();
+    setState(() => _value = 0);
+    _timer = Timer.periodic(const Duration(milliseconds: 250), (timer) {
+      setState(() => _value = (_value + 0.125).clamp(0.0, 1.0));
+      if (_value >= 1) timer.cancel();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 360,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PlinthProgress(
+            value: _value,
+            color: 'green',
+            // The value is read when a reader visits; only the finish
+            // interrupts. Both halves of the rule, in one widget.
+            semanticLabel: 'Upload',
+            completeLabel: 'Upload complete',
+          ),
+          const SizedBox(height: 16),
+          PlinthButton(
+            onPressed: _run,
+            child: Text(_value >= 1 ? 'Run again' : 'Start upload'),
+          ),
+        ],
+      ),
     );
   }
 }
