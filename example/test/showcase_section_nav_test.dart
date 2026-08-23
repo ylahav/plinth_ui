@@ -17,6 +17,7 @@
 // scrolls into view, which makes text a poor proxy for "is this section
 // on screen".
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_components/plinth_components.dart';
 import 'package:plinth_example/main.dart';
@@ -47,6 +48,25 @@ Future<void> _select(WidgetTester tester, String name) async {
   await tester.tap(find.text(name));
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 300));
+}
+
+/// Walks the ancestors of whatever holds focus, reporting the first
+/// widget type in [wanted] that it finds.
+///
+/// Focus lands on a bare `Focus` node inside whichever control owns it,
+/// so the useful question is never "what is focused" but "what is it
+/// part of".
+String _focusInside(Set<Type> wanted) {
+  final context = FocusManager.instance.primaryFocus?.context;
+  var found = 'nothing';
+  context?.visitAncestorElements((element) {
+    if (wanted.contains(element.widget.runtimeType)) {
+      found = element.widget.runtimeType.toString();
+      return false;
+    }
+    return true;
+  });
+  return found;
 }
 
 void main() {
@@ -109,5 +129,28 @@ void main() {
         reason: 'the menu is sorted by name, so the page has to be too '
             '— otherwise scrolling past one entry to find the next '
             'lands somewhere unrelated');
+  });
+
+  testWidgets('Tab walks the section instead of bouncing to the menu',
+      (tester) async {
+    await _pumpShowcase(tester);
+    await _select(tester, 'Affix');
+
+    // Reported by hand: from the section's "Show code" button, the next
+    // Tab reached a sidebar entry rather than the arrow button in the
+    // demo below it. Flutter's default traversal sorts by geometry
+    // across the whole scope, so a menu on the left interleaves with
+    // the content on the right by vertical position.
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    expect(_focusInside({TextButton, ListTile}), 'TextButton',
+        reason: 'the first stop is the Show code button in the '
+            'section heading');
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    expect(_focusInside({PlinthActionIcon, ListTile}), 'PlinthActionIcon',
+        reason: 'and the second is the control in the section, not a '
+            'menu entry further down the page');
   });
 }

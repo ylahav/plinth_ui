@@ -2425,12 +2425,24 @@ class _ShowcasePageState extends State<ShowcasePage> {
               // steps into the section rather than back to the top of
               // a 115-entry sidebar. skipTraversal keeps it out of the
               // way of anyone Tab-ing through normally.
-              final focusable = Focus(focusNode: _contentFocus, child: content);
+              //
+              // FocusTraversalGroup around each column, because
+              // Flutter's default policy sorts by *geometry* across the
+              // whole scope — which interleaves a left-hand menu with
+              // the content beside it. From the "Show code" button the
+              // next stop was a menu entry further down the page rather
+              // than the control directly below, so Tab bounced between
+              // the columns instead of walking the section. A group is
+              // traversed as a unit: the content finishes before
+              // anything else is offered.
+              final focusable = FocusTraversalGroup(
+                child: Focus(focusNode: _contentFocus, child: content),
+              );
 
               if (!isWide) return focusable;
               return Row(
                 children: [
-                  _buildSidebar(inDrawer: false),
+                  FocusTraversalGroup(child: _buildSidebar(inDrawer: false)),
                   Expanded(child: focusable),
                 ],
               );
