@@ -357,12 +357,21 @@ and a magic-number pixel value. Provide `w`, `h`, or both; omitting
 both collapses to zero size.
 
 ### `PlinthUnstyledButton`
-`child`, `onPressed`. A bare tap target with no visual chrome — no
-color, border, padding, or ripple by default. The building block for
-fully custom-styled clickable elements where `PlinthButton`'s built-in
-variant/color/size resolution would fight the custom look. Still
-provides proper semantics (announced as a button) and a disabled
-state when `onPressed` is null.
+`child`, `onPressed`, `focusRing` (default true). A bare tap target
+with no visual chrome — no color, border, padding, or ripple by
+default. The building block for fully custom-styled clickable elements
+where `PlinthButton`'s built-in variant/color/size resolution would
+fight the custom look. Still provides proper semantics (announced as a
+button), keyboard operation, and a disabled state when `onPressed` is
+null.
+
+**"Unstyled" stops at the focus ring.** Mantine's own `UnstyledButton`
+renders a real `<button>`, which the browser gives a focus indicator
+whether or not anyone styles it; a control that cannot be seen to have
+focus is not decorated differently, it is unusable by keyboard (WCAG
+2.4.7). The ring is drawn as a foreground decoration, so it never
+changes layout. Set `focusRing: false` only where the child paints its
+own.
 
 ### `PlinthAppShell`
 `child` (the main region), `header`/`headerHeight`, `navbar`/`navbarWidth`/
@@ -531,6 +540,13 @@ for search-match terms.
 (`PlinthAnchorUnderline`: `always, hover, never` — default `hover`,
 matching conventional link affordance). Styled link text; not a
 navigation widget itself, just a themed tap target.
+
+Keyboard reachable: Tab focuses it, Enter and Space activate it, and it
+shows a ring plus its underline while focused. It was neither until a
+screen-reader session walked Tab straight past it — a `GestureDetector`
+gives a tap action but no focus node, so it was clickable and
+announceable while being unusable by keyboard (WCAG 2.1.1). A null
+`onTap` is skipped rather than focusable and dead.
 
 ### `PlinthVisuallyHidden`
 `child`. Renders `child` so screen readers announce it while sighted

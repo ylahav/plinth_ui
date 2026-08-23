@@ -34,6 +34,9 @@ class PlinthAnchor extends StatefulWidget {
 
 class _PlinthAnchorState extends State<PlinthAnchor> {
   bool _hovering = false;
+  bool _focused = false;
+
+  void _activate() => widget.onTap?.call();
 
   @override
   Widget build(BuildContext context) {
@@ -49,13 +52,37 @@ class _PlinthAnchorState extends State<PlinthAnchor> {
     final showUnderline = switch (widget.underline) {
       PlinthAnchorUnderline.always => true,
       PlinthAnchorUnderline.never => false,
-      PlinthAnchorUnderline.hover => _hovering,
+      // Focus underlines too. A ring alone is a weak signal on a line
+      // of text, and the underline is the affordance a link already
+      // has -- reusing it costs nothing and reads as the same thing.
+      PlinthAnchorUnderline.hover => _hovering || _focused,
     };
 
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovering = true),
-      onExit: (_) => setState(() => _hovering = false),
+    // FocusableActionDetector rather than MouseRegion, which is what
+    // this used to be. A GestureDetector supplies a tap *action* but no
+    // focus node, so this was a link a mouse could click and a screen
+    // reader could activate while Tab walked straight past it -- WCAG
+    // 2.1.1, found by ear rather than by any test here.
+    //
+    // It also decides *when* a focus ring is warranted: onShowFocusHighlight
+    // fires only in traversal mode, so a tap does not leave a ring behind.
+    return FocusableActionDetector(
+      enabled: widget.onTap != null,
+      mouseCursor: SystemMouseCursors.click,
+      onShowHoverHighlight: (value) => setState(() => _hovering = value),
+      onShowFocusHighlight: (value) => setState(() => _focused = value),
+      actions: <Type, Action<Intent>>{
+        // Both, because the web splits them: there Enter arrives as
+        // ButtonActivateIntent and Space as ActivateIntent, while every
+        // other platform sends ActivateIntent for each. Handling one
+        // would leave a key dead on some platform.
+        ActivateIntent: CallbackAction<ActivateIntent>(
+          onInvoke: (_) => _activate(),
+        ),
+        ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+          onInvoke: (_) => _activate(),
+        ),
+      },
       child: Semantics(
         link: true,
         child: GestureDetector(
@@ -66,19 +93,37 @@ class _PlinthAnchorState extends State<PlinthAnchor> {
           // the text so nothing shifts around it.
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 24),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              widthFactor: 1,
-              heightFactor: 1,
-              child: Text(
-                widget.label,
-                style: TextStyle(
-                  color: linkColor,
-                  fontSize: theme.fontSizes[widget.size],
-                  decoration: showUnderline
-                      ? TextDecoration.underline
-                      : TextDecoration.none,
-                  decorationColor: linkColor,
+            child: DecoratedBox(
+              // Foreground, so the ring is painted over the link rather
+              // than laid out around it. A real border would shift
+              // every anchor by its own width the moment it took focus.
+              position: DecorationPosition.foreground,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(2),
+                border: Border.all(
+                  // A focus ring is non-text UI carrying meaning, so
+                  // WCAG 1.4.11 asks 3:1 rather than the body floor.
+                  color: _focused
+                      ? theme.readableOn(colorKey, theme.surface,
+                          level: PlinthContrast.nonText)
+                      : Colors.transparent,
+                  width: _focused ? 2 : 0,
+                ),
+              ),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                widthFactor: 1,
+                heightFactor: 1,
+                child: Text(
+                  widget.label,
+                  style: TextStyle(
+                    color: linkColor,
+                    fontSize: theme.fontSizes[widget.size],
+                    decoration: showUnderline
+                        ? TextDecoration.underline
+                        : TextDecoration.none,
+                    decorationColor: linkColor,
+                  ),
                 ),
               ),
             ),
