@@ -53,9 +53,9 @@ void main() {
   testWidgets('opens on one section rather than all of them', (tester) async {
     await _pumpShowcase(tester);
 
-    expect(find.byType(PlinthAvatar), findsWidgets,
-        reason: 'Avatars is first in page order, so it is what a '
-            'visitor lands on');
+    expect(find.byType(PlinthAccordion), findsWidgets,
+        reason: 'the tour opens on the first section by name, which is '
+            'also the first entry under "All components" in the menu');
     expect(find.byType(PlinthRingProgress), findsNothing,
         reason: 'every other section used to be mounted at the same '
             'time, which is what put hundreds of Tab stops between the '
@@ -65,19 +65,18 @@ void main() {
   testWidgets('the sidebar switches sections', (tester) async {
     await _pumpShowcase(tester);
 
-    // Alphabetically first, so it is inside the sidebar's viewport
-    // without having to scroll it.
-    await _select(tester, 'Accordion');
+    // Near the top of the alphabet, so it is inside the sidebar's
+    // viewport without having to scroll it.
+    await _select(tester, 'Avatars');
 
-    expect(find.byType(PlinthAccordion), findsWidgets);
-    expect(find.byType(PlinthAvatar), findsNothing,
+    expect(find.byType(PlinthAvatar), findsWidgets);
+    expect(find.byType(PlinthAccordion), findsNothing,
         reason: 'the section that was on screen should have left');
   });
 
-  testWidgets('selecting a section moves focus to the content',
-      (tester) async {
+  testWidgets('selecting a section moves focus to the content', (tester) async {
     await _pumpShowcase(tester);
-    await _select(tester, 'Accordion');
+    await _select(tester, 'Avatars');
 
     expect(FocusManager.instance.primaryFocus?.debugLabel, 'showcase content',
         reason: 'the point of the change: the next Tab steps into the '
@@ -87,12 +86,28 @@ void main() {
 
   testWidgets('"All components" brings the whole tour back', (tester) async {
     await _pumpShowcase(tester);
-    await _select(tester, 'Accordion');
+    await _select(tester, 'Avatars');
     await _select(tester, 'All components');
 
     expect(find.byType(PlinthAccordion), findsWidgets);
     expect(find.byType(PlinthAvatar), findsWidgets,
         reason: 'two sections mounted at once is enough to show the '
             'mode is back; the long page is not what this tests');
+  });
+
+  testWidgets('and reads down in the order the menu lists', (tester) async {
+    await _pumpShowcase(tester);
+    await _select(tester, 'All components');
+
+    // Accordion sorts before Avatars, and the page is authored the
+    // other way round. Before the sections were regrouped, the menu and
+    // the page disagreed about where anything was.
+    final accordion = tester.getTopLeft(find.byType(PlinthAccordion).first).dy;
+    final avatar = tester.getTopLeft(find.byType(PlinthAvatar).first).dy;
+
+    expect(accordion, lessThan(avatar),
+        reason: 'the menu is sorted by name, so the page has to be too '
+            '— otherwise scrolling past one entry to find the next '
+            'lands somewhere unrelated');
   });
 }

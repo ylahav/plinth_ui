@@ -229,7 +229,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   /// page — hundreds of stops to reach one component, which made the
   /// showcase unusable for the exact evaluation it exists to invite.
   /// It is no kindness to a mouse user either.
-  String? _section = _sectionOrder.first;
+  String? _section = _sidebarOrder.first;
 
   /// Holds focus at the top of the content, so selecting a section
   /// puts the next Tab *inside* it rather than back at the start of
@@ -244,44 +244,59 @@ class _ShowcasePageState extends State<ShowcasePage> {
     _contentFocus.requestFocus();
   }
 
-  /// Keeps only the run of children belonging to [_section].
+  /// The children to show: one section, or all of them by name.
   ///
   /// The page is one flat list with `_sectionTitle` calls as the
   /// dividers between sections, so a section is everything from its
-  /// title up to the next one. Filtering here rather than restructuring
+  /// title up to the next one. Grouping here rather than restructuring
   /// 1,700 lines of authored layout into a map of builders: the page
   /// stays readable as a page, and a new section needs no registration
   /// beyond the `_sectionTitle` call it already has.
   ///
-  /// Anything before the first title — the hero and the alert — falls
-  /// out for free, which is the point: they were two more Tab stops
-  /// between the sidebar and the component.
-  List<Widget> _onlySelectedSection(List<Widget> all) {
-    final name = _section;
-    if (name == null) return all;
+  /// Anything before the first title — the hero and the alert — is the
+  /// preamble. It leads "All components" and disappears from a single
+  /// section, which is the point: those were two more Tab stops between
+  /// the sidebar and the component, and the alert's close button a
+  /// third.
+  ///
+  /// Once the runs exist, ordering them by [_sidebarOrder] costs
+  /// nothing and settles the older complaint that the menu and the page
+  /// disagreed about where a component was.
+  List<Widget> _sectionsForDisplay(List<Widget> all) {
+    final preamble = <Widget>[];
+    final runs = <String, List<Widget>>{};
+    String? current;
 
-    final kept = <Widget>[];
-    var inside = false;
     for (final child in all) {
-      if (child is _SectionBlock) inside = child.name == name;
-      if (inside) kept.add(child);
+      if (child is _SectionBlock) current = child.name;
+      if (current == null) {
+        preamble.add(child);
+      } else {
+        (runs[current] ??= <Widget>[]).add(child);
+      }
     }
-    return kept;
+
+    final name = _section;
+    if (name != null) return runs[name] ?? const <Widget>[];
+
+    return [
+      ...preamble,
+      for (final section in _sidebarOrder) ...?runs[section],
+    ];
   }
 
-  static const List<String> _sectionOrder = componentSectionOrder;
-
-  /// The sidebar's own order, sorted by name.
+  /// The order the tour is presented in: by name, menu and page alike.
   ///
-  /// Separate from [_sectionOrder] on purpose. That list is the order
-  /// the sections appear in down the page, which `_sectionTitle` reads
-  /// to know which one is first; sorting it in place would hand the
-  /// first-section styling to whatever sorts earliest and leave the
-  /// actual first section looking like a continuation.
+  /// A menu of 115 entries in build order cannot be searched by eye, so
+  /// the menu was sorted first and the page left in the order it is
+  /// authored — which left the two disagreeing about where anything
+  /// was. Now `_sectionsForDisplay` regroups the page at its section
+  /// markers and re-emits it in this order, so "All components" reads
+  /// down in exactly the order the sidebar lists.
   ///
-  /// So the page keeps its authored order and only the menu is sorted —
-  /// which is all that was wrong. A menu of 115 entries in build order
-  /// cannot be searched by eye.
+  /// `componentSectionOrder` stays the authored order, since that is
+  /// what the source actually is and what a test holds against
+  /// `demoCode`.
   static final List<String> _sidebarOrder = [...componentSectionOrder]
     ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
@@ -314,8 +329,10 @@ class _ShowcasePageState extends State<ShowcasePage> {
     final code = demoCode[text];
     final expanded = _codeVisible.contains(text);
     // A rule between sections separates them from each other. Shown on
-    // its own, a section has nothing above it to be separated from.
-    final isFirst = _section != null || text == _sectionOrder.first;
+    // its own, a section has nothing above it to be separated from —
+    // and in the full tour it is the first *displayed* section that
+    // leads, which is now the first by name rather than by source.
+    final isFirst = _section != null || text == _sidebarOrder.first;
 
     return _SectionBlock(
       name: text,
@@ -490,7 +507,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
           const SizedBox(height: 16),
           Row(
             children: [
-              PlinthBadge('${_sectionOrder.length} sections', color: 'blue'),
+              PlinthBadge('${_sidebarOrder.length} sections', color: 'blue'),
               const SizedBox(width: 8),
               const PlinthBadge('Web + Desktop',
                   color: 'green', variant: PlinthVariant.outline),
@@ -661,7 +678,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   controller: _pageScroller,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: _onlySelectedSection([
+                    children: _sectionsForDisplay([
                       _buildHero(),
                       if (_alertVisible) ...[
                         PlinthAlert(
@@ -2425,9 +2442,14 @@ class _ShowcasePageState extends State<ShowcasePage> {
   }
 }
 
-/// Mirrors the order sections actually appear in the page — used to
-/// build the sidebar list. Keep this in sync when adding a new
-/// `_sectionTitle(...)` call.
+/// Every section in the component tour, in the order the page is
+/// authored. Keep this in sync when adding a new `_sectionTitle(...)`
+/// call.
+///
+/// Not the order anything is *displayed* in: the sidebar and the full
+/// tour both sort by name, because a list of 115 entries in build order
+/// cannot be searched by eye. This stays as authored because that is
+/// what the source is, and because a test holds it against `demoCode`.
 ///
 /// Top-level rather than private to the State so a test can hold it
 /// against `demoCode`: both are hand-maintained, and a section with no
