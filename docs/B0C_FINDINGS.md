@@ -12,7 +12,12 @@ any of it was heard.
 **Second pass 23 Aug 2026**, against the `F-3` work built in between —
 same setup, different listener. It found one more library defect, one
 demo defect, and repeated one of the false alarms below. See
-[the second pass](#second-pass--23-aug-2026) at the end.
+[the second pass](#second-pass--23-aug-2026).
+
+**Third pass 23 Aug 2026**, a full sweep of the component tour once it
+was navigable. Three more defects, all of the same shape — a control
+that does not say what state it is in. See
+[the third pass](#third-pass--23-aug-2026) at the end.
 
 ## The headline
 
@@ -262,3 +267,119 @@ knobs panel.
 
 Until those are heard, the honest claim is that the library **has**
 announcements, tested — not that they are known to read well.
+
+---
+
+# Third pass — 23 Aug 2026
+
+Every section of the component tour, once the tour was navigable enough
+to walk. The two passes before this reached a handful of controls each;
+this is the first time all of them were heard.
+
+## The headline
+
+**Three defects, all one shape: a control that does not say what state
+it is in.** None of them is a missing label — that work holds. Each is a
+control whose state lives in a colour, a fill or an icon and reaches
+the semantics tree nowhere.
+
+That is a different family from `F-3`, which was about *messages* that
+appear. This is about *controls* that change. The `F-3` task list never
+considered it, which is why none of these were caught by building it.
+
+## F-6 — the stepper reports no state
+
+> *"stepper - works fine - one exception - when selecting a step (space
+> key) - it does not say it"*
+
+Every step announced as its label and the word button, whichever state
+it was in. Pressing one said nothing, because nothing a reader watches
+had changed: `_StepState` existed in the code and reached the tree
+nowhere. The filled circle and the check mark were carrying "done" and
+"you are here" alone.
+
+**Its two siblings already did this.** `PlinthTabs` and
+`PlinthSegmentedControl` both carry `selected`. Three "pick one of
+several" controls, two with state and one without — an omission rather
+than a decision.
+
+**Fixed:** `selected` on the current step, and a spoken `value` on all
+three — `'completed'`, `'current step'`, `'not completed'`. The word as
+well as the flag, because `selected` maps to `aria-selected`, which
+browsers honour only on certain roles and a button is not reliably one.
+
+## F-7 — the spoiler's toggle is neither a button nor a state
+
+> *"collapse - when changing value - nothing"* — reported of collapse,
+> and true of the spoiler for its own reasons.
+
+`PlinthSpoiler` owns its toggle, and it was a bare `InkWell` around
+text: reachable, tappable, announcing as neither a control nor as
+something that opens anything.
+
+**That is the accordion defect, in the widget next door.** The first
+pass fixed the accordion header — *"labelled but roleless, so it
+announced as text"* — and nothing looked at the two widgets beside it.
+
+**Fixed:** `button` and `expanded`.
+
+**Not fixed, and documented instead:** a collapsed spoiler's clipped
+remainder stays readable. Unlike `PlinthCollapse`, a spoiler shows a
+teaser, so there is no boundary in the semantics tree to cut at.
+Clipping the reading as well would mean cutting a sentence at a pixel,
+which semantics cannot express.
+
+## F-8 — collapse cannot announce itself, and never said so
+
+`PlinthCollapse` was right about the hard part: it excludes its hidden
+child from semantics and hit-testing, so nothing invisible is reachable.
+
+But it owns no button. `opened` comes from the caller, so "open" and
+"shut" can only be announced by whatever trigger the caller wires — and
+a plain button beside it reads identically either way.
+
+**Both demos in this repo got that wrong.** That is the finding, more
+than the widget itself: a doc comment that explained the mounting
+trade-off in careful detail and omitted this one was not enough to stop
+its own author making the mistake twice.
+
+**Fixed:** the doc comment now shows the `Semantics(button:, expanded:)`
+wrapper, and both demos use it.
+
+## What was heard and was right
+
+| | |
+|---|---|
+| **Switch** | Label and state on focus; the new state spoken on Space |
+| **Checkbox** | The same, checked and not checked |
+| **Radio** | Label and whether it is selected; the new value on Space |
+| **Stepper, on focus** | Label and role were already correct — only the state was missing |
+
+## The fifth false alarm — the same as the second and the fourth
+
+> *"overlay - after 'tab' to source code button not continue on page
+> (dimmed content)"*
+
+Correct. That section is a container, a scrim and a line of text, with
+nothing focusable in it, so Tab has one stop and leaves. "Dimmed
+content" is text; arrows read it.
+
+**Three reports now from one distinction** — accordion twice, overlay
+once. It has been written down since the first pass, which is why each
+answer takes ten seconds rather than an afternoon, and it keeps
+recurring anyway.
+
+The conclusion is not to write it down harder. It is that **the rule
+belongs where a listener meets it while listening**, not in a table of
+past mistakes they read once before starting. The script should open
+with *Tab reaches controls; arrows read everything else* rather than
+filing it under false alarms.
+
+## What is still not heard
+
+Unchanged from the second pass, because this one went looking at
+controls rather than at announcements: alerts defaulting to live,
+loading completion, progress completion, and the checkbox/switch/radio
+error trade. The gallery now has a use case for the last of those —
+`PlinthCheckbox` → *Error announced on validate*, which raises an error
+on all three at once from a button, so it works under `&preview`.

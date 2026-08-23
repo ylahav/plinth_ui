@@ -122,6 +122,23 @@ dropping the tree and the knobs panel:
 Everything spoken from here belongs to Plinth, which is what makes a
 pasted transcript worth anything.
 
+### Before any of it: which mode are you in
+
+**Tab reaches controls. Arrows read everything else.**
+
+Read that again before you start, because it has produced a false
+report on every pass so far — the accordion twice, the overlay once.
+The shape is always the same: *"X does not read its content"*, where X
+is text rather than a control and Tab was never going to reach it.
+
+- **Tab / Shift+Tab** — the next control. Buttons, links, fields. It
+  skips headings, paragraphs, an accordion's body, a dimmed panel's
+  caption, anything you cannot operate.
+- **↓ / ↑** — browse mode, line by line, everything on the page.
+
+Before filing *"it does not say X"*, arrow onto X. If it reads then,
+what you found is the distinction rather than a defect.
+
 ### NVDA, on Windows
 
 1. Install from [nvaccess.org](https://www.nvaccess.org/download/). The

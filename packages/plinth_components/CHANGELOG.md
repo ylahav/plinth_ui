@@ -144,12 +144,54 @@ and rendered output has never been covered by the 1.0 promise - see
   a screen reader. `plinth_keyboard_reachable_test.dart` now sweeps
   every interactive component for it.
 
+- **`PlinthStepper` reported no state at all.** Every step announced as
+  its label and the word button, whether it was completed, current or
+  still ahead — the filled circle and the check mark were carrying that
+  alone. Pressing a step therefore said nothing, because nothing a
+  reader was watching had changed.
+
+  Its two siblings already did this: `PlinthTabs` and
+  `PlinthSegmentedControl` both carry `selected`. The stepper was the
+  one in the family that did not.
+
+  Each step now carries `selected` for the current one and a spoken
+  `value` — `'completed'`, `'current step'`, `'not completed'` — for all
+  three. The word as well as the flag, because `selected` maps to
+  `aria-selected`, which browsers honour only on certain roles and a
+  button is not reliably one of them.
+
+- **`PlinthSpoiler`'s toggle was neither a button nor a state.** A bare
+  `InkWell` around text: reachable, tappable, and giving no clue that it
+  was a control or that it opened anything. That is the same defect
+  `B0c` found on the accordion header last week, in the widget next
+  door. It now reports `button` and `expanded`.
+
+  Its collapsed remainder does stay readable, which is documented rather
+  than fixed. Unlike `PlinthCollapse`, a spoiler shows a teaser, so
+  there is no boundary in the semantics tree to cut at — clipping the
+  reading too would mean cutting a sentence at a pixel.
+
+- **`PlinthCollapse` never said that the caller's trigger has to report
+  the state.** The widget itself was right — it excludes its hidden
+  child from semantics — but it owns no button, so "open" and "shut"
+  can only be announced by whatever the caller wires up. Both demos in
+  this repo got that wrong, which is the evidence that a doc comment
+  explaining the mounting trade-off in detail and omitting this one was
+  not enough. The example now shows the `Semantics(button:, expanded:)`
+  wrapper.
+
 ### Known gap
 
-Four parts of the announcement work are tested against the semantics
-tree and **have never been heard**: the checkbox/switch/radio change
-above, alerts defaulting to live, loading completion, and progress
-completion. Two of those are judgement calls rather than mechanics.
+**A third listening pass ran on 23 Aug 2026**, before this release, and
+is what found the stepper, the spoiler and the collapse trigger above.
+It also confirmed that switch, checkbox and radio each announce their
+label, their state, and the change when it is toggled.
+
+What it did **not** cover is the announcement work itself: alerts
+defaulting to live, loading completion, progress completion, and the
+error trade on checkbox/switch/radio. Those are tested against the
+semantics tree and have not been heard. Two of them are judgement calls
+rather than mechanics.
 
 What this release supports is that the library *has* announcements,
 tested - not that they are known to read well.

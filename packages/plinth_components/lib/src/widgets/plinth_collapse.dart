@@ -20,7 +20,23 @@ import 'package:flutter/material.dart';
 /// go away, swapping it out is the better shape. [PlinthAccordion]
 /// deliberately does that instead.
 ///
+/// **Your trigger has to say what it does.** This owns no button —
+/// [opened] comes from the caller — so nothing here can report the
+/// state to a screen reader, and a plain button beside it announces as
+/// "Show, button" whether the panel is open or shut. Pressing it then
+/// says nothing at all, because nothing in the tree changed that a
+/// reader was watching. [PlinthAccordion] does not have this problem
+/// only because it owns its header and marks it itself.
+///
 /// ```dart
+/// Semantics(
+///   button: true,
+///   expanded: _showFilters,
+///   child: PlinthButton(
+///     onPressed: () => setState(() => _showFilters = !_showFilters),
+///     child: Text(_showFilters ? 'Hide filters' : 'Show filters'),
+///   ),
+/// ),
 /// PlinthCollapse(
 ///   opened: _showFilters,
 ///   child: const FilterPanel(),

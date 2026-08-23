@@ -1802,12 +1802,22 @@ class _ShowcasePageState extends State<ShowcasePage> {
                         gap: PlinthSize.sm,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          PlinthButton(
-                            size: PlinthSize.sm,
-                            variant: PlinthVariant.outline,
-                            onPressed: () =>
-                                setState(() => _collapsed = !_collapsed),
-                            child: Text(_collapsed ? 'Show' : 'Hide'),
+                          // Semantics around the trigger, not inside
+                          // PlinthCollapse: the collapse owns no button,
+                          // so the state it holds can only be announced
+                          // by whatever the caller wires up. Without
+                          // this the button reads the same open or shut,
+                          // and pressing it says nothing.
+                          Semantics(
+                            button: true,
+                            expanded: !_collapsed,
+                            child: PlinthButton(
+                              size: PlinthSize.sm,
+                              variant: PlinthVariant.outline,
+                              onPressed: () =>
+                                  setState(() => _collapsed = !_collapsed),
+                              child: Text(_collapsed ? 'Show' : 'Hide'),
+                            ),
                           ),
                           PlinthCollapse(
                             opened: !_collapsed,

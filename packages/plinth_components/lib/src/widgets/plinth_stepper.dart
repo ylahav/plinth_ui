@@ -224,6 +224,23 @@ class _StepCircleAndLabel extends StatelessWidget {
   /// Null keeps the circular default, which is what a step marker is.
   final PlinthSize? radius;
 
+  /// What this step's state sounds like.
+  ///
+  /// A stepper means "you are here, these are done, these are ahead",
+  /// and none of that used to reach the semantics tree: every step
+  /// announced as its label and the word button, whichever state it
+  /// was in. The fill and the check mark carried it alone, which is
+  /// fine for a pair of eyes and nothing at all for a reader.
+  ///
+  /// Its two siblings already did this — `PlinthTabs` and
+  /// `PlinthSegmentedControl` both carry `selected`. The stepper was
+  /// the one in the family that did not.
+  String get _spokenState => switch (state) {
+        _StepState.completed => 'completed',
+        _StepState.active => 'current step',
+        _StepState.pending => 'not completed',
+      };
+
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
@@ -282,6 +299,15 @@ class _StepCircleAndLabel extends StatelessWidget {
 
     return Semantics(
       button: onTap != null,
+      // Null rather than false on the others: marking every step
+      // explicitly not-selected has a reader say so on each one.
+      selected: state == _StepState.active ? true : null,
+      // Said in words as well, because `selected` maps to
+      // `aria-selected`, which browsers honour only on certain roles —
+      // a button is not reliably one of them. The word is what
+      // guarantees the state is heard; the flag is what makes it the
+      // right state where the platform does use it.
+      value: _spokenState,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(

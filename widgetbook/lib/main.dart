@@ -1044,6 +1044,73 @@ final List<WidgetbookNode> _plinthDirectories = [
             },
           ),
           WidgetbookUseCase(
+            // The only checkbox use case that can demonstrate the 1.2.0
+            // change: an `error` is a live region now, so it is spoken
+            // when it *appears*. A knob cannot show that under
+            // `&preview`, which drops the knobs panel — and a static
+            // error is registered before anything changes, so it says
+            // nothing by design.
+            //
+            // Switch and radio are here too, because the three share
+            // the trade this change made: their error used to live
+            // inside the control's merged name, spoken on focus and
+            // never on arrival. It is now a live region beside them,
+            // spoken on arrival and no longer part of the name.
+            name: 'Error announced on validate',
+            builder: (context) => _themed(
+              _Local<bool>(
+                initial: false,
+                builder: (invalid, onChanged) => SizedBox(
+                  width: 420,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          PlinthButton(
+                            onPressed: () => onChanged(true),
+                            child: const Text('Validate'),
+                          ),
+                          PlinthButton(
+                            variant: PlinthVariant.subtle,
+                            onPressed: () => onChanged(false),
+                            child: const Text('Clear'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      PlinthCheckbox(
+                        value: false,
+                        onChanged: (_) {},
+                        label: 'Accept terms',
+                        description: 'You must agree to continue',
+                        error: invalid ? 'This field is required' : null,
+                      ),
+                      const SizedBox(height: 16),
+                      PlinthSwitch(
+                        value: false,
+                        onChanged: (_) {},
+                        label: 'Enable notifications',
+                        error: invalid ? 'Choose one to continue' : null,
+                      ),
+                      const SizedBox(height: 16),
+                      PlinthRadio<String>(
+                        value: 'a',
+                        groupValue: 'b',
+                        onChanged: (_) {},
+                        label: 'Standard delivery',
+                        error: invalid ? 'Pick a delivery option' : null,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          WidgetbookUseCase(
             name: 'Unchecked',
             builder: (context) => _themed(
               PlinthCheckbox(
@@ -3683,14 +3750,25 @@ final List<WidgetbookNode> _plinthDirectories = [
                     builder: (opened, onChanged) => Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        PlinthButton(
-                          variant: PlinthVariant.subtle,
-                          leadingIcon: Icon(
-                            opened ? Icons.expand_less : Icons.expand_more,
-                            size: 16,
+                        // Semantics on the trigger, not inside
+                        // PlinthCollapse: the collapse owns no button, so
+                        // the state it holds can only be announced by
+                        // whatever the caller wires up. Without this the
+                        // button reads the same open or shut, and
+                        // pressing it says nothing at all.
+                        Semantics(
+                          button: true,
+                          expanded: opened,
+                          child: PlinthButton(
+                            variant: PlinthVariant.subtle,
+                            leadingIcon: Icon(
+                              opened ? Icons.expand_less : Icons.expand_more,
+                              size: 16,
+                            ),
+                            onPressed: () => onChanged(!opened),
+                            child:
+                                Text(opened ? 'Hide filters' : 'Show filters'),
                           ),
-                          onPressed: () => onChanged(!opened),
-                          child: Text(opened ? 'Hide filters' : 'Show filters'),
                         ),
                         PlinthCollapse(
                           opened: opened,

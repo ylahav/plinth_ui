@@ -16,6 +16,15 @@ import 'package:plinth_core/plinth_core.dart';
 ///   child: Text(longDescription),
 /// )
 /// ```
+/// **The clipped remainder stays readable.** Unlike [PlinthCollapse],
+/// which excludes its hidden child from semantics, a spoiler shows a
+/// teaser — the first [maxHeight] of the content — so there is no
+/// boundary in the semantics tree to cut at. A screen reader therefore
+/// reaches the whole text whether it is expanded or not, and "Show
+/// more" is a visual affordance rather than a promise of hidden
+/// content. That is a deliberate trade rather than an oversight:
+/// clipping the reading as well would mean cutting a sentence at a
+/// pixel, which semantics cannot express.
 class PlinthSpoiler extends StatefulWidget {
   const PlinthSpoiler({
     super.key,
@@ -78,12 +87,20 @@ class _PlinthSpoilerState extends State<PlinthSpoiler> {
                 ),
         ),
         SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.5),
-        InkWell(
-          onTap: () => setState(() => _expanded = !_expanded),
-          child: Text(
-            _expanded ? widget.hideLabel : widget.showLabel,
-            style: TextStyle(
-                color: linkColor, fontSize: 13, fontWeight: FontWeight.w600),
+        // The toggle was a bare InkWell around text: reachable and
+        // tappable, announcing as neither a control nor as something
+        // that opens anything. Exactly what the B0c pass found on the
+        // accordion header, in the widget next door.
+        Semantics(
+          button: true,
+          expanded: _expanded,
+          child: InkWell(
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Text(
+              _expanded ? widget.hideLabel : widget.showLabel,
+              style: TextStyle(
+                  color: linkColor, fontSize: 13, fontWeight: FontWeight.w600),
+            ),
           ),
         ),
       ],
