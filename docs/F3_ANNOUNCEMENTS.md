@@ -237,22 +237,37 @@ The claims gate in [ROADMAP.md](ROADMAP.md) named one claim as resting
 on nothing: *that nothing changing on screen goes unannounced.* All
 five tasks have landed, so the code behind it exists.
 
-**The claim is not yet earned, and the difference matters.** Every one
-of these is verified against the semantics tree — which is exactly the
-kind of evidence `B0c` was run to stop trusting on its own. `B0a` to
-`B0d` were all structurally blind to this finding while passing.
+**Partly heard, on 23 Aug 2026.** The pin input's result — the whole
+chain, live region through shared primitive — was confirmed spoken in a
+real browser, focus unmoved. Recorded in
+[B0C_FINDINGS.md](B0C_FINDINGS.md#second-pass--23-aug-2026).
 
-Two decisions in particular want a real screen reader before they are
-called settled:
+**The rest is not earned yet**, and the difference matters: everything
+else here is verified against the semantics tree, which is exactly the
+kind of evidence `B0c` was run to stop trusting on its own. That pass
+proved the point again — `F-4`, two components clickable and
+announceable but unreachable by Tab, was invisible to every test in
+this repo *because the tree was correct*.
+
+Four parts have not been listened to. Two are judgement calls rather
+than mechanics:
 
 - The **checkbox, switch and radio** label change in task 2 — the error
   left the control's name to become a live region.
 - **Alerts defaulting to live**, and what a page of standing callouts
   sounds like on a platform that announces them on arrival.
+- **Loading completion**, which goes through `sendAnnouncement` rather
+  than a live region — a different mechanism from the one confirmed
+  above, and silent on Android by that platform's policy.
+- **Progress `completeLabel`.**
 
-Until a `B0c`-style pass hears them, the honest claim is that the
-library now *has* announcements, tested — not that they are known to
-read well.
+The gallery gained two use cases so the last three can be reached at
+all: `PlinthAlert` → *Raised by an action* and `PlinthProgress` →
+*Announced on completion*, both button-driven because `&preview` drops
+the knobs panel.
+
+Until those are heard, the honest claim is that the library *has*
+announcements, tested — not that they are known to read well.
 
 The comparison piece under *Trust and distribution* was waiting on
-this. It can be written once the pass confirms it.
+this. It can be written once the rest is confirmed.

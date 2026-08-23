@@ -1,6 +1,6 @@
 # Plinth UI — Roadmap
 
-*Last checked 22 Aug 2026, against `1.0.1`.*
+*Last checked 23 Aug 2026, against `1.1.0`.*
 
 > Task IDs like `B0c` appear only where something outside this file
 > cites them — commit messages, or
@@ -86,16 +86,18 @@ else built** is worth more than any further feature.
 | **Accessibility probes** (`B0a`, `B0b`, `B0d`) | Run and recorded |
 | **The screen-reader pass** (`B0c`) | Run 22 Aug 2026. Two defects, both fixed; the nine form labels hold up in a real browser. [B0C_FINDINGS.md](B0C_FINDINGS.md) |
 | **Focus containment** | `PlinthFocusTrap`; smaller than planned — Drawer never needed it |
+| **Announcements** (`F-3`) | Built 22–23 Aug 2026 across validation, alerts, notifications, loading and progress. [F3_ANNOUNCEMENTS.md](F3_ANNOUNCEMENTS.md). Partly heard; see the claims gate |
+| **Keyboard reachability** (`F-4`) | `PlinthAnchor` and `PlinthUnstyledButton` were clickable and announceable but not focusable — WCAG 2.1.1. Found by ear on 23 Aug 2026, and by nothing else: the semantics tree was correct |
 
 ## Next
 
-**1. Announce what changes.** `liveRegion` and
-`SemanticsService.announce` appear **nowhere** in the library, so
-nothing that happens while the user holds still is ever spoken —
-validation messages, notifications, loading completion. B0c found this
-through the pin input, where it is now fixed; everywhere else it is
-open. **The one accessibility claim still resting on nothing.**
-Task list: [F3_ANNOUNCEMENTS.md](F3_ANNOUNCEMENTS.md).
+**1. Finish listening to `F-3`.** Four parts of the announcement work
+have never been heard: the checkbox/switch/radio label change, alerts
+defaulting to live, loading completion (which uses an announcement
+rather than a live region), and progress completion. Two of those are
+judgement calls, not mechanics. **Cheap, and it is what the claims gate
+below is waiting on.** The gallery now has use cases that can
+demonstrate them.
 
 **2. The token hierarchy.** Formalise primitive / semantic /
 component tiers. The gate on everything in interop, and the last
@@ -145,7 +147,7 @@ Plinth's author, and that discount is applied everywhere it is cited.
 | | What it is |
 |---|---|
 | **Roving focus** | Arrow-key navigation within a control. Starts by extracting the logic welded inside `PlinthTabs`. **This is the right fix for the dropdown family**, which leaks Tab — a focus *trap* there would be wrong, because focus belongs in the text field while arrows move a highlighted option |
-| **Announcements beyond the pin input** | B0c's `F-3`, promoted to *Next* above. Listed here too because the migration — every validation message, notification and loading state in the library — is the long part |
+| **A second keyboard sweep** | `F-4` was found by ear, not by any test, because every accessibility test here walks the semantics tree and the tree was right. `plinth_keyboard_reachable_test.dart` now covers Tab reachability; **focus order and focus visibility are still unchecked** anywhere |
 
 ### Trust and distribution
 
@@ -191,9 +193,12 @@ directions, which no CSS-variable refactor can offer.
 ## On Mantine
 
 A starting point, not a specification. 112 components track
-`@mantine/core` because its answer was right; three exist because
+`@mantine/core` because its answer was right; five exist because
 Flutter asked a question a web library never had to — `PlinthLtr`,
-`PlinthFocusTrap`, `PlinthTapTarget`.
+`PlinthFocusTrap`, `PlinthTapTarget`, and now `PlinthLiveRegion` and
+`PlinthAnnounceWhen`. The last two are the clearest case of the whole
+pattern: the web spells a live region as an attribute, so Mantine never
+needed a component for it and Flutter has nothing at all.
 
 **Where the two disagree, Flutter wins.** Filled buttons carry a dark
 label because white on Mantine's own `blue.6` is 3.56:1 and fails AA.
@@ -206,13 +211,24 @@ purpose.
 **Do not publish interaction-state or variant language** — it does not
 exist here, and it is Mix's, by name.
 
-Today's checkable claim: *115 components on a shared token system — 112
-tracking `@mantine/core`, three answering questions only Flutter has —
-with 43 golden images and 65 test files behind them.*
+Today's checkable claim: *117 components on a shared token system — 112
+tracking `@mantine/core`, five answering questions only Flutter has —
+with 43 golden images and 73 test files behind them.*
 
 **`B0c` has run**, so the token-engine framing is publishable: the
 accessibility work has been heard, not only asserted against simulated
 semantics trees.
 
 The claim that is still not available: that nothing changing on screen
-goes unannounced. That is `F-3`, and it is open.
+goes unannounced. `F-3` is **built and tested, and partly heard** — the
+pin input's result was confirmed spoken in a real browser on 23 Aug
+2026. Four parts have not been listened to, two of them judgement calls
+rather than mechanics, so the claim is *has announcements, tested*
+rather than *known to read well*. See
+[B0C_FINDINGS.md](B0C_FINDINGS.md#second-pass--23-aug-2026).
+
+**A caution the second pass earned.** `F-4` — two components that were
+clickable, announceable, and unreachable by Tab — was found by ear and
+by nothing else, because every accessibility test here walks the
+semantics tree and the tree was correct. Passing tests are evidence
+about the tree, not about the app.
