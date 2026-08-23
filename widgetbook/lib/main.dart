@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:plinth_components/plinth_components.dart';
 import 'package:widgetbook/widgetbook.dart';
 
@@ -3911,6 +3912,29 @@ final List<WidgetbookNode> _plinthDirectories = [
         ],
       ),
       WidgetbookComponent(
+        name: 'PlinthAnnounce',
+        useCases: [
+          WidgetbookUseCase(
+            // The imperative half of the announcement primitive, with
+            // nothing else in the way.
+            //
+            // Every other announcement use case reaches this through a
+            // widget: an overlay that leaves the tree, a bar that
+            // finishes. If one of those is silent, the cause could be
+            // the mechanism or the edge that was supposed to trigger
+            // it, and there is no way to tell them apart from outside.
+            // This removes the widget: press a button, hear a sentence.
+            //
+            // It also shows `supportsAnnounce`, because
+            // PlinthAnnounce.say returns false and stays quiet when the
+            // platform declines announcements — correct behaviour that
+            // looks identical to a bug.
+            name: 'Say something',
+            builder: (context) => _themed(const _AnnounceProbe()),
+          ),
+        ],
+      ),
+      WidgetbookComponent(
         name: 'PlinthLoadingOverlay',
         useCases: [
           WidgetbookUseCase(
@@ -3942,6 +3966,18 @@ final List<WidgetbookNode> _plinthDirectories = [
                 ),
               ),
             ),
+          ),
+          WidgetbookUseCase(
+            // The completion edge, which a knob cannot produce: changing
+            // a knob rebuilds the use case, and a rebuild that remounts
+            // the subtree runs initState rather than didUpdateWidget, so
+            // the true -> false transition never happens. Arrival is a
+            // live region and survives that; completion is an
+            // announcement fired on the edge, and does not.
+            //
+            // So this one finishes on its own, inside a single State.
+            name: 'Finishes on its own',
+            builder: (context) => _themed(const _LoadingRunDemo()),
           ),
           WidgetbookUseCase(
             name: 'Loading',
@@ -7491,6 +7527,143 @@ class _ProgressRunDemoState extends State<_ProgressRunDemo> {
             onPressed: _run,
             child: Text(_value >= 1 ? 'Run again' : 'Start upload'),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Shows the overlay, then takes it away two seconds later.
+///
+/// Both edges in one State, which is what the completion announcement
+/// needs: it fires on `visible` going true -> false, and a knob-driven
+/// demo rebuilds rather than transitions.
+class _LoadingRunDemo extends StatefulWidget {
+  const _LoadingRunDemo();
+
+  @override
+  State<_LoadingRunDemo> createState() => _LoadingRunDemoState();
+}
+
+class _LoadingRunDemoState extends State<_LoadingRunDemo> {
+  bool _saving = false;
+  Timer? _timer;
+
+  void _save() {
+    _timer?.cancel();
+    setState(() => _saving = true);
+    _timer = Timer(const Duration(seconds: 2), () {
+      if (mounted) setState(() => _saving = false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 360,
+      child: PlinthLoadingOverlay(
+        visible: _saving,
+        child: PlinthPaper(
+          withBorder: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const PlinthText('Account settings'),
+              const SizedBox(height: 12),
+              PlinthButton(
+                onPressed: _saving ? null : _save,
+                child: Text(_saving ? 'Saving...' : 'Save'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Presses that reach the platform's announcement channel by three
+/// routes, so a silence can be attributed rather than guessed at.
+class _AnnounceProbe extends StatefulWidget {
+  const _AnnounceProbe();
+
+  @override
+  State<_AnnounceProbe> createState() => _AnnounceProbeState();
+}
+
+class _AnnounceProbeState extends State<_AnnounceProbe> {
+  String _last = 'nothing sent yet';
+
+  @override
+  Widget build(BuildContext context) {
+    final supported = MediaQuery.supportsAnnounceOf(context);
+
+    return SizedBox(
+      width: 460,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PlinthText(
+            'supportsAnnounce: $supported',
+            weight: FontWeight.w700,
+            color: supported ? 'green' : 'red',
+          ),
+          const SizedBox(height: 4),
+          const PlinthText(
+            'False means the platform declines announcements and '
+            'PlinthAnnounce.say stays quiet on purpose — Android does '
+            'this, having deprecated the events.',
+            size: PlinthSize.sm,
+            color: 'gray',
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              PlinthButton(
+                onPressed: () async {
+                  final sent = await PlinthAnnounce.say(
+                      context, 'Announced through Plinth');
+                  setState(() => _last = 'PlinthAnnounce.say returned $sent');
+                },
+                child: const Text('Say, through Plinth'),
+              ),
+              PlinthButton(
+                variant: PlinthVariant.outline,
+                onPressed: () {
+                  // The same channel, reached without the wrapper: if
+                  // this speaks and the one beside it does not, the
+                  // wrapper is at fault rather than the platform.
+                  SemanticsService.sendAnnouncement(
+                    View.of(context),
+                    'Announced through Flutter',
+                    Directionality.of(context),
+                  );
+                  setState(() => _last = 'sendAnnouncement called directly');
+                },
+                child: const Text('Say, through Flutter'),
+              ),
+              PlinthButton(
+                variant: PlinthVariant.subtle,
+                onPressed: () async {
+                  await PlinthAnnounce.say(context, 'Interrupting announcement',
+                      assertiveness: Assertiveness.assertive);
+                  setState(() => _last = 'sent assertively');
+                },
+                child: const Text('Say, assertively'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          PlinthText(_last, size: PlinthSize.sm, color: 'gray'),
         ],
       ),
     );
