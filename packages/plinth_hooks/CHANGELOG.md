@@ -11,6 +11,13 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.2.0
+
+No change in this package. Released in lockstep with `plinth_components`
+1.2.0, which builds out `F-3` - the announcement work - and fixes two
+components that could not be reached by keyboard. See
+[B0C_FINDINGS.md](../../docs/B0C_FINDINGS.md#second-pass--23-aug-2026).
+
 ## 1.1.0
 
 No change in this package. Released in lockstep with

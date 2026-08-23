@@ -11,6 +11,149 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.2.0
+
+**`F-3` built out, and a keyboard defect found by ear.** Nothing that
+happened while the user held still was ever spoken; most of it now is.
+A [second listening pass on 23 Aug 2026](../../docs/B0C_FINDINGS.md#second-pass--23-aug-2026)
+confirmed part of it aloud and turned up a defect no test in this repo
+could have caught. The plan and its corrections are in
+[F3_ANNOUNCEMENTS.md](../../docs/F3_ANNOUNCEMENTS.md).
+
+### Added
+
+- **`PlinthLiveRegion`** - marks a message a screen reader should visit
+  when it changes, without focus having moved.
+
+  ```dart
+  PlinthLiveRegion(message: error, child: PlinthText(error!))
+  ```
+
+  Pass the message as well as the widget rendering it: `null` and `''`
+  return the child untouched, since a live region with nothing in it is
+  a node a reader visits to hear silence. It carries `container: true`,
+  so the flag lands on a node as wide as the message - merged into a
+  form field it would make the whole control live and re-speak the label
+  on every rebuild.
+
+  `PlinthLiveRegion.always` is the same thing for content that is a
+  widget rather than a string, where "is there anything to say?" is
+  already answered by the widget existing.
+
+- **`PlinthAnnounce.say(context, message)`** - for an event whose visual
+  is *leaving*, where marking the departing widget announces nothing
+  because it is already gone. Returns whether it was actually sent: an
+  announcement leaves no trace in the semantics tree, so without a
+  return value neither a caller nor a test can know.
+
+  **Silent on Android**, which deprecated announcement events because
+  TalkBack clears its speech queue to serve them. That is the platform's
+  choice rather than a gap, and it is the reason to carry a message in
+  the tree with `PlinthLiveRegion` wherever one can be.
+
+- **`PlinthAnnounceWhen`** - speaks once, at the moment a condition turns
+  true. The edge neither of the other two covers: a live region is wrong
+  for anything that changes continuously, but the moment it finishes is
+  worth a word.
+
+  **Never on first build**, which is why it holds state. A progress bar
+  rendered at 100% is usually a statistic, and announcing "complete" for
+  a number that was already there reports an event that never happened.
+
+- **`live` on `PlinthAlert` and `PlinthNotification`** (default true),
+  covering the title and body, never the dismiss button.
+  `PlinthNotification.show` and `showOn` pass `false` deliberately:
+  Flutter's own `SnackBar` already wraps its content in the same live
+  region, and a second one nested inside the first is how a fix becomes
+  a stutter.
+
+- **`loadingLabel` and `completeLabel` on `PlinthLoadingOverlay`.** The
+  two edges need different mechanisms and cannot share one. Arrival is a
+  live region, which works on every platform; completion is an
+  announcement, because the overlay is removed and a node that is gone
+  speaks nothing.
+
+- **`semanticLabel` on `PlinthLoader`**, default `'Loading'`. A spinner
+  read as nothing at all before this. Deliberately not a live region: it
+  usually sits inside something whose own change is already spoken.
+
+- **`semanticLabel` and `completeLabel` on `PlinthProgress`,
+  `PlinthRingProgress` and `PlinthSemiCircleProgress`**, and single-value
+  bars now expose their percentage as a semantic `value`.
+
+  `completeLabel` is opt-in, unlike everything else here. Most progress
+  bars are statistics - storage used, quota reached - not running
+  operations, and a default would have every dashboard announcing
+  completions that never happened. The bar itself is never a live
+  region; marked live it would narrate every frame of its own animation.
+
+- **`focusRing` on `PlinthUnstyledButton`** (default true). "Unstyled"
+  stops at the focus ring: Mantine's own `UnstyledButton` is a real
+  `<button>`, which the browser rings whether or not anyone styles it.
+
+### Changed
+
+**Four behaviour changes an adopter will notice. None break the API**,
+and rendered output has never been covered by the 1.0 promise - see
+[PUBLISHING.md](../../docs/PUBLISHING.md#what-100-promises).
+
+- **Tab order changes in any app using `PlinthAnchor` or
+  `PlinthUnstyledButton`.** Both are now focusable (see *Fixed*), so
+  both become keyboard stops they were not before. That is the fix
+  working, and it is still a change to feel for.
+
+- **Validation errors are announced when they appear**, across all
+  seventeen controls that take an `error`, plus `PlinthPinInput`'s
+  `statusText`. Previously a message arrived in silence unless a reader
+  happened to walk into it.
+
+- **Checkbox, switch and radio errors left the control's accessible
+  name.** They used to be folded into the merged label -
+  `"Accept terms / You must agree / This field is required"` - spoken on
+  focus and never on arrival. A live region needs its own node, so the
+  error is now adjacent to the control rather than part of its name.
+
+  The trade, taken deliberately: a Tab-only user returning to the
+  control no longer hears the error as part of its name, and in exchange
+  it is heard at all when it appears. It also makes the family read one
+  way, since the text inputs have always kept the error as an adjacent
+  node.
+
+- **Alerts announce themselves on arrival.** `live: false` opts out, for
+  a standing informational banner that is part of the page rather than
+  news. On the web this costs little either way, since a live region
+  registered during the initial render announces nothing until it
+  changes.
+
+### Fixed
+
+- **`PlinthAnchor` and `PlinthUnstyledButton` could not be reached by
+  keyboard.** Both were `Semantics(...) > GestureDetector`, which
+  supplies a tap *action* but no focus node - clickable by mouse,
+  activatable by a screen reader in browse mode, and invisible to Tab.
+  **WCAG 2.1.1, failed outright.**
+
+  Both now take focus, activate on Enter and Space, and show a ring
+  while focused, drawn as a foreground decoration so nothing shifts. A
+  null callback is skipped rather than focusable and dead.
+
+  **No test here could have found it**, which is worth stating rather
+  than burying. Every accessibility test in this package walks the
+  semantics tree, and the tree was correct; the missing thing was a
+  focus node, which lives somewhere else entirely. It took a person with
+  a screen reader. `plinth_keyboard_reachable_test.dart` now sweeps
+  every interactive component for it.
+
+### Known gap
+
+Four parts of the announcement work are tested against the semantics
+tree and **have never been heard**: the checkbox/switch/radio change
+above, alerts defaulting to live, loading completion, and progress
+completion. Two of those are judgement calls rather than mechanics.
+
+What this release supports is that the library *has* announcements,
+tested - not that they are known to read well.
+
 ## 1.1.0
 
 **The first release shaped by hearing the library rather than testing
