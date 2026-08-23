@@ -86,18 +86,14 @@ else built** is worth more than any further feature.
 | **Accessibility probes** (`B0a`, `B0b`, `B0d`) | Run and recorded |
 | **The screen-reader pass** (`B0c`) | Run 22 Aug 2026. Two defects, both fixed; the nine form labels hold up in a real browser. [B0C_FINDINGS.md](B0C_FINDINGS.md) |
 | **Focus containment** | `PlinthFocusTrap`; smaller than planned — Drawer never needed it |
-| **Announcements** (`F-3`) | Built 22–23 Aug 2026 across validation, alerts, notifications, loading and progress. [F3_ANNOUNCEMENTS.md](F3_ANNOUNCEMENTS.md). Partly heard; see the claims gate |
+| **Announcements** (`F-3`) | Built 22–23 Aug 2026 across validation, alerts, notifications, loading and progress, and **heard end to end** in a fourth NVDA pass. [F3_ANNOUNCEMENTS.md](F3_ANNOUNCEMENTS.md) |
 | **Keyboard reachability** (`F-4`) | `PlinthAnchor` and `PlinthUnstyledButton` were clickable and announceable but not focusable — WCAG 2.1.1. Found by ear on 23 Aug 2026, and by nothing else: the semantics tree was correct |
 
 ## Next
 
-**1. Finish listening to `F-3`.** Four parts of the announcement work
-have never been heard: the checkbox/switch/radio label change, alerts
-defaulting to live, loading completion (which uses an announcement
-rather than a live region), and progress completion. Two of those are
-judgement calls, not mechanics. **Cheap, and it is what the claims gate
-below is waiting on.** The gallery now has use cases that can
-demonstrate them.
+**1. Publish 1.2.0.** Prepared and unpublished, and now carrying four
+listening passes' worth of fixes. Nothing is waiting on it but the
+release steps in [PUBLISHING.md](PUBLISHING.md).
 
 **2. The token hierarchy.** Formalise primitive / semantic /
 component tiers. The gate on everything in interop, and the last
@@ -219,13 +215,20 @@ with 43 golden images and 73 test files behind them.*
 accessibility work has been heard, not only asserted against simulated
 semantics trees.
 
-The claim that is still not available: that nothing changing on screen
-goes unannounced. `F-3` is **built and tested, and partly heard** — the
-pin input's result was confirmed spoken in a real browser on 23 Aug
-2026. Four parts have not been listened to, two of them judgement calls
-rather than mechanics, so the claim is *has announcements, tested*
-rather than *known to read well*. See
-[B0C_FINDINGS.md](B0C_FINDINGS.md#second-pass--23-aug-2026).
+**`F-3` is now heard end to end**, on both of its mechanisms, in a
+collaborative NVDA pass on 23 Aug 2026 — validation errors,
+notifications, alerts, loading completion and progress completion, no
+defects. Including both judgement calls: the error that left the
+checkbox's name, and alerts announcing themselves by default. See
+[B0C_FINDINGS.md](B0C_FINDINGS.md#fourth-pass--23-aug-2026).
+
+So **that nothing changing on screen goes unannounced is now a
+publishable claim** — heard, not asserted against a semantics tree.
+
+Two caveats belong with it wherever it is made. Announcements are
+silent on Android by that platform's own policy, so the tree-carried
+half is what reaches every platform. And *heard* means heard on the web
+with NVDA; no other reader has been in the room.
 
 **A caution the second pass earned.** `F-4` — two components that were
 clickable, announceable, and unreachable by Tab — was found by ear and

@@ -237,10 +237,10 @@ The claims gate in [ROADMAP.md](ROADMAP.md) named one claim as resting
 on nothing: *that nothing changing on screen goes unannounced.* All
 five tasks have landed, so the code behind it exists.
 
-**Partly heard, on 23 Aug 2026.** The pin input's result — the whole
-chain, live region through shared primitive — was confirmed spoken in a
-real browser, focus unmoved. Recorded in
-[B0C_FINDINGS.md](B0C_FINDINGS.md#second-pass--23-aug-2026).
+**Heard end to end, on 23 Aug 2026.** All five tasks confirmed aloud
+with NVDA — live regions *and* announcements, including both judgement
+calls. Recorded in
+[B0C_FINDINGS.md](B0C_FINDINGS.md#fourth-pass--23-aug-2026).
 
 **The rest is not earned yet**, and the difference matters: everything
 else here is verified against the semantics tree, which is exactly the
@@ -249,25 +249,25 @@ proved the point again — `F-4`, two components clickable and
 announceable but unreachable by Tab, was invisible to every test in
 this repo *because the tree was correct*.
 
-Four parts have not been listened to. Two are judgement calls rather
-than mechanics:
+The two judgement calls were the point of the exercise, and both hold:
 
-- The **checkbox, switch and radio** label change in task 2 — the error
-  left the control's name to become a live region.
-- **Alerts defaulting to live**, and what a page of standing callouts
-  sounds like on a platform that announces them on arrival.
-- **Loading completion**, which goes through `sendAnnouncement` rather
-  than a live region — a different mechanism from the one confirmed
-  above, and silent on Android by that platform's policy.
-- **Progress `completeLabel`.**
+- The **checkbox, switch and radio** change in task 2 — the error left
+  the control's name to become a live region, and reads beside it.
+- **Alerts defaulting to live** — raised alerts speak, `live: false`
+  banners stay quiet.
 
-The gallery gained two use cases so the last three can be reached at
-all: `PlinthAlert` → *Raised by an action* and `PlinthProgress` →
-*Announced on completion*, both button-driven because `&preview` drops
-the knobs panel.
+**One limit survives the pass.** `PlinthAnnounce.say` is silent on
+Android by that platform's own policy, so "heard" means heard on the
+web. Anything that must reach an Android user has to be carried in the
+tree by a live region, which is why the pair exists and why the
+tree-carried half is the default everywhere it fits.
 
-Until those are heard, the honest claim is that the library *has*
-announcements, tested — not that they are known to read well.
+Getting a screen reader and a local build into the same room cost far
+more than the checks did. The lessons are in
+[B0C_FINDINGS.md](B0C_FINDINGS.md#fourth-pass--23-aug-2026) — a dead
+`flutter run` leaves a service worker that serves a stale app, a knob
+cannot test an edge, and a probe you can only hear is no use when the
+app is silent.
 
 The comparison piece under *Trust and distribution* was waiting on
-this. It can be written once the rest is confirmed.
+this. It is no longer blocked.

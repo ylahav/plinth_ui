@@ -17,7 +17,11 @@ demo defect, and repeated one of the false alarms below. See
 **Third pass 23 Aug 2026**, a full sweep of the component tour once it
 was navigable. Three more defects, all of the same shape — a control
 that does not say what state it is in. See
-[the third pass](#third-pass--23-aug-2026) at the end.
+[the third pass](#third-pass--23-aug-2026).
+
+**Fourth pass 23 Aug 2026**, run as a collaboration against a local
+build: no defects, and **`F-3` heard end to end for the first time**.
+See [the fourth pass](#fourth-pass--23-aug-2026) at the end.
 
 ## The headline
 
@@ -383,3 +387,86 @@ loading completion, progress completion, and the checkbox/switch/radio
 error trade. The gallery now has a use case for the last of those —
 `PlinthCheckbox` → *Error announced on validate*, which raises an error
 on all three at once from a button, so it works under `&preview`.
+
+---
+
+# Fourth pass — 23 Aug 2026
+
+Run differently from the three before it: one person on NVDA, one
+driving a local build and writing use cases as the gaps appeared. Seven
+checks, chosen as everything `F-3` had built and nobody had listened to,
+plus the three fixes from the third pass.
+
+## The headline
+
+**No defects. Everything announced as designed, including both
+judgement calls.**
+
+`F-3` is now heard end to end, on both of its mechanisms — the live
+region *and* the announcement. The claim the roadmap has been hedging
+since the work started is available.
+
+## What was heard
+
+| | |
+|---|---|
+| **Validation errors** on checkbox, switch and radio | Spoken on arrival, focus unmoved. **The trade holds**: the error is no longer part of the control's name, and is read beside it instead |
+| **Alerts** | Spoken when raised. A `live: false` banner stays silent, which is the half that proves the flag rather than the default |
+| **Progress completion** | Silent through the run, `"Upload complete"` once at the end |
+| **Loading completion** | Spoken — the imperative half, through `PlinthAnnounce.say` |
+| **Stepper state** | `completed` / `current step` / `not completed`, per step |
+| **Spoiler toggle** | Button, collapsed, then expanded |
+| **Collapse trigger** | The same, once the demo marked it |
+
+The first two are the ones that mattered most. Both were decisions taken
+against the semantics tree alone, written into the 1.2.0 notes as
+behaviour changes an adopter would feel, and neither had been heard.
+
+## What the session cost, which was all harness
+
+No defect took more than a minute to confirm. Everything else went on
+getting a screen reader and a local build into the same room.
+
+**`flutter run` cannot host this.** With no interactive terminal it
+reads EOF on stdin as *quit*: the app launched, Chrome opened, and the
+process exited with `Application finished`. What was left was a dead tab
+that looked like a working one. Build and serve statically instead.
+
+**A dead `flutter run` leaves a service worker behind.** That origin
+then serves a stale or half-broken app, and a hard reload does not
+unregister it. This cost the most time of anything, and presented as
+*"no voice"* — which reads exactly like a total accessibility failure.
+**Moving to a fresh port fixed it instantly**, because a new origin
+cannot have one.
+
+**A local build with `SemanticsBinding.instance.ensureSemantics()`
+removes the largest false-failure source there is.** No invisible
+button, nothing to redo after each reload. It changes *when* the tree is
+built, not what is in it, so findings stay valid. Patch, build, revert
+the source — the served bundle has it and the repository does not.
+
+**A knob cannot test an edge.** Widgetbook rebuilds a use case when a
+knob changes, and a rebuild that remounts runs `initState` rather than
+`didUpdateWidget`. The loading overlay's completion never fired, and
+looked for a while like a broken announcement. A use case that finishes
+on its own inside one `State` announced immediately.
+
+**A probe has to be readable, not only audible.** When the app is
+silent, a diagnostic you can only hear tells you nothing.
+`PlinthAnnounce` → *Say something* shows `supportsAnnounce` and what
+`say` returned on screen, and calls `SemanticsService.sendAnnouncement`
+directly beside the wrapped call — so "the platform declines", "the
+wrapper is wrong" and "Flutter web cannot do this" are three different
+readings instead of one silence. That is what finally separated them.
+
+## What this changes
+
+The claims gate can stop hedging. The library has announcements, and
+they have been heard: **not asserted against a semantics tree, and not
+inferred from a passing test.**
+
+Two things stay true and are worth keeping in view. `PlinthAnnounce.say`
+is still silent on Android by that platform's own policy — heard here
+means heard on the web. And every pass so far has found something the
+tests could not: `F-4` was invisible to a tree walk because the tree was
+correct. Four clean checks are not a reason to stop listening.

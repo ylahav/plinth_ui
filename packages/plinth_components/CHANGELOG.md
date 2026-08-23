@@ -180,21 +180,27 @@ and rendered output has never been covered by the 1.0 promise - see
   not enough. The example now shows the `Semantics(button:, expanded:)`
   wrapper.
 
-### Known gap
+### Heard, not only tested
 
-**A third listening pass ran on 23 Aug 2026**, before this release, and
-is what found the stepper, the spoiler and the collapse trigger above.
-It also confirmed that switch, checkbox and radio each announce their
-label, their state, and the change when it is toggled.
+**Four listening passes ran against this release before it shipped**,
+the last of them a full sweep of everything above with NVDA. The third
+found the stepper, the spoiler and the collapse trigger; the fourth
+found nothing and confirmed the rest.
 
-What it did **not** cover is the announcement work itself: alerts
-defaulting to live, loading completion, progress completion, and the
-error trade on checkbox/switch/radio. Those are tested against the
-semantics tree and have not been heard. Two of them are judgement calls
-rather than mechanics.
+That includes both of the behaviour changes in *Changed*: validation
+errors are spoken when they appear, and the error is no longer part of
+the control's name; alerts raised by an action speak, and a
+`live: false` banner stays quiet.
 
-What this release supports is that the library *has* announcements,
-tested - not that they are known to read well.
+**One limit, stated rather than buried.** `PlinthAnnounce.say` is silent
+on Android, which deprecated announcement events because TalkBack clears
+its speech queue to serve them. `PlinthLoadingOverlay.completeLabel`
+goes through it, so loading *completion* is a web and iOS behaviour;
+arrival is a live region and reaches every platform. Anything that must
+be heard everywhere belongs in the tree, not in an announcement.
+
+And *heard* means heard with NVDA on Chrome. No other screen reader has
+been in the room.
 
 ## 1.1.0
 
