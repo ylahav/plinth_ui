@@ -1,6 +1,6 @@
 # Plinth UI — Roadmap
 
-*Last checked 23 Aug 2026, against `1.1.0`.*
+*Last checked 23 Aug 2026, against `1.2.0`.*
 
 > Task IDs like `B0c` appear only where something outside this file
 > cites them — commit messages, or
@@ -91,20 +91,16 @@ else built** is worth more than any further feature.
 
 ## Next
 
-**1. Publish 1.2.0.** Prepared and unpublished, and now carrying four
-listening passes' worth of fixes. Nothing is waiting on it but the
-release steps in [PUBLISHING.md](PUBLISHING.md).
-
-**2. The token hierarchy.** Formalise primitive / semantic /
+**1. The token hierarchy.** Formalise primitive / semantic /
 component tiers. The gate on everything in interop, and the last
 structural piece.
 
-**3. DTCG import.** `PlinthTheme.fromDtcg(json)`. **Re-ranked up:**
+**2. DTCG import.** `PlinthTheme.fromDtcg(json)`. **Re-ranked up:**
 it is the one planned item neither competitor has, which makes it the
 strongest remaining differentiator rather than only an audience-B
 enabler. Depends on the token hierarchy above.
 
-**4. One real app, built by somebody else.** The only thing that
+**3. One real app, built by somebody else.** The only thing that
 produces undiscounted evidence. The validation app's author is also
 Plinth's author, and that discount is applied everywhere it is cited.
 

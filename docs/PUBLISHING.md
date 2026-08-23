@@ -9,13 +9,40 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.0.0** | 1.0.0 |
-| `plinth_hooks` | **1.0.0** | 1.0.0 |
-| `plinth_components` | **1.0.0** | 1.0.0 |
+| `plinth_core` | **1.2.0** | 1.2.0 |
+| `plinth_hooks` | **1.2.0** | 1.2.0 |
+| `plinth_components` | **1.2.0** | 1.2.0 |
 
-**1.0.0 shipped 20 Aug 2026.** `flutter pub add plinth_components` now
-resolves to it without an explicit constraint, which the two betas never
-did — pub.dev does not promote a prerelease to "latest".
+**1.2.0 shipped 23 Aug 2026**, in dependency order, 19 seconds end to
+end.
+
+> This table said `1.0.0` until then, having gone stale through two
+> releases. It is prose with nothing keeping it honest — the same shape
+> as the component counts on the pub.dev pages, which now have a test
+> holding them to `COMPONENTS.md`. Nothing holds this one. Update it
+> when you publish.
+
+### What the `1.2.0` release proved
+
+**Publishing was the easy part.** Three dry runs, zero warnings, and the
+two `pubspec_overrides` hints on `plinth_components` that this document
+already predicts. The archive-diff check is cheaper than the recipe
+below suggests and cheaper still than either: `git diff v1.1.0..HEAD --
+packages/plinth_core/lib` answers "has the leaf drifted since it was
+last published" directly, without a download or a cache lookup, because
+the tag is the published state.
+
+**The release itself is the thing worth recording.** It is the first
+whose accessibility claims were verified by ear *before* it shipped
+rather than after. Four listening passes ran against it: the third found
+three defects, the fourth found none and confirmed the rest. Two of the
+behaviour changes in its notes — a validation error leaving a control's
+accessible name, and alerts announcing themselves by default — were
+decisions taken against a semantics tree and would have shipped
+unheard under the previous rhythm.
+
+`B0c` was run *after* 1.1.0 went out and produced two corrections. This
+time the corrections landed first.
 
 ### What the `1.0.0` release proved
 
