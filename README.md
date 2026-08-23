@@ -259,7 +259,7 @@ dart pub global activate melos
 # Links the packages to each other and fetches dependencies
 melos bootstrap
 
-# The showcase app — every component wired together in one scrollable demo
+# The showcase app — every component, one section at a time
 cd example && flutter run
 
 # ...or the Widgetbook gallery — each component's variants as separate use cases
@@ -299,13 +299,22 @@ and don't regenerate goldens locally (there's a
 
 ### The example app
 
-The example app demonstrates most components in one scrollable page —
-run it to see them live, or browse `docs/COMPONENTS.md` for the
-complete reference without running anything. It has a persistent
-sidebar (wide screens) or drawer menu (narrow screens) that jumps to
-any section, a small branded hero at the top, and a **"Show code"**
-toggle on every section that reveals the exact source used for that
-demo (with a copy button). Those snippets live as hand-maintained
+The example app demonstrates most components — run it to see them
+live, or browse `docs/COMPONENTS.md` for the complete reference without
+running anything. A persistent sidebar (wide screens) or drawer menu
+(narrow screens) selects **one section at a time**, and **"Show code"**
+on each section reveals the exact source behind that demo, with a copy
+button.
+
+> **One at a time, rather than the single long page this used to be.**
+> With all 115 sections mounted, reaching one control meant Tab-ing past
+> 115 sidebar entries and then every control above it — hundreds of
+> stops, on the app that exists to invite exactly that inspection.
+> Selecting a section now also moves focus to the top of it, so the next
+> Tab steps *into* the component. **"All components"** at the top of the
+> sidebar restores the whole tour for anyone who wants to scroll it.
+
+Those snippets live as hand-maintained
 string literals in `example/lib/src/demo_code.dart` (and
 `src/showcase/examples_code.dart` for the composed examples) — they
 are *not* extracted at build time, so nothing enforces that they

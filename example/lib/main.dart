@@ -204,6 +204,14 @@ class _ShowcasePageState extends State<ShowcasePage> {
   bool _showWindow = true;
   final ScrollController _scroller = ScrollController();
 
+  /// The page's own scroller.
+  ///
+  /// Distinct from [_scroller], which belongs to the Scroller section's
+  /// demo list. Switching sections has to return the page to the top —
+  /// otherwise a short section arrives already scrolled past its own
+  /// heading, having inherited the offset of the long one before it.
+  final ScrollController _pageScroller = ScrollController();
+
   // Keyed per section title so the sidebar nav can scroll to each one
   // via Scrollable.ensureVisible — populated lazily inside
   // _sectionTitle() rather than declared upfront, so adding a new
@@ -212,6 +220,54 @@ class _ShowcasePageState extends State<ShowcasePage> {
 
   /// Section names whose "Show code" panel is currently expanded.
   final Set<String> _codeVisible = {};
+
+  /// The section on screen, or null for the whole tour at once.
+  ///
+  /// One at a time is the default, and the reason is keyboard reach.
+  /// With every section mounted, getting to a control meant Tab-ing
+  /// past 115 sidebar entries and then every control above it on the
+  /// page — hundreds of stops to reach one component, which made the
+  /// showcase unusable for the exact evaluation it exists to invite.
+  /// It is no kindness to a mouse user either.
+  String? _section = _sectionOrder.first;
+
+  /// Holds focus at the top of the content, so selecting a section
+  /// puts the next Tab *inside* it rather than back at the start of
+  /// the sidebar. Moving focus is also what tells a screen reader the
+  /// page changed under it.
+  final FocusNode _contentFocus =
+      FocusNode(debugLabel: 'showcase content', skipTraversal: true);
+
+  void _showSection(String? name) {
+    setState(() => _section = name);
+    if (_pageScroller.hasClients) _pageScroller.jumpTo(0);
+    _contentFocus.requestFocus();
+  }
+
+  /// Keeps only the run of children belonging to [_section].
+  ///
+  /// The page is one flat list with `_sectionTitle` calls as the
+  /// dividers between sections, so a section is everything from its
+  /// title up to the next one. Filtering here rather than restructuring
+  /// 1,700 lines of authored layout into a map of builders: the page
+  /// stays readable as a page, and a new section needs no registration
+  /// beyond the `_sectionTitle` call it already has.
+  ///
+  /// Anything before the first title — the hero and the alert — falls
+  /// out for free, which is the point: they were two more Tab stops
+  /// between the sidebar and the component.
+  List<Widget> _onlySelectedSection(List<Widget> all) {
+    final name = _section;
+    if (name == null) return all;
+
+    final kept = <Widget>[];
+    var inside = false;
+    for (final child in all) {
+      if (child is _SectionBlock) inside = child.name == name;
+      if (inside) kept.add(child);
+    }
+    return kept;
+  }
 
   static const List<String> _sectionOrder = componentSectionOrder;
 
@@ -248,6 +304,8 @@ class _ShowcasePageState extends State<ShowcasePage> {
     _combobox.dispose();
     _dialog.dispose();
     _scroller.dispose();
+    _pageScroller.dispose();
+    _contentFocus.dispose();
     super.dispose();
   }
 
@@ -255,9 +313,12 @@ class _ShowcasePageState extends State<ShowcasePage> {
     final key = _sectionKeys.putIfAbsent(text, () => GlobalKey());
     final code = demoCode[text];
     final expanded = _codeVisible.contains(text);
-    final isFirst = text == _sectionOrder.first;
+    // A rule between sections separates them from each other. Shown on
+    // its own, a section has nothing above it to be separated from.
+    final isFirst = _section != null || text == _sectionOrder.first;
 
-    return Container(
+    return _SectionBlock(
+      name: text,
       key: key,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -372,24 +433,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
 
   Widget _gap([double height = 40]) => SizedBox(height: height);
 
-  void _scrollToSection(String name) {
-    final key = _sectionKeys[name];
-    final ctx = key?.currentContext;
-    if (ctx == null) {
-      // Fails silently by design elsewhere, but during development
-      // this is the one thing that would explain "nothing happens on
-      // click" with no visible error — surfacing it loudly here.
-      debugPrint('Plinth showcase: no section registered for "$name"');
-      return;
-    }
-    Scrollable.ensureVisible(
-      ctx,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-      alignment: 0.05,
-    );
-  }
-
   /// A literal pedestal silhouette — three stacked bars of decreasing
   /// width, evoking the "plinth" the library is named after. Used as
   /// the wordmark's icon in the hero and sidebar header rather than a
@@ -475,23 +518,28 @@ class _ShowcasePageState extends State<ShowcasePage> {
               ],
             ),
           ),
-        for (final name in _sidebarOrder)
+        for (final name in <String?>[null, ..._sidebarOrder])
           ListTile(
             dense: true,
-            title: Text(name, style: const TextStyle(fontSize: 13.5)),
+            selected: _section == name,
+            title: Text(
+              name ?? 'All components',
+              style: TextStyle(
+                fontSize: 13.5,
+                fontStyle: name == null ? FontStyle.italic : null,
+              ),
+            ),
             onTap: () {
               if (inDrawer) {
                 Navigator.of(context).pop();
-                // Let the drawer's own closing animation finish
-                // before scrolling the page underneath it — jumping
-                // both at once looks like the scroll didn't register.
+                // Let the drawer's own closing animation finish before
+                // the page changes underneath it — doing both at once
+                // reads as the tap not having registered.
                 Future.delayed(const Duration(milliseconds: 250), () {
-                  if (mounted) _scrollToSection(name);
+                  if (mounted) _showSection(name);
                 });
               } else {
-                // No drawer to close on the persistent wide-screen
-                // sidebar — scroll immediately.
-                _scrollToSection(name);
+                _showSection(name);
               }
             },
           ),
@@ -610,9 +658,10 @@ class _ShowcasePageState extends State<ShowcasePage> {
                 // exactly what "click a nav item, scroll to it"
                 // needs — fine performance-wise at 50 sections.
                 child: SingleChildScrollView(
+                  controller: _pageScroller,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
+                    children: _onlySelectedSection([
                       _buildHero(),
                       if (_alertVisible) ...[
                         PlinthAlert(
@@ -2349,16 +2398,23 @@ class _ShowcasePageState extends State<ShowcasePage> {
                             ),
                         ],
                       ),
-                    ],
+                    ]),
                   ),
                 ),
               );
 
-              if (!isWide) return content;
+              // Focus, not FocusScope: this holds the traversal
+              // position at the top of the content so the next Tab
+              // steps into the section rather than back to the top of
+              // a 115-entry sidebar. skipTraversal keeps it out of the
+              // way of anyone Tab-ing through normally.
+              final focusable = Focus(focusNode: _contentFocus, child: content);
+
+              if (!isWide) return focusable;
               return Row(
                 children: [
                   _buildSidebar(inDrawer: false),
-                  Expanded(child: content),
+                  Expanded(child: focusable),
                 ],
               );
             },
@@ -2490,3 +2546,19 @@ const List<String> componentSectionOrder = [
   'Button Sizes',
   'Button Colors',
 ];
+
+/// One section of the component tour, tagged with its name so
+/// `_onlySelectedSection` can find where each begins.
+///
+/// A marker rather than a container: the page is authored as one flat
+/// list of children with section titles acting as dividers, and this
+/// keeps that shape while making the boundaries findable.
+class _SectionBlock extends StatelessWidget {
+  const _SectionBlock({super.key, required this.name, required this.child});
+
+  final String name;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => child;
+}
