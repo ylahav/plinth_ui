@@ -5153,15 +5153,19 @@ class _VerificationCodeExampleState extends State<VerificationCodeExample> {
               }),
               onCompleted: (v) => setState(() => _accepted = v == _expected),
               error: _accepted == false,
+              // The result belongs *to* the pin input rather than
+              // beside it. statusText is a live region, so it is spoken
+              // when it appears; this example used to render its own
+              // PlinthText sibling, which looks identical and announces
+              // nothing -- the demo bypassing the very fix B0c made,
+              // and reported as a library failure because there was no
+              // way to tell the two apart from outside.
+              statusText: switch (_accepted) {
+                true => 'Verified',
+                false => 'That code has expired or is wrong',
+                null => 'Code expires in 9:58',
+              },
             ),
-            if (_accepted == true)
-              const PlinthText('Verified', size: PlinthSize.sm, color: 'green')
-            else if (_accepted == false)
-              const PlinthText('That code has expired or is wrong',
-                  size: PlinthSize.sm, color: 'red')
-            else
-              const PlinthText('Code expires in 9:58',
-                  size: PlinthSize.sm, color: 'gray'),
             PlinthAnchor('Send a new code',
                 size: PlinthSize.sm, onTap: () => setState(() => _code = '')),
           ],

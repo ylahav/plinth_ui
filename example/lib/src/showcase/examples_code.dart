@@ -2039,15 +2039,15 @@ return PlinthPaper(
         }),
         onCompleted: (v) => setState(() => _accepted = v == _expected),
         error: _accepted == false,
+        // statusText, not a PlinthText beside the field: it is a live
+        // region, so the result is spoken when it appears rather than
+        // only when a reader goes looking for it.
+        statusText: switch (_accepted) {
+          true => 'Verified',
+          false => 'That code has expired or is wrong',
+          null => 'Code expires in 9:58',
+        },
       ),
-      if (_accepted == true)
-        const PlinthText('Verified', size: PlinthSize.sm, color: 'green')
-      else if (_accepted == false)
-        const PlinthText('That code has expired or is wrong',
-            size: PlinthSize.sm, color: 'red')
-      else
-        const PlinthText('Code expires in 9:58',
-            size: PlinthSize.sm, color: 'gray'),
       PlinthAnchor('Send a new code',
           size: PlinthSize.sm, onTap: () => setState(() => _code = '')),
     ],
