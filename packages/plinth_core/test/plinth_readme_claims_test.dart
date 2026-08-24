@@ -15,12 +15,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_core/plinth_core.dart';
 
 double _luminance(Color c) {
-  double channel(double v) => v <= 0.03928
-      ? v / 12.92
-      : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
-  return 0.2126 * channel(c.r) +
-      0.7152 * channel(c.g) +
-      0.0722 * channel(c.b);
+  double channel(double v) =>
+      v <= 0.03928 ? v / 12.92 : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
+  return 0.2126 * channel(c.r) + 0.7152 * channel(c.g) + 0.0722 * channel(c.b);
 }
 
 double _ratio(Color a, Color b) {
@@ -59,7 +56,8 @@ void main() {
     });
 
     test('and returns violet untouched, because it already passed', () {
-      expect(theme.readableOn('violet', theme.surface), theme.color('violet', 6));
+      expect(
+          theme.readableOn('violet', theme.surface), theme.color('violet', 6));
     });
 
     test('#FF9500 on white is the 2.20:1 the role section quotes', () {
