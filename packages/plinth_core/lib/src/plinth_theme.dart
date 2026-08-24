@@ -515,9 +515,10 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// [shaded] mirrors a shade for the theme's brightness, which fixes
   /// the *theme* half of the problem. It cannot fix the *palette* half:
   /// the ramps differ in intrinsic lightness, so one shade index can't
-  /// serve every hue. Shade 6 of `violet` reads comfortably on white
-  /// while shade 6 of `cyan` lands near 2.2:1 — a colour you can see
-  /// but not read.
+  /// serve every hue. Measured against white, **one of the thirteen
+  /// built-in ramps clears 4.5:1 at shade 6** — `violet`, at 4.95:1.
+  /// `cyan` is 2.79:1 and `yellow` 1.86:1: colours you can see but not
+  /// read.
   ///
   /// This walks the ramp from the role shade toward whichever end
   /// contrasts with [background] and returns the first shade clearing

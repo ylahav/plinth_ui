@@ -24,6 +24,8 @@ Flutter asked a question a web library never had to.
 
 📖 **[Component reference](docs/COMPONENTS.md)** · 🧭 **[Adopting tokens](docs/ADOPTING_TOKENS.md)** · 🧱 **[Showcase blocks](docs/SHOWCASE.md)** · 🧪 **[Testing guide](docs/TESTING.md)** · 🔍 **[Pre-1.0 audit](docs/PRE_1_0_AUDIT.md)** · 🗺️ **[Roadmap](docs/ROADMAP.md)**
 
+📝 **[The semantics tree was right. The link was unusable.](docs/POST_THE_TREE_WAS_RIGHT.md)** — a Flutter accessibility bug no semantics test can find, and the ten-line test that catches the category.
+
 Both are the real apps in this repo, built for the web and deployed on
 every push to `main` by `.github/workflows/pages.yml`. The demo is the
 curated tour — every component, plus the composed blocks, each with its
