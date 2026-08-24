@@ -1,0 +1,29 @@
+name: plinth_tutorial
+description: >-
+  Larder — the small app built step by step in
+  docs/TUTORIAL_LARDER_APP.md. Tracks what food is in the house,
+  suggests what can be cooked from it, and guides you through cooking it.
+publish_to: none
+version: 0.0.1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plinth_components:
+    path: ../packages/plinth_components
+  plinth_core:
+    path: ../packages/plinth_core
+  plinth_hooks:
+    path: ../packages/plinth_hooks
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

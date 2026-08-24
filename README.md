@@ -20,9 +20,11 @@ Flutter asked a question a web library never had to.
 
 [![CI](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml/badge.svg)](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml)
 
-🌐 **[Live demo](https://ylahav.github.io/plinth_ui/)** · 🎛️ **[Widgetbook gallery](https://ylahav.github.io/plinth_ui/widgetbook/)**
+🌐 **[Live demo](https://ylahav.github.io/plinth_ui/)** · 🎛️ **[Widgetbook gallery](https://ylahav.github.io/plinth_ui/widgetbook/)** · 🍳 **[Larder, the tutorial app](https://ylahav.github.io/plinth_ui/tutorial/)**
 
 📖 **[Component reference](docs/COMPONENTS.md)** · 🧭 **[Adopting tokens](docs/ADOPTING_TOKENS.md)** · 🧱 **[Showcase blocks](docs/SHOWCASE.md)** · 🧪 **[Testing guide](docs/TESTING.md)** · 🔍 **[Pre-1.0 audit](docs/PRE_1_0_AUDIT.md)** · 🗺️ **[Roadmap](docs/ROADMAP.md)**
+
+🍳 **[Build Larder](docs/TUTORIAL_LARDER_APP.md)** — a six-part tutorial that ends with a real app: what food is in the house, what to cook, and how to cook it. The finished code is in [tutorial/](tutorial/), compiled and tested by CI.
 
 📝 **[The semantics tree was right. The link was unusable.](docs/POST_THE_TREE_WAS_RIGHT.md)** — a Flutter accessibility bug no semantics test can find, and the ten-line test that catches the category.
 
