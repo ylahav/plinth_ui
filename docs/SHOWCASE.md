@@ -23,9 +23,28 @@ arrangement yet — usually from components that already exist.
 snippet its "Show code" panel displays. The widgets themselves live in
 `examples.dart`, the snippets in `examples_code.dart`.
 
-The snippets are **hand-maintained string literals**, not extracted at
-build time — edit the snippet alongside the example it mirrors, or the
-code panel will quietly show something the demo no longer does.
+The snippets are **generated from the blocks themselves** by
+`example/tool/generate_example_code.dart`, which parses `examples.dart`
+and writes out each block's real source — the widget class, plus its
+`State` class where it has one. Run it after changing a block:
+
+```bash
+cd example && dart run tool/generate_example_code.dart
+```
+
+`example/test/examples_code_fresh_test.dart` fails if you forget, so a
+stale panel is a red build rather than something nobody notices.
+
+They used to be hand-written literals, and had drifted three ways by
+the time that was fixed: wrapped lines the formatter had since moved, a
+`return` kept in half the blocks and stripped in the other half, and
+stateful blocks whose panels referred to fields they never showed — so
+the text behind the copy button could not compile if you pasted it.
+
+**The component tour's snippets are still hand-maintained**, in
+`example/lib/src/demo_code.dart`. Those mirror sections of `main.dart`
+rather than whole classes, so the same extraction does not apply to
+them yet.
 
 ## What exists
 
@@ -170,15 +189,29 @@ already provides what Mantine needed a third-party engine for.
 
 ## Adding an example
 
-1. Write the widget in `examples.dart`.
-2. Add its source snippet to `examples_code.dart`, keyed by class name.
-3. Register an `ExampleEntry` in `showcase_data.dart` under the right
-   subcategory, or add a new `SubcategoryData` if none fits.
+1. Write the widget in `examples.dart`, as a class named
+   `<Something>Example`. The name is the key everything else uses.
+2. Register an `ExampleEntry` in `showcase_data.dart` under the right
+   subcategory, or add a new `SubcategoryData` if none fits. Each entry
+   needs a one-line `WidgetBuilder` adapter beside the others at the
+   bottom of that file — a constructor tear-off is
+   `({Key? key}) -> Widget`, which is not assignable to `WidgetBuilder`.
+3. Regenerate the snippets:
+
+   ```bash
+   cd example && dart run tool/generate_example_code.dart
+   ```
+
+Step 3 used to be "write the snippet out again by hand", which is why
+they drifted. Nothing is transcribed now — the panel shows the class
+the app compiles.
 
 `example/test/showcase_smoke_test.dart` builds every block and asserts
-none throws, so a new entry is covered the moment it is registered. It
-also checks each block has a non-empty code snippet — easy to forget,
-and a missing one renders an empty panel rather than failing.
+none throws, so a new entry is covered the moment it is registered.
+`examples_code_fresh_test.dart` covers the rest: that the committed
+generated file is current, that every panel's text really appears in
+`examples.dart`, and that no snippet is orphaned from a block or the
+other way round.
 
 That test widens the viewport to 1400x2000 before pumping. Blocks are
 laid out for a page rather than a phone, and several would overflow the

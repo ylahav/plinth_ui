@@ -342,13 +342,20 @@ button.
 > Tab steps *into* the component. **"All components"** at the top of the
 > sidebar restores the whole tour for anyone who wants to scroll it.
 
-Those snippets live as hand-maintained
-string literals in `example/lib/src/demo_code.dart` (and
-`src/showcase/examples_code.dart` for the composed examples) — they
-are *not* extracted at build time, so nothing enforces that they
-match the widgets they mirror. Update the snippet alongside any demo
-you edit; a stale one still compiles and still renders a working code
-panel, which is what makes the drift easy to miss.
+The composed blocks' snippets are **generated from the blocks
+themselves** — `example/tool/generate_example_code.dart` parses
+`examples.dart` and writes each block's real source into
+`src/showcase/examples_code.dart`, so the panel cannot describe
+something the widget no longer does. Run it after changing a block
+(`cd example && dart run tool/generate_example_code.dart`);
+`examples_code_fresh_test.dart` fails in CI if you forget.
+
+**The component tour's snippets are still hand-maintained**, as string
+literals in `example/lib/src/demo_code.dart`. Those mirror sections of
+`main.dart` rather than whole classes, so nothing enforces that they
+match. Update the snippet alongside any tour demo you edit; a stale one
+still compiles and still renders a working code panel, which is what
+makes the drift easy to miss.
 
 ## Running the example app on Web and Desktop
 
