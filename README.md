@@ -1,6 +1,6 @@
 # Plinth UI
 
-**A design-token engine for Flutter — and 115 components built on it, so
+**A design-token engine for Flutter — and 117 components built on it, so
 you can see that it holds up.**
 
 - **Colour resolves against a WCAG contrast floor**, not a fixed shade.
@@ -15,8 +15,12 @@ you can see that it holds up.**
   you to replace one with the other.
 
 Mantine-inspired rather than a port: 112 components track
-`@mantine/core` because its answer was right, and three exist because
-Flutter asked a question a web library never had to.
+`@mantine/core` because its answer was right, and five exist because
+Flutter asked a question a web library never had to — `PlinthLtr`,
+`PlinthFocusTrap`, `PlinthTapTarget`, `PlinthLiveRegion` and
+`PlinthAnnounceWhen`. The last two are the clearest case of the
+pattern: the web spells a live region as an attribute, so Mantine never
+needed a component for it and Flutter has nothing at all.
 
 [![CI](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml/badge.svg)](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml)
 
@@ -28,11 +32,13 @@ Flutter asked a question a web library never had to.
 
 📝 **[The semantics tree was right. The link was unusable.](docs/POST_THE_TREE_WAS_RIGHT.md)** — a Flutter accessibility bug no semantics test can find, and the ten-line test that catches the category.
 
-Both are the real apps in this repo, built for the web and deployed on
+All three are real apps in this repo, built for the web and deployed on
 every push to `main` by `.github/workflows/pages.yml`. The demo is the
 curated tour — every component, plus the composed blocks, each with its
 source. The gallery is the exhaustive one: every state of every
-component, with knobs to poke at them.
+component, with knobs to poke at them. Larder is neither: it is one
+small app that uses the library the way an app would, which is the only
+one of the three that can show whether the pieces hold together.
 
 > **Testing either demo with a screen reader?** Press `Tab` once from
 > the top of the page and `Enter` before anything else.
@@ -159,7 +165,7 @@ pixel values, so `spacing`, `radius`, and `fontSizes` can be retuned in
 one place.
 
 **[docs/COMPONENTS.md](docs/COMPONENTS.md)** is the full prop reference
-for all 115 components, and the theme-token table there explains which
+for all 117 components, and the theme-token table there explains which
 color method to reach for (`shaded`, `contrastingOn`, `readableOn`)
 when you build your own widget on the same foundation.
 
@@ -171,8 +177,8 @@ a path dependency **does not work**, and the error is not obviously
 about what it is about:
 
 ```
-Because your_app depends on plinth_components ^1.0.1 which
-depends on plinth_core ^1.0.1, plinth_core from hosted is
+Because your_app depends on plinth_components ^1.2.0 which
+depends on plinth_core ^1.2.0, plinth_core from hosted is
 required. So, because your_app depends on plinth_core from path,
 version solving failed.
 ```
@@ -183,7 +189,7 @@ This is the first thing an adopter hits, before writing any Dart. Use
 ```yaml
 # your_app/pubspec.yaml
 dependencies:
-  plinth_components: ^1.0.1
+  plinth_components: ^1.2.0
 
 dependency_overrides:
   plinth_core:
@@ -228,12 +234,17 @@ plinth_ui/
     plinth_hooks/             # PlinthDisclosureController (useDisclosure equivalent)
   example/                  # Showcase app — run this to see the components live
   widgetbook/               # Isolated component gallery (manual/non-codegen setup)
+  tutorial/                 # Larder — the finished app from the tutorial,
+                            #   compiled and tested by CI
   docs/
     ROADMAP.md                # The single plan — who it is for, what is
-    │                           done, what is next, and what is declined
+    │                           done, what is next, and what is declined.
+    │                           The component/test counts quoted in this
+    │                           README come from its claims gate
     COMPONENTS.md             # Per-component prop reference
     ADOPTING_TOKENS.md        # What adopting tokens costs an app, and
     │                           the five patterns every adopter hits
+    TUTORIAL_LARDER_APP.md    # The six-part tutorial that builds tutorial/
     TESTING.md                # How to verify this locally — SDK setup
     │                           through golden tests
     PUBLISHING.md             # Release order, and the mistake that has
@@ -248,6 +259,11 @@ plinth_ui/
     PRE_1_0_AUDIT.md          # How complete each component is
     B0C_SCREEN_READER_PASS.md # The one accessibility task a person has
     │                           to run
+    B0C_FINDINGS.md           # What was heard when it was run
+    F3_ANNOUNCEMENTS.md       # The announcement work — what a screen
+    │                           reader says, and when it stays quiet
+    POST_THE_TREE_WAS_RIGHT.md # The accessibility bug no semantics test
+                              #   could find
 ```
 
 
@@ -268,6 +284,9 @@ cd example && flutter run
 
 # ...or the Widgetbook gallery — each component's variants as separate use cases
 cd ../widgetbook && flutter run
+
+# ...or Larder, the app the tutorial builds
+cd ../tutorial && flutter run
 ```
 
 ### Making a change
@@ -284,6 +303,11 @@ leaves the docs drifting from the code:
 5. The prop reference in `docs/COMPONENTS.md` (and remove the entry from
    its *Coming soon* list if you just built one)
 6. `CHANGELOG.md` and a version bump in `pubspec.yaml`
+7. If you added or removed a component, the counts in **the claims gate
+   at the end of `docs/ROADMAP.md`** — that is where the component,
+   golden and test-file numbers quoted in this README come from, and
+   every count here has drifted at least once by being updated in one
+   place and not the other
 
 Then verify exactly what CI verifies, from the repo root:
 
@@ -311,8 +335,8 @@ on each section reveals the exact source behind that demo, with a copy
 button.
 
 > **One at a time, rather than the single long page this used to be.**
-> With all 115 sections mounted, reaching one control meant Tab-ing past
-> 115 sidebar entries and then every control above it — hundreds of
+> With all 112 sections mounted, reaching one control meant Tab-ing past
+> 112 sidebar entries and then every control above it — hundreds of
 > stops, on the app that exists to invite exactly that inspection.
 > Selecting a section now also moves focus to the top of it, so the next
 > Tab steps *into* the component. **"All components"** at the top of the
@@ -382,7 +406,7 @@ the sidebar.
   shared between them (a blue button is the same blue either way); only
   the chrome inverts. See
   **[docs/COMPONENTS.md § Theme tokens](docs/COMPONENTS.md#theme-tokens)**.
-- **115 components** across Primitives, Forms, Feedback, Data Display,
+- **117 components** across Primitives, Forms, Feedback, Data Display,
   Navigation, Surfaces, and Overlays — full list with props in
   **[docs/COMPONENTS.md](docs/COMPONENTS.md)**, kept current every round
   rather than duplicated here. A few architectural patterns worth
@@ -403,17 +427,19 @@ the sidebar.
     caller rather than managing it internally.
 - **Widgetbook gallery** (`widgetbook/`) — manual (non-codegen)
   registration of every component's key states as browsable use cases,
-  with a knob-driven **Playground** for 107 of the 115 components
+  with a knob-driven **Playground** for 108 of the 117 components
   alongside the static variant grids (the two answer different
   questions: a playground explores combinations, a grid compares
-  options side by side). A smoke test builds all 225 use cases in CI,
+  options side by side). A smoke test builds all 238 use cases in CI,
   so a page that compiles but throws on render is caught before anyone
-  opens it. `web/` is checked in — `cd widgetbook && flutter run -d
-  chrome`.
+  opens it, and a second one builds every one of them again
+  right-to-left — the cheap half of the RTL question (does anything
+  *break*), for one extra pump each. `web/` is checked in — `cd
+  widgetbook && flutter run -d chrome`.
 - **Tests** — pure-logic tests for `PlinthTheme`'s shade generator and
   `PlinthDisclosureController`, a golden (visual regression) test suite
   for `PlinthButton` (variants, a color override, disabled state, all
-  sizes), and widget behavior tests across 65 test files. **Every
+  sizes), and widget behavior tests across 74 test files. **Every
   public component has at least one test** — the only untested class is
   `PlinthOverlayHost`, which is internal and exercised indirectly
   through `PlinthModalHost`/`PlinthDrawerHost`.
@@ -517,19 +543,31 @@ intentional rather than bugs:
   `example/test/section_coverage_test.dart` now holds the section list
   against the snippet map so the two can't drift apart silently.
 
-  The three Flutter-specific additions — `PlinthLtr`, `PlinthFocusTrap`,
-  `PlinthTapTarget` — deliberately have no tour section. Each is
-  behaviour rather than appearance (a pinned text direction, a focus
-  boundary, a minimum hit area), and a section showing one would be a
+  The five Flutter-specific additions — `PlinthLtr`, `PlinthFocusTrap`,
+  `PlinthTapTarget`, `PlinthLiveRegion` and `PlinthAnnounceWhen` —
+  deliberately have no tour section. Each is behaviour rather than
+  appearance (a pinned text direction, a focus boundary, a minimum hit
+  area, something spoken), and a section showing one would be a
   screenshot of nothing. `PlinthLtr` has a Widgetbook use case, where a
-  side-by-side comparison actually shows something.
+  side-by-side comparison actually shows something; the two
+  announcement components are exercised through gallery demos that can
+  actually fire them — a progress bar that runs to completion, rather
+  than one rendered at 100%, which is a statistic and announces
+  nothing.
 - ~~Make a local `flutter test` quiet again~~ — done. The golden tests
   carry `@Tags(['golden'])` and `dart_test.yaml` excludes that tag on
   Windows and macOS only, so they still run in CI. Note this also means
   you can't force them on locally with `--tags golden`; the OS
   exclusion wins. That's deliberate — they cannot pass off Linux — but
   it's worth knowing before you go looking for the flag.
-- Fill in pub.dev's discoverability fields — the package scores
-  160/160 on pana but ships no `topics:` and no `screenshots:` in its
-  pubspec, which are the two things that make it findable by someone
-  who isn't already looking for it.
+- ~~Fill in pub.dev's discoverability fields~~ — done. All three
+  packages now carry `topics:`, and `plinth_components` ships
+  `screenshots:` as well, which were the two things making it findable
+  by someone who wasn't already looking for it.
+
+**The plan itself lives in [docs/ROADMAP.md](docs/ROADMAP.md)**, not
+here — the list above is the residue of work that ran through this
+file. The three things actually next are the token hierarchy
+(primitive / semantic / component tiers, which gates all interop),
+`PlinthTheme.fromDtcg(json)`, and one real app built by somebody who
+isn't the author.
