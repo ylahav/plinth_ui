@@ -544,11 +544,11 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     final target = minRatio ?? level.ratio;
     final start = shadeFor(from);
     // Darken against a light background, lighten against a dark one.
-    final step = _luminance(background) > 0.5 ? 1 : -1;
+    final step = relativeLuminance(background) > 0.5 ? 1 : -1;
 
     for (var shade = start; shade >= 0 && shade <= 9; shade += step) {
       final candidate = color(name, shade);
-      if (_contrastRatio(candidate, background) >= target) return candidate;
+      if (contrastRatio(candidate, background) >= target) return candidate;
     }
     return color(name, step > 0 ? 9 : 0);
   }
@@ -575,14 +575,18 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// ratio, well under the 4.5:1 WCAG AA asks for — and which way it
   /// falls depends on the fill, not on the theme's brightness.
   Color contrastingOn(Color background) {
-    return _contrastRatio(onFilledInverse, background) >
-            _contrastRatio(onFilled, background)
+    return contrastRatio(onFilledInverse, background) >
+            contrastRatio(onFilled, background)
         ? onFilledInverse
         : onFilled;
   }
 
   /// Relative luminance per WCAG 2.x.
-  static double _luminance(Color c) {
+  ///
+  /// Public because [contrastRatio] is: a caller checking its own colours
+  /// against a floor needs the same arithmetic the library resolves with,
+  /// not a second implementation that might round differently.
+  static double relativeLuminance(Color c) {
     double channel(double v) => v <= 0.03928
         ? v / 12.92
         : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
@@ -592,9 +596,23 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   }
 
   /// WCAG contrast ratio between two opaque colours, 1.0 to 21.0.
-  static double _contrastRatio(Color a, Color b) {
-    final la = _luminance(a);
-    final lb = _luminance(b);
+  ///
+  /// This is the function [readableOn] and [contrastingOn] resolve with,
+  /// exposed so an app can ask the question rather than only receive the
+  /// answer — "is this pair legible?" for colours Plinth never picked,
+  /// and the same number in a CI assertion as the one behind the widget.
+  ///
+  /// Both colours must be opaque. Compose a translucent one onto its
+  /// background first ([Color.alphaBlend]); a ratio taken against an
+  /// alpha channel is measuring a colour nothing renders.
+  ///
+  /// ```dart
+  /// final ratio = PlinthTheme.contrastRatio(theme.text, theme.surface);
+  /// expect(ratio, greaterThanOrEqualTo(PlinthContrast.body.ratio));
+  /// ```
+  static double contrastRatio(Color a, Color b) {
+    final la = relativeLuminance(a);
+    final lb = relativeLuminance(b);
     final lighter = la > lb ? la : lb;
     final darker = la > lb ? lb : la;
     return (lighter + 0.05) / (darker + 0.05);

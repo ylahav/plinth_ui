@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plinth_components/plinth_components.dart';
 
 import '../../main.dart' show ShowcasePage, ThemeToggleButton;
+import '../brand_switcher.dart';
 import 'category_detail_page.dart';
 import 'showcase_data.dart';
 
@@ -42,6 +43,7 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(width: 8),
           ],
+          const BrandPickerButton(),
           const ThemeToggleButton(),
           const SizedBox(width: 8),
         ],

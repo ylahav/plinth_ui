@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:plinth_components/plinth_components.dart';
 
 import '../../main.dart' show ThemeToggleButton;
+import '../brand_switcher.dart';
 import 'code_panel.dart';
 import 'showcase_data.dart';
 
@@ -38,7 +39,11 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.subcategory.title),
-        actions: const [ThemeToggleButton(), SizedBox(width: 8)],
+        actions: const [
+          BrandPickerButton(),
+          ThemeToggleButton(),
+          SizedBox(width: 8),
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(compact ? 16 : 24),

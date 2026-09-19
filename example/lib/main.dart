@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_components/plinth_components.dart';
 
+import 'src/brand_switcher.dart';
 import 'src/demo_code.dart';
 import 'src/showcase/home_page.dart';
 
@@ -124,27 +125,38 @@ class PlinthExampleApp extends StatefulWidget {
 class _PlinthExampleAppState extends State<PlinthExampleApp> {
   ThemeMode _mode = ThemeMode.light;
 
+  /// The brand colour the whole app is re-skinned to, or null for the
+  /// built-in palette. See `src/brand_switcher.dart`.
+  Color? _brand;
+
   @override
   Widget build(BuildContext context) {
+    final light = brandedTheme(PlinthTheme.defaultTheme, _brand);
+    final dark = brandedTheme(PlinthTheme.darkTheme, _brand);
+
     return ThemeSwitcher(
       mode: _mode,
       onChanged: (mode) => setState(() => _mode = mode),
-      child: MaterialApp(
-        title: 'Plinth UI',
-        themeMode: _mode,
-        theme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.light,
-          scaffoldBackgroundColor: PlinthTheme.defaultTheme.surface,
-          extensions: [PlinthTheme.defaultTheme],
+      child: BrandSwitcher(
+        brand: _brand,
+        onChanged: (brand) => setState(() => _brand = brand),
+        child: MaterialApp(
+          title: 'Plinth UI',
+          themeMode: _mode,
+          theme: ThemeData(
+            useMaterial3: true,
+            brightness: Brightness.light,
+            scaffoldBackgroundColor: light.surface,
+            extensions: [light],
+          ),
+          darkTheme: ThemeData(
+            useMaterial3: true,
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: dark.surface,
+            extensions: [dark],
+          ),
+          home: const HomePage(),
         ),
-        darkTheme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.dark,
-          scaffoldBackgroundColor: PlinthTheme.darkTheme.surface,
-          extensions: [PlinthTheme.darkTheme],
-        ),
-        home: const HomePage(),
       ),
     );
   }
@@ -649,7 +661,11 @@ class _ShowcasePageState extends State<ShowcasePage> {
         child: Scaffold(
           appBar: AppBar(
             title: const Text('Plinth UI — Component Showcase'),
-            actions: const [ThemeToggleButton(), SizedBox(width: 8)],
+            actions: const [
+              BrandPickerButton(),
+              ThemeToggleButton(),
+              SizedBox(width: 8),
+            ],
           ),
           // Only offered as a drawer (hamburger icon) on narrow
           // screens — on wide screens the persistent sidebar below

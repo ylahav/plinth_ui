@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_components/plinth_components.dart';
 import 'package:plinth_example/main.dart';
+import 'package:plinth_example/src/brand_switcher.dart';
 import 'package:plinth_example/src/showcase/category_detail_page.dart';
 import 'package:plinth_example/src/showcase/showcase_data.dart';
 
@@ -32,17 +33,23 @@ void main() {
           usePhoneView(tester);
 
           // The page directly rather than through a tap: reaching a
-          // subcategory means scrolling a one-column list of 24 tiles,
-          // and ThemeSwitcher is the only thing the page needs from
-          // the app above it.
+          // subcategory means scrolling a one-column list of 24 tiles.
+          // Both app-level switchers have to be above it — the app bar
+          // carries a control from each, and both look their provider
+          // up with a null assertion, so a missing one is a type error
+          // at build rather than a control that quietly goes missing.
           await tester.pumpWidget(MaterialApp(
             theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
             home: ThemeSwitcher(
               mode: ThemeMode.light,
               onChanged: (_) {},
-              child: CategoryDetailPage(
-                category: category,
-                subcategory: subcategory,
+              child: BrandSwitcher(
+                brand: null,
+                onChanged: (_) {},
+                child: CategoryDetailPage(
+                  category: category,
+                  subcategory: subcategory,
+                ),
               ),
             ),
           ));
