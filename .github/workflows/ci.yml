@@ -30,7 +30,17 @@ jobs:
           flutter-version: '3.44.8'
 
       - name: Activate Melos
-        run: dart pub global activate melos
+        # Pinned, like flutter-version above. `melos bootstrap` links the
+        # packages to each other by generating a gitignored
+        # `pubspec_overrides.yaml` per package — a melos 6 mechanism that
+        # melos 7 dropped in favour of Dart pub workspaces. Unpinned, CI
+        # silently moved to melos 8 the day it released and broke: first
+        # on version solving (`plinth_hooks from hosted is required`),
+        # and then worse, because melos 8 reads its package list from a
+        # `workspace:` key this repo does not have and finds zero
+        # packages — so `melos run test` would go green having run
+        # nothing at all. Raise this deliberately, not by drift.
+        run: dart pub global activate melos 6.1.0
 
       - name: Bootstrap workspace
         run: melos bootstrap

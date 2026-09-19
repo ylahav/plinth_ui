@@ -5,4 +5,11 @@ environment:
   sdk: ">=3.4.0 <4.0.0"
 
 dev_dependencies:
-  melos: ^8.8.0
+  # Held at 6.x deliberately, and pinned to match in the workflows.
+  # Melos 7 replaced the generated `pubspec_overrides.yaml` linking this
+  # workspace relies on with Dart pub workspaces, which would mean a
+  # `workspace:` list here and `resolution: workspace` plus an SDK floor
+  # of 3.6.0 in all six packages — including the three published ones,
+  # which currently support 3.4.0. That is a real change to what adopters
+  # can build against, so it is a decision rather than an upgrade.
+  melos: ^6.1.0
