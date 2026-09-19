@@ -16,6 +16,27 @@ They're separate concerns. A missing *component* means something can't
 be built; a missing *block* just means nobody has assembled that
 arrangement yet — usually from components that already exist.
 
+## Where a block lives
+
+Two places, and the split is being closed in one direction.
+
+**`packages/plinth_blocks/`** is where a block ends up: a real widget
+with a real API, which an app installs and calls. Four are there so far,
+all authentication.
+
+**`example/lib/src/showcase/`** is where the other 106 still are, as
+fixed arrangements built for the gallery — `onPressed: () {}`
+throughout, hardcoded copy, no way for a caller to pass anything in.
+They demonstrate that an arrangement works; they are not yet something
+you can install.
+
+A block moves by gaining the things a gallery never needed: values
+reported back, disabled states that mean something, and every visible
+string as a parameter rather than English baked in. Its showcase entry
+then becomes a *use* of the package block, so the "Show code" panel
+shows the call an adopter would write instead of the arrangement's
+internals — which is the point of moving it.
+
 ## How it's structured
 
 `showcase_data.dart` holds the tree: `CategoryData` → `SubcategoryData`

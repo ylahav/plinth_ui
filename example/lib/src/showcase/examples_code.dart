@@ -3461,41 +3461,22 @@ class OverlayArticleCardExample extends StatelessWidget {
 }
 ''',
   'PasswordResetExample': r'''
-class PasswordResetExample extends StatelessWidget {
+class PasswordResetExample extends StatefulWidget {
   const PasswordResetExample({super.key});
 
   @override
+  State<PasswordResetExample> createState() => _PasswordResetExampleState();
+}
+
+class _PasswordResetExampleState extends State<PasswordResetExample> {
+  bool _sent = false;
+
+  @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 340,
-      child: PlinthPaper(
-        p: PlinthSize.lg,
-        withBorder: true,
-        child: PlinthStack(
-          gap: PlinthSize.sm,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const PlinthTitle('Reset your password', order: 4),
-            const PlinthText(
-              'We will send a link to the address on your account.',
-              size: PlinthSize.sm,
-              color: 'gray',
-            ),
-            const PlinthTextInput(
-              label: 'Email',
-              placeholder: 'you@example.com',
-            ),
-            PlinthButton(
-              fullWidth: true,
-              onPressed: () {},
-              child: const Text('Send reset link'),
-            ),
-            // The way back matters as much as the way forward: a reset
-            // screen with no exit strands anyone who mistyped the URL.
-            Center(child: PlinthAnchor('Back to sign in', onTap: () {})),
-          ],
-        ),
-      ),
+    return PlinthPasswordResetBlock(
+      sent: _sent,
+      onSubmit: (email) => setState(() => _sent = true),
+      onBack: () => setState(() => _sent = false),
     );
   }
 }
@@ -4254,71 +4235,19 @@ class SignInFormExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 360,
-      child: PlinthCard(
-        withBorder: true,
-        p: PlinthSize.lg,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const PlinthTitle('Welcome back', order: 3),
-            const SizedBox(height: 4),
-            const PlinthText(
-              'Sign in to continue to your dashboard.',
-              size: PlinthSize.sm,
-              color: 'gray',
-            ),
-            const SizedBox(height: 20),
-            PlinthTextInput(
-              label: 'Email',
-              placeholder: 'you@example.com',
-              onChanged: (_) {},
-            ),
-            const SizedBox(height: 12),
-            PlinthPasswordInput(
-              label: 'Password',
-              placeholder: 'Your password',
-              onChanged: (_) {},
-            ),
-            const SizedBox(height: 12),
-            // Wrap rather than Row: at a large text scale these two
-            // no longer fit side by side in a 360-wide card, and a
-            // sign-in form is exactly where that must degrade rather
-            // than clip.
-            PlinthGroup(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              gap: PlinthSize.xs,
-              children: [
-                PlinthCheckbox(
-                  label: 'Remember me',
-                  value: true,
-                  size: PlinthSize.sm,
-                  onChanged: (_) {},
-                ),
-                PlinthAnchor('Forgot password?',
-                    size: PlinthSize.sm, onTap: () {}),
-              ],
-            ),
-            const SizedBox(height: 20),
-            PlinthButton(
-              fullWidth: true,
-              onPressed: () {},
-              child: const Text('Sign in'),
-            ),
-            const SizedBox(height: 16),
-            const PlinthDivider(label: 'OR'),
-            const SizedBox(height: 16),
-            PlinthButton(
-              variant: PlinthVariant.defaultVariant,
-              fullWidth: true,
-              leadingIcon: const Icon(Icons.g_mobiledata, size: 20),
-              onPressed: () {},
-              child: const Text('Continue with Google'),
-            ),
-          ],
+    return PlinthSignInBlock(
+      onSubmit: (values) {},
+      onForgotPassword: () {},
+      alternatives: [
+        PlinthButton(
+          variant: PlinthVariant.defaultVariant,
+          fullWidth: true,
+          leadingIcon: const Icon(Icons.g_mobiledata, size: 20),
+          onPressed: () {},
+          child: const Text('Continue with Google'),
         ),
-      ),
+      ],
+      subtitle: 'Sign in to continue to your dashboard.',
     );
   }
 }
@@ -4329,55 +4258,10 @@ class SignUpFormExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 360,
-      child: PlinthCard(
-        withBorder: true,
-        p: PlinthSize.lg,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const PlinthTitle('Create an account', order: 3),
-            const SizedBox(height: 20),
-            PlinthTextInput(label: 'Name', onChanged: (_) {}),
-            const SizedBox(height: 12),
-            PlinthTextInput(
-              label: 'Email',
-              placeholder: 'you@example.com',
-              onChanged: (_) {},
-            ),
-            const SizedBox(height: 12),
-            PlinthPasswordInput(
-              label: 'Password',
-              description: 'At least 12 characters.',
-              onChanged: (_) {},
-            ),
-            const SizedBox(height: 16),
-            PlinthCheckbox(
-              label: 'I agree to the terms of service',
-              value: false,
-              size: PlinthSize.sm,
-              onChanged: (_) {},
-            ),
-            const SizedBox(height: 20),
-            PlinthButton(
-              fullWidth: true,
-              onPressed: () {},
-              child: const Text('Create account'),
-            ),
-            const SizedBox(height: 12),
-            PlinthGroup(
-              mainAxisAlignment: MainAxisAlignment.center,
-              gap: PlinthSize.xs,
-              children: [
-                const PlinthText('Already have an account?',
-                    size: PlinthSize.sm, color: 'gray'),
-                PlinthAnchor('Sign in', size: PlinthSize.sm, onTap: () {}),
-              ],
-            ),
-          ],
-        ),
-      ),
+    return PlinthSignUpBlock(
+      onSubmit: (values) {},
+      passwordDescription: 'At least 12 characters.',
+      footer: PlinthAnchor('Already have an account?', onTap: () {}),
     );
   }
 }
