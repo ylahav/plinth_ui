@@ -1,5 +1,6 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_components/plinth_components.dart';
@@ -335,17 +336,18 @@ void main() {
       );
 
       final handle = tester.ensureSemantics();
+      // Tristate rather than a bool, which is the point: `isFalse` says
+      // this tab carries selection state and is off, where `none` would
+      // say it never reports selection at all. `hasFlag` collapsed
+      // those two into one `false`, so the unselected assert below used
+      // to pass either way.
       expect(
-        tester.getSemantics(find.text('Security')).hasFlag(
-              SemanticsFlag.isSelected,
-            ),
-        isTrue,
+        tester.getSemantics(find.text('Security')).flagsCollection.isSelected,
+        Tristate.isTrue,
       );
       expect(
-        tester.getSemantics(find.text('Account')).hasFlag(
-              SemanticsFlag.isSelected,
-            ),
-        isFalse,
+        tester.getSemantics(find.text('Account')).flagsCollection.isSelected,
+        Tristate.isFalse,
       );
       handle.dispose();
     });

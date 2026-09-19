@@ -11,6 +11,8 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_components/plinth_components.dart';
 
+import 'helpers/semantics.dart';
+
 Widget _wrap(Widget child) => MaterialApp(
       theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
       home: Scaffold(body: Center(child: child)),
@@ -28,7 +30,7 @@ List<String> _labels(WidgetTester tester) {
     });
   }
 
-  walk(tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!);
+  walk(rootSemanticsNode(tester));
   return found;
 }
 
@@ -93,7 +95,7 @@ void main() {
           });
         }
 
-        walk(tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!);
+        walk(rootSemanticsNode(tester));
         expect(onControl, isNotEmpty,
             reason: '${entry.key}: the label reaches the tree as '
                 '${_labels(tester)} but not on the control');

@@ -28,6 +28,8 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_components/plinth_components.dart';
 
+import 'helpers/semantics.dart';
+
 Iterable<SemanticsNode> _walk(SemanticsNode node) sync* {
   yield node;
   final children = <SemanticsNode>[];
@@ -45,7 +47,7 @@ Future<List<SemanticsNode>> _tree(WidgetTester tester, Widget child) async {
     MaterialApp(home: Scaffold(body: Center(child: child))),
   );
   await tester.pumpAndSettle();
-  final root = tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!;
+  final root = rootSemanticsNode(tester);
   return _walk(root).toList();
 }
 
@@ -147,8 +149,7 @@ void main() {
       await tester.tap(find.text('Show more'));
       await tester.pumpAndSettle();
 
-      final root =
-          tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!;
+      final root = rootSemanticsNode(tester);
       final toggle = _labelled(_walk(root).toList(), 'Show less');
       expect(toggle.flagsCollection.isExpanded, Tristate.isTrue);
       handle.dispose();

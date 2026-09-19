@@ -1,7 +1,7 @@
 /// B0d — every gallery use case, built right-to-left.
 ///
 /// The cheap half of the RTL question: does anything *break*. It reuses
-/// the same 232 use cases the gallery smoke test builds, so coverage is
+/// the same 238 use cases the gallery smoke test builds, so coverage is
 /// the whole component surface rather than a hand-picked sample, and
 /// costs one extra pump each.
 ///
@@ -11,6 +11,8 @@
 /// combinations clean.
 ///
 /// Result when added: 0 of 232 threw.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_widgetbook/main.dart';

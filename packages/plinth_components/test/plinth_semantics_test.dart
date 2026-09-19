@@ -14,6 +14,8 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_components/plinth_components.dart';
 
+import 'helpers/semantics.dart';
+
 Widget _wrap(Widget child) => MaterialApp(
       theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
       home: Scaffold(body: Center(child: child)),
@@ -28,7 +30,9 @@ Widget _wrap(Widget child) => MaterialApp(
       if (d.label.isNotEmpty) labelled++;
       if (d.flagsCollection.isButton ||
           d.flagsCollection.isTextField ||
-          d.flagsCollection.isLink) roled++;
+          d.flagsCollection.isLink) {
+        roled++;
+      }
     }
     n.visitChildren((c) {
       walk(c);
@@ -36,7 +40,7 @@ Widget _wrap(Widget child) => MaterialApp(
     });
   }
 
-  walk(tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!);
+  walk(rootSemanticsNode(tester));
   return (tappable: tappable, labelled: labelled, roled: roled);
 }
 
@@ -91,7 +95,7 @@ void main() {
       });
     }
 
-    walk(tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!);
+    walk(rootSemanticsNode(tester));
     expect(labels, ['1 of 5', '2 of 5', '3 of 5', '4 of 5', '5 of 5']);
     handle.dispose();
   });

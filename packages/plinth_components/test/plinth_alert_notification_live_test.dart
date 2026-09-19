@@ -14,6 +14,8 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_components/plinth_components.dart';
 
+import 'helpers/semantics.dart';
+
 Iterable<SemanticsNode> _walk(SemanticsNode node) sync* {
   yield node;
   final children = <SemanticsNode>[];
@@ -27,7 +29,7 @@ Iterable<SemanticsNode> _walk(SemanticsNode node) sync* {
 }
 
 List<SemanticsNode> _nodes(WidgetTester tester) {
-  final root = tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!;
+  final root = rootSemanticsNode(tester);
   return _walk(root).toList();
 }
 
