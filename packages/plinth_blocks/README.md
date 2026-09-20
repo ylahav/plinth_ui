@@ -34,14 +34,18 @@ MaterialApp(
 
 ## What's here
 
-Authentication, so far:
+Authentication and error states, so far:
 
 | Block | What it is |
 |---|---|
 | `PlinthSignInBlock` | Email, password, remember-me, alternatives under a divider |
 | `PlinthSignUpBlock` | Name, email, password, terms — the terms gate the submit |
 | `PlinthPasswordResetBlock` | Request a link, and the confirmation that replaces it |
-| `PlinthAuthCard` | The card the other three are built in, for the screens they don't cover |
+| `PlinthTwoFactorBlock` | A code input whose submit waits until the code is complete |
+| `PlinthSplitAuthBlock` | Brand on one side, form on the other — one side on a phone |
+| `PlinthAuthCard` | The card the others are built in, for the screens they don't cover |
+| `PlinthErrorPageBlock` | `.notFound`, `.serverError`, `.maintenance`, `.permissionDenied` |
+| `PlinthOfflineNotice` | A banner the page keeps working around, not a page that replaces it |
 
 ```dart
 PlinthSignInBlock(

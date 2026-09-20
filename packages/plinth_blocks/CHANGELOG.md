@@ -37,6 +37,26 @@ Unreleased. The first blocks, and the shape the rest will follow.
   part of the block because it is the half that gets skipped, and it is
   worded not to say whether the address has an account, which would
   turn a public form into a way to enumerate who has registered.
+- `PlinthTwoFactorBlock` — a pin input whose submit stays disabled
+  until the code is the full length, because the button is the
+  affordance that says how many digits are expected. `autoSubmit` is
+  off by default: firing on a mistyped digit spends an attempt before
+  the person has finished reading what they typed.
+- `PlinthSplitAuthBlock` — the two-pane brand-and-form layout. The
+  decoration pane drops below `breakpoint` rather than squeezing both
+  halves onto a phone, and the form pane scrolls rather than clipping,
+  which the original 620x300 arrangement did the moment a real sign-in
+  card went in it.
+- `PlinthErrorPageBlock` — one widget with `.notFound`,
+  `.serverError`, `.maintenance` and `.permissionDenied` constructors,
+  since those differ only in their words. Every default is
+  overridable. The permission wording points at the admin who can
+  actually grant access, because "access denied" alone leaves someone
+  with nothing to do.
+- `PlinthOfflineNotice` — deliberately *not* an error page. A dropped
+  connection resolves itself, so this is a banner plus the state of the
+  queue that the page keeps working around. Yellow rather than red:
+  nothing has failed, work is being held.
 
 ### Notes
 

@@ -20,3 +20,7 @@ export 'src/auth/plinth_auth_card.dart';
 export 'src/auth/plinth_password_reset_block.dart';
 export 'src/auth/plinth_sign_in_block.dart';
 export 'src/auth/plinth_sign_up_block.dart';
+export 'src/auth/plinth_split_auth_block.dart';
+export 'src/auth/plinth_two_factor_block.dart';
+export 'src/feedback/plinth_error_page_block.dart';
+export 'src/feedback/plinth_offline_notice.dart';

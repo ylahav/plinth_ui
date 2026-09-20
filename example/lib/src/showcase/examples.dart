@@ -580,41 +580,15 @@ class NotFoundPageExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 460,
-      child: PlinthCenter(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const PlinthTitle('404', color: 'gray'),
-            const SizedBox(height: 8),
-            const PlinthTitle('Nothing to see here', order: 3),
-            const SizedBox(height: 8),
-            const PlinthText(
-              'The page you are looking for was moved, removed, or never '
-              'existed in the first place.',
-              size: PlinthSize.sm,
-              color: 'gray',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            PlinthGroup(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                PlinthButton(
-                  variant: PlinthVariant.defaultVariant,
-                  onPressed: () {},
-                  child: const Text('Go back'),
-                ),
-                PlinthButton(
-                  onPressed: () {},
-                  child: const Text('Take me home'),
-                ),
-              ],
-            ),
-          ],
+    return PlinthErrorPageBlock.notFound(
+      actions: [
+        PlinthButton(
+          variant: PlinthVariant.defaultVariant,
+          onPressed: () {},
+          child: const Text('Go back'),
         ),
-      ),
+        PlinthButton(onPressed: () {}, child: const Text('Take me home')),
+      ],
     );
   }
 }
@@ -624,35 +598,14 @@ class ServerErrorPageExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 460,
-      child: PlinthCenter(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const PlinthThemeIcon(
-              icon: Icon(Icons.cloud_off),
-              variant: PlinthVariant.light,
-              color: 'red',
-              size: PlinthSize.xl,
-            ),
-            const SizedBox(height: 16),
-            const PlinthTitle('Something went wrong', order: 3),
-            const SizedBox(height: 8),
-            const PlinthText(
-              'Our servers could not handle that request. We have been '
-              'notified and are looking into it.',
-              size: PlinthSize.sm,
-              color: 'gray',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            const PlinthCode('request_id: 7f3c9a21'),
-            const SizedBox(height: 20),
-            PlinthButton(onPressed: () {}, child: const Text('Try again')),
-          ],
+    return PlinthErrorPageBlock.serverError(
+      actions: [
+        PlinthButton(
+          leadingIcon: const Icon(Icons.refresh, size: 16),
+          onPressed: () {},
+          child: const Text('Try again'),
         ),
-      ),
+      ],
     );
   }
 }
@@ -3361,51 +3314,14 @@ class _PasswordResetExampleState extends State<PasswordResetExample> {
   }
 }
 
-class TwoFactorExample extends StatefulWidget {
+class TwoFactorExample extends StatelessWidget {
   const TwoFactorExample({super.key});
 
   @override
-  State<TwoFactorExample> createState() => _TwoFactorExampleState();
-}
-
-class _TwoFactorExampleState extends State<TwoFactorExample> {
-  String _code = '';
-
-  @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 340,
-      child: PlinthPaper(
-        p: PlinthSize.lg,
-        withBorder: true,
-        child: PlinthStack(
-          gap: PlinthSize.sm,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const PlinthTitle('Two-factor code', order: 4),
-            const PlinthText(
-              'Enter the six digits from your authenticator app.',
-              size: PlinthSize.sm,
-              color: 'gray',
-            ),
-            Center(
-              child: PlinthPinInput(
-                length: 6,
-                value: _code,
-                onChanged: (v) => setState(() => _code = v),
-              ),
-            ),
-            PlinthButton(
-              fullWidth: true,
-              // Disabled until the code is complete — the button is the
-              // affordance that says how many digits are expected.
-              onPressed: _code.length == 6 ? () {} : null,
-              child: const Text('Verify'),
-            ),
-            Center(child: PlinthAnchor('Send a new code', onTap: () {})),
-          ],
-        ),
-      ),
+    return PlinthTwoFactorBlock(
+      onSubmit: (code) {},
+      onResend: () {},
     );
   }
 }
@@ -3415,45 +3331,19 @@ class SplitAuthExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return PlinthSplitAuthBlock(
       width: 620,
-      height: 300,
-      child: PlinthPaper(
-        p: PlinthSize.xs,
-        withBorder: true,
-        child: Row(
-          children: [
-            // The brand half is decoration, so it goes first in the
-            // tree but carries no focusable content — a screen reader
-            // reaches the form without wading through it.
-            const Expanded(
-              child: PlinthBackgroundImage(
-                src: 'https://picsum.photos/seed/plinth-auth/600/600',
-                height: double.infinity,
-                child: PlinthTitle('Build faster', order: 3),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: PlinthStack(
-                  gap: PlinthSize.sm,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const PlinthTitle('Welcome back', order: 4),
-                    const PlinthTextInput(label: 'Email'),
-                    const PlinthTextInput(label: 'Password', obscureText: true),
-                    PlinthButton(
-                      fullWidth: true,
-                      onPressed: () {},
-                      child: const Text('Sign in'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+      height: 380,
+      decoration: const PlinthBackgroundImage(
+        src: 'https://picsum.photos/seed/plinth-auth/600/600',
+        height: double.infinity,
+        child: PlinthTitle('Build faster', order: 3),
+      ),
+      child: PlinthSignInBlock(
+        width: null,
+        titleOrder: 4,
+        showRememberMe: false,
+        onSubmit: (values) {},
       ),
     );
   }
@@ -3466,22 +3356,8 @@ class MaintenanceExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 420,
-      child: PlinthEmptyState(
-        icon: const Icon(Icons.build_outlined),
-        title: 'Down for maintenance',
-        description: 'We are upgrading the database. Back at 14:30 UTC.',
-        // A maintenance page is the one error state where the useful
-        // action is elsewhere, so it points at status rather than
-        // offering a retry that cannot succeed yet.
-        action: PlinthButton(
-          variant: PlinthVariant.outline,
-          onPressed: () {},
-          leadingIcon: const Icon(Icons.open_in_new, size: 16),
-          child: const Text('Status page'),
-        ),
-      ),
+    return const PlinthErrorPageBlock.maintenance(
+      description: 'We are upgrading the database. Back by about 14:00 UTC.',
     );
   }
 }
@@ -3491,32 +3367,15 @@ class PermissionDeniedExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 420,
-      child: PlinthStack(
-        gap: PlinthSize.sm,
-        children: [
-          PlinthEmptyState(
-            icon: const Icon(Icons.lock_outline),
-            title: 'You do not have access',
-            description: 'Ask an owner of this workspace to invite you.',
-            color: 'red',
-            action: PlinthButton(
-              onPressed: () {},
-              child: const Text('Request access'),
-            ),
-          ),
-          // Naming who can actually help turns a dead end into a next
-          // step — "contact an administrator" rarely says which one.
-          const PlinthDataList(
-            orientation: PlinthDataListOrientation.horizontal,
-            items: [
-              PlinthDataListItem.text('Workspace', 'Acme design'),
-              PlinthDataListItem.text('Owner', 'alice@acme.com'),
-            ],
-          ),
-        ],
-      ),
+    return PlinthErrorPageBlock.permissionDenied(
+      actions: [
+        PlinthButton(
+          variant: PlinthVariant.defaultVariant,
+          onPressed: () {},
+          child: const Text('Switch account'),
+        ),
+        PlinthButton(onPressed: () {}, child: const Text('Request access')),
+      ],
     );
   }
 }
@@ -3526,50 +3385,19 @@ class OfflineExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 420,
-      child: PlinthPaper(
-        p: PlinthSize.lg,
-        withBorder: true,
-        child: PlinthStack(
-          gap: PlinthSize.sm,
-          children: [
-            const PlinthAlert(
-              title: 'You are offline',
-              color: 'yellow',
-              icon: Icon(Icons.wifi_off),
-              child: Text(
-                'Changes are saved locally and will sync when the '
-                'connection returns.',
-              ),
-            ),
-            // Unlike the other two, this state resolves itself, so the
-            // page keeps working rather than replacing itself with an
-            // apology.
-            const PlinthDataList(
-              items: [
-                PlinthDataListItem.text('Queued changes', '3'),
-                PlinthDataListItem.text('Last synced', '11:42'),
-              ],
-            ),
-            PlinthGroup(
-              children: [
-                PlinthButton(
-                  variant: PlinthVariant.outline,
-                  onPressed: () {},
-                  leadingIcon: const Icon(Icons.refresh, size: 16),
-                  child: const Text('Retry now'),
-                ),
-                PlinthButton(
-                  variant: PlinthVariant.subtle,
-                  onPressed: () {},
-                  child: const Text('Work offline'),
-                ),
-              ],
-            ),
-          ],
+    return PlinthOfflineNotice(
+      onRetry: () {},
+      details: const [
+        PlinthDataListItem.text('Queued changes', '3'),
+        PlinthDataListItem.text('Last synced', '11:42'),
+      ],
+      actions: [
+        PlinthButton(
+          variant: PlinthVariant.subtle,
+          onPressed: () {},
+          child: const Text('Work offline'),
         ),
-      ),
+      ],
     );
   }
 }

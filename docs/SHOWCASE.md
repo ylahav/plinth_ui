@@ -21,10 +21,28 @@ arrangement yet — usually from components that already exist.
 Two places, and the split is being closed in one direction.
 
 **`packages/plinth_blocks/`** is where a block ends up: a real widget
-with a real API, which an app installs and calls. Four are there so far,
-all authentication.
+with a real API, which an app installs and calls. Nine are there so far
+— the five authentication blocks, and the error states.
 
-**`example/lib/src/showcase/`** is where the other 106 still are, as
+| Widget | Replaces |
+|---|---|
+| `PlinthAuthCard` | the card the auth blocks share |
+| `PlinthSignInBlock` | Sign in |
+| `PlinthSignUpBlock` | Sign up |
+| `PlinthPasswordResetBlock` | Password reset |
+| `PlinthTwoFactorBlock` | Two-factor code |
+| `PlinthSplitAuthBlock` | Split sign in |
+| `PlinthErrorPageBlock` | 404, 500, Maintenance, Permission denied |
+| `PlinthOfflineNotice` | Offline |
+
+Four error pages became one widget with four named constructors,
+because they differ only in their words. **Offline did not**, and that
+is the interesting one: a dropped connection resolves itself, so the
+page should keep working around a notice rather than replace itself
+with an apology. The showcase had already made that call; collapsing it
+into the error page would have thrown the decision away.
+
+**`example/lib/src/showcase/`** is where the other 101 still are, as
 fixed arrangements built for the gallery — `onPressed: () {}`
 throughout, hardcoded copy, no way for a caller to pass anything in.
 They demonstrate that an arrangement works; they are not yet something
