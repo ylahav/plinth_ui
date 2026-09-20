@@ -34,7 +34,7 @@ MaterialApp(
 
 ## What's here
 
-Authentication, error states, banners, the FAQ, heroes and features, so far:
+Every Page Sections arrangement, so far — and Application UI is next:
 
 | Block | What it is |
 |---|---|
@@ -53,6 +53,8 @@ Authentication, error states, banners, the FAQ, heroes and features, so far:
 | `PlinthFeatureBlock` | Features as a grid, a checklist, or alternating rows |
 | `PlinthComparisonBlock` | A plans-by-features matrix that refuses a short row |
 | `PlinthLogoStrip` | Customer names, scrolling only when they don't fit |
+| `PlinthContactBlock` | A form, with room beside it for hours or an address |
+| `PlinthSupportChannels` | Ways to reach you, as routes rather than a form |
 
 ```dart
 PlinthSignInBlock(

@@ -1724,44 +1724,10 @@ class ContactFormExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return PlinthContactBlock(
       width: 420,
-      child: PlinthCard(
-        withBorder: true,
-        p: PlinthSize.lg,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const PlinthTitle('Get in touch', order: 3),
-            const SizedBox(height: 4),
-            const PlinthText(
-              'We usually reply within a working day.',
-              size: PlinthSize.sm,
-              color: 'gray',
-            ),
-            const SizedBox(height: 20),
-            PlinthTextInput(label: 'Name', onChanged: (_) {}),
-            const SizedBox(height: 12),
-            PlinthTextInput(
-              label: 'Email',
-              placeholder: 'you@example.com',
-              onChanged: (_) {},
-            ),
-            const SizedBox(height: 12),
-            PlinthTextarea(
-              label: 'Message',
-              placeholder: 'How can we help?',
-              onChanged: (_) {},
-            ),
-            const SizedBox(height: 20),
-            PlinthButton(
-              fullWidth: true,
-              onPressed: () {},
-              child: const Text('Send message'),
-            ),
-          ],
-        ),
-      ),
+      subtitle: 'We usually reply within a working day.',
+      onSubmit: (values) {},
     );
   }
 }
@@ -1769,91 +1735,34 @@ class ContactFormExample extends StatelessWidget {
 class ContactWithDetailsExample extends StatelessWidget {
   const ContactWithDetailsExample({super.key});
 
-  static const _details = [
-    (Icons.mail_outline, 'Email', 'support@example.com'),
-    (Icons.phone_outlined, 'Phone', '+1 (555) 010-4477'),
-    (Icons.schedule_outlined, 'Hours', 'Mon–Fri, 9–5 UTC'),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return PlinthContactBlock(
       width: 560,
-      child: PlinthGrid(
-        children: [
-          PlinthGridCol(
-            span: 12,
-            spanMd: 5,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const PlinthTitle('Contact us', order: 4),
-                const SizedBox(height: 16),
-                for (final (icon, label, value) in _details)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      children: [
-                        PlinthThemeIcon(
-                          icon: Icon(icon),
-                          variant: PlinthVariant.light,
-                          size: PlinthSize.sm,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              PlinthText(label,
-                                  size: PlinthSize.xs, color: 'gray'),
-                              PlinthText(
-                                value,
-                                size: PlinthSize.sm,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
+      title: 'Contact us',
+      titleOrder: 4,
+      onSubmit: (values) {},
+      // The address beside the form rather than under it: somebody who
+      // wanted the postal address never needed the form at all.
+      aside: const PlinthSupportChannels(
+        channels: [
+          PlinthSupportChannel(
+            icon: Icon(Icons.mail_outline),
+            title: 'Email',
+            detail: 'hello@plinth.dev',
           ),
-          PlinthGridCol(
-            span: 12,
-            spanMd: 7,
-            child: PlinthPaper(
-              withBorder: true,
-              p: PlinthSize.md,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  PlinthTextInput(
-                    label: 'Email',
-                    placeholder: 'you@example.com',
-                    onChanged: (_) {},
-                  ),
-                  const SizedBox(height: 12),
-                  PlinthTextarea(
-                    label: 'Message',
-                    minLines: 2,
-                    maxLines: 4,
-                    onChanged: (_) {},
-                  ),
-                  const SizedBox(height: 16),
-                  PlinthButton(
-                    fullWidth: true,
-                    onPressed: () {},
-                    child: const Text('Send'),
-                  ),
-                ],
-              ),
-            ),
+          PlinthSupportChannel(
+            icon: Icon(Icons.phone_outlined),
+            title: 'Phone',
+            detail: '+44 20 7946 0958',
+          ),
+          PlinthSupportChannel(
+            icon: Icon(Icons.location_on_outlined),
+            title: 'Office',
+            detail: 'London, UK',
           ),
         ],
+        columns: 1,
       ),
     );
   }
@@ -3891,58 +3800,36 @@ class FaqSearchExample extends StatelessWidget {
 class SupportChannelsExample extends StatelessWidget {
   const SupportChannelsExample({super.key});
 
-  static const _channels = [
-    (
-      icon: Icons.chat_bubble_outline,
-      title: 'Live chat',
-      detail: 'Weekdays, 9–17 UTC',
-      colour: 'blue'
-    ),
-    (
-      icon: Icons.mail_outline,
-      title: 'Email',
-      detail: 'Replies within a day',
-      colour: 'teal'
-    ),
-    (
-      icon: Icons.menu_book_outlined,
-      title: 'Docs',
-      detail: 'Answers most questions',
-      colour: 'grape'
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    // Routing rather than a form: when several channels exist, the
+    // reader's first decision is which one, and a form presumes that
+    // answer for them.
+    return PlinthSupportChannels(
       width: 560,
-      // Routing rather than a form: when several channels exist, the
-      // reader's first decision is which one, and a form presumes that
-      // answer for them.
-      child: PlinthSimpleGrid(
-        columns: 3,
-        children: [
-          for (final c in _channels)
-            PlinthPaper(
-              p: PlinthSize.md,
-              withBorder: true,
-              child: PlinthStack(
-                gap: PlinthSize.xs,
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  PlinthThemeIcon(
-                    icon: Icon(c.icon),
-                    variant: PlinthVariant.light,
-                    color: c.colour,
-                  ),
-                  PlinthText(c.title, weight: FontWeight.w700),
-                  PlinthText(c.detail, size: PlinthSize.xs, color: 'gray'),
-                ],
-              ),
-            ),
-        ],
-      ),
+      channels: [
+        PlinthSupportChannel(
+          icon: const Icon(Icons.chat_bubble_outline),
+          title: 'Live chat',
+          detail: 'Weekdays, 9–17 UTC',
+          color: 'blue',
+          onTap: () {},
+        ),
+        PlinthSupportChannel(
+          icon: const Icon(Icons.mail_outline),
+          title: 'Email',
+          detail: 'Replies within a day',
+          color: 'teal',
+          onTap: () {},
+        ),
+        PlinthSupportChannel(
+          icon: const Icon(Icons.menu_book_outlined),
+          title: 'Docs',
+          detail: 'Answers most questions',
+          color: 'grape',
+          onTap: () {},
+        ),
+      ],
     );
   }
 }
@@ -3952,42 +3839,27 @@ class ContactWithHoursExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return PlinthContactBlock(
       width: 560,
-      child: Row(
+      title: 'Talk to us',
+      titleOrder: 4,
+      showName: false,
+      messageLabel: 'How can we help?',
+      onSubmit: (values) {},
+      // Setting expectations beside the form rather than after it:
+      // knowing the reply window before writing changes what people
+      // write, and whether they wait.
+      aside: const PlinthStack(
+        gap: PlinthSize.sm,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: PlinthStack(
-              gap: PlinthSize.sm,
-              children: [
-                const PlinthTitle('Talk to us', order: 4),
-                const PlinthTextInput(label: 'Email'),
-                const PlinthTextarea(label: 'How can we help?', minLines: 3),
-                PlinthButton(onPressed: () {}, child: const Text('Send')),
-              ],
-            ),
-          ),
-          const SizedBox(width: 24),
-          // Setting expectations beside the form rather than after it:
-          // knowing the reply window before writing changes what people
-          // write, and whether they wait.
-          const Expanded(
-            child: PlinthStack(
-              gap: PlinthSize.sm,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                PlinthText('When we reply', weight: FontWeight.w700),
-                PlinthDataList(
-                  orientation: PlinthDataListOrientation.vertical,
-                  items: [
-                    PlinthDataListItem.text('Weekdays', 'Within 4 hours'),
-                    PlinthDataListItem.text('Weekends', 'Next working day'),
-                    PlinthDataListItem.text('Timezone', 'UTC+0'),
-                  ],
-                ),
-              ],
-            ),
+          PlinthText('When we are around', weight: FontWeight.w600),
+          PlinthDataList(
+            items: [
+              PlinthDataListItem.text('Mon–Fri', '9–17 UTC'),
+              PlinthDataListItem.text('Saturday', '10–14 UTC'),
+              PlinthDataListItem.text('Sunday', 'Closed'),
+            ],
           ),
         ],
       ),

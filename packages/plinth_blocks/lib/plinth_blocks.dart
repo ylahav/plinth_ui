@@ -22,6 +22,8 @@ export 'src/auth/plinth_sign_in_block.dart';
 export 'src/auth/plinth_sign_up_block.dart';
 export 'src/auth/plinth_split_auth_block.dart';
 export 'src/auth/plinth_two_factor_block.dart';
+export 'src/contact/plinth_contact_block.dart';
+export 'src/contact/plinth_support_channels.dart';
 export 'src/content/plinth_faq_block.dart';
 export 'src/feedback/plinth_banner_block.dart';
 export 'src/feedback/plinth_error_page_block.dart';

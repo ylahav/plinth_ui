@@ -96,6 +96,18 @@ Unreleased. The first blocks, and the shape the rest will follow.
 - `PlinthLogoStrip` — names under a caption, scrolling by default
   because a strip usually has more than fit. `scroll: false` when they
   do: motion that earns nothing is motion somebody has to sit through.
+- `PlinthContactBlock` — the form, plus an `aside` for whatever
+  surrounds it: an address, opening hours, other ways through. The
+  aside moves under the form rather than squeezing beside it when
+  narrow. `sent` swaps the form for an acknowledgement, for the same
+  reason the password-reset block does: a form that submits and looks
+  unchanged reads as broken, and the result is the same message sent
+  four times.
+- `PlinthSupportChannels` — ways to reach you as a grid of routes.
+  Routing rather than a form, because when several channels exist the
+  reader's first decision is which one, and a form presumes that answer
+  for them. A channel with no `onTap` renders as a statement rather
+  than as something to press.
 
 ### Notes
 
