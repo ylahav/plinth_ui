@@ -11,6 +11,50 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.3.0
+
+**Three controls whose state lived in a colour, a fill or an icon and
+reached the semantics tree as nothing.** Found in a full sweep of the
+component tour, once it was navigable enough to walk end to end - the
+two passes before it had reached a handful of controls each. None of
+the three was a missing label; each was a control a screen reader user
+could operate without learning the result.
+
+### Fixed
+
+- **`PlinthStepper`** announces each step's state. A stepper means
+  "you are here, these are done, these are ahead", and none of it used
+  to reach a reader: every step announced as its label and the word
+  button, whichever state it was in. Its two siblings, `PlinthTabs` and
+  `PlinthSegmentedControl`, already carried `selected`; the stepper was
+  the one in the family that did not.
+
+- **`PlinthSpoiler`**'s toggle is a button. It was a bare `InkWell`
+  around text - reachable and tappable, announcing as neither a control
+  nor as something that opens anything. It now carries `button` and
+  `expanded`, which is the same defect the `B0c` pass found on the
+  accordion header in the widget next door.
+
+### Documented
+
+- **`PlinthCollapse`** owns no trigger, so nothing in it can report the
+  open state - a plain button beside it announces as "Show, button"
+  whether the panel is open or shut, and pressing it says nothing at
+  all. That is now written down on the widget, with the `Semantics`
+  wrapper a caller needs. `PlinthAccordion` avoids the problem only
+  because it owns its own header.
+
+- **`PlinthSpoiler`** reaches a reader in full whether expanded or not,
+  because the teaser is real content with no boundary in the semantics
+  tree to cut at. Recorded as a deliberate trade rather than left to be
+  rediscovered: clipping the reading too would mean cutting a sentence
+  at a pixel, which semantics cannot express.
+
+### Note
+
+Released in lockstep with `plinth_core` 1.3.0, which makes the contrast
+machinery public. Nothing in this package's own API changed.
+
 ## 1.2.0
 
 **`F-3` built out, and a keyboard defect found by ear.** Nothing that

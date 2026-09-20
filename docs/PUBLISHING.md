@@ -302,6 +302,34 @@ Left in place rather than deleted, so the record shows the question was
 answered rather than forgotten. Tracked as **V1** in
 [ROADMAP.md](ROADMAP.md).
 
+### `plinth_blocks` is outside the lockstep, for now
+
+Decided when the package was first versioned, at `0.1.0`.
+
+**Lockstep would import a churning catalogue's version into a stable
+foundation.** `plinth_blocks` holds 18 of the ~110 arrangements the
+showcase has, and the rest will land over time; the API will move as
+they do. Under lockstep, renaming a parameter on `PlinthFaqBlock` is a
+breaking change that drags `plinth_core` to `2.0.0` with it — a major
+bump on a token engine that did not change, announced to every team
+that installed it for the tokens alone.
+
+That is the same tension the section above worked through and
+resolved *for the three that ship together*. It resolves the other way
+here, because the premise differs: the three are stable relative to one
+another, and blocks is not yet stable relative to anything.
+
+**`0.x` is the mechanism, not a hedge.** Pub treats a `0.x` minor as
+allowed to break, so the catalogue can churn at whatever rate it needs
+to without a compatibility question reaching anyone who only wanted the
+components.
+
+**It joins the lockstep at its `1.0.0`**, once the catalogue has
+settled enough that a block API is worth promising. Until then the
+answer to *"which versions go together?"* is that `plinth_blocks`
+declares the `plinth_components` constraint it actually needs, and that
+constraint is the answer.
+
 ### The `1.0.0-beta.1` rehearsal
 
 The beta exists so this sequence gets run once while a mistake is still

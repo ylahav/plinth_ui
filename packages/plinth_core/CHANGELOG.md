@@ -11,6 +11,45 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.3.0
+
+**The contrast machinery is askable, not just answerable.** This
+package's whole claim is a number - 4.5:1 - and until now a caller
+could only ever receive the answer. `readableOn` hands back a colour;
+nothing let you ask what the ratio actually was. Every contrast test in
+this repo, and the tutorial app's theme test, had re-implemented the
+WCAG formula locally to check its own work.
+
+### Added
+
+- **`PlinthTheme.contrastRatio(a, b)`** - the WCAG contrast ratio
+  between two opaque colours, 1.0 to 21.0. This is the function
+  `readableOn` and `contrastingOn` resolve with, exposed so an app can
+  verify a pair rather than take it on trust - including for colours
+  Plinth never picked.
+
+  ```dart
+  final ratio = PlinthTheme.contrastRatio(theme.text, theme.surface);
+  expect(ratio, greaterThanOrEqualTo(PlinthContrast.body.ratio));
+  ```
+
+  Both colours must be opaque. Compose a translucent one onto its
+  background first (`Color.alphaBlend`) - a ratio taken against an
+  alpha channel measures a colour nothing renders.
+
+- **`PlinthTheme.relativeLuminance(c)`** - WCAG relative luminance,
+  public for the same reason: a caller checking its own colours needs
+  the arithmetic the library resolves with, not a second implementation
+  that might round differently. It agrees with Flutter's own
+  `Color.computeLuminance`, which a test pins.
+
+This is the first piece of the roadmap's *"ship the contrast machinery
+as something a team runs in CI against its own tokens"*, and it arrived
+the way that roadmap says core work should - demanded by something
+being built rather than picked off a list. What demanded it was the
+demo app's new rebrand control, which reports what a chosen brand
+colour actually measures.
+
 ## 1.2.0
 
 No change in this package. Released in lockstep with `plinth_components`
