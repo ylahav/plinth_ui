@@ -57,6 +57,19 @@ Unreleased. The first blocks, and the shape the rest will follow.
   connection resolves itself, so this is a banner plus the state of the
   queue that the page keeps working around. Yellow rather than red:
   nothing has failed, work is being held.
+- `PlinthBannerBlock` — the four banner shapes as one widget with a
+  `notice` / `bar` layout. Ships **no default copy**, unlike the error
+  pages: nothing can guess what your announcement says, and placeholder
+  text in a banner is worse than a banner that refuses to build.
+  Dismissal is carried by `onClose` being null or not, which makes the
+  consent-versus-promo decision explicit rather than incidental — a
+  prompt somebody can wave away has not obtained consent, and a promo
+  that cannot be dismissed is a tax on everyone who has read it.
+- `PlinthFaqBlock` — accordion or two-column, optionally searchable,
+  with an optional footer. Search matches answers as well as questions,
+  because people search for the word they remember and it is usually in
+  the answer. A search that matches nothing says so; an empty list with
+  no explanation reads as a broken filter.
 
 ### Notes
 

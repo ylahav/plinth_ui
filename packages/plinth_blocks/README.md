@@ -34,7 +34,7 @@ MaterialApp(
 
 ## What's here
 
-Authentication and error states, so far:
+Authentication, error states, banners and the FAQ, so far:
 
 | Block | What it is |
 |---|---|
@@ -46,6 +46,8 @@ Authentication and error states, so far:
 | `PlinthAuthCard` | The card the others are built in, for the screens they don't cover |
 | `PlinthErrorPageBlock` | `.notFound`, `.serverError`, `.maintenance`, `.permissionDenied` |
 | `PlinthOfflineNotice` | A banner the page keeps working around, not a page that replaces it |
+| `PlinthBannerBlock` | A page-level message, as a notice or a one-line bar |
+| `PlinthFaqBlock` | Questions as an accordion or two columns, optionally searchable |
 
 ```dart
 PlinthSignInBlock(

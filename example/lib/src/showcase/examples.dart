@@ -722,46 +722,26 @@ class FaqAccordionExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    return const PlinthFaqBlock(
+      title: 'Frequently asked questions',
       width: 520,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          PlinthTitle('Frequently asked questions', order: 3),
-          SizedBox(height: 20),
-          PlinthAccordion(
-            items: [
-              PlinthAccordionItem(
-                value: 'billing',
-                title: 'When am I billed?',
-                content: PlinthText(
-                  'On the same day each month, starting the day you '
-                  'upgrade. Downgrades take effect at the end of the '
-                  'current period.',
-                  size: PlinthSize.sm,
-                ),
-              ),
-              PlinthAccordionItem(
-                value: 'cancel',
-                title: 'Can I cancel at any time?',
-                content: PlinthText(
-                  'Yes. Your plan stays active until the end of the '
-                  'period you have already paid for.',
-                  size: PlinthSize.sm,
-                ),
-              ),
-              PlinthAccordionItem(
-                value: 'refund',
-                title: 'Do you offer refunds?',
-                content: PlinthText(
-                  'Within 30 days of purchase, no questions asked.',
-                  size: PlinthSize.sm,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+      items: [
+        PlinthFaqItem(
+          question: 'When am I billed?',
+          answer: 'On the same day each month, starting the day you upgrade. '
+              'Downgrades take effect at the end of the current period.',
+        ),
+        PlinthFaqItem(
+          question: 'Can I cancel at any time?',
+          answer: 'Yes. Your plan stays active until the end of the period '
+              'you have already paid for.',
+        ),
+        PlinthFaqItem(
+          question: 'Do you offer a free tier?',
+          answer: 'Everything in Plinth UI is MIT licensed, including for '
+              'commercial use.',
+        ),
+      ],
     );
   }
 }
@@ -771,60 +751,30 @@ class FaqWithContactExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 560,
-      child: PlinthGrid(
-        children: [
-          PlinthGridCol(
-            span: 12,
-            spanMd: 5,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const PlinthTitle('Still deciding?', order: 4),
-                const SizedBox(height: 8),
-                const PlinthText(
-                  'The answers most people need are on the right. If '
-                  'yours is not, we read every message.',
-                  size: PlinthSize.sm,
-                  color: 'gray',
-                ),
-                const SizedBox(height: 16),
-                PlinthButton(
-                  variant: PlinthVariant.light,
-                  leadingIcon: const Icon(Icons.mail_outline, size: 16),
-                  onPressed: () {},
-                  child: const Text('Contact support'),
-                ),
-              ],
-            ),
-          ),
-          const PlinthGridCol(
-            span: 12,
-            spanMd: 7,
-            child: PlinthAccordion(
-              items: [
-                PlinthAccordionItem(
-                  value: 'trial',
-                  title: 'Is there a free trial?',
-                  content: PlinthText(
-                    '14 days, no card required.',
-                    size: PlinthSize.sm,
-                  ),
-                ),
-                PlinthAccordionItem(
-                  value: 'seats',
-                  title: 'Can I add seats later?',
-                  content: PlinthText(
-                    'At any time — you are billed the prorated '
-                    'difference.',
-                    size: PlinthSize.sm,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+    return PlinthFaqBlock(
+      title: 'Questions',
+      subtitle: 'If yours is not here, we answer email within a day.',
+      items: [
+        PlinthFaqItem(
+          question: 'When am I billed?',
+          answer: 'On the same day each month, starting the day you upgrade. '
+              'Downgrades take effect at the end of the current period.',
+        ),
+        PlinthFaqItem(
+          question: 'Can I cancel at any time?',
+          answer: 'Yes. Your plan stays active until the end of the period '
+              'you have already paid for.',
+        ),
+        PlinthFaqItem(
+          question: 'Do you offer a free tier?',
+          answer: 'Everything in Plinth UI is MIT licensed, including for '
+              'commercial use.',
+        ),
+      ],
+      footer: PlinthButton(
+        leadingIcon: const Icon(Icons.mail_outline, size: 16),
+        onPressed: () {},
+        child: const Text('Email support'),
       ),
     );
   }
@@ -1175,26 +1125,16 @@ class AnnouncementBannerExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 560,
-      child: PlinthAlert(
-        color: 'grape',
-        icon: const Icon(Icons.campaign_outlined),
-        onClose: () {},
-        title: 'Plinth UI 0.9.0 is out',
-        child: PlinthGroup(
-          gap: PlinthSize.sm,
-          children: [
-            const PlinthText(
-              'Dark mode, contrast-aware colours, and three new form '
-              'components.',
-              size: PlinthSize.sm,
-            ),
-            PlinthAnchor('Read the changelog',
-                size: PlinthSize.sm, onTap: () {}),
-          ],
-        ),
-      ),
+    return PlinthBannerBlock(
+      title: 'Plinth UI 1.2.0 is out',
+      message: 'Dark mode, contrast-aware colours, and three new form '
+          'components.',
+      color: 'grape',
+      icon: const Icon(Icons.campaign_outlined),
+      onClose: () {},
+      actions: [
+        PlinthAnchor('Read the changelog', size: PlinthSize.sm, onTap: () {}),
+      ],
     );
   }
 }
@@ -1204,43 +1144,26 @@ class ConsentBannerExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 560,
-      child: PlinthPaper(
-        withBorder: true,
-        shadow: PlinthShadow.md,
-        p: PlinthSize.md,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Expanded(
-              child: PlinthText(
-                'We use a single cookie to remember your theme. Nothing '
-                'is shared with anyone.',
-                size: PlinthSize.sm,
-              ),
-            ),
-            const SizedBox(width: 16),
-            PlinthGroup(
-              gap: PlinthSize.xs,
-              wrap: false,
-              children: [
-                PlinthButton(
-                  variant: PlinthVariant.subtle,
-                  size: PlinthSize.sm,
-                  onPressed: () {},
-                  child: const Text('Decline'),
-                ),
-                PlinthButton(
-                  size: PlinthSize.sm,
-                  onPressed: () {},
-                  child: const Text('Accept'),
-                ),
-              ],
-            ),
-          ],
+    return PlinthBannerBlock(
+      layout: PlinthBannerLayout.bar,
+      elevated: true,
+      message: 'We use a single cookie to remember your theme. Nothing is '
+          'shared with anyone.',
+      // No onClose: a consent prompt somebody can wave away has not
+      // obtained consent.
+      actions: [
+        PlinthButton(
+          variant: PlinthVariant.subtle,
+          size: PlinthSize.sm,
+          onPressed: () {},
+          child: const Text('Decline'),
         ),
-      ),
+        PlinthButton(
+          size: PlinthSize.sm,
+          onPressed: () {},
+          child: const Text('Accept'),
+        ),
+      ],
     );
   }
 }
@@ -2250,7 +2173,7 @@ class _ArticleContentsExampleState extends State<ArticleContentsExample> {
             PlinthTableOfContents(
               activeIndex: _active,
               onSelected: (i) => setState(() => _active = i),
-              items: const [
+              items: [
                 PlinthTocItem(label: 'Introduction'),
                 PlinthTocItem(label: 'Installing', order: 2),
                 PlinthTocItem(label: 'From pub.dev', order: 3),
@@ -2727,7 +2650,7 @@ class _HeaderWithFiltersExampleState extends State<HeaderWithFiltersExample> {
             PlinthSegmentedControl<String>(
               value: _view,
               onChanged: (v) => setState(() => _view = v),
-              items: const [
+              items: [
                 PlinthSegmentedControlItem('all', 'All'),
                 PlinthSegmentedControlItem('open', 'Open'),
                 PlinthSegmentedControlItem('closed', 'Closed'),
@@ -2964,7 +2887,7 @@ class _UserStatusExampleState extends State<UserStatusExample> {
             size: PlinthSize.sm,
             value: _status,
             onChanged: (s) => setState(() => _status = s),
-            items: const [
+            items: [
               PlinthSegmentedControlItem('online', 'Online'),
               PlinthSegmentedControlItem('away', 'Away'),
               PlinthSegmentedControlItem('busy', 'Busy'),
@@ -3158,7 +3081,7 @@ class _StatWithPeriodExampleState extends State<StatWithPeriodExample> {
               fullWidth: true,
               value: _period,
               onChanged: (p) => setState(() => _period = p),
-              items: const [
+              items: [
                 PlinthSegmentedControlItem('week', 'Week'),
                 PlinthSegmentedControlItem('month', 'Month'),
                 PlinthSegmentedControlItem('year', 'Year'),
@@ -4038,105 +3961,57 @@ class HeroWithProofExample extends StatelessWidget {
 class FaqTwoColumnExample extends StatelessWidget {
   const FaqTwoColumnExample({super.key});
 
-  static const _faqs = [
-    (q: 'Is it free?', a: 'Yes, MIT licensed, including commercial use.'),
-    (
-      q: 'Does it do dark mode?',
-      a: 'Register darkTheme and the library follows.'
-    ),
-    (q: 'Can I retheme it?', a: 'Every colour prop is a key into the palette.'),
-    (
-      q: 'Which platforms?',
-      a: 'Anywhere Flutter runs; the demo is on the web.'
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 560,
-      child: PlinthStack(
-        gap: PlinthSize.md,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const PlinthTitle('Common questions', order: 3),
-          // Everything open in two columns rather than an accordion.
-          // For four short answers, hiding them behind a click costs
-          // more than the vertical space it saves.
-          PlinthSimpleGrid(
-            columns: 2,
-            children: [
-              for (final f in _faqs)
-                PlinthStack(
-                  gap: PlinthSize.xs,
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    PlinthText(f.q, weight: FontWeight.w700),
-                    PlinthText(f.a, size: PlinthSize.sm, color: 'gray'),
-                  ],
-                ),
-            ],
-          ),
-        ],
-      ),
+    return const PlinthFaqBlock(
+      layout: PlinthFaqLayout.twoColumn,
+      title: 'Common questions',
+      items: [
+        PlinthFaqItem(
+          question: 'When am I billed?',
+          answer: 'On the same day each month, starting the day you upgrade. '
+              'Downgrades take effect at the end of the current period.',
+        ),
+        PlinthFaqItem(
+          question: 'Can I cancel at any time?',
+          answer: 'Yes. Your plan stays active until the end of the period '
+              'you have already paid for.',
+        ),
+        PlinthFaqItem(
+          question: 'Do you offer a free tier?',
+          answer: 'Everything in Plinth UI is MIT licensed, including for '
+              'commercial use.',
+        ),
+      ],
     );
   }
 }
 
-class FaqSearchExample extends StatefulWidget {
+class FaqSearchExample extends StatelessWidget {
   const FaqSearchExample({super.key});
 
   @override
-  State<FaqSearchExample> createState() => _FaqSearchExampleState();
-}
-
-class _FaqSearchExampleState extends State<FaqSearchExample> {
-  String _query = '';
-
-  static const _faqs = [
-    (id: 'billing', q: 'When am I billed?', a: 'On the same day each month.'),
-    (id: 'cancel', q: 'How do I cancel?', a: 'From Settings, any time.'),
-    (id: 'refund', q: 'Do you refund?', a: 'Within 30 days, no questions.'),
-  ];
-
-  @override
   Widget build(BuildContext context) {
-    final matches = _faqs
-        .where((f) => f.q.toLowerCase().contains(_query.toLowerCase()))
-        .toList();
-
-    return SizedBox(
-      width: 520,
-      child: PlinthStack(
-        gap: PlinthSize.sm,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          PlinthTextInput(
-            placeholder: 'Search questions…',
-            leadingIcon: const Icon(Icons.search, size: 18),
-            onChanged: (v) => setState(() => _query = v),
-          ),
-          if (matches.isEmpty)
-            // A search that can return nothing needs to say so; an
-            // empty accordion just looks broken.
-            const PlinthEmptyState(
-              title: 'No matching questions',
-              description: 'Try a different word, or contact support.',
-            )
-          else
-            PlinthAccordion(
-              items: [
-                for (final f in matches)
-                  PlinthAccordionItem(
-                    value: f.id,
-                    title: f.q,
-                    content: PlinthText(f.a, size: PlinthSize.sm),
-                  ),
-              ],
-            ),
-        ],
-      ),
+    return const PlinthFaqBlock(
+      title: 'Help centre',
+      searchable: true,
+      items: [
+        PlinthFaqItem(
+          question: 'When am I billed?',
+          answer: 'On the same day each month, starting the day you upgrade. '
+              'Downgrades take effect at the end of the current period.',
+        ),
+        PlinthFaqItem(
+          question: 'Can I cancel at any time?',
+          answer: 'Yes. Your plan stays active until the end of the period '
+              'you have already paid for.',
+        ),
+        PlinthFaqItem(
+          question: 'Do you offer a free tier?',
+          answer: 'Everything in Plinth UI is MIT licensed, including for '
+              'commercial use.',
+        ),
+      ],
     );
   }
 }
@@ -4269,46 +4144,20 @@ class _PromoBannerExampleState extends State<PromoBannerExample> {
       );
     }
 
-    final theme = context.plinth;
-
-    return SizedBox(
-      width: 560,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: theme.spacing[PlinthSize.md]!,
-          vertical: theme.spacing[PlinthSize.sm]!,
+    return PlinthBannerBlock(
+      layout: PlinthBannerLayout.bar,
+      color: 'grape',
+      leading: const PlinthBadge('Offer', color: 'grape'),
+      message: 'Annual plans are 20% off until Friday.',
+      onClose: () => setState(() => _visible = false),
+      actions: [
+        PlinthButton(
+          size: PlinthSize.xs,
+          color: 'grape',
+          onPressed: () {},
+          child: const Text('See plans'),
         ),
-        decoration: BoxDecoration(
-          color: theme.shaded('grape', 0),
-          borderRadius:
-              BorderRadius.circular(theme.radius[theme.defaultRadius]!),
-        ),
-        child: Row(
-          children: [
-            const PlinthBadge('Offer', color: 'grape'),
-            const SizedBox(width: 12),
-            const Expanded(
-              child: PlinthText(
-                'Annual plans are 20% off until Friday.',
-                size: PlinthSize.sm,
-              ),
-            ),
-            PlinthButton(
-              size: PlinthSize.xs,
-              color: 'grape',
-              onPressed: () {},
-              child: const Text('See plans'),
-            ),
-            // Dismissible, unlike the consent banner: a promo the
-            // reader has declined should not keep asking.
-            PlinthCloseButton(
-              size: PlinthSize.xs,
-              onPressed: () => setState(() => _visible = false),
-              semanticLabel: 'Dismiss offer',
-            ),
-          ],
-        ),
-      ),
+      ],
     );
   }
 }
@@ -4318,42 +4167,25 @@ class UpdateBannerExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 560,
-      child: PlinthAlert(
-        title: 'Version 0.17.0 is available',
-        color: 'blue',
-        icon: const Icon(Icons.system_update_alt),
-        child: PlinthStack(
-          gap: PlinthSize.sm,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const PlinthText(
-              'Adds four components and fixes a marquee overflow.',
-              size: PlinthSize.sm,
-            ),
-            // Two actions, and the passive one is not a dismissal:
-            // an update banner that can only be closed teaches people
-            // to close it.
-            PlinthGroup(
-              gap: PlinthSize.xs,
-              children: [
-                PlinthButton(
-                  size: PlinthSize.xs,
-                  onPressed: () {},
-                  child: const Text('Update now'),
-                ),
-                PlinthButton(
-                  size: PlinthSize.xs,
-                  variant: PlinthVariant.subtle,
-                  onPressed: () {},
-                  child: const Text('Release notes'),
-                ),
-              ],
-            ),
-          ],
+    return PlinthBannerBlock(
+      title: 'Version 1.3.0 is available',
+      message: 'Adds four components and fixes a marquee overflow.',
+      icon: const Icon(Icons.system_update_alt),
+      // Two actions, and the passive one is not a dismissal: an update
+      // banner that can only be closed teaches people to close it.
+      actions: [
+        PlinthButton(
+          size: PlinthSize.xs,
+          onPressed: () {},
+          child: const Text('Update now'),
         ),
-      ),
+        PlinthButton(
+          size: PlinthSize.xs,
+          variant: PlinthVariant.subtle,
+          onPressed: () {},
+          child: const Text('What changed?'),
+        ),
+      ],
     );
   }
 }
