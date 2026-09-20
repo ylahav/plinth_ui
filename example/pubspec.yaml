@@ -21,7 +21,23 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  analyzer: ^14.4.0
+
+  # Pinned exactly, and coupled to the Flutter pin in ci.yml.
+  #
+  # `tool/generate_example_code.dart` parses `examples.dart` with this.
+  # The constraint is not about the analyzer's API — it is about `meta`:
+  # `flutter_test` from the SDK pins `meta` to whatever that Flutter
+  # version bundles, and an analyzer newer than the SDK wants a newer
+  # `meta` than the SDK allows. Flutter 3.44.8 pins `meta 1.18.0`;
+  # analyzer 14.4.0 requires `meta ^1.18.3`, so it resolves on a newer
+  # local SDK and fails in CI with "analyzer is incompatible with
+  # flutter_test from sdk". Analyzer 13.0.0 asks for `meta ^1.18.0`,
+  # which the pinned SDK satisfies.
+  #
+  # So: raise this only together with `flutter-version` in the
+  # workflows, and check the new pair resolves against the SDK's `meta`
+  # rather than against whatever is installed locally.
+  analyzer: 13.0.0
 
 flutter:
   uses-material-design: true

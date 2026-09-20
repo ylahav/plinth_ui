@@ -56,9 +56,9 @@ Map<String, String> extractExampleSource(String source) {
 
   for (final declaration in parsed.unit.declarations) {
     if (declaration is! ClassDeclaration) continue;
-    // `namePart.typeName` rather than `name`: analyzer 14 moved a
-    // declaration's identifier behind a `ClassNamePart` so the name and
-    // its type parameters travel together.
+    // `namePart.typeName` rather than `name`: the analyzer keeps a
+    // declaration's identifier behind a `ClassNamePart`, so the name
+    // and its type parameters travel together.
     final name = declaration.namePart.typeName.lexeme;
 
     if (name.endsWith('Example')) {
