@@ -34,7 +34,7 @@ MaterialApp(
 
 ## What's here
 
-Authentication, error states, banners and the FAQ, so far:
+Authentication, error states, banners, the FAQ and heroes, so far:
 
 | Block | What it is |
 |---|---|
@@ -48,6 +48,8 @@ Authentication, error states, banners and the FAQ, so far:
 | `PlinthOfflineNotice` | A banner the page keeps working around, not a page that replaces it |
 | `PlinthBannerBlock` | A page-level message, as a notice or a one-line bar |
 | `PlinthFaqBlock` | Questions as an accordion or two columns, optionally searchable |
+| `PlinthHeroBlock` | A claim, a sentence and something to do — centred, split, or over a photograph |
+| `PlinthStatStrip` | Numbers under a claim, each pair announced as one thing |
 
 ```dart
 PlinthSignInBlock(

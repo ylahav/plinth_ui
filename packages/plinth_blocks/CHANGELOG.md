@@ -70,6 +70,16 @@ Unreleased. The first blocks, and the shape the rest will follow.
   because people search for the word they remember and it is usually in
   the answer. A search that matches nothing says so; an empty list with
   no explanation reads as a broken filter.
+- `PlinthHeroBlock` — the five hero arrangements as one widget:
+  centred or split, optionally over a photograph. The headline is a
+  `PlinthTitle`, not large text, because a landing page's claim *is*
+  the page's heading and a document whose outline starts further down
+  is one a screen reader cannot navigate. A split hero stacks below
+  `minSplitWidth` rather than giving both halves a measure too narrow
+  to read, and `aside` moves under the words rather than disappearing.
+- `PlinthStatStrip` — the numbers under a claim. Each value and label
+  is merged into one semantics node, so it is announced as "117
+  components" and not as two strings that happen to be adjacent.
 
 ### Notes
 

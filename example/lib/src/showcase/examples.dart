@@ -136,40 +136,18 @@ class HeroCenteredExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PlinthCenter(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const PlinthBadge('New', color: 'grape'),
-          const SizedBox(height: 12),
-          const PlinthText(
-            'Build interfaces faster',
-            size: PlinthSize.xl,
-            weight: FontWeight.w800,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          const PlinthText(
-            'A themeable Flutter component library for teams that ship.',
-            size: PlinthSize.sm,
-            color: 'gray',
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          PlinthGroup(
-            mainAxisAlignment: MainAxisAlignment.center,
-            gap: PlinthSize.sm,
-            children: [
-              PlinthButton(onPressed: () {}, child: const Text('Get started')),
-              PlinthButton(
-                onPressed: () {},
-                variant: PlinthVariant.outline,
-                child: const Text('Documentation'),
-              ),
-            ],
-          ),
-        ],
-      ),
+    return PlinthHeroBlock(
+      eyebrow: const PlinthBadge('New', color: 'grape'),
+      headline: 'Build interfaces faster',
+      subhead: 'A themeable Flutter component library for teams that ship.',
+      actions: [
+        PlinthButton(onPressed: () {}, child: const Text('Get started')),
+        PlinthButton(
+          onPressed: () {},
+          variant: PlinthVariant.outline,
+          child: const Text('Documentation'),
+        ),
+      ],
     );
   }
 }
@@ -179,42 +157,22 @@ class HeroSplitExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const PlinthText(
-                'Ship your product today',
-                size: PlinthSize.lg,
-                weight: FontWeight.w700,
-              ),
-              const SizedBox(height: 8),
-              const PlinthText(
-                'Every component is themeable, accessible, and tested.',
-                size: PlinthSize.sm,
-                color: 'gray',
-              ),
-              const SizedBox(height: 12),
-              PlinthButton(onPressed: () {}, child: const Text('Try it now')),
-            ],
-          ),
-        ),
-        const SizedBox(width: 24),
-        Expanded(
-          child: PlinthAspectRatio(
-            ratio: 4 / 3,
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFE7F5FF),
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          ),
-        ),
+    return PlinthHeroBlock(
+      layout: PlinthHeroLayout.split,
+      headline: 'Ship your product today',
+      subhead: 'Every component is themeable, accessible, and tested.',
+      actions: [
+        PlinthButton(onPressed: () {}, child: const Text('Try it now')),
       ],
+      aside: PlinthAspectRatio(
+        ratio: 4 / 3,
+        child: Container(
+          decoration: BoxDecoration(
+            color: context.plinth.shaded('blue', 0),
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -3826,45 +3784,14 @@ class HeroWithImageExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    // The photograph is the hero rather than sitting beside it. The
+    // scrim is doing real work: over the light half of this image the
+    // headline would otherwise disappear.
+    return const PlinthHeroBlock(
       width: 560,
-      // The photograph is the hero rather than sitting beside it. The
-      // scrim is doing real work here: over the light half of this
-      // image the headline would otherwise disappear.
-      child: PlinthBackgroundImage(
-        src: 'https://picsum.photos/seed/plinth-hero/1200/600',
-        height: 240,
-        scrimOpacity: 0.5,
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: PlinthStack(
-            gap: PlinthSize.sm,
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const PlinthTitle('Build it once',
-                  order: 2, textAlign: TextAlign.center),
-              const PlinthText(
-                'A themeable component library for Flutter.',
-                textAlign: TextAlign.center,
-              ),
-              PlinthGroup(
-                gap: PlinthSize.sm,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  PlinthButton(
-                      onPressed: () {}, child: const Text('Get started')),
-                  PlinthButton(
-                    variant: PlinthVariant.outline,
-                    onPressed: () {},
-                    child: const Text('Docs'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+      backgroundImage: 'https://picsum.photos/seed/plinth-hero/1200/600',
+      headline: 'Build it once',
+      subhead: 'A themeable component library for Flutter.',
     );
   }
 }
@@ -3874,36 +3801,19 @@ class HeroWithSignupExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return PlinthHeroBlock(
       width: 520,
-      child: PlinthStack(
-        gap: PlinthSize.sm,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      headline: 'Ship your design system',
+      subhead: 'One install, 117 components, no lock-in.',
+      // The conversion control lives in the hero rather than behind a
+      // button: one fewer step between reading the claim and acting.
+      footer: Row(
         children: [
-          const PlinthTitle('Ship your design system',
-              order: 2, textAlign: TextAlign.center),
-          const PlinthText(
-            'One install, 111 components, no lock-in.',
-            color: 'gray',
-            textAlign: TextAlign.center,
+          const Expanded(
+            child: PlinthTextInput(placeholder: 'you@example.com'),
           ),
-          // The conversion control lives in the hero rather than
-          // behind a button: one fewer step between reading the claim
-          // and acting on it.
-          Row(
-            children: [
-              const Expanded(
-                child: PlinthTextInput(placeholder: 'you@example.com'),
-              ),
-              const SizedBox(width: 8),
-              PlinthButton(onPressed: () {}, child: const Text('Start free')),
-            ],
-          ),
-          const PlinthText(
-            'No card required. Cancel whenever.',
-            size: PlinthSize.xs,
-            color: 'gray',
-          ),
+          const SizedBox(width: 8),
+          PlinthButton(onPressed: () {}, child: const Text('Start free')),
         ],
       ),
     );
@@ -3913,43 +3823,22 @@ class HeroWithSignupExample extends StatelessWidget {
 class HeroWithProofExample extends StatelessWidget {
   const HeroWithProofExample({super.key});
 
-  static const _proof = [
-    (value: '111', label: 'components'),
-    (value: '82', label: 'blocks'),
-    (value: '160', label: 'pub points'),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return PlinthHeroBlock(
       width: 520,
-      child: PlinthStack(
-        gap: PlinthSize.md,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const PlinthTitle('Trusted where it counts',
-              order: 2, textAlign: TextAlign.center),
-          PlinthButton(onPressed: () {}, child: const Text('Read the docs')),
-          const PlinthDivider(),
-          // Evidence under the claim rather than a second paragraph
-          // asserting it. Numbers are the part a reader can check.
-          PlinthGroup(
-            gap: PlinthSize.xl,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              for (final p in _proof)
-                PlinthStack(
-                  gap: PlinthSize.xs,
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    PlinthText(p.value,
-                        size: PlinthSize.xl, weight: FontWeight.w700),
-                    PlinthText(p.label, size: PlinthSize.xs, color: 'gray'),
-                  ],
-                ),
-            ],
-          ),
+      headline: 'Trusted where it counts',
+      actions: [
+        PlinthButton(onPressed: () {}, child: const Text('Read the docs')),
+      ],
+      // Evidence under the claim rather than a second paragraph
+      // asserting it. Numbers are the part a reader can check.
+      footer: const PlinthStatStrip(
+        divider: true,
+        stats: [
+          PlinthStat(value: '117', label: 'components'),
+          PlinthStat(value: '110', label: 'blocks'),
+          PlinthStat(value: '160', label: 'pub points'),
         ],
       ),
     );
