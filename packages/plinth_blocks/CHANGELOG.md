@@ -80,6 +80,22 @@ Unreleased. The first blocks, and the shape the rest will follow.
 - `PlinthStatStrip` — the numbers under a claim. Each value and label
   is merged into one semantics node, so it is announced as "117
   components" and not as two strings that happen to be adjacent.
+- `PlinthFeatureBlock` — grid, checklist and alternating-screenshot
+  layouts on one item type. The checklist tick resolves against the
+  surface rather than the `Color(0xFF40C057)` the showcase had frozen
+  into it, and is hidden from assistive technology: the same mark on
+  every row carries nothing, and read aloud it is thirty repetitions of
+  the word "check". The alternation is computed, which is the point —
+  by hand is where a row ends up on the same side as the one above it.
+- `PlinthComparisonBlock` — a plans-by-features matrix. **Asserts that
+  every row has one value per plan**, because a short row does not look
+  broken: it shifts every answer after it one column left, which is a
+  pricing page that lies. `bool` cells render as a tick or a cross with
+  a label behind them, since an unlabelled tick is a cell that reads as
+  nothing.
+- `PlinthLogoStrip` — names under a caption, scrolling by default
+  because a strip usually has more than fit. `scroll: false` when they
+  do: motion that earns nothing is motion somebody has to sit through.
 
 ### Notes
 

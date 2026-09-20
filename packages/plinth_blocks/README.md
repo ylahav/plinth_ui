@@ -34,7 +34,7 @@ MaterialApp(
 
 ## What's here
 
-Authentication, error states, banners, the FAQ and heroes, so far:
+Authentication, error states, banners, the FAQ, heroes and features, so far:
 
 | Block | What it is |
 |---|---|
@@ -50,6 +50,9 @@ Authentication, error states, banners, the FAQ and heroes, so far:
 | `PlinthFaqBlock` | Questions as an accordion or two columns, optionally searchable |
 | `PlinthHeroBlock` | A claim, a sentence and something to do — centred, split, or over a photograph |
 | `PlinthStatStrip` | Numbers under a claim, each pair announced as one thing |
+| `PlinthFeatureBlock` | Features as a grid, a checklist, or alternating rows |
+| `PlinthComparisonBlock` | A plans-by-features matrix that refuses a short row |
+| `PlinthLogoStrip` | Customer names, scrolling only when they don't fit |
 
 ```dart
 PlinthSignInBlock(

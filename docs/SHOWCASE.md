@@ -21,9 +21,9 @@ arrangement yet — usually from components that already exist.
 Two places, and the split is being closed in one direction.
 
 **`packages/plinth_blocks/`** is where a block ends up: a real widget
-with a real API, which an app installs and calls. Thirteen are there
-so far — authentication, the error states, banners, the FAQ and the
-hero sections.
+with a real API, which an app installs and calls. Sixteen are there so
+far — authentication, the error states, banners, the FAQ, and the hero
+and feature sections.
 
 | Widget | Replaces |
 |---|---|
@@ -39,6 +39,9 @@ hero sections.
 | `PlinthFaqBlock` | FAQ accordion, with contact, two-column, searchable |
 | `PlinthHeroBlock` | Centered, split, with image, with signup, with proof |
 | `PlinthStatStrip` | the proof strip under a hero, reusable on its own |
+| `PlinthFeatureBlock` | Feature grid, feature list, alternating screenshots |
+| `PlinthComparisonBlock` | Comparison table |
+| `PlinthLogoStrip` | Logo strip |
 
 Four error pages became one widget with four named constructors,
 because they differ only in their words. **Offline did not**, and that
@@ -47,7 +50,7 @@ page should keep working around a notice rather than replace itself
 with an apology. The showcase had already made that call; collapsing it
 into the error page would have thrown the decision away.
 
-**`example/lib/src/showcase/`** is where the other 88 still are, as
+**`example/lib/src/showcase/`** is where the other 83 still are, as
 fixed arrangements built for the gallery — `onPressed: () {}`
 throughout, hardcoded copy, no way for a caller to pass anything in.
 They demonstrate that an arrangement works; they are not yet something

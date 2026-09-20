@@ -182,41 +182,25 @@ class HeroSplitExample extends StatelessWidget {
 class FeatureGridExample extends StatelessWidget {
   const FeatureGridExample({super.key});
 
-  static const _features = [
-    (
-      Icons.bolt_outlined,
-      'Fast',
-      'Optimized rebuilds with no unnecessary widget churn.'
-    ),
-    (
-      Icons.palette_outlined,
-      'Themeable',
-      'Every color, spacing, and radius token is overridable.'
-    ),
-    (
-      Icons.accessibility_new,
-      'Accessible',
-      'Semantics built in, not bolted on afterward.'
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return PlinthSimpleGrid(
-      columns: 3,
-      spacing: PlinthSize.md,
-      children: [
-        for (final (icon, title, desc) in _features)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              PlinthThemeIcon(icon: Icon(icon), variant: PlinthVariant.light),
-              const SizedBox(height: 8),
-              PlinthText(title, weight: FontWeight.w600),
-              const SizedBox(height: 4),
-              PlinthText(desc, size: PlinthSize.xs, color: 'gray'),
-            ],
-          ),
+    return const PlinthFeatureBlock(
+      features: [
+        PlinthFeature(
+          icon: Icon(Icons.bolt_outlined),
+          title: 'Fast',
+          description: 'Optimized rebuilds with no unnecessary widget churn.',
+        ),
+        PlinthFeature(
+          icon: Icon(Icons.palette_outlined),
+          title: 'Themeable',
+          description: 'Every color, spacing, and radius token is overridable.',
+        ),
+        PlinthFeature(
+          icon: Icon(Icons.accessibility_new),
+          title: 'Accessible',
+          description: 'Semantics built in, not bolted on afterward.',
+        ),
       ],
     );
   }
@@ -227,20 +211,19 @@ class FeatureListExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PlinthList(
-      items: [
-        PlinthListItem(
-          PlinthText('67+ themeable components, zero design-system lock-in'),
-          icon: Icon(Icons.check_circle, color: Color(0xFF40C057), size: 16),
+    // No icons passed, so each row gets the default tick — resolved
+    // against the surface rather than frozen at one hex, which is what
+    // this block used to do.
+    return const PlinthFeatureBlock(
+      layout: PlinthFeatureLayout.list,
+      features: [
+        PlinthFeature(
+          title: '117 themeable components, zero design-system lock-in',
         ),
-        PlinthListItem(
-          PlinthText('Widgetbook gallery for isolated visual development'),
-          icon: Icon(Icons.check_circle, color: Color(0xFF40C057), size: 16),
+        PlinthFeature(
+          title: 'Widgetbook gallery for isolated visual development',
         ),
-        PlinthListItem(
-          PlinthText('Published on pub.dev, versioned semantically'),
-          icon: Icon(Icons.check_circle, color: Color(0xFF40C057), size: 16),
-        ),
+        PlinthFeature(title: 'Published on pub.dev, versioned semantically'),
       ],
     );
   }
@@ -4084,80 +4067,37 @@ class UpdateBannerExample extends StatelessWidget {
 class FeatureWithScreenshotExample extends StatelessWidget {
   const FeatureWithScreenshotExample({super.key});
 
+  static Widget _shot(String seed) => ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: PlinthImage(
+          src: 'https://picsum.photos/seed/$seed/600/360',
+          height: 130,
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    // The sides alternate on their own. Doing it by hand is where a
+    // row ends up on the same side as the one above it.
+    return PlinthFeatureBlock(
       width: 560,
-      // Text and image alternating sides down the page. Showing one
-      // pair is the point: the arrangement is the repeat, not the
-      // single row.
-      child: PlinthStack(
-        gap: PlinthSize.lg,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Expanded(
-                child: PlinthStack(
-                  gap: PlinthSize.xs,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    PlinthBadge('Theming', color: 'violet'),
-                    PlinthTitle('One token, every component', order: 4),
-                    PlinthText(
-                      'Change the primary colour and the whole library '
-                      'follows, dark mode included.',
-                      size: PlinthSize.sm,
-                      color: 'gray',
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: const PlinthImage(
-                    src: 'https://picsum.photos/seed/plinth-f1/600/360',
-                    height: 130,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: const PlinthImage(
-                    src: 'https://picsum.photos/seed/plinth-f2/600/360',
-                    height: 130,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 20),
-              const Expanded(
-                child: PlinthStack(
-                  gap: PlinthSize.xs,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    PlinthBadge('Testing', color: 'teal'),
-                    PlinthTitle('Goldens where they matter', order: 4),
-                    PlinthText(
-                      'Visual coverage for the components that compute '
-                      'their own layout.',
-                      size: PlinthSize.sm,
-                      color: 'gray',
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+      layout: PlinthFeatureLayout.alternating,
+      features: [
+        PlinthFeature(
+          eyebrow: 'Theming',
+          title: 'One token, every component',
+          description: 'Change the primary colour and the whole library '
+              'follows, dark mode included.',
+          media: _shot('plinth-f1'),
+        ),
+        PlinthFeature(
+          eyebrow: 'Testing',
+          title: 'Pinned where it matters',
+          description: 'Golden images for the components that place things '
+              'by arithmetic rather than by layout.',
+          media: _shot('plinth-f2'),
+        ),
+      ],
     );
   }
 }
@@ -4167,38 +4107,18 @@ class FeatureComparisonExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    // A matrix rather than three cards: the reader's question is what
+    // differs between plans, and columns answer it directly where cards
+    // make them hold three lists in their head.
+    return PlinthComparisonBlock(
       width: 480,
-      child: PlinthStack(
-        gap: PlinthSize.sm,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          PlinthTitle('Compare plans', order: 4),
-          // A matrix rather than three cards: the reader's question is
-          // what differs between plans, and columns answer it directly
-          // where cards make them hold three lists in their head.
-          PlinthTable(
-            columns: ['Feature', 'Free', 'Pro'],
-            rows: [
-              [
-                PlinthText('Components'),
-                PlinthText('All'),
-                PlinthText('All'),
-              ],
-              [
-                PlinthText('Private themes'),
-                Icon(Icons.close, size: 16),
-                Icon(Icons.check, size: 16),
-              ],
-              [
-                PlinthText('Support'),
-                PlinthText('Community'),
-                PlinthBadge('Priority', color: 'violet'),
-              ],
-            ],
-          ),
-        ],
-      ),
+      title: 'Compare plans',
+      plans: const ['Free', 'Pro'],
+      rows: const [
+        PlinthComparisonRow(label: 'Components', values: ['All', 'All']),
+        PlinthComparisonRow(label: 'Private themes', values: [false, true]),
+        PlinthComparisonRow(label: 'Support', values: ['Community', 'Email']),
+      ],
     );
   }
 }
@@ -4208,38 +4128,15 @@ class FeatureLogoStripExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    return const PlinthLogoStrip(
       width: 480,
-      child: PlinthStack(
-        gap: PlinthSize.sm,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          PlinthText(
-            'BUILT WITH PLINTH',
-            size: PlinthSize.xs,
-            color: 'gray',
-            weight: FontWeight.w700,
-          ),
-          // A marquee rather than a static row: a logo strip usually
-          // has more names than fit, and this is the arrangement that
-          // shows them all without a second line. It stops under the
-          // pointer and never starts under reduce-motion.
-          PlinthMarquee(
-            speed: 25,
-            child: PlinthGroup(
-              wrap: false,
-              gap: PlinthSize.xl,
-              children: [
-                PlinthText('ACME', weight: FontWeight.w700),
-                PlinthText('GLOBEX', weight: FontWeight.w700),
-                PlinthText('INITECH', weight: FontWeight.w700),
-                PlinthText('UMBRELLA', weight: FontWeight.w700),
-                PlinthText('SOYLENT', weight: FontWeight.w700),
-              ],
-            ),
-          ),
-        ],
-      ),
+      label: 'BUILT WITH PLINTH',
+      logos: [
+        PlinthText('ACME', weight: FontWeight.w700),
+        PlinthText('Globex', weight: FontWeight.w700),
+        PlinthText('Initech', weight: FontWeight.w700),
+        PlinthText('Umbrella', weight: FontWeight.w700),
+      ],
     );
   }
 }
