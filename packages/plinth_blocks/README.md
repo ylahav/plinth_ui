@@ -34,7 +34,7 @@ MaterialApp(
 
 ## What's here
 
-Every Page Sections arrangement, plus the navigation chrome:
+Every Page Sections arrangement, plus the navigation and page chrome:
 
 | Block | What it is |
 |---|---|
@@ -57,6 +57,8 @@ Every Page Sections arrangement, plus the navigation chrome:
 | `PlinthSupportChannels` | Ways to reach you, as routes rather than a form |
 | `PlinthTopBar` | Brand, links, a flexible middle, actions |
 | `PlinthSidebar` | A nav rail: sections, sub-levels, collapsible to icons |
+| `PlinthPageHeader` | Breadcrumbs, a real heading, actions, and a row beneath |
+| `PlinthStickyHeader` | A header that stays while the body under it scrolls |
 
 ```dart
 PlinthSignInBlock(

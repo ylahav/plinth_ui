@@ -119,6 +119,17 @@ Unreleased. The first blocks, and the shape the rest will follow.
   when collapsed, which left a column of icons a screen reader
   announced as nothing at all — the rail narrowed and the destinations
   stopped existing for anyone not looking at it.
+- `PlinthPageHeader` — breadcrumbs, title, a count beside it, actions,
+  and a row underneath for tabs or filters. **The title is a
+  `PlinthTitle`**: every header this replaced rendered it as
+  `PlinthText` at `size: xl, weight: w700`, which looks the same and
+  leaves the page's own name out of the outline a screen reader
+  navigates by. The count is merged with the title rather than sitting
+  in the actions, so "Issues, 128" is read as one fact about the page.
+- `PlinthStickyHeader` — a fixed header over a scrolling body. A
+  `Column` rather than a sliver arrangement, because the header never
+  moves: there is no collapse behaviour to tune, and the body gets a
+  bounded height so a plain `ListView` works inside it.
 
 ### Notes
 

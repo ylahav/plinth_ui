@@ -778,19 +778,10 @@ class CenteredHeaderExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PlinthCenter(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          PlinthText('Settings', size: PlinthSize.xl, weight: FontWeight.w700),
-          SizedBox(height: 4),
-          PlinthText(
-            'Manage your account preferences and integrations',
-            size: PlinthSize.sm,
-            color: 'gray',
-          ),
-        ],
-      ),
+    return const PlinthPageHeader(
+      centered: true,
+      title: 'Settings',
+      subtitle: 'Manage your account preferences and integrations',
     );
   }
 }
@@ -1827,29 +1818,20 @@ class HeaderWithBreadcrumbsExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        PlinthBreadcrumbs(
-          items: [
-            PlinthBreadcrumbItem(label: 'Home', onTap: () {}),
-            PlinthBreadcrumbItem(label: 'Projects', onTap: () {}),
-            const PlinthBreadcrumbItem(label: 'Plinth UI'),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            const Expanded(
-              child: PlinthText('Plinth UI',
-                  size: PlinthSize.xl, weight: FontWeight.w700),
-            ),
-            PlinthButton(
-              onPressed: () {},
-              leadingIcon: const Icon(Icons.add, size: 16),
-              child: const Text('New release'),
-            ),
-          ],
+    return PlinthPageHeader(
+      title: 'Plinth UI',
+      breadcrumbs: PlinthBreadcrumbs(
+        items: [
+          PlinthBreadcrumbItem(label: 'Home', onTap: () {}),
+          PlinthBreadcrumbItem(label: 'Projects', onTap: () {}),
+          const PlinthBreadcrumbItem(label: 'Plinth UI'),
+        ],
+      ),
+      actions: [
+        PlinthButton(
+          onPressed: () {},
+          leadingIcon: const Icon(Icons.add, size: 16),
+          child: const Text('New release'),
         ),
       ],
     );
@@ -1870,46 +1852,39 @@ class _HeaderWithFiltersExampleState extends State<HeaderWithFiltersExample> {
 
   @override
   Widget build(BuildContext context) {
-    return PlinthStack(
-      gap: PlinthSize.sm,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            const PlinthText('Issues',
-                size: PlinthSize.xl, weight: FontWeight.w700),
-            const SizedBox(width: 8),
-            const PlinthBadge('128', color: 'gray'),
-            const Spacer(),
-            PlinthButton(
-              onPressed: () {},
-              leadingIcon: const Icon(Icons.add, size: 16),
-              child: const Text('New issue'),
-            ),
-          ],
-        ),
-        PlinthGroup(
-          children: [
-            PlinthSegmentedControl<String>(
-              value: _view,
-              onChanged: (v) => setState(() => _view = v),
-              items: [
-                PlinthSegmentedControlItem('all', 'All'),
-                PlinthSegmentedControlItem('open', 'Open'),
-                PlinthSegmentedControlItem('closed', 'Closed'),
-              ],
-            ),
-            const SizedBox(
-              width: 220,
-              child: PlinthTextInput(
-                placeholder: 'Filter…',
-                size: PlinthSize.sm,
-                leadingIcon: Icon(Icons.filter_list, size: 16),
-              ),
-            ),
-          ],
+    return PlinthPageHeader(
+      title: 'Issues',
+      // The count sits with the name rather than in the actions: it is
+      // a fact about the page, and a reader hears "Issues, 128".
+      titleTrailing: const PlinthBadge('128', color: 'gray'),
+      actions: [
+        PlinthButton(
+          onPressed: () {},
+          leadingIcon: const Icon(Icons.add, size: 16),
+          child: const Text('New issue'),
         ),
       ],
+      below: PlinthGroup(
+        children: [
+          PlinthSegmentedControl<String>(
+            value: _view,
+            onChanged: (v) => setState(() => _view = v),
+            items: [
+              PlinthSegmentedControlItem('all', 'All'),
+              PlinthSegmentedControlItem('open', 'Open'),
+              PlinthSegmentedControlItem('closed', 'Closed'),
+            ],
+          ),
+          const SizedBox(
+            width: 220,
+            child: PlinthTextInput(
+              placeholder: 'Filter…',
+              size: PlinthSize.sm,
+              leadingIcon: Icon(Icons.filter_list, size: 16),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1927,35 +1902,26 @@ class _HeaderWithTabsExampleState extends State<HeaderWithTabsExample> {
 
   @override
   Widget build(BuildContext context) {
-    return PlinthStack(
-      gap: PlinthSize.sm,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            const Expanded(
-              child: PlinthText('Plinth UI',
-                  size: PlinthSize.xl, weight: FontWeight.w700),
-            ),
-            PlinthButton(
-              variant: PlinthVariant.outline,
-              onPressed: () {},
-              child: const Text('Share'),
-            ),
-          ],
-        ),
-        // Tabs belong to the header rather than the body: the title
-        // stays put while the section below it changes.
-        PlinthTabs<String>(
-          value: _tab,
-          onChanged: (t) => setState(() => _tab = t),
-          tabs: const [
-            PlinthTabItem('overview', 'Overview'),
-            PlinthTabItem('activity', 'Activity'),
-            PlinthTabItem('settings', 'Settings'),
-          ],
+    return PlinthPageHeader(
+      title: 'Plinth UI',
+      actions: [
+        PlinthButton(
+          variant: PlinthVariant.outline,
+          onPressed: () {},
+          child: const Text('Share'),
         ),
       ],
+      // Tabs belong to the header rather than the body: the title stays
+      // put while the section below it changes.
+      below: PlinthTabs<String>(
+        value: _tab,
+        onChanged: (t) => setState(() => _tab = t),
+        tabs: const [
+          PlinthTabItem('overview', 'Overview'),
+          PlinthTabItem('activity', 'Activity'),
+          PlinthTabItem('settings', 'Settings'),
+        ],
+      ),
     );
   }
 }
@@ -4301,51 +4267,30 @@ class StickyHeaderExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    // A fixed row plus a scrolling body, rather than a SliverAppBar:
+    // the header never moves, so there is no collapse behaviour to
+    // tune and the list needs no CustomScrollView around it.
+    return PlinthStickyHeader(
       height: 220,
-      child: PlinthPaper(
-        // xs rather than the md default: the header and list supply
-        // their own padding, and doubling it wastes the panel.
-        p: PlinthSize.xs,
-        withBorder: true,
-        child: Column(
-          children: [
-            // Fixed row plus a scrolling Expanded, rather than a
-            // SliverAppBar: the header never moves, so there is no
-            // collapse behaviour to tune.
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: context.plinth.surfaceSunken),
-                ),
-              ),
-              child: Row(
-                children: [
-                  const Expanded(
-                    child: PlinthText('Changelog', weight: FontWeight.w700),
-                  ),
-                  PlinthActionIcon(
-                    semanticLabel: 'Close',
-                    icon: const Icon(Icons.close, size: 16),
-                    variant: PlinthVariant.subtle,
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.all(12),
-                itemCount: 12,
-                itemBuilder: (context, i) => Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child:
-                      PlinthText('Release 0.${16 - i}.0', size: PlinthSize.sm),
-                ),
-              ),
-            ),
-          ],
+      header: Row(
+        children: [
+          const Expanded(
+            child: PlinthText('Changelog', weight: FontWeight.w700),
+          ),
+          PlinthActionIcon(
+            semanticLabel: 'Close',
+            icon: const Icon(Icons.close, size: 16),
+            variant: PlinthVariant.subtle,
+            onPressed: () {},
+          ),
+        ],
+      ),
+      child: ListView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: 12,
+        itemBuilder: (context, i) => Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: PlinthText('Release 0.${16 - i}.0', size: PlinthSize.sm),
         ),
       ),
     );
