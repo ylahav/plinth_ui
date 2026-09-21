@@ -104,6 +104,12 @@ enabler. Depends on the token hierarchy above.
 produces undiscounted evidence. The validation app's author is also
 Plinth's author, and that discount is applied everywhere it is cited.
 
+The four starters in `templates/` **do not close this** — they are also
+written by Plinth's author and carry exactly the same discount. What
+they change is the cost of the first hour for somebody else: `cp -r`,
+`flutter create .`, and the app runs. That is a lower bar to somebody
+starting, not evidence that somebody did.
+
 ## Later
 
 **None of this blocks 1.0.** Ordered roughly by value, not by phase.
@@ -214,9 +220,21 @@ arrangements across 3 categories, of which the 38 are the ones that
 have become real widgets with real APIs; the rest are still component
 demos and [SHOWCASE.md](SHOWCASE.md) says which, and why.
 
-**Do not quote a block count from another document.** These two
-packages are moving, every count above is derived from source, and the
-one number that has gone stale in every past round is this one.
+And four starter apps in `templates/` — dashboard, account, blog,
+mobile list–detail — with **36 tests** between them. They are melos
+packages, so CI compiles and tests them with everything else.
+
+**What the template tests are, and are not.** They do not test Plinth;
+the packages test themselves. They assert that each app still compiles
+against the current API, still navigates at phone width, still
+announces what it changes, and that every role in it clears 4.5:1 on
+both surfaces. So *"the starters still work"* is a checkable claim
+rather than an assumption, which is the only reason to keep starters in
+a repository instead of in a gist.
+
+**Do not quote a block count from another document.** These packages
+are moving, every count above is derived from source, and the one
+number that has gone stale in every past round is this one.
 
 **`B0c` has run**, so the token-engine framing is publishable: the
 accessibility work has been heard, not only asserted against simulated

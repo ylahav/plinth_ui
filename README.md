@@ -30,6 +30,8 @@ needed a component for it and Flutter has nothing at all.
 
 🍳 **[Build Larder](docs/TUTORIAL_LARDER_APP.md)** — a six-part tutorial that ends with a real app: what food is in the house, what to cook, and how to cook it. The finished code is in [tutorial/](tutorial/), compiled and tested by CI.
 
+🚀 **[Start from a template](templates/)** — four apps you copy rather than read: a dashboard, an account shell, a blog, a mobile list–detail. Change one colour in `theme.dart` and the whole app re-skins, contrast floor included. Each is compiled and tested by CI, so one that has stopped working fails here rather than in your hands.
+
 📝 **[The semantics tree was right. The link was unusable.](docs/POST_THE_TREE_WAS_RIGHT.md)** — a Flutter accessibility bug no semantics test can find, and the ten-line test that catches the category.
 
 All three are real apps in this repo, built for the web and deployed on
@@ -242,6 +244,11 @@ plinth_ui/
   widgetbook/               # Isolated component gallery (manual/non-codegen setup)
   tutorial/                 # Larder — the finished app from the tutorial,
                             #   compiled and tested by CI
+  templates/                # Four starter apps — dashboard, account, blog,
+    dashboard/              #   mobile list–detail. Copy one, run
+    account/                #   `flutter create .`, change one colour.
+    blog/                   #   Melos packages, so CI compiles and tests
+    mobile/                 #   them. Platform folders are not committed
   docs/
     ROADMAP.md                # The single plan — who it is for, what is
     │                           done, what is next, and what is declined.
@@ -314,6 +321,10 @@ leaves the docs drifting from the code:
    golden and test-file numbers quoted in this README come from, and
    every count here has drifted at least once by being updated in one
    place and not the other
+8. If you changed a *public API*, run the templates: `melos run test`
+   covers them, and they are the only thing in this repo that uses the
+   packages the way somebody else's app would. A rename that every
+   package test survives can still break all four
 
 Then verify exactly what CI verifies, from the repo root:
 
@@ -551,6 +562,10 @@ intentional rather than bugs:
   since `PlinthCarousel` closed Carousels, and none is more than two
   behind except Inputs. Nothing is blocked on a missing component. See
   **[docs/SHOWCASE.md](docs/SHOWCASE.md)**.
+- ~~Ship starter templates~~ — done. Four in **[templates/](templates/)**,
+  each a melos package that CI compiles and tests. They are not
+  evidence that somebody else built an app; they lower what it costs
+  somebody else to start one. See ROADMAP Next item 3.
 - ~~Bring the example app's component tour up to date~~ — done. All
   112 Mantine-parity components have a section, and
   `example/test/section_coverage_test.dart` now holds the section list
