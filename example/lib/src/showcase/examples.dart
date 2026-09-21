@@ -654,37 +654,17 @@ class UserButtonExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return PlinthUserTile(
       width: 260,
-      child: PlinthPaper(
-        withBorder: true,
-        p: PlinthSize.sm,
-        child: Row(
-          children: [
-            const PlinthAvatar(initials: 'YL'),
-            const SizedBox(width: 12),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  PlinthText('Yair Lahav', weight: FontWeight.w600),
-                  PlinthText(
-                    'yair@example.com',
-                    size: PlinthSize.xs,
-                    color: 'gray',
-                  ),
-                ],
-              ),
-            ),
-            PlinthActionIcon(
-              semanticLabel: 'Expand',
-              icon: const Icon(Icons.unfold_more, size: 16),
-              variant: PlinthVariant.subtle,
-              onPressed: () {},
-            ),
-          ],
-        ),
+      withBorder: true,
+      initials: 'YL',
+      name: 'Yair Lahav',
+      detail: 'yair@example.com',
+      trailing: PlinthActionIcon(
+        semanticLabel: 'Expand',
+        icon: const Icon(Icons.unfold_more, size: 16),
+        variant: PlinthVariant.subtle,
+        onPressed: () {},
       ),
     );
   }
@@ -2545,13 +2525,7 @@ class UserStatusExample extends StatefulWidget {
 }
 
 class _UserStatusExampleState extends State<UserStatusExample> {
-  String _status = 'online';
-
-  static const _colors = {
-    'online': 'green',
-    'away': 'yellow',
-    'busy': 'red',
-  };
+  PlinthPresence _status = PlinthPresence.online;
 
   @override
   Widget build(BuildContext context) {
@@ -2563,34 +2537,23 @@ class _UserStatusExampleState extends State<UserStatusExample> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          PlinthGroup(
-            gap: PlinthSize.sm,
-            children: [
-              // The dot rides the avatar rather than sitting beside it,
-              // which is what makes presence readable at a glance.
-              PlinthIndicator(
-                color: _colors[_status],
-                child: const PlinthAvatar(initials: 'YL'),
-              ),
-              PlinthStack(
-                gap: PlinthSize.xs,
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const PlinthText('Yair Lahav', weight: FontWeight.w600),
-                  PlinthText(_status, size: PlinthSize.xs, color: 'gray'),
-                ],
-              ),
-            ],
+          // The dot rides the avatar rather than sitting beside it,
+          // which is what makes presence readable at a glance — and the
+          // word travels with it, so it is readable without colour too.
+          PlinthUserTile(
+            initials: 'YL',
+            name: 'Yair Lahav',
+            detail: _status.label,
+            presence: _status,
           ),
-          PlinthSegmentedControl<String>(
+          PlinthSegmentedControl<PlinthPresence>(
             size: PlinthSize.sm,
             value: _status,
             onChanged: (s) => setState(() => _status = s),
-            items: [
-              PlinthSegmentedControlItem('online', 'Online'),
-              PlinthSegmentedControlItem('away', 'Away'),
-              PlinthSegmentedControlItem('busy', 'Busy'),
+            items: const [
+              PlinthSegmentedControlItem(PlinthPresence.online, 'Online'),
+              PlinthSegmentedControlItem(PlinthPresence.away, 'Away'),
+              PlinthSegmentedControlItem(PlinthPresence.busy, 'Busy'),
             ],
           ),
         ],
@@ -4408,7 +4371,11 @@ class NavbarWithFooterUserExample extends StatelessWidget {
           ),
         ),
       ),
-      footer: const PlinthNavLinkFooter(),
+      footer: const PlinthUserTile(
+        initials: 'YL',
+        name: 'Yair Lahav',
+        size: PlinthSize.sm,
+      ),
       sections: const [
         PlinthNavSection(
           items: [
@@ -4428,26 +4395,6 @@ class NavbarWithFooterUserExample extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-}
-
-/// The account row at the bottom of the sidebar above.
-class PlinthNavLinkFooter extends StatelessWidget {
-  const PlinthNavLinkFooter({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MergeSemantics(
-      child: Row(
-        children: [
-          PlinthAvatar(initials: 'YL', size: PlinthSize.sm),
-          SizedBox(width: 8),
-          Expanded(
-            child: PlinthText('Yair Lahav', size: PlinthSize.sm),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -4626,8 +4573,6 @@ class _AccountSwitcherExampleState extends State<AccountSwitcherExample> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.plinth;
-
     return SizedBox(
       width: 320,
       child: PlinthPaper(
@@ -4642,50 +4587,15 @@ class _AccountSwitcherExampleState extends State<AccountSwitcherExample> {
             // identity is the kind of action worth seeing before you
             // commit to it.
             for (final account in _accounts)
-              PlinthUnstyledButton(
-                onPressed: () => setState(() => _current = account.name),
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: _current == account.name
-                        ? theme.surfaceSunken
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Row(
-                    children: [
-                      PlinthAvatar(
-                          initials: account.initials, size: PlinthSize.sm),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: PlinthStack(
-                          gap: PlinthSize.xs,
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            PlinthText(account.name,
-                                size: PlinthSize.sm, weight: FontWeight.w600),
-                            PlinthText(account.detail,
-                                size: PlinthSize.xs, color: 'gray'),
-                          ],
-                        ),
-                      ),
-                      if (_current == account.name)
-                        Icon(Icons.check,
-                            size: 16, color: theme.shaded('blue', 6)),
-                    ],
-                  ),
-                ),
+              PlinthUserTile(
+                initials: account.initials,
+                name: account.name,
+                detail: account.detail,
+                onTap: () => setState(() => _current = account.name),
+                trailing: account.name == _current
+                    ? const Icon(Icons.check, size: 16)
+                    : null,
               ),
-            const PlinthDivider(),
-            PlinthButton(
-              fullWidth: true,
-              variant: PlinthVariant.subtle,
-              size: PlinthSize.sm,
-              leadingIcon: const Icon(Icons.add, size: 16),
-              onPressed: () {},
-              child: const Text('Add another account'),
-            ),
           ],
         ),
       ),

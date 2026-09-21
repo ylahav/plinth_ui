@@ -63,6 +63,7 @@ Every Page Sections arrangement, plus the navigation and page chrome:
 | `PlinthStatGrid` | Those tiles in a row that becomes a column |
 | `PlinthGoalRings` | Separate targets as rings, because they do not add up |
 | `PlinthLeaderboard` | A ranking whose bars are measured against the leader |
+| `PlinthUserTile` | A person: face, name, one line, and presence as a word |
 
 ```dart
 PlinthSignInBlock(

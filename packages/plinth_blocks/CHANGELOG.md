@@ -150,6 +150,17 @@ Unreleased. The first blocks, and the shape the rest will follow.
   renders a page with 40% of traffic and one with 4% as the same stub.
   An empty ranking says so rather than showing a blank card, which
   reads as a broken query.
+- `PlinthUserTile` — the shape almost every user-facing row turns out
+  to be: an account switcher, a team member, the signed-in user at the
+  foot of a sidebar. The row is one semantics node — "Yair Lahav,
+  yair@example.com, online" — while a `trailing` control keeps its own
+  name and role, because a menu button inside a labelled row is still
+  a button.
+
+  **Presence is a word, not only a colour.** `PlinthPresence` carries
+  the label with the palette key, so a green dot always arrives with
+  "online" attached. A null presence renders no dot at all rather than
+  a grey one, which would read as "offline" when it means "unknown".
 
 ### Notes
 
