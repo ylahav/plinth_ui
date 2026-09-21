@@ -22,6 +22,29 @@ could operate without learning the result.
 
 ### Added
 
+- **`loading` on every input — Tier 1 is closed.** Thirteen fields take
+  it: the eleven that share the field chrome, plus `PlinthColorInput`
+  and `PlinthMaskInput`, which pass it to `PlinthTextInput`.
+
+  **A loading field is busy, not unavailable**, which is the opposite
+  of `PlinthButton.loading` and deliberately so. A button mid-request
+  drops its callback, because a second press would submit twice. A
+  field has no such hazard, and disabling one would be actively
+  harmful: an autocomplete that went dead while fetching would eat the
+  keystroke that arrived during it and move focus — punishing the user
+  for typing faster than the network. So the field stays enabled and
+  focusable, and `loading_test.dart` pins both halves, including that a
+  loading *button* still refuses a second press.
+
+  The spinner is not announced when loading starts. An autocomplete
+  loads on nearly every keystroke, and a live region there would talk
+  over what is being typed, which is worse than silence: it makes the
+  field unusable rather than merely uninformative. It carries a
+  `Loading` semantics node to be found, not to interrupt.
+
+  This was one implementation because the chrome extraction below came
+  first. Before it, the same prop was eleven edits.
+
 - **`clearable` closes the last Tier 1 gap but one.** It reaches
   `PlinthColorInput` and `PlinthCascader`, the two the earlier batch
   left, so all seven of the select family have it.

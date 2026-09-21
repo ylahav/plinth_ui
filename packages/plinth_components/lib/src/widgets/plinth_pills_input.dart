@@ -45,6 +45,7 @@ class PlinthPillsInput extends StatelessWidget {
     this.color,
     this.radius,
     this.enabled = true,
+    this.loading = false,
     this.focused = false,
     this.onTap,
   });
@@ -70,6 +71,13 @@ class PlinthPillsInput extends StatelessWidget {
 
   final PlinthSize? radius;
   final bool enabled;
+
+  /// Shows a spinner beside the pills while something this field depends
+  /// on is in flight.
+  ///
+  /// The field stays enabled and focusable: it is busy, not
+  /// unavailable.
+  final bool loading;
 
   /// Whether the thing inside currently has focus. Passed in rather
   /// than tracked here — see the class doc.
@@ -120,7 +128,17 @@ class PlinthPillsInput extends StatelessWidget {
                     spacing: 4,
                     runSpacing: 4,
                     crossAxisAlignment: WrapCrossAlignment.center,
-                    children: children,
+                    children: [
+                      ...children,
+
+                      // Inside the Wrap with the pills rather than
+                      // pinned to an edge, for the same reason the
+                      // clear button in `PlinthTagsInput` is: this
+                      // field grows to as many rows as its pills need,
+                      // and anything anchored to one edge would sit
+                      // beside whichever row happened to be last.
+                      if (loading) PlinthFieldLoader(size: size),
+                    ],
                   ),
           ),
         ));

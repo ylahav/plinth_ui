@@ -37,6 +37,7 @@ class PlinthMaskInput extends StatefulWidget {
     this.color,
     this.radius,
     this.enabled = true,
+    this.loading = false,
     this.leadingIcon,
   });
 
@@ -56,6 +57,9 @@ class PlinthMaskInput extends StatefulWidget {
   final String? color;
   final PlinthSize? radius;
   final bool enabled;
+
+  /// Passed to the underlying [PlinthTextInput].
+  final bool loading;
   final Widget? leadingIcon;
 
   /// Strips a masked string back to the characters the user actually
@@ -107,6 +111,7 @@ class _PlinthMaskInputState extends State<PlinthMaskInput> {
       color: widget.color,
       radius: widget.radius,
       enabled: widget.enabled,
+      loading: widget.loading,
       leadingIcon: widget.leadingIcon,
       // Everything else here is PlinthTextInput's. A mask is a
       // formatter, not a different field.

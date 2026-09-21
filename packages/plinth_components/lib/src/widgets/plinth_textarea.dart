@@ -29,6 +29,7 @@ class PlinthTextarea extends StatefulWidget {
     this.color,
     this.radius,
     this.enabled = true,
+    this.loading = false,
     this.minLines = 3,
     this.maxLines = 6,
   });
@@ -43,6 +44,14 @@ class PlinthTextarea extends StatefulWidget {
   final String? color;
   final PlinthSize? radius;
   final bool enabled;
+
+  /// Shows a spinner at the far end while something this field depends
+  /// on is in flight.
+  ///
+  /// The field stays enabled and focusable: it is busy, not
+  /// unavailable. A field that went dead mid-request would eat the
+  /// keystroke that arrived during it.
+  final bool loading;
 
   /// The field starts at this many visible lines tall.
   final int minLines;
@@ -111,23 +120,40 @@ class _PlinthTextareaState extends State<PlinthTextarea> {
             horizontal: horizontalPadding,
             vertical: verticalPadding,
           ),
-          child: Semantics(
-            label: widget.label,
-            child: TextField(
-              controller: widget.controller,
-              focusNode: _focusNode,
-              onChanged: widget.onChanged,
-              enabled: widget.enabled,
-              minLines: widget.minLines,
-              maxLines: widget.maxLines,
-              style: TextStyle(fontSize: fontSize),
-              decoration: InputDecoration(
-                hintText: widget.placeholder,
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
+          child: Stack(
+            children: [
+              Semantics(
+                label: widget.label,
+                child: TextField(
+                  controller: widget.controller,
+                  focusNode: _focusNode,
+                  onChanged: widget.onChanged,
+                  enabled: widget.enabled,
+                  minLines: widget.minLines,
+                  maxLines: widget.maxLines,
+                  style: TextStyle(fontSize: fontSize),
+                  decoration: InputDecoration(
+                    hintText: widget.placeholder,
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
               ),
-            ),
+
+              // The trailing corner rather than a row beside the text:
+              // this box is several lines tall, and a spinner sharing a
+              // row with the field would either sit beside the first
+              // line or stretch the box to centre itself against all of
+              // them. The Stack keeps it out of the text's way without
+              // the box changing size when loading starts.
+              if (widget.loading)
+                PositionedDirectional(
+                  top: 0,
+                  end: 0,
+                  child: PlinthFieldLoader(size: widget.size),
+                ),
+            ],
           ),
         ));
   }

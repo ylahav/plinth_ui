@@ -46,8 +46,10 @@ them here so the same question isn't re-litigated per component.
 
 ## Tier 1 — the gaps a 1.0 shouldn't ship with
 
-**Five of the six are closed, and this section said otherwise for
-several releases.** It was written at 0.19.0 and read as a list of
+**All six are closed as of 1.3.0. This section spent several releases
+claiming otherwise in both directions at once** — listing gaps that
+had shipped under a heading that called them open, while its own
+conclusion struck the whole tier through as done. It was written at 0.19.0 and read as a list of
 open blockers long after four of them shipped — which is worse than
 having the gaps, because a reader deciding whether to adopt was being
 told about holes that had been filled. Re-checked against source at
@@ -55,28 +57,39 @@ told about holes that had been filled. Re-checked against source at
 
 | # | Gap | Status at 1.3.0 |
 |---|---|---|
-| 1 | No loading state anywhere | **Partly.** Buttons done, inputs open — the only one left |
+| 1 | No loading state anywhere | **Closed** (1.3.0) |
 | 2 | Progress takes one value, not sections | **Closed** |
 | 3 | Slider has no marks | **Closed** |
 | 4 | Tooltip can't be positioned | **Closed** (0.19.0, as a divergence) |
 | 5 | Nothing in the select family is clearable | **Closed** (1.3.0) |
 | 6 | `radius` and `size` cover only part of the library | **Closed** (0.19.0 / 0.23.0) |
 
-### 1. Loading state — **buttons done, the input family still open**
-`PlinthButton` and `PlinthActionIcon` both take `loading` now. No input
-does: `loadingPosition` appears nowhere in the library, against
-Mantine having it on every input.
+### 1. No loading state anywhere — **closed in 1.3.0**
+`PlinthButton` and `PlinthActionIcon` took `loading` first. Thirteen
+inputs now do too: every field in the library, plus `PlinthColorInput`
+and `PlinthMaskInput`, which pass it through to `PlinthTextInput`.
 
-So the original complaint — "a form that submits over a network is the
-ordinary case" — is half answered. The submit button holds its width
-and shows a spinner; the fields beside it cannot show that they are
-waiting on anything. `PlinthAsyncButton` in `plinth_blocks` covers the
-button half again at the block level.
+**A loading field is busy, not unavailable, and that is the opposite
+of the button.** A button mid-request drops its callback, because a
+second press would submit twice. A field has no such hazard, and
+disabling one would be actively harmful: an autocomplete that went
+dead while fetching would eat the keystroke that arrived during it and
+move focus, punishing the user for typing faster than the network. So
+a loading field stays enabled and focusable, and
+`loading_test.dart` asserts that a loading text field still accepts
+typing — and, separately, that a loading *button* still refuses a
+second press, so nobody harmonises the two the wrong way.
 
-**Cost of the rest — larger than this document first said.** The
-claim here was that the family shares chrome through `PlinthTextInput`,
-so `loading` would be one implementation and a prop on each wrapper.
-That was asserted without grepping, and it is wrong.
+The spinner is not announced when loading starts. An autocomplete
+loads on nearly every keystroke, and a live region there would talk
+over the thing being typed, which is worse than silence: it makes the
+field unusable rather than merely uninformative. The spinner carries a
+`Loading` semantics node to be found, not to interrupt.
+
+**The cost was mispriced here twice before it was paid.** The first
+estimate said the family shared chrome through `PlinthTextInput`, so
+this would be one implementation and a prop on each wrapper. That was
+asserted without grepping, and wrong.
 
 Three inputs delegate to `PlinthTextInput`: `PlinthColorInput`,
 `PlinthCombobox` and `PlinthMaskInput`. **Eleven built their own** —
@@ -185,15 +198,21 @@ prop's clothes, which is the section below.
 
 ### What is actually left
 
-**One prop.**
+**Nothing.** Tier 1 is closed.
 
-- `loading` on the input family (item 1) — now one implementation
-  rather than eleven, since the shared chrome was extracted in 1.3.0
+- ~~`loading` on the input family (item 1)~~ — **done in 1.3.0**, on
+  thirteen fields, as one implementation rather than eleven
 - ~~`clearable` on `PlinthColorInput` and `PlinthCascader`~~ — **done
   in 1.3.0**
 - ~~the shared input chrome itself~~ — **done in 1.3.0.** It was never a
   gap against Mantine, so it appeared nowhere else in this document; it
   was found by trying to price item 1 and getting the price wrong
+
+The last of those is the one worth remembering. The two remaining
+props were each cheap *after* a piece of structure that no gap list
+could have named, because every gap list here is a comparison against
+another library, and the eleven duplicated copies agreed with each
+other perfectly.
 
 **Neither blocks a 1.0** on the reading this document opened with — a
 component with the right name and a third of its behaviour. Both are
@@ -392,17 +411,18 @@ than a silent behaviour change.
 
 A proposal, not a decision:
 
-1. **Tier 1 — four of six closed.** Progress sections, slider marks,
-   tooltip position and `radius` landed in 0.19.0; `size` coverage was
-   carried forward and closed in 0.23.0.
+1. ~~**Tier 1 closed.**~~ **Genuinely, as of 1.3.0.** Progress
+   sections, slider marks, tooltip position and `radius` landed in
+   0.19.0; `size` coverage in 0.23.0; `loading` on the input family
+   and the last two `clearable`s in 1.3.0.
 
-   **This item said "Tier 1 closed" for several releases and was
-   wrong.** Loading states shipped on buttons only, never on the input
-   family, and `clearable` reached five of the seven select-family
-   components rather than all seven. Both were counted as done here
-   because the release that started them was the release this line was
-   written in. Corrected at 1.3.0 against source; the two remainders
-   are named at the end of the Tier 1 section above.
+   **This item claimed "Tier 1 closed" from 0.19.0 and was wrong for
+   four releases.** Loading shipped on buttons only, and `clearable`
+   reached five of seven — both counted as done because the release
+   that *started* them was the release this line was written in. It is
+   true now, and the way it became untrue is worth more than the tick:
+   a checklist written at the moment work begins records intent, not
+   outcome.
 2. ~~**The naming table applied.**~~ Done in 0.20.0, and it is the last
    breaking change planned before 1.0.
 3. ~~**Tier 2 triaged**, not necessarily done.~~ Triaged in 0.21.0 and
@@ -435,11 +455,9 @@ A proposal, not a decision:
    rather than a crop, and therefore also makes the page something the
    helper has to paint.
 
-**With that, every item on this list is triaged** — and Tier 3 followed
-in 0.24.0, so all three tiers are done being *found*. Two Tier 1 props
-are still unbuilt, as above; neither is a component missing most of
-itself, which is what this audit set out to catch. What remains before
-1.0 is not a gap list:
+**With that, every item on this list is closed** — and Tier 3 followed
+in 0.24.0, so all three tiers are triaged *and* built. What remains
+before 1.0 is not a gap list:
 
 1. ~~**Keyboard navigation on `PlinthTabs`**~~ — done in 0.25.0, on
    `PlinthSegmentedControl` too. `PlinthStepper` was assessed and left
@@ -453,9 +471,7 @@ itself, which is what this audit set out to catch. What remains before
 
 **This list is now empty.** Everything this audit set out to find has
 been found, and everything it found has been built or written down as a
-deliberate exclusion — bar the two props named in Tier 1, which are
-written down here rather than built. What remains before 1.0 is those
-two and the release itself.
+deliberate exclusion. What remains before 1.0 is the release itself.
 
 Beta, by contrast, is where the library is now: the API is stable
 enough to build against, and the remaining changes are additive except
@@ -463,7 +479,7 @@ for the naming table.
 
 **What comes after 1.0 is a different question**, and this document is
 not the place for it: this one asked how complete each *component* is,
-and the answer is "complete, bar two props on three components". The gaps that remain are in the token
+and the answer is "complete". The gaps that remain are in the token
 layer, in accessibility evidence, in `plinth_hooks`, and in the eleven
 Mantine packages scoped out at the top of this file. Those are
 inventoried and sequenced in

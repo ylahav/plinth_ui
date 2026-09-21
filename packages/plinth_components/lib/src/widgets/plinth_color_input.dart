@@ -43,6 +43,7 @@ class PlinthColorInput extends StatefulWidget {
     this.error,
     this.withAlpha = false,
     this.swatches,
+    this.loading = false,
     this.clearable = false,
     this.onClear,
     this.size = PlinthSize.md,
@@ -69,6 +70,9 @@ class PlinthColorInput extends StatefulWidget {
 
   final PlinthSize size;
   final PlinthSize? radius;
+
+  /// Passed to the underlying [PlinthTextInput].
+  final bool loading;
 
   /// Shows a clear button once the field has been typed in or picked.
   ///
@@ -194,6 +198,7 @@ class _PlinthColorInputState extends State<PlinthColorInput> {
       size: widget.size,
       radius: widget.radius,
       enabled: enabled,
+      loading: widget.loading,
       trailing: widget.clearable && widget.onClear != null && enabled
           ? PlinthCloseButton(
               size: PlinthSize.xs,

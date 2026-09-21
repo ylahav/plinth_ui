@@ -55,6 +55,7 @@ class PlinthMultiSelect<T> extends StatefulWidget {
     this.radius,
     this.enabled = true,
     this.clearable = false,
+    this.loading = false,
   });
 
   final List<PlinthMultiSelectOption<T>> options;
@@ -65,6 +66,15 @@ class PlinthMultiSelect<T> extends StatefulWidget {
   /// already remove itself; this is the difference between undoing a
   /// choice and starting the filter over.
   final bool clearable;
+
+  /// Shows a spinner at the far end while something this field depends
+  /// on is in flight.
+  ///
+  /// The field stays enabled and focusable: it is busy, not
+  /// unavailable. A field that went dead mid-request would eat the
+  /// keystroke that arrived during it.
+  final bool loading;
+
   final String? label;
   final String? description;
   final String? placeholder;
@@ -263,7 +273,9 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
                     // Each pill removes itself; this empties the field in
                     // one move, which is the difference between undoing a
                     // choice and starting the filter over.
-                    if (widget.clearable &&
+                    if (widget.loading)
+                      PlinthFieldLoader(size: widget.size)
+                    else if (widget.clearable &&
                         widget.value.isNotEmpty &&
                         widget.enabled)
                       PlinthCloseButton(

@@ -40,6 +40,7 @@ class PlinthTagsInput extends StatefulWidget {
     this.radius,
     this.enabled = true,
     this.clearable = false,
+    this.loading = false,
     this.maxTags,
     this.allowDuplicates = false,
   });
@@ -59,6 +60,14 @@ class PlinthTagsInput extends StatefulWidget {
   /// Shows a button that removes every tag at once. Each pill can
   /// already remove itself; this is for starting over.
   final bool clearable;
+
+  /// Shows a spinner at the far end while something this field depends
+  /// on is in flight.
+  ///
+  /// The field stays enabled and focusable: it is busy, not
+  /// unavailable. A field that went dead mid-request would eat the
+  /// keystroke that arrived during it.
+  final bool loading;
 
   /// Stops accepting new tags once reached. Null for no limit.
   final int? maxTags;
@@ -219,7 +228,9 @@ class _PlinthTagsInputState extends State<PlinthTagsInput> {
                 // the right: this field grows to as many rows as its
                 // tags need, and a button anchored to one edge of that
                 // would sit beside whichever row happened to be last.
-                if (widget.clearable &&
+                if (widget.loading)
+                  PlinthFieldLoader(size: widget.size)
+                else if (widget.clearable &&
                     widget.value.isNotEmpty &&
                     widget.enabled)
                   PlinthCloseButton(

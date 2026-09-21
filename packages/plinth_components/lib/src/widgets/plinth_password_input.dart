@@ -26,6 +26,7 @@ class PlinthPasswordInput extends StatefulWidget {
     this.color,
     this.radius,
     this.enabled = true,
+    this.loading = false,
   });
 
   final String? label;
@@ -38,6 +39,14 @@ class PlinthPasswordInput extends StatefulWidget {
   final String? color;
   final PlinthSize? radius;
   final bool enabled;
+
+  /// Shows a spinner at the far end while something this field depends
+  /// on is in flight.
+  ///
+  /// The field stays enabled and focusable: it is busy, not
+  /// unavailable. A field that went dead mid-request would eat the
+  /// keystroke that arrived during it.
+  final bool loading;
 
   @override
   State<PlinthPasswordInput> createState() => _PlinthPasswordInputState();
@@ -119,6 +128,10 @@ class _PlinthPasswordInputState extends State<PlinthPasswordInput> {
                   ),
                 ),
               ),
+              if (widget.loading) ...[
+                PlinthFieldLoader(size: widget.size),
+                SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
+              ],
               Semantics(
                 button: true,
                 // Icon-only, so without this a screen reader reaches the

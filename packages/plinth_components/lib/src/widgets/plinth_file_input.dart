@@ -51,6 +51,7 @@ class PlinthFileInput<T> extends StatelessWidget {
     this.radius,
     this.enabled = true,
     this.clearable = false,
+    this.loading = false,
     this.multiple = false,
     this.leadingIcon,
   });
@@ -85,6 +86,14 @@ class PlinthFileInput<T> extends StatelessWidget {
   /// Shows a button that drops every chosen file at once. Each file
   /// chip can already remove itself; this is for starting over.
   final bool clearable;
+
+  /// Shows a spinner at the far end while something this field depends
+  /// on is in flight.
+  ///
+  /// The field stays enabled and focusable: it is busy, not
+  /// unavailable. A field that went dead mid-request would eat the
+  /// keystroke that arrived during it.
+  final bool loading;
 
   /// Whether picking replaces the selection or adds to it. The picker
   /// itself also needs telling — this only governs what happens to what
@@ -182,7 +191,9 @@ class PlinthFileInput<T> extends StatelessWidget {
                   // Wrapped so the tap clears rather than reopening the
                   // picker underneath it, the same guard the file chips
                   // needed.
-                  if (clearable && value.isNotEmpty && enabled)
+                  if (loading)
+                    PlinthFieldLoader(size: size)
+                  else if (clearable && value.isNotEmpty && enabled)
                     GestureDetector(
                       onTap: () => onChanged(const []),
                       child: PlinthCloseButton(

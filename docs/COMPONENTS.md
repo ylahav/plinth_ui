@@ -608,8 +608,21 @@ left `null` are simply omitted, not rendered empty.
 Border color: gray (default) -> theme color at shade 6 (focused) -> red
 (error present) — error takes precedence over focus.
 
+`loading` shows a spinner at the far end while something the field
+depends on is in flight — options being fetched, a value validated
+server-side. **Every field in the library takes it**, and a loading
+field stays enabled and focusable.
+
+That is deliberately the opposite of `PlinthButton.loading`, which
+drops its callback: a button mid-request must not take a second press,
+where a field has no such hazard and going dead would eat the
+keystroke that arrived during the request. The spinner is not
+announced when it starts, because an autocomplete loads on nearly
+every keystroke and a live region there would talk over the typing.
+
 `trailing` is the far end of the field, inside the border — a clear
-button, a unit, a toggle. It sits outside the `TextField` rather than
+button, a unit, a toggle. `loading` takes its place while it runs, so
+the two never crowd each other. It sits outside the `TextField` rather than
 in `decoration.suffixIcon` so a button there has its own hit area; a
 suffix icon is inside the field's, and a tap meant for the button
 places the caret instead.

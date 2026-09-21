@@ -40,6 +40,7 @@ class PlinthAutocomplete extends StatefulWidget {
     this.radius,
     this.enabled = true,
     this.clearable = false,
+    this.loading = false,
     this.limit = 8,
     this.onOptionSelected,
   });
@@ -64,6 +65,14 @@ class PlinthAutocomplete extends StatefulWidget {
 
   /// Shows a button that empties the field, reporting an empty string.
   final bool clearable;
+
+  /// Shows a spinner at the far end while something this field depends
+  /// on is in flight.
+  ///
+  /// The field stays enabled and focusable: it is busy, not
+  /// unavailable. A field that went dead mid-request would eat the
+  /// keystroke that arrived during it.
+  final bool loading;
 
   /// How many suggestions to show at once. A long unfiltered list is
   /// noise rather than help.
@@ -292,7 +301,9 @@ class _PlinthAutocompleteState extends State<PlinthAutocomplete> {
                   // reported: this field owns the text it displays, so
                   // reporting an empty string alone would leave the old
                   // text sitting there.
-                  if (widget.clearable &&
+                  if (widget.loading)
+                    PlinthFieldLoader(size: widget.size)
+                  else if (widget.clearable &&
                       _controller.text.isNotEmpty &&
                       widget.enabled)
                     PlinthCloseButton(

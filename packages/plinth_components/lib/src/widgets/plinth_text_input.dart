@@ -34,6 +34,7 @@ class PlinthTextInput extends StatefulWidget {
     this.enabled = true,
     this.leadingIcon,
     this.trailing,
+    this.loading = false,
     this.inputFormatters,
     this.keyboardType,
   });
@@ -59,6 +60,15 @@ class PlinthTextInput extends StatefulWidget {
   final bool obscureText;
   final bool enabled;
   final Widget? leadingIcon;
+
+  /// Shows a spinner at the far end while something this field depends
+  /// on is in flight — an async validation, a lookup.
+  ///
+  /// The field stays enabled and focusable: it is busy, not
+  /// unavailable, and a field that went dead mid-request would eat the
+  /// keystroke that arrived during it. Takes [trailing]'s place while
+  /// it runs, so the two never crowd each other.
+  final bool loading;
 
   /// The far end of the field, inside the border — a clear button, a
   /// unit, a visibility toggle.
@@ -167,7 +177,10 @@ class _PlinthTextInputState extends State<PlinthTextInput> {
                 ),
               ),
             ),
-            if (widget.trailing != null) ...[
+            if (widget.loading) ...[
+              SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
+              PlinthFieldLoader(size: widget.size),
+            ] else if (widget.trailing != null) ...[
               SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
               widget.trailing!,
             ],

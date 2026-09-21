@@ -43,6 +43,7 @@ class PlinthSelect<T> extends StatelessWidget {
     this.radius,
     this.enabled = true,
     this.clearable = false,
+    this.loading = false,
   });
 
   final List<PlinthSelectOption<T>> options;
@@ -54,6 +55,15 @@ class PlinthSelect<T> extends StatelessWidget {
   /// Off by default: a required field that can be emptied invites the
   /// state the form then has to reject.
   final bool clearable;
+
+  /// Shows a spinner at the far end while something this field depends
+  /// on is in flight.
+  ///
+  /// The field stays enabled and focusable: it is busy, not
+  /// unavailable. A field that went dead mid-request would eat the
+  /// keystroke that arrived during it.
+  final bool loading;
+
   final String? label;
   final String? description;
   final String? placeholder;
@@ -147,7 +157,9 @@ class PlinthSelect<T> extends StatelessWidget {
                 // slot: the icon sits inside the dropdown's own hit
                 // area, so a tap there would open the menu it is
                 // supposed to be clearing.
-                if (clearable && value != null && enabled)
+                if (loading)
+                  PlinthFieldLoader(size: size)
+                else if (clearable && value != null && enabled)
                   PlinthCloseButton(
                     size: PlinthSize.xs,
                     semanticLabel: 'Clear selection',

@@ -27,6 +27,7 @@ import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
 import 'plinth_announce.dart';
+import 'plinth_loader.dart';
 import 'plinth_text.dart';
 
 /// Whether [error] is present *and* says something.
@@ -137,6 +138,48 @@ class PlinthFieldChrome extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+/// The busy indicator a field shows while something it depends on is in
+/// flight — options being fetched, a value being validated server-side.
+///
+/// **A loading field stays operable**, which is where this parts company
+/// with [PlinthButton]. A button mid-request drops its callback, because
+/// a second press would submit twice. A field has no such hazard, and
+/// disabling one would be actively harmful: an autocomplete that went
+/// dead while fetching would eat the next keystroke and move focus, so
+/// the user would be punished for typing faster than the network.
+///
+/// It is *busy*, not unavailable, and nothing here says otherwise.
+class PlinthFieldLoader extends StatelessWidget {
+  const PlinthFieldLoader({
+    super.key,
+    this.size = PlinthSize.md,
+    this.label = 'Loading',
+  });
+
+  /// The field's size, which the spinner matches so that starting to
+  /// load does not change the field's height.
+  final PlinthSize size;
+
+  /// What a screen reader hears on reaching the spinner.
+  ///
+  /// Not announced when loading starts, deliberately. An autocomplete
+  /// loads on nearly every keystroke, and a live region there would
+  /// talk over the thing the user is typing — which is worse than
+  /// silence, because it makes the field unusable rather than merely
+  /// uninformative. The node is here to be found, not to interrupt.
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.plinth;
+    return PlinthLoader(
+      dimension: theme.fontSizes[size]!,
+      colorValue: theme.textMuted,
+      semanticLabel: label,
     );
   }
 }

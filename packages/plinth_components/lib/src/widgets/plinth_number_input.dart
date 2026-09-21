@@ -33,6 +33,7 @@ class PlinthNumberInput extends StatefulWidget {
     this.color,
     this.radius,
     this.enabled = true,
+    this.loading = false,
   });
 
   final num value;
@@ -48,6 +49,14 @@ class PlinthNumberInput extends StatefulWidget {
   final String? color;
   final PlinthSize? radius;
   final bool enabled;
+
+  /// Shows a spinner at the far end while something this field depends
+  /// on is in flight.
+  ///
+  /// The field stays enabled and focusable: it is busy, not
+  /// unavailable. A field that went dead mid-request would eat the
+  /// keystroke that arrived during it.
+  final bool loading;
 
   @override
   State<PlinthNumberInput> createState() => _PlinthNumberInputState();
@@ -175,6 +184,10 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
                   ),
                 ),
               ),
+              if (widget.loading) ...[
+                PlinthFieldLoader(size: widget.size),
+                SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
+              ],
               _StepButton(
                 icon: Icons.remove,
                 semanticLabel: 'Decrease',

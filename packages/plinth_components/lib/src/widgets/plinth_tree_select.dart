@@ -41,6 +41,7 @@ class PlinthTreeSelect extends StatefulWidget {
     this.size = PlinthSize.md,
     this.radius,
     this.enabled = true,
+    this.loading = false,
     this.dropdownWidth = 260,
     this.dropdownMaxHeight = 260,
   });
@@ -65,6 +66,14 @@ class PlinthTreeSelect extends StatefulWidget {
   final PlinthSize size;
   final PlinthSize? radius;
   final bool enabled;
+
+  /// Shows a spinner at the far end while something this field depends
+  /// on is in flight.
+  ///
+  /// The field stays enabled and focusable: it is busy, not
+  /// unavailable. A field that went dead mid-request would eat the
+  /// keystroke that arrived during it.
+  final bool loading;
 
   final double dropdownWidth;
   final double dropdownMaxHeight;
@@ -186,6 +195,10 @@ class _PlinthTreeSelectState extends State<PlinthTreeSelect> {
               overflow: TextOverflow.ellipsis,
             ),
           ),
+          if (widget.loading) ...[
+            PlinthFieldLoader(size: widget.size),
+            SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
+          ],
           Icon(
             Icons.keyboard_arrow_down,
             size: fontSize * 1.2,

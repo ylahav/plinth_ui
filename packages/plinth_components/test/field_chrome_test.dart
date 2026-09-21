@@ -14,7 +14,6 @@
 library;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_components/plinth_components.dart';
 
@@ -122,17 +121,14 @@ void main() {
         await tester.pumpWidget(_wrap(build()));
         await tester.pumpAndSettle();
 
-        final handle = tester.ensureSemantics();
-        final node = tester.getSemantics(find.text(_error).first);
         expect(
-          node.hasFlag(SemanticsFlag.isLiveRegion) ||
-              tester
-                  .widgetList<PlinthLiveRegion>(find.byType(PlinthLiveRegion))
-                  .isNotEmpty,
-          isTrue,
+          find.descendant(
+            of: find.byType(PlinthLiveRegion),
+            matching: find.text(_error),
+          ),
+          findsOneWidget,
           reason: '$name: the error is drawn but not announced',
         );
-        handle.dispose();
       });
     });
   });
