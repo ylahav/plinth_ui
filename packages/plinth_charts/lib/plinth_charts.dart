@@ -12,5 +12,6 @@ library;
 
 export 'package:plinth_core/plinth_core.dart';
 
+export 'src/plinth_bar_chart.dart';
 export 'src/plinth_line_chart.dart';
 export 'src/plinth_sparkline.dart';

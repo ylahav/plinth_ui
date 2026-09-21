@@ -50,6 +50,26 @@ Unreleased. The first chart, and the shape the rest will follow.
 
   One scale across every series, because two lines on their own axes
   can cross without ever having met.
+- `PlinthBarChart` — categories as horizontal bars.
+
+  **Horizontal by default**, which is the opposite of most defaults and
+  the right one here: category names are words, and words fit along a
+  horizontal bar without being rotated, truncated, or moved into a
+  legend somebody has to cross-reference.
+
+  **Every bar is its own semantics node** — "Direct, 5,200" — rather
+  than the chart being one sentence. That is the difference from
+  `PlinthLineChart`: a line is a shape and reads as a summary, a bar
+  chart is a list of figures and a list should be walkable.
+
+  Bars take the palette's colours **unlifted**, unlike lines. A bar is
+  a large filled area and is perfectly visible at 2:1 where a 2px line
+  is not, so lifting would flatten the lightness variation the palette
+  exists to provide for no gain.
+
+  Bars are measured against the largest, not a total: the question is
+  how the categories compare, and dividing by a sum nobody sees makes a
+  long tail out of every one of them.
 
 ### Notes
 
