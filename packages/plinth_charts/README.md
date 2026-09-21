@@ -39,6 +39,13 @@ say something else entirely.
 | `PlinthSparkline` | A line with no axes, for beside a number |
 | `PlinthLineChart` | Several series, told apart by shape as well as colour |
 | `PlinthBarChart` | Categories, each bar its own node and its own figure |
+| `PlinthDonutChart` | Part-to-whole with the total in the middle |
+
+**Reach for a bar before a donut.** Angles are harder to compare than
+lengths, and `PlinthProgress.sections` in `plinth_components` shows the
+same part-to-whole split as a bar that reads more easily and takes a
+fraction of the space. `PlinthDonutChart` earns its place when the
+*total* is the headline — which is what the middle of a ring is for.
 
 More to come. This package is new and its version says so.
 

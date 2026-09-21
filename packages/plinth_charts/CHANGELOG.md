@@ -70,6 +70,21 @@ Unreleased. The first chart, and the shape the rest will follow.
   Bars are measured against the largest, not a total: the question is
   how the categories compare, and dividing by a sum nobody sees makes a
   long tail out of every one of them.
+- `PlinthDonutChart` — slices with the total in the middle.
+
+  Its own documentation tells you to **reach for a bar first**: angles
+  are harder to compare than lengths, and `PlinthProgress.sections`
+  already shows the same split more legibly. The donut earns its place
+  when the total is the headline, which is what the middle of a ring is
+  for and what a bar has nowhere to put.
+
+  The legend carries the value and the percentage, because a slice is
+  an angle and an angle is not a number. Every slice is its own
+  semantics node, like a bar chart and unlike a line.
+
+  A negative slice is clamped to zero rather than drawn backwards,
+  which would silently corrupt every slice after it. An empty or
+  all-zero donut says "No data" instead of drawing an empty ring.
 
 ### Notes
 
