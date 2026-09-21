@@ -141,6 +141,15 @@ Unreleased. The first blocks, and the shape the rest will follow.
   information anyone can hear. The arrow's colour resolves through
   `readableOn` rather than the raw `color(ramp, 6)` the showcase used,
   which sits under the floor for a 14px mark on white.
+- `PlinthGoalRings` — separate targets as rings rather than bars,
+  because they are not parts of one total and a row of bars implies
+  they add up. Each ring and its label are one semantics node.
+- `PlinthLeaderboard` — a ranked list whose **bars are measured
+  against the leader, not the total**. The question a ranking answers
+  is "how far behind is second", and dividing by a sum nobody sees
+  renders a page with 40% of traffic and one with 4% as the same stub.
+  An empty ranking says so rather than showing a blank card, which
+  reads as a broken query.
 
 ### Notes
 

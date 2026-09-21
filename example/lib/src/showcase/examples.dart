@@ -2851,47 +2851,17 @@ class StatBreakdownExample extends StatelessWidget {
 class StatGoalRingsExample extends StatelessWidget {
   const StatGoalRingsExample({super.key});
 
-  static const _goals = [
-    (label: 'Signups', value: 0.82, color: 'teal'),
-    (label: 'Activation', value: 0.46, color: 'blue'),
-    (label: 'Retention', value: 0.91, color: 'grape'),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    // Rings rather than bars: these are three unrelated targets, not
+    // parts of one total, and a row of bars would imply they add up.
+    return const PlinthGoalRings(
       width: 420,
-      child: PlinthPaper(
-        withBorder: true,
-        p: PlinthSize.md,
-        child: PlinthGroup(
-          gap: PlinthSize.xl,
-          children: [
-            for (final g in _goals)
-              PlinthStack(
-                gap: PlinthSize.xs,
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Rings rather than bars: these are three unrelated
-                  // targets, not parts of one total, and a row of bars
-                  // would imply they add up.
-                  PlinthRingProgress(
-                    value: g.value,
-                    color: g.color,
-                    diameter: 72,
-                    label: PlinthText(
-                      '${(g.value * 100).round()}%',
-                      size: PlinthSize.sm,
-                      weight: FontWeight.w700,
-                    ),
-                  ),
-                  PlinthText(g.label, size: PlinthSize.xs, color: 'gray'),
-                ],
-              ),
-          ],
-        ),
-      ),
+      goals: [
+        PlinthGoal(label: 'Signups', value: 0.82, color: 'teal'),
+        PlinthGoal(label: 'Activation', value: 0.46, color: 'blue'),
+        PlinthGoal(label: 'Retention', value: 0.91, color: 'grape'),
+      ],
     );
   }
 }
@@ -4608,64 +4578,32 @@ class StatWithSparklineExample extends StatelessWidget {
 class StatLeaderboardExample extends StatelessWidget {
   const StatLeaderboardExample({super.key});
 
-  static const _rows = [
-    (label: '/docs/getting-started', views: 8420),
-    (label: '/components/button', views: 5310),
-    (label: '/blog/0-17-0', views: 3980),
-    (label: '/pricing', views: 1240),
-  ];
-
   @override
   Widget build(BuildContext context) {
     // Shares are measured against the leader, not the total: the
     // question a ranking answers is "how far behind is second", and
     // dividing by a total nobody sees makes every bar look small.
-    final top = _rows.first.views;
-
-    return SizedBox(
+    return const PlinthLeaderboard(
       width: 420,
-      child: PlinthPaper(
-        withBorder: true,
-        p: PlinthSize.md,
-        child: PlinthStack(
-          gap: PlinthSize.sm,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const PlinthText('Top pages', weight: FontWeight.w700),
-            for (final row in _rows)
-              PlinthStack(
-                gap: PlinthSize.xs,
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: PlinthText(
-                          row.label,
-                          size: PlinthSize.sm,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      PlinthNumberFormatter(
-                        value: row.views.toDouble(),
-                        size: PlinthSize.sm,
-                        weight: FontWeight.w600,
-                      ),
-                    ],
-                  ),
-                  PlinthProgress(
-                    value: row.views / top,
-                    size: PlinthSize.xs,
-                    color: 'blue',
-                  ),
-                ],
-              ),
-          ],
+      title: 'Top pages',
+      rows: [
+        PlinthLeaderboardRow(
+          label: '/docs/getting-started',
+          value: 8420,
+          display: '8,420',
         ),
-      ),
+        PlinthLeaderboardRow(
+          label: '/components/button',
+          value: 5310,
+          display: '5,310',
+        ),
+        PlinthLeaderboardRow(
+          label: '/blog/0-17-0',
+          value: 3980,
+          display: '3,980',
+        ),
+        PlinthLeaderboardRow(label: '/pricing', value: 1240, display: '1,240'),
+      ],
     );
   }
 }

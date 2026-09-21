@@ -61,6 +61,8 @@ Every Page Sections arrangement, plus the navigation and page chrome:
 | `PlinthStickyHeader` | A header that stays while the body under it scrolls |
 | `PlinthStatTile` | A dashboard figure that knows up from good |
 | `PlinthStatGrid` | Those tiles in a row that becomes a column |
+| `PlinthGoalRings` | Separate targets as rings, because they do not add up |
+| `PlinthLeaderboard` | A ranking whose bars are measured against the leader |
 
 ```dart
 PlinthSignInBlock(

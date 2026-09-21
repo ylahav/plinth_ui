@@ -21,9 +21,9 @@ arrangement yet — usually from components that already exist.
 Two places, and the split is being closed in one direction.
 
 **`packages/plinth_blocks/`** is where a block ends up: a real widget
-with a real API, which an app installs and calls. Twenty-four are
-there so far: **the whole Page Sections category** — every one of its
-32 arrangements — plus the navbars, headers and the first stats of
+with a real API, which an app installs and calls. Twenty-six are there
+so far: **the whole Page Sections category** — every one of its 32
+arrangements — plus the navbars, headers and most of the stats of
 Application UI.
 
 | Widget | Replaces |
@@ -51,6 +51,8 @@ Application UI.
 | `PlinthStickyHeader` | Sticky header |
 | `PlinthStatTile` | Stat tiles, with progress, breakdown |
 | `PlinthStatGrid` | the row those tiles sit in |
+| `PlinthGoalRings` | Goal rings |
+| `PlinthLeaderboard` | Top pages leaderboard |
 
 Four error pages became one widget with four named constructors,
 because they differ only in their words. **Offline did not**, and that
@@ -59,7 +61,7 @@ page should keep working around a notice rather than replace itself
 with an apology. The showcase had already made that call; collapsing it
 into the error page would have thrown the decision away.
 
-**`example/lib/src/showcase/`** is where the other 64 still are — the
+**`example/lib/src/showcase/`** is where the other 62 still are — the
 rest of Application UI, and Blog UI — as
 fixed arrangements built for the gallery — `onPressed: () {}`
 throughout, hardcoded copy, no way for a caller to pass anything in.
