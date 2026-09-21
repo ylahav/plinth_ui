@@ -33,6 +33,7 @@ class PlinthTextInput extends StatefulWidget {
     this.obscureText = false,
     this.enabled = true,
     this.leadingIcon,
+    this.trailing,
     this.inputFormatters,
     this.keyboardType,
   });
@@ -58,6 +59,15 @@ class PlinthTextInput extends StatefulWidget {
   final bool obscureText;
   final bool enabled;
   final Widget? leadingIcon;
+
+  /// The far end of the field, inside the border — a clear button, a
+  /// unit, a visibility toggle.
+  ///
+  /// Outside the `TextField` rather than in its `decoration.suffixIcon`
+  /// so that a button here has its own hit area: a suffix icon sits
+  /// inside the field's, and a tap meant for the button places the
+  /// caret instead.
+  final Widget? trailing;
 
   /// Passed straight through to the underlying [TextField]. Added for
   /// [PlinthMaskInput], which is nothing but a formatter over this
@@ -157,6 +167,10 @@ class _PlinthTextInputState extends State<PlinthTextInput> {
                 ),
               ),
             ),
+            if (widget.trailing != null) ...[
+              SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
+              widget.trailing!,
+            ],
           ],
         ),
       ),

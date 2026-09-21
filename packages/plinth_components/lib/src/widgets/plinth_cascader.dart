@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_button.dart';
 import 'plinth_scroll_area.dart';
 import 'plinth_text.dart';
 
@@ -54,6 +55,7 @@ class PlinthCascader extends StatelessWidget {
     required this.options,
     required this.value,
     required this.onChanged,
+    this.clearable = false,
     this.columnWidth = 160,
     this.height = 200,
     this.size = PlinthSize.md,
@@ -69,6 +71,18 @@ class PlinthCascader extends StatelessWidget {
 
   /// Null makes the whole thing read-only.
   final ValueChanged<List<String>>? onChanged;
+
+  /// Shows a way to unpick the current path, reporting an empty list.
+  ///
+  /// Off by default, as everywhere else in the family: a required
+  /// field that can be emptied invites the state the form then has to
+  /// reject.
+  ///
+  /// Unlike the rest of the family this is not an icon inside a field,
+  /// because a cascader has no field — it is a browser of panels. The
+  /// affordance sits under them, and only once there is something to
+  /// clear, so it never occupies a row that says nothing.
+  final bool clearable;
 
   final double columnWidth;
   final double height;
@@ -151,7 +165,7 @@ class PlinthCascader extends StatelessWidget {
     final contentWidth = columnWidth * columns.length +
         (columns.isEmpty ? 0 : columns.length - 1);
 
-    return Container(
+    final box = Container(
       height: height,
       decoration: BoxDecoration(
         border: Border.all(color: theme.border),
@@ -180,6 +194,26 @@ class PlinthCascader extends StatelessWidget {
           );
         },
       ),
+    );
+
+    if (!clearable || value.isEmpty || onChanged == null) return box;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        box,
+        SizedBox(height: theme.space(2)),
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: PlinthButton(
+            variant: PlinthVariant.subtle,
+            size: PlinthSize.xs,
+            onPressed: () => onChanged!(const []),
+            child: const Text('Clear selection'),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -20,6 +20,26 @@ two passes before it had reached a handful of controls each. None of
 the three was a missing label; each was a control a screen reader user
 could operate without learning the result.
 
+### Added
+
+- **`clearable` closes the last Tier 1 gap but one.** It reaches
+  `PlinthColorInput` and `PlinthCascader`, the two the earlier batch
+  left, so all seven of the select family have it.
+
+  They take different shapes, for a reason. `PlinthCascader` clears to
+  an empty path through `onChanged`, like the other five. **`PlinthColorInput`
+  takes an `onClear` instead**: its `value` is a plain `Color` and no
+  colour means "none", so there is nothing for `onChanged` to report.
+  Making `value` nullable would say it properly and would be a
+  breaking change to an API published at 1.2.0. `clearable: true`
+  with no `onClear` renders no button, because a clear that does
+  nothing is worse than none.
+
+- **`trailing` on `PlinthTextInput`** — the far end of the field,
+  inside the border. Outside the `TextField` rather than in
+  `decoration.suffixIcon`, so a button there has its own hit area
+  instead of sharing the one that places the caret.
+
 ### Changed
 
 - **Eleven inputs shared one copy of their chrome instead of eleven.**

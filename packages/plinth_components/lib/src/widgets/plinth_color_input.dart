@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 import 'package:plinth_hooks/plinth_hooks.dart';
 
+import 'plinth_close_button.dart';
 import 'plinth_color_picker.dart';
 import 'plinth_popover.dart';
 import 'plinth_text_input.dart';
@@ -42,6 +43,8 @@ class PlinthColorInput extends StatefulWidget {
     this.error,
     this.withAlpha = false,
     this.swatches,
+    this.clearable = false,
+    this.onClear,
     this.size = PlinthSize.md,
     this.radius,
     this.enabled = true,
@@ -66,6 +69,28 @@ class PlinthColorInput extends StatefulWidget {
 
   final PlinthSize size;
   final PlinthSize? radius;
+
+  /// Shows a clear button once the field has been typed in or picked.
+  ///
+  /// Off by default, for the same reason as everywhere else in the
+  /// family: a required field that can be emptied invites the state the
+  /// form then has to reject.
+  final bool clearable;
+
+  /// What "cleared" means here, because a `Color` has no empty value.
+  ///
+  /// The rest of the family reports null through `onChanged`, which
+  /// works because their values are nullable. [value] is a plain
+  /// `Color` — there is no colour that means "none", and making it
+  /// nullable would be a breaking change to a published API. So
+  /// clearing is its own callback and the caller decides what an
+  /// unset colour is in their model: a sentinel, a null beside it, a
+  /// removed key.
+  ///
+  /// `clearable: true` with no [onClear] renders no button, since a
+  /// clear that does nothing is worse than no clear at all.
+  final VoidCallback? onClear;
+
   final bool enabled;
 
   /// Formats a colour as CSS-style hex: `#RRGGBB`, or `#RRGGBBAA` when
@@ -169,6 +194,13 @@ class _PlinthColorInputState extends State<PlinthColorInput> {
       size: widget.size,
       radius: widget.radius,
       enabled: enabled,
+      trailing: widget.clearable && widget.onClear != null && enabled
+          ? PlinthCloseButton(
+              size: PlinthSize.xs,
+              semanticLabel: 'Clear colour',
+              onPressed: widget.onClear,
+            )
+          : null,
       // The swatch is the picker's trigger rather than the whole
       // field: a field that opened a dropdown on every tap would fight
       // the caret for the same gesture.

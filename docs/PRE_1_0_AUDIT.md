@@ -46,7 +46,7 @@ them here so the same question isn't re-litigated per component.
 
 ## Tier 1 — the gaps a 1.0 shouldn't ship with
 
-**Four of the six are closed, and this section said otherwise for
+**Five of the six are closed, and this section said otherwise for
 several releases.** It was written at 0.19.0 and read as a list of
 open blockers long after four of them shipped — which is worse than
 having the gaps, because a reader deciding whether to adopt was being
@@ -55,11 +55,11 @@ told about holes that had been filled. Re-checked against source at
 
 | # | Gap | Status at 1.3.0 |
 |---|---|---|
-| 1 | No loading state anywhere | **Partly.** Buttons done, inputs open |
+| 1 | No loading state anywhere | **Partly.** Buttons done, inputs open — the only one left |
 | 2 | Progress takes one value, not sections | **Closed** |
 | 3 | Slider has no marks | **Closed** |
 | 4 | Tooltip can't be positioned | **Closed** (0.19.0, as a divergence) |
-| 5 | Nothing in the select family is clearable | **Partly.** 5 of 7 |
+| 5 | Nothing in the select family is clearable | **Closed** (1.3.0) |
 | 6 | `radius` and `size` cover only part of the library | **Closed** (0.19.0 / 0.23.0) |
 
 ### 1. Loading state — **buttons done, the input family still open**
@@ -134,14 +134,26 @@ Recorded as a divergence rather than a gap: if a caller genuinely needs
 a tooltip beside its target, `PlinthHoverCard` is the four-sided
 component and takes arbitrary content.
 
-### 5. Nothing in the select family is clearable — **5 of 7 now**
-`clearable`/`onClear` is on `PlinthSelect`, `PlinthMultiSelect`,
-`PlinthTagsInput`, `PlinthFileInput` and `PlinthAutocomplete`.
+### 5. Nothing in the select family is clearable — **closed in 1.3.0**
+`clearable` is on all seven. Five report null through `onChanged`;
+the last two could not, and the difference is the interesting part.
 
-**Still absent on `PlinthColorInput` and `PlinthCascader`** — the last
-two, and the last genuine component gap in the library. Nothing about
-either makes it harder; they were simply not in the batch that closed
-the other five.
+**`PlinthColorInput` takes an `onClear` instead.** Its `value` is a
+plain `Color`, and there is no colour that means "none" — so there is
+nothing for `onChanged` to report. Making `value` nullable would say
+it properly and is a breaking change to an API published at 1.2.0, so
+clearing is its own callback and the caller decides what unset means
+in their model. `clearable: true` with no `onClear` renders nothing,
+since a clear button that does nothing is worse than none.
+
+**`PlinthCascader` clears to an empty path**, which `onChanged` can
+carry, so it matches the other five. Its affordance is not an icon in
+a field because it has no field — it is a browser of panels — so the
+button sits under them, and only once there is something to clear.
+
+Both needed something first: `PlinthTextInput` gained a `trailing`
+slot, which is where a clear button belongs in any text-based field
+and is additive.
 
 ### 6. `radius` and `size` cover only part of the library — **closed**
 `radius` was accepted by 41 of ~112 components. The theme defines a
@@ -173,12 +185,12 @@ prop's clothes, which is the section below.
 
 ### What is actually left
 
-Two props, and one structural thing behind the first of them:
+**One prop.**
 
-- `clearable` on `PlinthColorInput` and `PlinthCascader` (item 5) —
-  genuinely small, two components
-- `loading` on the input family (item 1) — now one implementation,
-  since the shared chrome was extracted in 1.3.0
+- `loading` on the input family (item 1) — now one implementation
+  rather than eleven, since the shared chrome was extracted in 1.3.0
+- ~~`clearable` on `PlinthColorInput` and `PlinthCascader`~~ — **done
+  in 1.3.0**
 - ~~the shared input chrome itself~~ — **done in 1.3.0.** It was never a
   gap against Mantine, so it appeared nowhere else in this document; it
   was found by trying to price item 1 and getting the price wrong

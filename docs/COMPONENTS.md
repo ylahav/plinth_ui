@@ -603,9 +603,23 @@ left `null` are simply omitted, not rendered empty.
 
 ### `PlinthTextInput`
 `label`, `description`, `placeholder`, `error`, `controller`, `onChanged`,
-`size`, `color`, `radius`, `obscureText`, `enabled`, `leadingIcon`.
+`size`, `color`, `radius`, `obscureText`, `enabled`, `leadingIcon`,
+`trailing`.
 Border color: gray (default) -> theme color at shade 6 (focused) -> red
 (error present) — error takes precedence over focus.
+
+`trailing` is the far end of the field, inside the border — a clear
+button, a unit, a toggle. It sits outside the `TextField` rather than
+in `decoration.suffixIcon` so a button there has its own hit area; a
+suffix icon is inside the field's, and a tap meant for the button
+places the caret instead.
+
+The label, description and error are rendered by an internal
+`PlinthFieldChrome` shared with every other field in the library, so
+they look and announce the same everywhere. An `error` of `''` is not
+an error — a caller clearing one often passes an empty string, and
+treating that as a failure paints a red border under an empty
+message.
 
 ### `PlinthTextarea`
 `label`, `description`, `placeholder`, `error`, `controller`, `onChanged`,
@@ -961,8 +975,9 @@ down. `selectableBranches: false` makes tapping a branch only open it,
 for when only leaves are real choices.
 
 ### `PlinthCascader` + `PlinthCascaderOption`
-`options`, `value` (the path), `onChanged`, `columnWidth`, `height`,
-`size`, `color`, `radius`. Column-by-column selection through a hierarchy.
+`options`, `value` (the path), `onChanged`, `clearable`, `columnWidth`,
+`height`, `size`, `color`, `radius`. Column-by-column selection through
+a hierarchy.
 
 The same data `PlinthTreeSelect` shows, arranged for a different
 question. A tree is for *finding* one item in a structure you have to
@@ -982,21 +997,34 @@ more than a phone has. When they fit, the box still shrink-wraps to
 them, so its border stops at the last panel rather than stretching
 across a wide screen.
 
+`clearable` reports an empty path, matching the rest of the select
+family. The affordance sits *under* the panels rather than inside a
+field, because a cascader has no field — and it appears only once
+there is a path to clear, so it never occupies a row that says
+nothing.
+
 Renders inline. Wrap it in a `PlinthPopover` for the dropdown form —
 the columns are the part worth having, and keeping the trigger out
 means it composes into a filter bar or a settings panel just as easily.
 
 ### `PlinthColorInput`
 `value` (a `Color`), `onChanged`, `label`, `description`,
-`placeholder`, `error`, `withAlpha`, `swatches`, `size`, `radius`,
-`enabled`. A hex text field with a preview swatch that opens a
-`PlinthColorPicker`.
+`placeholder`, `error`, `withAlpha`, `swatches`, `clearable`,
+`onClear`, `size`, `radius`, `enabled`. A hex text field with a
+preview swatch that opens a `PlinthColorPicker`.
 
 Both halves matter: typing `#2f9e44` is the fastest way in when you
 know the value, and the picker is the only way in when you don't. The
 swatch is the picker's trigger rather than the whole field, since a
 field that opened a dropdown on every tap would fight the caret for
 the same gesture.
+
+`clearable` is the one in the family that does **not** report through
+`onChanged`, because `value` is a plain `Color` and no colour means
+"none". It calls `onClear` instead and leaves the caller to decide
+what unset is in their model. `clearable: true` without an `onClear`
+renders no button at all — a clear that does nothing is worse than no
+clear.
 
 Typing is parsed leniently — `#abc`, `abc`, `#aabbcc`, `aabbcc`, and
 with `withAlpha`, `#aabbccdd` in CSS order. An unparseable value is
