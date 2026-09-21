@@ -73,9 +73,29 @@ and shows a spinner; the fields beside it cannot show that they are
 waiting on anything. `PlinthAsyncButton` in `plinth_blocks` covers the
 button half again at the block level.
 
-**Cost of the rest:** the input family shares chrome through
-`PlinthTextInput`, so this is one implementation and a prop on each
-wrapper, not eleven.
+**Cost of the rest — larger than this document first said.** The
+claim here was that the family shares chrome through `PlinthTextInput`,
+so `loading` would be one implementation and a prop on each wrapper.
+That was asserted without grepping, and it is wrong.
+
+Three inputs delegate to `PlinthTextInput`: `PlinthColorInput`,
+`PlinthCombobox` and `PlinthMaskInput`. **Seven build their own** —
+`PlinthAutocomplete`, `PlinthNumberInput`, `PlinthPasswordInput`,
+`PlinthPillsInput`, `PlinthPinInput`, `PlinthTagsInput` and
+`PlinthTextarea` — and each carries its own copy of the same
+label/description/error block, down to the same four `hasError`
+branches.
+
+So `loading` on the input family is seven implementations, not one.
+
+**Which makes the duplication the finding, not the prop.** This audit
+compared Plinth's props against Mantine's and so could not see it: the
+seven agree with each other about every prop they expose, and differ
+only in having written it out seven times. Any future prop on "every
+input" — `loading`, and `clearable` is the same shape — costs seven
+edits and can be got subtly wrong in six of them. Extracting the chrome
+first is the cheaper order, and it is a refactor with no API change,
+which is the kind that can land any time.
 
 ### 2. `PlinthProgress` and `PlinthRingProgress` take one value, not sections — **closed**
 Both have a `.sections` named constructor taking
@@ -144,10 +164,14 @@ prop's clothes, which is the section below.
 
 ### What is actually left
 
-Two things, both small:
+Two props, and one structural thing behind the first of them:
 
-- `loading` on the input family (item 1)
-- `clearable` on `PlinthColorInput` and `PlinthCascader` (item 5)
+- `clearable` on `PlinthColorInput` and `PlinthCascader` (item 5) —
+  genuinely small, two components
+- `loading` on the input family (item 1) — seven implementations
+  unless the shared chrome is extracted first
+- **the shared input chrome itself**, which is not a gap against
+  Mantine and so appears nowhere else in this document
 
 **Neither blocks a 1.0** on the reading this document opened with — a
 component with the right name and a third of its behaviour. Both are
