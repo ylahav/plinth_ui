@@ -61,7 +61,7 @@ class PlinthTableOfContents extends StatelessWidget {
     this.color,
     this.indent = 14,
     this.withRail = true,
-    this.scrollDuration = const Duration(milliseconds: 300),
+    this.scrollDuration,
   });
 
   final List<PlinthTocItem> items;
@@ -81,7 +81,10 @@ class PlinthTableOfContents extends StatelessWidget {
   /// Draws the vertical rule that marks the active entry.
   final bool withRail;
 
-  final Duration scrollDuration;
+  /// Null takes the value from the theme, which is what almost every
+  /// caller wants. It cannot be a default here: a default must be
+  /// `const` and a theme lookup is not.
+  final Duration? scrollDuration;
 
   /// Indent is relative: a document whose headings start at level 2
   /// shouldn't sit permanently indented.
@@ -96,8 +99,8 @@ class PlinthTableOfContents extends StatelessWidget {
     if (target != null) {
       Scrollable.ensureVisible(
         target,
-        duration: scrollDuration,
-        curve: Curves.easeOutCubic,
+        duration: scrollDuration ?? target.plinth.duration(PlinthSize.lg),
+        curve: target.plinth.curve(PlinthCurve.emphasized),
         alignment: 0.1,
       );
     }
@@ -140,7 +143,7 @@ class PlinthTableOfContents extends StatelessWidget {
                                 color: active
                                     ? theme.shaded(colorKey, 6)
                                     : theme.surfaceSunken,
-                                width: 2,
+                                width: theme.borderWidth(PlinthSize.md),
                               ),
                             ),
                           )
@@ -151,7 +154,8 @@ class PlinthTableOfContents extends StatelessWidget {
                       // The active entry carries both weight and colour:
                       // a rail alone is easy to miss at a glance, and
                       // colour alone doesn't survive a mono display.
-                      weight: active ? FontWeight.w600 : null,
+                      weight:
+                          active ? theme.weight(PlinthWeight.semibold) : null,
                       color: active ? colorKey : 'gray',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

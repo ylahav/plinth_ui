@@ -120,7 +120,7 @@ class _PlinthTextInputState extends State<PlinthTextInput> {
           PlinthText(
             widget.label!,
             size: widget.size,
-            weight: FontWeight.w600,
+            weight: theme.weight(PlinthWeight.semibold),
           ),
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
@@ -137,7 +137,8 @@ class _PlinthTextInputState extends State<PlinthTextInput> {
             borderRadius: BorderRadius.circular(resolvedRadius),
             border: Border.all(
               color: borderColor,
-              width: _isFocused || hasError ? 2 : 1,
+              width: theme.borderWidth(
+                  _isFocused || hasError ? PlinthSize.md : PlinthSize.xs),
             ),
             color: widget.enabled ? theme.surface : theme.surfaceMuted,
           ),

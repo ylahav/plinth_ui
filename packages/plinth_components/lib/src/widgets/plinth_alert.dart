@@ -106,7 +106,7 @@ class PlinthAlert extends StatelessWidget {
                 children: [
                   if (title != null)
                     PlinthText(title!,
-                        weight: FontWeight.w700,
+                        weight: theme.weight(PlinthWeight.bold),
                         color: color,
                         // The title sits on the tint, not on the surface.
                         on: backgroundColor),

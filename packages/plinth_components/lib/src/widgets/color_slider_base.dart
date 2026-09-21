@@ -211,7 +211,8 @@ class _Thumb extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
-        border: Border.all(color: border, width: 2),
+        border: Border.all(
+            color: border, width: context.plinth.borderWidth(PlinthSize.md)),
         boxShadow: [
           BoxShadow(
             color: shadow.withValues(alpha: 0.25),

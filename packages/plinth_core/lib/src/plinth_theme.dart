@@ -14,6 +14,114 @@ const Map<PlinthSize, double> kDefaultSpacing = {
   PlinthSize.xl: 32,
 };
 
+/// Default font weights, one per [PlinthWeight].
+const Map<PlinthWeight, FontWeight> kDefaultFontWeights = {
+  PlinthWeight.regular: FontWeight.w400,
+  PlinthWeight.medium: FontWeight.w500,
+  PlinthWeight.semibold: FontWeight.w600,
+  PlinthWeight.bold: FontWeight.w700,
+};
+
+/// Default motion durations.
+///
+/// Keyed by [PlinthSize] like the other scales, and centred on what the
+/// library already uses: 150ms appears in 13 places and 200ms in 5, so
+/// `sm` and `md` are those two rather than round numbers chosen fresh.
+const Map<PlinthSize, Duration> kDefaultDurations = {
+  PlinthSize.xs: Duration(milliseconds: 100),
+  PlinthSize.sm: Duration(milliseconds: 150),
+  PlinthSize.md: Duration(milliseconds: 200),
+  PlinthSize.lg: Duration(milliseconds: 300),
+  PlinthSize.xl: Duration(milliseconds: 500),
+};
+
+/// Default easing, one per [PlinthCurve].
+const Map<PlinthCurve, Curve> kDefaultCurves = {
+  PlinthCurve.standard: Curves.easeOut,
+  PlinthCurve.emphasized: Curves.easeOutCubic,
+  PlinthCurve.linear: Curves.linear,
+};
+
+/// Default border widths.
+///
+/// The five values the library actually draws: a hairline, the focus
+/// ring at 1.5, the common 2 (8 of the 13 explicit widths), and the 3
+/// and 4 that a blockquote rule and a notification accent use.
+const Map<PlinthSize, double> kDefaultBorderWidths = {
+  PlinthSize.xs: 1,
+  PlinthSize.sm: 1.5,
+  PlinthSize.md: 2,
+  PlinthSize.lg: 3,
+  PlinthSize.xl: 4,
+};
+
+/// Default elevations, matching what `PlinthPaper` drew before this
+/// scale existed — so adopting it changes nothing on screen.
+const Map<PlinthShadow, PlinthElevation> kDefaultElevations = {
+  PlinthShadow.none: PlinthElevation(blur: 0, offsetY: 0, opacity: 0),
+  PlinthShadow.sm: PlinthElevation(blur: 4, offsetY: 1, opacity: 0.08),
+  PlinthShadow.md: PlinthElevation(blur: 10, offsetY: 4, opacity: 0.10),
+  PlinthShadow.lg: PlinthElevation(blur: 20, offsetY: 8, opacity: 0.12),
+};
+
+/// One step on the elevation scale, as geometry rather than as a colour.
+///
+/// Separating the two is the point. `PlinthPaper` used to build its
+/// shadows from a hardcoded `Colors.black`, which meant [PlinthTheme]
+/// carried a `shadow` colour that nothing painted with — a token that
+/// existed, was documented, and did nothing. An elevation here is blur,
+/// offset and opacity; the colour comes from the theme at paint time,
+/// so a theme that sets `shadow` now gets shadows in it.
+@immutable
+class PlinthElevation {
+  const PlinthElevation({
+    required this.blur,
+    required this.offsetY,
+    required this.opacity,
+    this.spread = 0,
+  });
+
+  final double blur;
+  final double offsetY;
+  final double opacity;
+  final double spread;
+
+  /// The shadows to paint, in [color].
+  ///
+  /// Empty at zero opacity rather than a transparent shadow, because a
+  /// `BoxShadow` that paints nothing still costs a layer.
+  List<BoxShadow> shadows(Color color) {
+    if (opacity <= 0) return const [];
+    return [
+      BoxShadow(
+        color: color.withValues(alpha: opacity),
+        blurRadius: blur,
+        offset: Offset(0, offsetY),
+        spreadRadius: spread,
+      ),
+    ];
+  }
+
+  static PlinthElevation lerp(PlinthElevation a, PlinthElevation b, double t) =>
+      PlinthElevation(
+        blur: lerpDouble(a.blur, b.blur, t)!,
+        offsetY: lerpDouble(a.offsetY, b.offsetY, t)!,
+        opacity: lerpDouble(a.opacity, b.opacity, t)!,
+        spread: lerpDouble(a.spread, b.spread, t)!,
+      );
+
+  @override
+  bool operator ==(Object other) =>
+      other is PlinthElevation &&
+      other.blur == blur &&
+      other.offsetY == offsetY &&
+      other.opacity == opacity &&
+      other.spread == spread;
+
+  @override
+  int get hashCode => Object.hash(blur, offsetY, opacity, spread);
+}
+
 /// The base spacing unit. Every step on the spacing scale, and every
 /// ad-hoc gap a caller needs, should be a whole multiple of this.
 ///
@@ -330,6 +438,11 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     this.spacing = kDefaultSpacing,
     this.radius = kDefaultRadius,
     this.fontSizes = kDefaultFontSizes,
+    this.fontWeights = kDefaultFontWeights,
+    this.durations = kDefaultDurations,
+    this.curves = kDefaultCurves,
+    this.borderWidths = kDefaultBorderWidths,
+    this.elevations = kDefaultElevations,
     this.defaultRadius = PlinthSize.sm,
     this.brightness = Brightness.light,
     this.surface = kLightSurface,
@@ -405,6 +518,23 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   final Map<PlinthSize, double> spacing;
   final Map<PlinthSize, double> radius;
   final Map<PlinthSize, double> fontSizes;
+
+  /// Font weights by role. Read through [weight].
+  final Map<PlinthWeight, FontWeight> fontWeights;
+
+  /// Motion durations. Read through [duration].
+  final Map<PlinthSize, Duration> durations;
+
+  /// Easing by role. Read through [curve].
+  final Map<PlinthCurve, Curve> curves;
+
+  /// Border widths. Read through [borderWidth].
+  final Map<PlinthSize, double> borderWidths;
+
+  /// Elevation geometry by step. Read through [elevation], which
+  /// resolves it against [shadow] — this map deliberately holds no
+  /// colour of its own.
+  final Map<PlinthShadow, PlinthElevation> elevations;
 
   /// The radius used when a component doesn't specify a [PlinthSize]
   /// for its `radius` prop.
@@ -482,6 +612,34 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// Half steps are allowed (`space(1.5)` is 6) but are a smell: if a
   /// layout needs many of them, the base unit is wrong for it.
   double space(double steps) => kSpaceUnit * steps;
+
+  /// The weight for a role, falling back to regular.
+  ///
+  /// A fallback rather than a `!` because a caller who replaced
+  /// `fontWeights` with a partial map should get body text, not a
+  /// crash in a build method.
+  FontWeight weight(PlinthWeight w) =>
+      fontWeights[w] ?? kDefaultFontWeights[w] ?? FontWeight.w400;
+
+  /// The duration for a step.
+  Duration duration(PlinthSize size) =>
+      durations[size] ?? kDefaultDurations[size]!;
+
+  /// The easing for a role.
+  Curve curve(PlinthCurve c) => curves[c] ?? kDefaultCurves[c]!;
+
+  /// The border width for a step.
+  double borderWidth(PlinthSize size) =>
+      borderWidths[size] ?? kDefaultBorderWidths[size]!;
+
+  /// The shadows for an elevation step, in this theme's [shadow] colour.
+  ///
+  /// This is the whole reason the scale holds geometry and not colours:
+  /// a dark theme wants the same geometry over a different colour, and
+  /// before this existed the shadow colour was hardcoded black while
+  /// [shadow] sat in the theme unused.
+  List<BoxShadow> elevation(PlinthShadow step) =>
+      (elevations[step] ?? kDefaultElevations[step]!).shadows(shadow);
 
   /// Resolves a color name + shade index to a concrete [Color].
   /// Falls back to [primaryColor] if the name isn't found.
@@ -923,6 +1081,11 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     Map<PlinthSize, double>? spacing,
     Map<PlinthSize, double>? radius,
     Map<PlinthSize, double>? fontSizes,
+    Map<PlinthWeight, FontWeight>? fontWeights,
+    Map<PlinthSize, Duration>? durations,
+    Map<PlinthCurve, Curve>? curves,
+    Map<PlinthSize, double>? borderWidths,
+    Map<PlinthShadow, PlinthElevation>? elevations,
     PlinthSize? defaultRadius,
     Brightness? brightness,
     Color? surface,
@@ -949,6 +1112,11 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
       spacing: spacing ?? this.spacing,
       radius: radius ?? this.radius,
       fontSizes: fontSizes ?? this.fontSizes,
+      fontWeights: fontWeights ?? this.fontWeights,
+      durations: durations ?? this.durations,
+      curves: curves ?? this.curves,
+      borderWidths: borderWidths ?? this.borderWidths,
+      elevations: elevations ?? this.elevations,
       defaultRadius: defaultRadius ?? this.defaultRadius,
       brightness: brightness ?? this.brightness,
       surface: surface ?? this.surface,
@@ -1009,6 +1177,15 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
       spacing: _lerpScale(spacing, other.spacing, t),
       radius: _lerpScale(radius, other.radius, t),
       fontSizes: _lerpScale(fontSizes, other.fontSizes, t),
+
+      // Weights and curves are discrete — there is no half a
+      // `FontWeight.w600`, and an eased half-curve is not a curve — so
+      // they change over at the midpoint like `brightness` does.
+      fontWeights: beforeHalf ? fontWeights : other.fontWeights,
+      curves: beforeHalf ? curves : other.curves,
+      durations: _lerpDurations(durations, other.durations, t),
+      borderWidths: _lerpScale(borderWidths, other.borderWidths, t),
+      elevations: _lerpElevations(elevations, other.elevations, t),
       defaultRadius: beforeHalf ? defaultRadius : other.defaultRadius,
       brightness: beforeHalf ? brightness : other.brightness,
       surface: Color.lerp(surface, other.surface, t)!,
@@ -1068,6 +1245,43 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
     return {
       for (final key in {...a.keys, ...b.keys})
         key: lerpDouble(a[key] ?? b[key]!, b[key] ?? a[key]!, t)!,
+    };
+  }
+
+  /// Durations, in microseconds so a 150ms↔300ms cross-fade is smooth
+  /// rather than a jump at the midpoint.
+  static Map<PlinthSize, Duration> _lerpDurations(
+    Map<PlinthSize, Duration> a,
+    Map<PlinthSize, Duration> b,
+    double t,
+  ) {
+    if (identical(a, b)) return a;
+    return {
+      for (final key in {...a.keys, ...b.keys})
+        key: Duration(
+          microseconds: lerpDouble(
+            (a[key] ?? b[key]!).inMicroseconds,
+            (b[key] ?? a[key]!).inMicroseconds,
+            t,
+          )!
+              .round(),
+        ),
+    };
+  }
+
+  static Map<PlinthShadow, PlinthElevation> _lerpElevations(
+    Map<PlinthShadow, PlinthElevation> a,
+    Map<PlinthShadow, PlinthElevation> b,
+    double t,
+  ) {
+    if (identical(a, b)) return a;
+    return {
+      for (final key in {...a.keys, ...b.keys})
+        key: PlinthElevation.lerp(
+          a[key] ?? b[key]!,
+          b[key] ?? a[key]!,
+          t,
+        ),
     };
   }
 }

@@ -35,7 +35,7 @@ class PlinthHoverCard extends StatefulWidget {
     this.position = PlinthPopoverPosition.bottom,
     this.width,
     this.radius,
-    this.closeDelay = const Duration(milliseconds: 100),
+    this.closeDelay,
   });
 
   final Widget target;
@@ -48,7 +48,10 @@ class PlinthHoverCard extends StatefulWidget {
   /// Overrides the theme's default radius for this one instance.
   final PlinthSize? radius;
 
-  final Duration closeDelay;
+  /// Null takes the value from the theme, which is what almost every
+  /// caller wants. It cannot be a default here: a default must be
+  /// `const` and a theme lookup is not.
+  final Duration? closeDelay;
 
   @override
   State<PlinthHoverCard> createState() => _PlinthHoverCardState();
@@ -158,7 +161,10 @@ class _PlinthHoverCardState extends State<PlinthHoverCard> {
 
   void _scheduleClose() {
     _closeTimer?.cancel();
-    _closeTimer = Timer(widget.closeDelay, _close);
+    _closeTimer = Timer(
+      widget.closeDelay ?? context.plinth.duration(PlinthSize.xs),
+      _close,
+    );
   }
 
   void _close() {

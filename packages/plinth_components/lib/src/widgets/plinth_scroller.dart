@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plinth_core/plinth_core.dart';
 
 import 'plinth_action_icon.dart';
 
@@ -28,7 +29,7 @@ class PlinthScroller extends StatefulWidget {
     this.threshold = 200,
     this.alignment = Alignment.bottomRight,
     this.padding = const EdgeInsets.all(16),
-    this.duration = const Duration(milliseconds: 300),
+    this.duration,
     this.color,
     this.icon = const Icon(Icons.arrow_upward),
     this.semanticLabel = 'Back to top',
@@ -45,7 +46,11 @@ class PlinthScroller extends StatefulWidget {
 
   final AlignmentGeometry alignment;
   final EdgeInsetsGeometry padding;
-  final Duration duration;
+
+  /// Null takes the value from the theme, which is what almost every
+  /// caller wants. It cannot be a default here: a default must be
+  /// `const` and a theme lookup is not.
+  final Duration? duration;
   final String? color;
   final Widget icon;
   final String semanticLabel;
@@ -89,8 +94,8 @@ class _PlinthScrollerState extends State<PlinthScroller> {
   void _toTop() {
     widget.controller.animateTo(
       0,
-      duration: widget.duration,
-      curve: Curves.easeOutCubic,
+      duration: widget.duration ?? context.plinth.duration(PlinthSize.lg),
+      curve: context.plinth.curve(PlinthCurve.emphasized),
     );
   }
 
@@ -106,7 +111,8 @@ class _PlinthScrollerState extends State<PlinthScroller> {
               padding: widget.padding,
               child: AnimatedOpacity(
                 opacity: _visible ? 1 : 0,
-                duration: widget.duration,
+                duration:
+                    widget.duration ?? context.plinth.duration(PlinthSize.lg),
                 // Hidden means unreachable, not just invisible: a
                 // transparent button that still takes taps is worse
                 // than no button.

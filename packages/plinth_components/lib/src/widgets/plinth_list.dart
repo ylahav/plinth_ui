@@ -86,7 +86,9 @@ class PlinthList extends StatelessWidget {
       case PlinthListType.ordered:
         return Text(
           '${index + 1}.',
-          style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w600),
+          style: TextStyle(
+              fontSize: fontSize,
+              fontWeight: theme.weight(PlinthWeight.semibold)),
         );
     }
   }

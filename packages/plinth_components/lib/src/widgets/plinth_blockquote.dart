@@ -40,7 +40,9 @@ class PlinthBlockquote extends StatelessWidget {
         vertical: theme.spacing[PlinthSize.sm]!,
       ),
       decoration: BoxDecoration(
-        border: Border(left: BorderSide(color: accentColor, width: 3)),
+        border: Border(
+            left: BorderSide(
+                color: accentColor, width: theme.borderWidth(PlinthSize.lg))),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

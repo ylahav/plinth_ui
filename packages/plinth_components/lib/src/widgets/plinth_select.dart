@@ -82,7 +82,8 @@ class PlinthSelect<T> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (label != null) ...[
-          PlinthText(label!, size: size, weight: FontWeight.w600),
+          PlinthText(label!,
+              size: size, weight: theme.weight(PlinthWeight.semibold)),
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         if (description != null) ...[
@@ -99,7 +100,10 @@ class PlinthSelect<T> extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(resolvedRadius),
-              border: Border.all(color: borderColor, width: hasError ? 2 : 1),
+              border: Border.all(
+                  color: borderColor,
+                  width: theme
+                      .borderWidth(hasError ? PlinthSize.md : PlinthSize.xs)),
               color: enabled ? theme.surface : theme.surfaceMuted,
             ),
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding),

@@ -89,7 +89,9 @@ class SliderMarkLabels extends StatelessWidget {
                       mark.label!,
                       size: PlinthSize.xs,
                       color: _isActive(mark) ? null : 'gray',
-                      weight: _isActive(mark) ? FontWeight.w700 : null,
+                      weight: _isActive(mark)
+                          ? theme.weight(PlinthWeight.bold)
+                          : null,
                     ),
                   ),
                 ),

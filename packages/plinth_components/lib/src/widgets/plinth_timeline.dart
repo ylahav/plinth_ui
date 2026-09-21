@@ -142,7 +142,7 @@ class _TimelineRow extends StatelessWidget {
               ? CrossAxisAlignment.end
               : CrossAxisAlignment.start,
           children: [
-            PlinthText(item.title, weight: FontWeight.w600),
+            PlinthText(item.title, weight: theme.weight(PlinthWeight.semibold)),
             if (item.description != null) ...[
               SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.3),
               PlinthText(item.description!,

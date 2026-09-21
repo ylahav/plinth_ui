@@ -8,13 +8,18 @@ import 'package:plinth_core/plinth_core.dart';
 /// that scale tops out at 20px because it sizes body text, badges, and
 /// input labels, while an `h1` needs to be considerably larger than
 /// any of them.
-const Map<int, (double size, FontWeight weight)> _titleStyles = {
-  1: (34, FontWeight.w700),
-  2: (26, FontWeight.w700),
-  3: (22, FontWeight.w700),
-  4: (18, FontWeight.w600),
-  5: (16, FontWeight.w600),
-  6: (14, FontWeight.w600),
+///
+/// The weight is a [PlinthWeight], not a `FontWeight`, so this map can
+/// stay `const` while what it resolves to still comes from the theme.
+/// A heading's *role* — bold down to h3, semibold below — is a property
+/// of the scale; which `FontWeight` that is belongs to the brand.
+const Map<int, (double size, PlinthWeight weight)> _titleStyles = {
+  1: (34, PlinthWeight.bold),
+  2: (26, PlinthWeight.bold),
+  3: (22, PlinthWeight.bold),
+  4: (18, PlinthWeight.semibold),
+  5: (16, PlinthWeight.semibold),
+  6: (14, PlinthWeight.semibold),
 };
 
 /// A semantic heading matching Mantine's `Title`.
@@ -61,7 +66,8 @@ class PlinthTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final (size, weight) = _titleStyles[order]!;
+    final (size, weightRole) = _titleStyles[order]!;
+    final weight = theme.weight(weightRole);
 
     return Semantics(
       header: true,
@@ -88,7 +94,8 @@ class PlinthTitle extends StatelessWidget {
               : theme.readableOn(
                   color!,
                   theme.surface,
-                  level: size >= 18.67 && weight.value >= FontWeight.w700.value
+                  level: size >= 18.67 &&
+                          weight.value >= theme.weight(PlinthWeight.bold).value
                       ? PlinthContrast.large
                       : PlinthContrast.body,
                 ),

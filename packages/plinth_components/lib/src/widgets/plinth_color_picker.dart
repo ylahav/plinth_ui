@@ -288,7 +288,9 @@ class _AreaHandle extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 2),
+        border: Border.all(
+            color: Colors.white,
+            width: context.plinth.borderWidth(PlinthSize.md)),
         boxShadow: const [
           BoxShadow(color: Color(0x33000000), blurRadius: 3),
         ],

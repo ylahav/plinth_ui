@@ -72,13 +72,13 @@ class PlinthBurger extends StatelessWidget {
                 children: [
                   // Top bar: slides down to center and rotates +45°.
                   AnimatedPositioned(
-                    duration: const Duration(milliseconds: 150),
+                    duration: theme.duration(PlinthSize.sm),
                     top: opened ? middleY : 0,
                     left: 0,
                     width: barWidth,
                     height: barHeight,
                     child: AnimatedRotation(
-                      duration: const Duration(milliseconds: 150),
+                      duration: theme.duration(PlinthSize.sm),
                       turns: opened ? 0.125 : 0,
                       child: Container(color: barColor),
                     ),
@@ -90,20 +90,20 @@ class PlinthBurger extends StatelessWidget {
                     width: barWidth,
                     height: barHeight,
                     child: AnimatedOpacity(
-                      duration: const Duration(milliseconds: 100),
+                      duration: theme.duration(PlinthSize.xs),
                       opacity: opened ? 0 : 1,
                       child: Container(color: barColor),
                     ),
                   ),
                   // Bottom bar: slides up to center and rotates -45°.
                   AnimatedPositioned(
-                    duration: const Duration(milliseconds: 150),
+                    duration: theme.duration(PlinthSize.sm),
                     top: opened ? middleY : boxHeight - barHeight,
                     left: 0,
                     width: barWidth,
                     height: barHeight,
                     child: AnimatedRotation(
-                      duration: const Duration(milliseconds: 150),
+                      duration: theme.duration(PlinthSize.sm),
                       turns: opened ? -0.125 : 0,
                       child: Container(color: barColor),
                     ),

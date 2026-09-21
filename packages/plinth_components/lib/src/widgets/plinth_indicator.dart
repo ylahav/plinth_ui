@@ -157,7 +157,7 @@ class PlinthIndicator extends StatelessWidget {
                 // rather than the surface behind the badge.
                 color: theme.contrastingOn(fillColor),
                 fontSize: dimension * 0.625,
-                fontWeight: FontWeight.w700,
+                fontWeight: theme.weight(PlinthWeight.bold),
               ),
             )
           : null,

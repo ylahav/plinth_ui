@@ -104,8 +104,10 @@ class PlinthAppShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final borderColor = theme.roleShaded(PlinthRole.neutral, 2);
-    final border =
-        withBorder ? BorderSide(color: borderColor, width: 1) : BorderSide.none;
+    final border = withBorder
+        ? BorderSide(
+            color: borderColor, width: theme.borderWidth(PlinthSize.xs))
+        : BorderSide.none;
 
     final showNavbar = navbar != null && !navbarCollapsed;
     final showAside = aside != null && !asideCollapsed;

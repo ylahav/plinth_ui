@@ -16,7 +16,7 @@ import 'plinth_paper.dart';
 /// PlinthCard(
 ///   shadow: PlinthShadow.sm,
 ///   withBorder: true,
-///   header: const Text('Card title', style: TextStyle(fontWeight: FontWeight.w700)),
+///   header: const Text('Card title', style: TextStyle(fontWeight: theme.weight(PlinthWeight.bold))),
 ///   footer: Row(
 ///     mainAxisAlignment: MainAxisAlignment.end,
 ///     children: [PlinthButton(onPressed: () {}, child: const Text('Action'))],

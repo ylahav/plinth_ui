@@ -50,7 +50,7 @@ class PlinthKbd extends StatelessWidget {
         style: TextStyle(
           fontSize: _fontSizes[size],
           fontFamily: 'monospace',
-          fontWeight: FontWeight.w600,
+          fontWeight: theme.weight(PlinthWeight.semibold),
           color: theme.text,
         ),
       ),

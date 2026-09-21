@@ -107,8 +107,9 @@ class PlinthDrawer extends StatelessWidget {
       transitionDuration: const Duration(milliseconds: 220),
       pageBuilder: (context, _, __) => _buildContent(context),
       transitionBuilder: (context, animation, _, child) {
-        final curved =
-            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
+        final curved = CurvedAnimation(
+            parent: animation,
+            curve: context.plinth.curve(PlinthCurve.emphasized));
         return SlideTransition(
           position:
               Tween(begin: _beginOffset, end: Offset.zero).animate(curved),
@@ -138,7 +139,7 @@ class PlinthDrawer extends StatelessWidget {
                       child: PlinthText(
                         title!,
                         size: PlinthSize.lg,
-                        weight: FontWeight.w700,
+                        weight: theme.weight(PlinthWeight.bold),
                       ),
                     ),
                     PlinthCloseButton(

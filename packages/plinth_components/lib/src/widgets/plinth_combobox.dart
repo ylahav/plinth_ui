@@ -384,7 +384,7 @@ class _OptionRow<T> extends StatelessWidget {
                   option.label,
                   size: size,
                   color: option.disabled ? 'gray' : null,
-                  weight: selected ? FontWeight.w600 : null,
+                  weight: selected ? theme.weight(PlinthWeight.semibold) : null,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

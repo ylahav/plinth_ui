@@ -258,7 +258,7 @@ class _StepCircleAndLabel extends StatelessWidget {
         color: isFilled ? activeColor : theme.surface,
         border: Border.all(
           color: isFilled ? activeColor : theme.border,
-          width: 2,
+          width: theme.borderWidth(PlinthSize.md),
         ),
       ),
       child: state == _StepState.completed
@@ -275,7 +275,7 @@ class _StepCircleAndLabel extends StatelessWidget {
                 color: isFilled
                     ? theme.contrastingOn(activeColor)
                     : theme.textMuted,
-                fontWeight: FontWeight.w600,
+                fontWeight: theme.weight(PlinthWeight.semibold),
                 fontSize: metrics.number,
               ),
             ),
@@ -285,7 +285,9 @@ class _StepCircleAndLabel extends StatelessWidget {
       PlinthText(
         step.label,
         size: metrics.label,
-        weight: state == _StepState.active ? FontWeight.w700 : FontWeight.w400,
+        weight: state == _StepState.active
+            ? theme.weight(PlinthWeight.bold)
+            : theme.weight(PlinthWeight.regular),
         textAlign: align,
       ),
       if (step.description != null)

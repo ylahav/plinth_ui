@@ -94,7 +94,7 @@ class PlinthChip extends StatelessWidget {
           onTap: enabled ? () => onSelected!(!selected) : null,
           borderRadius: BorderRadius.circular(resolvedRadius),
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
+            duration: theme.duration(PlinthSize.sm),
             padding: EdgeInsets.symmetric(
               horizontal: _horizontalPadding[size]!,
               vertical: _verticalPadding[size]!,
@@ -121,7 +121,9 @@ class PlinthChip extends StatelessWidget {
                     fontSize: _fontSizes[size],
                     color:
                         selected ? theme.contrastingOn(baseColor) : theme.text,
-                    fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                    fontWeight: selected
+                        ? theme.weight(PlinthWeight.semibold)
+                        : theme.weight(PlinthWeight.regular),
                   ),
                 ),
               ],

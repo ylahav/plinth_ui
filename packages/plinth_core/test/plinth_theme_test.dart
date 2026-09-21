@@ -105,6 +105,75 @@ void main() {
             reason: 'missing fontSize for $size');
       }
     });
+
+    test('durations and borderWidths cover every PlinthSize', () {
+      final theme = PlinthTheme.defaultTheme;
+      for (final size in PlinthSize.values) {
+        expect(theme.durations[size], isNotNull,
+            reason: 'missing duration for $size');
+        expect(theme.borderWidths[size], isNotNull,
+            reason: 'missing borderWidth for $size');
+      }
+    });
+
+    test('weights, curves and elevations cover their own enums', () {
+      final theme = PlinthTheme.defaultTheme;
+      for (final w in PlinthWeight.values) {
+        expect(theme.fontWeights[w], isNotNull, reason: 'missing weight $w');
+      }
+      for (final c in PlinthCurve.values) {
+        expect(theme.curves[c], isNotNull, reason: 'missing curve $c');
+      }
+      for (final e in PlinthShadow.values) {
+        expect(theme.elevations[e], isNotNull, reason: 'missing elevation $e');
+      }
+    });
+
+    test('a partial override falls back rather than throwing', () {
+      // A caller who sets one weight should not lose the other three.
+      // The lookups take a fallback instead of `!` precisely so a
+      // partial map degrades to the default rather than crashing in a
+      // build method, where the stack trace says nothing useful.
+      final theme = PlinthTheme.defaultTheme.copyWith(
+        fontWeights: const {PlinthWeight.bold: FontWeight.w900},
+        durations: const {PlinthSize.md: Duration(milliseconds: 1)},
+        borderWidths: const {PlinthSize.md: 99},
+        curves: const {PlinthCurve.standard: Curves.bounceIn},
+        elevations: const {},
+      );
+
+      expect(theme.weight(PlinthWeight.bold), FontWeight.w900);
+      expect(theme.weight(PlinthWeight.regular), FontWeight.w400);
+      expect(theme.duration(PlinthSize.md), const Duration(milliseconds: 1));
+      expect(theme.duration(PlinthSize.lg), const Duration(milliseconds: 300));
+      expect(theme.borderWidth(PlinthSize.md), 99);
+      expect(theme.borderWidth(PlinthSize.xs), 1);
+      expect(theme.curve(PlinthCurve.standard), Curves.bounceIn);
+      expect(theme.curve(PlinthCurve.linear), Curves.linear);
+      expect(theme.elevation(PlinthShadow.md), isNotEmpty);
+    });
+
+    test('elevation paints in the theme shadow colour, not black', () {
+      // The bug this scale exists to fix: `PlinthPaper` built its
+      // shadows from a hardcoded `Colors.black`, so `PlinthTheme.shadow`
+      // was a documented token that nothing ever painted with.
+      final blue = PlinthTheme.defaultTheme.copyWith(
+        shadow: const Color(0xFF0000FF),
+      );
+      final shadows = blue.elevation(PlinthShadow.md);
+
+      expect(shadows, hasLength(1));
+      expect(shadows.single.color.r, 0);
+      expect(shadows.single.color.b, 1);
+      expect(shadows.single.blurRadius, 10);
+      expect(shadows.single.offset, const Offset(0, 4));
+    });
+
+    test('elevation none paints nothing at all', () {
+      // Not a transparent shadow — an empty list. A BoxShadow that
+      // paints nothing still costs a layer.
+      expect(PlinthTheme.defaultTheme.elevation(PlinthShadow.none), isEmpty);
+    });
   });
 
   group('PlinthTheme.darkTheme', () {

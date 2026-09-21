@@ -15,7 +15,7 @@ import 'plinth_announce.dart';
 /// ```dart
 /// PlinthSemiCircleProgress(
 ///   value: 0.72,
-///   label: const PlinthText('72%', weight: FontWeight.w700),
+///   label: const PlinthText('72%', weight: theme.weight(PlinthWeight.bold)),
 /// )
 /// ```
 class PlinthSemiCircleProgress extends StatelessWidget {

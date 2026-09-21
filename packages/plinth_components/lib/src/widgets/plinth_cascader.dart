@@ -224,7 +224,7 @@ class _Option extends StatelessWidget {
                   option.label,
                   size: size,
                   color: selected ? colorKey : null,
-                  weight: selected ? FontWeight.w600 : null,
+                  weight: selected ? theme.weight(PlinthWeight.semibold) : null,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

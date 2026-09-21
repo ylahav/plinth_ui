@@ -88,7 +88,8 @@ class _PlinthPasswordInputState extends State<PlinthPasswordInput> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.label != null) ...[
-          PlinthText(widget.label!, size: widget.size, weight: FontWeight.w600),
+          PlinthText(widget.label!,
+              size: widget.size, weight: theme.weight(PlinthWeight.semibold)),
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         if (widget.description != null) ...[
@@ -101,7 +102,8 @@ class _PlinthPasswordInputState extends State<PlinthPasswordInput> {
             borderRadius: BorderRadius.circular(resolvedRadius),
             border: Border.all(
               color: borderColor,
-              width: _isFocused || hasError ? 2 : 1,
+              width: theme.borderWidth(
+                  _isFocused || hasError ? PlinthSize.md : PlinthSize.xs),
             ),
             color: widget.enabled ? theme.surface : theme.surfaceMuted,
           ),

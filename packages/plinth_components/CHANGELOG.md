@@ -20,6 +20,35 @@ two passes before it had reached a handful of controls each. None of
 the three was a missing label; each was a control a screen reader user
 could operate without learning the result.
 
+### Changed
+
+- **Every hardcoded weight, duration, curve and border width now comes
+  from the theme.** 58 `FontWeight` literals, 22 `Duration`s, 13
+  `Curves` and 23 border widths, replaced with lookups into the new
+  scales in `plinth_core` 1.3.0. The defaults resolve to exactly the
+  values that were there, so nothing moved on screen — all 802 existing
+  tests passed unchanged through each of the three migrations.
+
+  Eleven durations were **left alone**: 120, 220, 250, 400, 600, 800
+  and 900ms are not steps on any scale, and snapping them to the
+  nearest one would have been a behaviour change dressed up as a
+  refactor. A one-off duration is allowed to be a one-off.
+
+- **`PlinthPaper` paints its shadows in `theme.shadow`**, which it
+  previously ignored in favour of a hardcoded `Colors.black`. Identical
+  by default, since `shadow` defaults to black.
+
+- **`duration` and `curve` parameters are now nullable** on
+  `PlinthCollapse`, `PlinthHoverCard` (`closeDelay`), `PlinthProgress`,
+  `PlinthRollingNumber`, `PlinthScroller` and
+  `PlinthTableOfContents` (`scrollDuration`). Null takes the theme's
+  value; passing one still wins. This is not a preference — a default
+  parameter value must be `const`, and a theme lookup cannot be, so
+  nullable is the only way for a theme to reach them at all.
+
+- **`PlinthShadow` moved to `plinth_core`.** Unchanged, and still
+  importable from this package, which re-exports it.
+
 ### Fixed
 
 - **`PlinthStepper`** announces each step's state. A stepper means

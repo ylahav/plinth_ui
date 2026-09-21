@@ -99,7 +99,7 @@ class PlinthFieldset extends StatelessWidget {
                           child: PlinthText(
                             legend!,
                             size: PlinthSize.sm,
-                            weight: FontWeight.w600,
+                            weight: theme.weight(PlinthWeight.semibold),
                           ),
                         ),
                       ),

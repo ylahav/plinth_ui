@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plinth_core/plinth_core.dart';
 
 /// An animated height reveal, matching Mantine's `Collapse`.
 ///
@@ -47,8 +48,8 @@ class PlinthCollapse extends StatelessWidget {
     super.key,
     required this.opened,
     required this.child,
-    this.duration = const Duration(milliseconds: 200),
-    this.curve = Curves.easeOut,
+    this.duration,
+    this.curve,
   });
 
   /// Controlled by the caller, like every other disclosure in this
@@ -57,15 +58,19 @@ class PlinthCollapse extends StatelessWidget {
   final bool opened;
 
   final Widget child;
-  final Duration duration;
-  final Curve curve;
+
+  /// Null takes the value from the theme, which is what almost every
+  /// caller wants. It cannot be a default here: a default must be
+  /// `const` and a theme lookup is not.
+  final Duration? duration;
+  final Curve? curve;
 
   @override
   Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: opened ? 1 : 0, end: opened ? 1 : 0),
-      duration: duration,
-      curve: curve,
+      duration: duration ?? context.plinth.duration(PlinthSize.md),
+      curve: curve ?? context.plinth.curve(PlinthCurve.standard),
       // The child is built once and passed through, so collapsing
       // doesn't rebuild it on every frame of the animation.
       child: child,

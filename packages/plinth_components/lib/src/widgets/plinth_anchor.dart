@@ -107,7 +107,7 @@ class _PlinthAnchorState extends State<PlinthAnchor> {
                       ? theme.readableOn(colorKey, theme.surface,
                           level: PlinthContrast.nonText)
                       : Colors.transparent,
-                  width: _focused ? 2 : 0,
+                  width: _focused ? theme.borderWidth(PlinthSize.md) : 0,
                 ),
               ),
               child: Align(

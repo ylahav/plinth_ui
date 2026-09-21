@@ -38,7 +38,7 @@ class PlinthRollingNumber extends StatelessWidget {
     this.decimalScale,
     this.trimTrailingZeros = false,
     this.duration = const Duration(milliseconds: 600),
-    this.curve = Curves.easeOutCubic,
+    this.curve,
     this.size = PlinthSize.md,
     this.color,
     this.weight,
@@ -54,7 +54,11 @@ class PlinthRollingNumber extends StatelessWidget {
   final bool trimTrailingZeros;
 
   final Duration duration;
-  final Curve curve;
+
+  /// Null takes the value from the theme, which is what almost every
+  /// caller wants. It cannot be a default here: a default must be
+  /// `const` and a theme lookup is not.
+  final Curve? curve;
 
   final PlinthSize size;
   final String? color;
@@ -102,7 +106,7 @@ class PlinthRollingNumber extends StatelessWidget {
       child: TweenAnimationBuilder<double>(
         tween: Tween<double>(end: value.toDouble()),
         duration: reduceMotion ? Duration.zero : duration,
-        curve: curve,
+        curve: curve ?? theme.curve(PlinthCurve.emphasized),
         builder: (context, animated, _) {
           return Row(
             mainAxisSize: MainAxisSize.min,

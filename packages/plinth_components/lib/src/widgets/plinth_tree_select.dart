@@ -199,7 +199,8 @@ class _PlinthTreeSelectState extends State<PlinthTreeSelect> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.label != null) ...[
-          PlinthText(widget.label!, size: widget.size, weight: FontWeight.w600),
+          PlinthText(widget.label!,
+              size: widget.size, weight: theme.weight(PlinthWeight.semibold)),
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         if (widget.description != null) ...[

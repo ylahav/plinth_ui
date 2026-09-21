@@ -151,7 +151,7 @@ class _PlinthFloatingWindowState extends State<PlinthFloatingWindow> {
                                   child: PlinthText(
                                     widget.title ?? '',
                                     size: PlinthSize.sm,
-                                    weight: FontWeight.w600,
+                                    weight: theme.weight(PlinthWeight.semibold),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),

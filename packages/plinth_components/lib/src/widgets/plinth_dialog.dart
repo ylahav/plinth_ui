@@ -169,7 +169,7 @@ class _PlinthDialogState extends State<PlinthDialog> {
                                 ? const SizedBox.shrink()
                                 : PlinthText(
                                     widget.title!,
-                                    weight: FontWeight.w700,
+                                    weight: theme.weight(PlinthWeight.bold),
                                   ),
                           ),
                           if (widget.withCloseButton)

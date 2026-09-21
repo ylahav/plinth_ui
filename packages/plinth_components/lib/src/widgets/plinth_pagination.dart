@@ -143,7 +143,9 @@ class PlinthPagination extends StatelessWidget {
                       : interactive
                           ? theme.text
                           : theme.textDisabled,
-                  fontWeight: entry == page ? FontWeight.w600 : FontWeight.w400,
+                  fontWeight: entry == page
+                      ? theme.weight(PlinthWeight.semibold)
+                      : theme.weight(PlinthWeight.regular),
                 ),
               ),
             ),

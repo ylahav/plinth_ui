@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
-/// Shadow depth for [PlinthPaper]/[PlinthCard], mirroring Mantine's
-/// shadow scale (a subset of it — Mantine also has `xl`, added here
-/// only as far as this library currently needs).
-enum PlinthShadow { none, sm, md, lg }
-
 /// A themed surface container matching Mantine's `Paper`: a white
 /// (or custom) background with optional shadow, border, radius, and
 /// padding. The foundation [PlinthCard] builds on — reach for `Paper`
@@ -58,40 +53,9 @@ class PlinthPaper extends StatelessWidget {
         color: bg ?? theme.surface,
         borderRadius: BorderRadius.circular(resolvedRadius),
         border: withBorder ? Border.all(color: theme.surfaceSunken) : null,
-        boxShadow: _shadowFor(shadow),
+        boxShadow: theme.elevation(shadow),
       ),
       child: child,
     );
-  }
-
-  static List<BoxShadow> _shadowFor(PlinthShadow shadow) {
-    switch (shadow) {
-      case PlinthShadow.none:
-        return const [];
-      case PlinthShadow.sm:
-        return [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
-          ),
-        ];
-      case PlinthShadow.md:
-        return [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.10),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ];
-      case PlinthShadow.lg:
-        return [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ];
-    }
   }
 }

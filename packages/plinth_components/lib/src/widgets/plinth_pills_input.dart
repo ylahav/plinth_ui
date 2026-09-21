@@ -96,7 +96,8 @@ class PlinthPillsInput extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (label != null) ...[
-          PlinthText(label!, size: size, weight: FontWeight.w600),
+          PlinthText(label!,
+              size: size, weight: theme.weight(PlinthWeight.semibold)),
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         if (description != null) ...[
@@ -117,7 +118,8 @@ class PlinthPillsInput extends StatelessWidget {
                   theme.radius[radius ?? theme.defaultRadius]!),
               border: Border.all(
                 color: borderColor,
-                width: focused || hasError ? 2 : 1,
+                width: theme.borderWidth(
+                    focused || hasError ? PlinthSize.md : PlinthSize.xs),
               ),
               color: enabled ? theme.surface : theme.surfaceMuted,
             ),

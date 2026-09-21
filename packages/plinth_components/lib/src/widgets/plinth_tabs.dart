@@ -220,12 +220,14 @@ class _PlinthTabsState<T> extends State<PlinthTabs<T>> {
       final selected = tab.value == value;
       final indicator = BorderSide(
         color: selected ? activeColor : Colors.transparent,
-        width: 2,
+        width: theme.borderWidth(PlinthSize.md),
       );
       final label = PlinthText(
         tab.label,
         size: size,
-        weight: selected ? FontWeight.w600 : FontWeight.w400,
+        weight: selected
+            ? theme.weight(PlinthWeight.semibold)
+            : theme.weight(PlinthWeight.regular),
         color: selected ? colorKey : null,
       );
 
@@ -366,7 +368,7 @@ class PlinthTabView<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 150),
+      duration: context.plinth.duration(PlinthSize.sm),
       child: KeyedSubtree(
         key: ValueKey(value),
         child: children[value] ?? const SizedBox.shrink(),

@@ -70,7 +70,10 @@ class PlinthColorSwatch extends StatelessWidget {
           decoration: BoxDecoration(
             color: fillColor,
             borderRadius: BorderRadius.circular(resolvedRadius),
-            border: selected ? Border.all(color: theme.text, width: 2) : null,
+            border: selected
+                ? Border.all(
+                    color: theme.text, width: theme.borderWidth(PlinthSize.md))
+                : null,
           ),
           child: selected
               ? Icon(Icons.check,

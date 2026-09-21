@@ -280,7 +280,9 @@ class _TreeRow extends StatelessWidget {
                       child: PlinthText(
                         entry.node.label,
                         size: size,
-                        weight: isSelected ? FontWeight.w600 : null,
+                        weight: isSelected
+                            ? theme.weight(PlinthWeight.semibold)
+                            : null,
                         color: isSelected ? colorKey : null,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,

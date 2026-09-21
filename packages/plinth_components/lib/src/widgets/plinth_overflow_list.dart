@@ -66,7 +66,7 @@ class PlinthOverflowList extends StatelessWidget {
       textDirection: Directionality.of(context),
       labelStyle: TextStyle(
         fontSize: theme.fontSizes[size],
-        fontWeight: FontWeight.w600,
+        fontWeight: theme.weight(PlinthWeight.semibold),
         color: color != null
             ? theme.readableOn(color!, theme.surface)
             : theme.textMuted,

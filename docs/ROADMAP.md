@@ -127,7 +127,7 @@ starting, not evidence that somebody did.
 | | What it is |
 |---|---|
 | **Component tokens** | `button.primary.background`, with hover / pressed / focus / disabled states. How a team styles *their own* widgets from Plinth |
-| **The missing axes** | Motion, typography, elevation, opacity, border width, interaction state, platform flags (`boldText`, `highContrast`). Each lands as a token, then a migration of the literals it replaces |
+| **The missing axes** | ~~Motion, typography, elevation, border width~~ — **shipped in 1.3.0**, each as a token *and* a migration of the literals it replaced. Still open: opacity, interaction state, platform flags (`boldText`, `highContrast`). `lineHeights` was planned and dropped: the library sets an explicit line height in one place, which is one widget rather than an axis |
 | **Nested overrides** | A theme override for one subtree — sections, embedded brands |
 | **`fromSeed`** | Promote the ramp generator to a public constructor |
 
@@ -219,6 +219,15 @@ and 4 test files behind them.* The demo app browses **113**
 arrangements across 3 categories, of which the 38 are the ones that
 have become real widgets with real APIs; the rest are still component
 demos and [SHOWCASE.md](SHOWCASE.md) says which, and why.
+
+The token engine carries **nine** scales, not four: colour, spacing,
+radius and font size, plus font weight, duration, curve, border width
+and elevation as of 1.3.0. The last five are checkable in a stronger
+sense than the others — `plinth_token_axes_test.dart` overrides each
+one and asserts what *rendered* changed, so "the theme drives it" is
+tested rather than assumed. That test exists because `shadow` was a
+public, documented, `lerp`-carried token that painted nothing for three
+releases.
 
 And four starter apps in `templates/` — dashboard, account, blog,
 mobile list–detail — with **36 tests** between them. They are melos

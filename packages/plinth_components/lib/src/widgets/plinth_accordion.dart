@@ -152,11 +152,12 @@ class _AccordionTile extends StatelessWidget {
                       SizedBox(width: theme.spacing[PlinthSize.xs]!),
                     ],
                     Expanded(
-                      child: PlinthText(item.title, weight: FontWeight.w600),
+                      child: PlinthText(item.title,
+                          weight: theme.weight(PlinthWeight.semibold)),
                     ),
                     AnimatedRotation(
                       turns: isOpen ? 0.5 : 0,
-                      duration: const Duration(milliseconds: 150),
+                      duration: theme.duration(PlinthSize.sm),
                       child: const Icon(Icons.keyboard_arrow_down, size: 20),
                     ),
                   ],
@@ -170,8 +171,8 @@ class _AccordionTile extends StatelessWidget {
           // a closed panel should leave the tree entirely rather than
           // linger as something a screen reader can still reach.
           AnimatedSize(
-            duration: const Duration(milliseconds: 150),
-            curve: Curves.easeOut,
+            duration: theme.duration(PlinthSize.sm),
+            curve: theme.curve(PlinthCurve.standard),
             child: isOpen
                 ? Padding(
                     padding: EdgeInsets.only(

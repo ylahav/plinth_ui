@@ -233,7 +233,7 @@ class _Segment<T> extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(radius),
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
+            duration: theme.duration(PlinthSize.sm),
             padding: EdgeInsets.symmetric(
               horizontal: horizontalPadding,
               vertical: verticalPadding,
@@ -256,7 +256,9 @@ class _Segment<T> extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: fontSize,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                fontWeight: selected
+                    ? theme.weight(PlinthWeight.semibold)
+                    : theme.weight(PlinthWeight.regular),
                 color: selected ? fillColor : theme.textMuted,
               ),
             ),

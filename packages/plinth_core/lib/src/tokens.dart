@@ -90,3 +90,49 @@ enum PlinthDensity {
 /// A shade ramp for a single color, indexed 0 (lightest) to 9 (darkest),
 /// matching Mantine's 10-shade convention.
 typedef PlinthColorShades = List<Color>;
+
+/// Font weights, as roles rather than numbers.
+///
+/// `plinth_components` hardcodes 59 `FontWeight` literals across three
+/// distinct values — w400 (7 uses), w600 (35) and w700 (17). Those three
+/// are what the library actually needs; [medium] is here because adding
+/// an enum value later is a breaking change for every exhaustive switch
+/// over this type, and a weight scale with a hole where 500 belongs is
+/// the first thing a brand asks to fill.
+enum PlinthWeight {
+  /// w400 — body text.
+  regular,
+
+  /// w500 — unused by the library today. See the note above.
+  medium,
+
+  /// w600 — the library's workhorse: labels, buttons, table headers.
+  semibold,
+
+  /// w700 — headings, and the value in a stat tile.
+  bold,
+}
+
+/// Easing, as roles rather than curves.
+///
+/// Three, because three is what the library uses: `Curves.easeOut` in 8
+/// places, `Curves.easeOutCubic` in 4, `Curves.linear` in 1.
+enum PlinthCurve {
+  /// Most things. Decelerates into place.
+  standard,
+
+  /// A longer, softer settle, for something that moved a long way.
+  emphasized,
+
+  /// No easing, for anything that must read as mechanical — a
+  /// determinate progress bar is not "arriving" anywhere.
+  linear,
+}
+
+/// Elevation steps, from flat to a drawer over a page.
+///
+/// Lives here rather than in `plinth_components` so that
+/// [PlinthTheme.elevations] can be keyed by it. It is still importable
+/// from `package:plinth_components/plinth_components.dart`, which
+/// re-exports this library.
+enum PlinthShadow { none, sm, md, lg }

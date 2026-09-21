@@ -164,6 +164,76 @@ void main() {
       expect(mid.radius[PlinthSize.md], 4); // between 8 and 0
     });
 
+    test('the new axes interpolate, where interpolating means something', () {
+      final other = light.copyWith(
+        borderWidths: {...light.borderWidths, PlinthSize.md: 6},
+        durations: {
+          ...light.durations,
+          PlinthSize.md: const Duration(milliseconds: 400),
+        },
+        elevations: {
+          ...light.elevations,
+          PlinthShadow.md: const PlinthElevation(
+            blur: 20,
+            offsetY: 8,
+            opacity: 0.20,
+          ),
+        },
+      );
+      final mid = light.lerp(other, 0.5);
+
+      expect(mid.borderWidth(PlinthSize.md), 4); // between 2 and 6
+      expect(
+        mid.duration(PlinthSize.md),
+        const Duration(milliseconds: 300), // between 200 and 400
+      );
+
+      final elevation = mid.elevations[PlinthShadow.md]!;
+      expect(elevation.blur, 15); // between 10 and 20
+      expect(elevation.offsetY, 6); // between 4 and 8
+      expect(elevation.opacity, closeTo(0.15, 1e-9));
+    });
+
+    test('weights and curves change over at the midpoint instead', () {
+      // There is no half of a `FontWeight.w600` and an eased half-curve
+      // is not a curve, so these are discrete like `brightness` is.
+      final other = light.copyWith(
+        fontWeights: {...light.fontWeights, PlinthWeight.bold: FontWeight.w900},
+        curves: {...light.curves, PlinthCurve.standard: Curves.bounceIn},
+      );
+
+      expect(
+          light.lerp(other, 0.25).weight(PlinthWeight.bold), FontWeight.w700);
+      expect(
+          light.lerp(other, 0.75).weight(PlinthWeight.bold), FontWeight.w900);
+      expect(
+          light.lerp(other, 0.25).curve(PlinthCurve.standard), Curves.easeOut);
+      expect(
+          light.lerp(other, 0.75).curve(PlinthCurve.standard), Curves.bounceIn);
+    });
+
+    test('copyWith carries every new axis', () {
+      // The failure this catches is a field added to the constructor and
+      // forgotten in `copyWith`, which silently resets it to the default
+      // on the next `copyWith` anybody makes.
+      final custom = light.copyWith(
+        fontWeights: const {PlinthWeight.regular: FontWeight.w300},
+        durations: const {PlinthSize.xs: Duration(milliseconds: 7)},
+        curves: const {PlinthCurve.linear: Curves.bounceOut},
+        borderWidths: const {PlinthSize.xs: 11},
+        elevations: const {
+          PlinthShadow.sm: PlinthElevation(blur: 1, offsetY: 2, opacity: 0.5),
+        },
+      );
+
+      final round = custom.copyWith(primaryColor: custom.primaryColor);
+      expect(round.weight(PlinthWeight.regular), FontWeight.w300);
+      expect(round.duration(PlinthSize.xs), const Duration(milliseconds: 7));
+      expect(round.curve(PlinthCurve.linear), Curves.bounceOut);
+      expect(round.borderWidth(PlinthSize.xs), 11);
+      expect(round.elevations[PlinthShadow.sm]!.blur, 1);
+    });
+
     test('ramps interpolate shade by shade', () {
       final other = light.copyWith(colors: {
         ...light.colors,

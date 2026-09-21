@@ -22,6 +22,31 @@ WCAG formula locally to check its own work.
 
 ### Added
 
+- **Four token axes, as five fields: `fontWeights`, `durations` and
+  `curves` (motion is both), `borderWidths`, `elevations`.** Read through `weight()`,
+  `duration()`, `curve()`, `borderWidth()` and `elevation()`, each of
+  which falls back to the default rather than throwing, so a caller who
+  overrides one entry does not lose the rest.
+
+  Driven by what the library was already hardcoding rather than by what
+  a token system usually has: 59 `FontWeight` literals across three
+  distinct values, 33 `Duration`s clustering on 150ms and 200ms, 13
+  `Curves`, and border widths of 1, 1.5, 2, 3 and 4. The defaults are
+  those values, so adopting the scales changes nothing on screen.
+
+  `lineHeights` was planned alongside these and is **not** here. The
+  library sets an explicit line height in exactly one place, which is
+  not evidence of an axis — it is evidence of one widget.
+
+- **`PlinthElevation`** — blur, offset, opacity and spread, with the
+  colour left out on purpose. `elevation(step)` resolves it against the
+  theme's `shadow`.
+
+- **`PlinthWeight`, `PlinthCurve`** — roles for the two axes that are
+  not size scales. `PlinthShadow` moved here from `plinth_components`
+  so `elevations` could be keyed by it; it is unchanged, and still
+  importable from that package, which re-exports this one.
+
 - **`PlinthTheme.contrastRatio(a, b)`** - the WCAG contrast ratio
   between two opaque colours, 1.0 to 21.0. This is the function
   `readableOn` and `contrastingOn` resolve with, exposed so an app can
@@ -49,6 +74,19 @@ the way that roadmap says core work should - demanded by something
 being built rather than picked off a list. What demanded it was the
 demo app's new rebrand control, which reports what a chosen brand
 colour actually measures.
+
+### Fixed
+
+- **`PlinthTheme.shadow` was a token that painted nothing.** It was
+  public, documented, and carried through `copyWith` and `lerp` — while
+  `PlinthPaper` built its shadows from a hardcoded `Colors.black`. A
+  theme that set `shadow` got black shadows anyway. Elevation now
+  resolves through it, so it does what it always said it did.
+
+  A regression test in `plinth_components` now overrides each of the
+  five fields and asserts what *rendered* changed, rather than reading
+  the value back off the theme — which would only prove that a map
+  holds what was put in it.
 
 ## 1.2.0
 

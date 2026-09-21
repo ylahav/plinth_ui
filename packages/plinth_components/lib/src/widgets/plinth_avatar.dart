@@ -112,7 +112,7 @@ class PlinthAvatar extends StatelessWidget {
             derived.toUpperCase(),
             style: TextStyle(
               color: foregroundColor,
-              fontWeight: FontWeight.w600,
+              fontWeight: theme.weight(PlinthWeight.semibold),
               fontSize: _fontSizes[size],
             ),
           ),

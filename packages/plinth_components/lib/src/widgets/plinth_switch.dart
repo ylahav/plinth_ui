@@ -71,7 +71,7 @@ class PlinthSwitch extends StatelessWidget {
         radius == null ? trackSize.height / 2 : theme.radius[radius!]!;
 
     final track = AnimatedContainer(
-      duration: const Duration(milliseconds: 150),
+      duration: theme.duration(PlinthSize.sm),
       width: trackSize.width,
       height: trackSize.height,
       padding: const EdgeInsets.all(2),
@@ -82,8 +82,8 @@ class PlinthSwitch extends StatelessWidget {
         borderRadius: BorderRadius.circular(resolvedRadius),
       ),
       child: AnimatedAlign(
-        duration: const Duration(milliseconds: 150),
-        curve: Curves.easeOut,
+        duration: theme.duration(PlinthSize.sm),
+        curve: theme.curve(PlinthCurve.standard),
         alignment: value ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           width: thumbDiameter,

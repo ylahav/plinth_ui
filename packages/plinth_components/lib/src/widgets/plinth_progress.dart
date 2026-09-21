@@ -143,8 +143,8 @@ class PlinthProgress extends StatelessWidget {
             : Align(
                 alignment: Alignment.centerLeft,
                 child: AnimatedFractionallySizedBox(
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOut,
+                  duration: theme.duration(PlinthSize.md),
+                  curve: theme.curve(PlinthCurve.standard),
                   widthFactor: value,
                   child: DecoratedBox(
                     decoration: BoxDecoration(color: fillColor),
@@ -182,8 +182,8 @@ class PlinthProgress extends StatelessWidget {
         children: [
           for (final section in parts)
             AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
+              duration: theme.duration(PlinthSize.md),
+              curve: theme.curve(PlinthCurve.standard),
               width: constraints.maxWidth * section.value,
               color: theme.shaded(section.color, 6),
             ),
@@ -215,20 +215,24 @@ class AnimatedFractionallySizedBox extends StatelessWidget {
     required this.widthFactor,
     required this.child,
     required this.duration,
-    this.curve = Curves.linear,
+    this.curve,
   });
 
   final double widthFactor;
   final Widget child;
   final Duration duration;
-  final Curve curve;
+
+  /// Null takes the value from the theme, which is what almost every
+  /// caller wants. It cannot be a default here: a default must be
+  /// `const` and a theme lookup is not.
+  final Curve? curve;
 
   @override
   Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: widthFactor, end: widthFactor),
       duration: duration,
-      curve: curve,
+      curve: curve ?? context.plinth.curve(PlinthCurve.linear),
       builder: (context, value, child) {
         return FractionallySizedBox(
           alignment: Alignment.centerLeft,

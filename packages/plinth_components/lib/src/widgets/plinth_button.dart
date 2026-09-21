@@ -132,7 +132,7 @@ class PlinthButton extends StatelessWidget {
                         style: TextStyle(
                           color: foreground,
                           fontSize: fontSize,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: theme.weight(PlinthWeight.semibold),
                         ),
                         child: child,
                       ),

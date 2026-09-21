@@ -92,7 +92,7 @@ class PlinthCheckbox extends StatelessWidget {
               : hasError
                   ? theme.roleShaded(PlinthRole.error, 6)
                   : theme.border,
-          width: 1.5,
+          width: theme.borderWidth(PlinthSize.sm),
         ),
       ),
       child: filled

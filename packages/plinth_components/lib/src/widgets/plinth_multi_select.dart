@@ -199,7 +199,8 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (widget.label != null) ...[
-          PlinthText(widget.label!, size: widget.size, weight: FontWeight.w600),
+          PlinthText(widget.label!,
+              size: widget.size, weight: theme.weight(PlinthWeight.semibold)),
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         if (widget.description != null) ...[
@@ -230,8 +231,10 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(resolvedRadius),
-                  border:
-                      Border.all(color: borderColor, width: hasError ? 2 : 1),
+                  border: Border.all(
+                      color: borderColor,
+                      width: theme.borderWidth(
+                          hasError ? PlinthSize.md : PlinthSize.xs)),
                   color: widget.enabled ? theme.surface : theme.surfaceMuted,
                 ),
                 child: Row(

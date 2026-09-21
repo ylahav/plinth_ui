@@ -171,7 +171,9 @@ class PlinthNotification extends StatelessWidget {
         padding: EdgeInsets.all(theme.spacing[PlinthSize.sm]!),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(resolvedRadius),
-          border: Border(left: BorderSide(color: accentColor, width: 4)),
+          border: Border(
+              left: BorderSide(
+                  color: accentColor, width: theme.borderWidth(PlinthSize.xl))),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,7 +198,8 @@ class PlinthNotification extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (title != null)
-                      PlinthText(title!, weight: FontWeight.w700),
+                      PlinthText(title!,
+                          weight: theme.weight(PlinthWeight.bold)),
                     if (title != null)
                       SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.5),
                     DefaultTextStyle.merge(

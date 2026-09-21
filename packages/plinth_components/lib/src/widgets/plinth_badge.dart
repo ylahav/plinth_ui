@@ -120,7 +120,7 @@ class PlinthBadge extends StatelessWidget {
             label.toUpperCase(),
             style: TextStyle(
               fontSize: _fontSizes[size],
-              fontWeight: FontWeight.w700,
+              fontWeight: theme.weight(PlinthWeight.bold),
               color: foreground,
               letterSpacing: 0.3,
             ),

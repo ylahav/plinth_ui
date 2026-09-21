@@ -63,8 +63,8 @@ class _PlinthSpoilerState extends State<PlinthSpoiler> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AnimatedSize(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOut,
+          duration: theme.duration(PlinthSize.md),
+          curve: theme.curve(PlinthCurve.standard),
           alignment: Alignment.topCenter,
           child: _expanded
               ? widget.child
@@ -99,7 +99,9 @@ class _PlinthSpoilerState extends State<PlinthSpoiler> {
             child: Text(
               _expanded ? widget.hideLabel : widget.showLabel,
               style: TextStyle(
-                  color: linkColor, fontSize: 13, fontWeight: FontWeight.w600),
+                  color: linkColor,
+                  fontSize: 13,
+                  fontWeight: theme.weight(PlinthWeight.semibold)),
             ),
           ),
         ),

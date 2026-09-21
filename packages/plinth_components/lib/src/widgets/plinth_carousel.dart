@@ -211,7 +211,7 @@ class _PlinthCarouselState extends State<PlinthCarousel> {
     _controller.animateToPage(
       page,
       duration: const Duration(milliseconds: 250),
-      curve: Curves.easeOut,
+      curve: context.plinth.curve(PlinthCurve.standard),
     );
   }
 
@@ -335,7 +335,7 @@ class _PlinthCarouselState extends State<PlinthCarousel> {
               child: Padding(
                 padding: const EdgeInsets.all(4),
                 child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
+                  duration: theme.duration(PlinthSize.sm),
                   // The current dot stretches rather than only
                   // changing colour: position stays readable when the
                   // dots are small or the palette is low-contrast.

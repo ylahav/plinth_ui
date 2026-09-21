@@ -168,7 +168,8 @@ class PlinthRadioGroup<T> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (label != null) ...[
-          PlinthText(label!, size: size, weight: FontWeight.w600),
+          PlinthText(label!,
+              size: size, weight: theme.weight(PlinthWeight.semibold)),
           SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
         ],
         if (description != null) ...[

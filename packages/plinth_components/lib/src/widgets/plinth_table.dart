@@ -307,7 +307,9 @@ class _PlinthTableState extends State<PlinthTable> {
         PlinthText(
           text,
           size: widget.size,
-          weight: header ? FontWeight.w700 : FontWeight.w400,
+          weight: header
+              ? theme.weight(PlinthWeight.bold)
+              : theme.weight(PlinthWeight.regular),
         ),
       );
     }
@@ -360,7 +362,7 @@ class _PlinthTableState extends State<PlinthTable> {
                   child: PlinthText(
                     label,
                     size: widget.size,
-                    weight: FontWeight.w700,
+                    weight: theme.weight(PlinthWeight.bold),
                   ),
                 ),
                 SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.4),
@@ -393,7 +395,10 @@ class _PlinthTableState extends State<PlinthTable> {
 
     final headerRow = TableRow(
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: theme.borderMuted, width: 2)),
+        border: Border(
+            bottom: BorderSide(
+                color: theme.borderMuted,
+                width: theme.borderWidth(PlinthSize.md))),
       ),
       children: [
         for (var i = 0; i < widget.columns.length; i++) headerCell(i),

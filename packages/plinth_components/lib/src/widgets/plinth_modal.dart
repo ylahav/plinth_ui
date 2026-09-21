@@ -71,11 +71,12 @@ class PlinthModal extends StatelessWidget {
       barrierDismissible: closeOnBackdropTap,
       barrierLabel: title ?? 'Modal',
       barrierColor: Colors.black.withValues(alpha: 0.5),
-      transitionDuration: const Duration(milliseconds: 150),
+      transitionDuration: context.plinth.duration(PlinthSize.sm),
       pageBuilder: (context, _, __) => _buildContent(context),
       transitionBuilder: (context, animation, _, child) {
-        final curved =
-            CurvedAnimation(parent: animation, curve: Curves.easeOut);
+        final curved = CurvedAnimation(
+            parent: animation,
+            curve: context.plinth.curve(PlinthCurve.standard));
         return FadeTransition(
           opacity: curved,
           child: ScaleTransition(
@@ -111,7 +112,7 @@ class PlinthModal extends StatelessWidget {
                         child: PlinthText(
                           title!,
                           size: PlinthSize.lg,
-                          weight: FontWeight.w700,
+                          weight: theme.weight(PlinthWeight.bold),
                         ),
                       ),
                       PlinthCloseButton(

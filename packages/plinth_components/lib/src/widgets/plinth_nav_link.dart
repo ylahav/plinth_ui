@@ -139,7 +139,9 @@ class PlinthNavLink extends StatelessWidget {
                 child: PlinthText(
                   label,
                   size: PlinthSize.sm,
-                  weight: active ? FontWeight.w600 : FontWeight.w400,
+                  weight: active
+                      ? theme.weight(PlinthWeight.semibold)
+                      : theme.weight(PlinthWeight.regular),
                   color: active ? colorKey : null,
                 ),
               ),
@@ -150,7 +152,7 @@ class PlinthNavLink extends StatelessWidget {
                 // it turns with the reveal instead of snapping.
                 AnimatedRotation(
                   turns: opened ? 0.5 : 0,
-                  duration: const Duration(milliseconds: 200),
+                  duration: theme.duration(PlinthSize.md),
                   child: Icon(
                     Icons.expand_more,
                     size: 16,
