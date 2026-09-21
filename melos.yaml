@@ -6,6 +6,11 @@ packages:
   - example
   - widgetbook
   - tutorial
+  # Starter apps. They are here so `analyze`, `format` and `test` cover
+  # them: a template that no longer compiles against the current API is
+  # worse than no template, because it is found by the person trying to
+  # start with it.
+  - templates/*
 
 command:
   bootstrap:

@@ -1,0 +1,28 @@
+name: plinth_template_dashboard
+description: >-
+  Admin dashboard starter for Plinth UI — sidebar shell, overview with
+  charts, a sortable orders table, and a settings form. Copy the
+  directory, run `flutter create .`, and change the brand colour in
+  lib/src/theme.dart.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plinth_blocks:
+    path: ../../packages/plinth_blocks
+  plinth_charts:
+    path: ../../packages/plinth_charts
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
