@@ -83,19 +83,26 @@ void main() {
       await tester.tap(find.text('Navbars'));
       await tester.pumpAndSettle();
 
+      // A marker from the first Navbars snippet. `class` rather than a
+      // widget name, because which widget a block is built from is
+      // exactly what moving it into `plinth_blocks` changes — this used
+      // to look for `PlinthPaper(` and broke when the block became a
+      // `PlinthTopBar`. Every generated snippet is a class declaration.
+      const marker = 'class SimpleNavbarExample';
+
       // Not visible before toggling.
-      expect(find.textContaining('PlinthPaper('), findsNothing);
+      expect(find.textContaining(marker), findsNothing);
 
       await tester.tap(find.text('Show code').first);
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('PlinthPaper('), findsWidgets);
+      expect(find.textContaining(marker), findsWidgets);
       expect(find.text('Hide code'), findsOneWidget);
 
       await tester.tap(find.text('Hide code'));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('PlinthPaper('), findsNothing);
+      expect(find.textContaining(marker), findsNothing);
     });
   });
 }

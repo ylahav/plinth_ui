@@ -108,6 +108,17 @@ Unreleased. The first blocks, and the shape the rest will follow.
   reader's first decision is which one, and a form presumes that answer
   for them. A channel with no `onTap` renders as a statement rather
   than as something to press.
+- `PlinthTopBar` — brand, links, a flexible `center` for a search
+  field, and actions. Links wrap rather than clipping: three of them
+  plus a brand and a sign-in button do not fit a phone, and a bar that
+  clips loses the last one.
+- `PlinthSidebar` — the nav rail: sections with headings, sub-levels,
+  an optional search box and footer, collapsible to icons.
+  **Collapsed, every destination keeps its accessible name.** The
+  version this was extracted from passed an empty string as the label
+  when collapsed, which left a column of icons a screen reader
+  announced as nothing at all — the rail narrowed and the destinations
+  stopped existing for anyone not looking at it.
 
 ### Notes
 

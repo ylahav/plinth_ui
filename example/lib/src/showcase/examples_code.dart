@@ -806,43 +806,32 @@ class CollapsibleNavbarExample extends StatefulWidget {
 
 class _CollapsibleNavbarExampleState extends State<CollapsibleNavbarExample> {
   bool _collapsed = false;
-  String _active = 'home';
-
-  static const _items = [
-    (value: 'home', label: 'Home', icon: Icons.home_outlined),
-    (value: 'projects', label: 'Projects', icon: Icons.folder_outlined),
-    (value: 'team', label: 'Team', icon: Icons.people_outline),
-  ];
+  String _active = 'Home';
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    // The whole point of this variant: the rail changes width rather
+    // than disappearing, so the icons stay reachable — and collapsed,
+    // each one keeps the name a screen reader reads.
+    return PlinthSidebar(
       height: 220,
-      child: PlinthPaper(
-        p: PlinthSize.sm,
-        withBorder: true,
-        child: SizedBox(
-          // The whole point of this variant: the rail changes width
-          // rather than disappearing, so the icons stay reachable.
-          width: _collapsed ? 64 : 200,
-          child: PlinthStack(
-            gap: PlinthSize.xs,
-            children: [
-              PlinthBurger(
-                opened: !_collapsed,
-                onPressed: () => setState(() => _collapsed = !_collapsed),
-              ),
-              for (final item in _items)
-                PlinthNavLink(
-                  label: _collapsed ? '' : item.label,
-                  leadingIcon: Icon(item.icon, size: 18),
-                  active: _active == item.value,
-                  onTap: () => setState(() => _active = item.value),
-                ),
-            ],
-          ),
+      width: 200,
+      collapsed: _collapsed,
+      onToggleCollapsed: () => setState(() => _collapsed = !_collapsed),
+      activeValue: _active,
+      onSelect: (value) => setState(() => _active = value),
+      sections: const [
+        PlinthNavSection(
+          items: [
+            PlinthNavItem(
+                label: 'Home', icon: Icon(Icons.home_outlined, size: 18)),
+            PlinthNavItem(
+                label: 'Projects', icon: Icon(Icons.folder_outlined, size: 18)),
+            PlinthNavItem(
+                label: 'Team', icon: Icon(Icons.people_outline, size: 18)),
+          ],
         ),
-      ),
+      ],
     );
   }
 }
@@ -2636,26 +2625,20 @@ class NavbarWithAvatarExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PlinthPaper(
-      p: PlinthSize.md,
-      withBorder: true,
-      child: Row(
-        children: [
-          const PlinthThemeIcon(
-              icon: Icon(Icons.hexagon), variant: PlinthVariant.filled),
-          const SizedBox(width: 12),
-          const PlinthText('Dashboard', weight: FontWeight.w600),
-          const Spacer(),
-          PlinthActionIcon(
-            semanticLabel: 'Notifications',
-            icon: const Icon(Icons.notifications_none, size: 18),
-            onPressed: () {},
-            variant: PlinthVariant.subtle,
-          ),
-          const SizedBox(width: 12),
-          const PlinthAvatar(initials: 'YL', size: PlinthSize.sm),
-        ],
+    return PlinthTopBar(
+      brand: const PlinthTopBarBrand(
+        title: 'Dashboard',
+        icon: Icon(Icons.hexagon),
       ),
+      actions: [
+        PlinthActionIcon(
+          semanticLabel: 'Notifications',
+          icon: const Icon(Icons.notifications_none, size: 18),
+          onPressed: () {},
+          variant: PlinthVariant.subtle,
+        ),
+        const PlinthAvatar(initials: 'YL', size: PlinthSize.sm),
+      ],
     );
   }
 }
@@ -2666,92 +2649,55 @@ class NavbarWithFooterUserExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.plinth;
-
-    return SizedBox(
+    // Workspace at the top, account at the bottom, links in between:
+    // the two things you switch rarely bracket the one you use
+    // constantly. A real height rather than shrink-wrapping, because
+    // the arrangement being shown is what a navbar does with the space
+    // *between* its two ends.
+    return PlinthSidebar(
       width: 240,
-      // A real height rather than shrink-wrapping: the arrangement
-      // being shown is what a navbar does with the space *between*
-      // its two ends, which a card sized to its content can't show.
       height: 340,
-      child: PlinthPaper(
-        p: PlinthSize.sm,
-        withBorder: true,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Workspace at the top, account at the bottom, links in
-            // between: the two things you switch rarely bracket the
-            // one you use constantly.
-            PlinthUnstyledButton(
-              onPressed: () {},
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: theme.surfaceSunken,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const Row(
-                  children: [
-                    PlinthAvatar(initials: 'AC', size: PlinthSize.sm),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: PlinthText('Acme Corp',
-                          size: PlinthSize.sm, weight: FontWeight.w600),
-                    ),
-                    Icon(Icons.unfold_more, size: 16),
-                  ],
+      activeValue: 'Overview',
+      header: PlinthUnstyledButton(
+        onPressed: () {},
+        child: PlinthPaper(
+          p: PlinthSize.xs,
+          child: const Row(
+            children: [
+              PlinthAvatar(initials: 'AC', size: PlinthSize.sm),
+              SizedBox(width: 8),
+              Expanded(
+                child: PlinthText(
+                  'Acme Corp',
+                  size: PlinthSize.sm,
+                  weight: FontWeight.w600,
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-            PlinthNavLink(
+              Icon(Icons.unfold_more, size: 16),
+            ],
+          ),
+        ),
+      ),
+      footer: const PlinthNavLinkFooter(),
+      sections: const [
+        PlinthNavSection(
+          items: [
+            PlinthNavItem(
               label: 'Overview',
-              leadingIcon: const Icon(Icons.dashboard_outlined, size: 18),
-              active: true,
-              onTap: () {},
+              icon: Icon(Icons.dashboard_outlined, size: 18),
             ),
-            PlinthNavLink(
+            PlinthNavItem(
               label: 'Inbox',
-              leadingIcon: const Icon(Icons.inbox_outlined, size: 18),
-              trailing: const PlinthBadge('12', color: 'red'),
-              onTap: () {},
+              icon: Icon(Icons.inbox_outlined, size: 18),
+              trailing: PlinthBadge('12', color: 'red'),
             ),
-            PlinthNavLink(
+            PlinthNavItem(
               label: 'Projects',
-              leadingIcon: const Icon(Icons.folder_outlined, size: 18),
-              onTap: () {},
-            ),
-            const Spacer(),
-            Divider(height: 17, color: theme.surfaceSunken),
-            Row(
-              children: [
-                const PlinthAvatar(initials: 'YL', size: PlinthSize.sm),
-                const SizedBox(width: 8),
-                const Expanded(
-                  child: PlinthStack(
-                    gap: PlinthSize.xs,
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      PlinthText('Yair Lahav',
-                          size: PlinthSize.sm, weight: FontWeight.w600),
-                      PlinthText('yair@example.com',
-                          size: PlinthSize.xs, color: 'gray'),
-                    ],
-                  ),
-                ),
-                PlinthActionIcon(
-                  semanticLabel: 'Log out',
-                  icon: const Icon(Icons.logout, size: 16),
-                  variant: PlinthVariant.subtle,
-                  onPressed: () {},
-                ),
-              ],
+              icon: Icon(Icons.folder_outlined, size: 18),
             ),
           ],
         ),
-      ),
+      ],
     );
   }
 }
@@ -2762,38 +2708,25 @@ class NavbarWithSearchExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PlinthPaper(
-      p: PlinthSize.md,
-      withBorder: true,
-      child: Row(
-        children: [
-          const PlinthText('Acme',
-              size: PlinthSize.lg, weight: FontWeight.w700),
-          const SizedBox(width: 24),
-          // A navbar that carries a control rather than only links —
-          // the arrangement most app shells actually need.
-          const Expanded(
-            child: PlinthTextInput(
-              placeholder: 'Search projects…',
-              size: PlinthSize.sm,
-              leadingIcon: Icon(Icons.search, size: 16),
-            ),
-          ),
-          const SizedBox(width: 16),
-          const PlinthKbd('Ctrl'),
-          const SizedBox(width: 4),
-          const PlinthKbd('K'),
-          const SizedBox(width: 16),
-          PlinthActionIcon(
-            semanticLabel: 'Settings',
-            icon: const Icon(Icons.settings_outlined, size: 18),
-            variant: PlinthVariant.subtle,
-            onPressed: () {},
-          ),
-          const SizedBox(width: 8),
-          const PlinthAvatar(initials: 'YL', size: PlinthSize.sm),
-        ],
+    // A navbar that carries a control rather than only links — the
+    // arrangement most app shells actually need.
+    return PlinthTopBar(
+      brand: const PlinthTopBarBrand(title: 'Acme'),
+      center: const PlinthTextInput(
+        placeholder: 'Search projects…',
+        size: PlinthSize.sm,
+        leadingIcon: Icon(Icons.search, size: 16),
       ),
+      actions: [
+        const PlinthKbd('Ctrl'),
+        const PlinthKbd('K'),
+        PlinthActionIcon(
+          semanticLabel: 'Settings',
+          icon: const Icon(Icons.settings_outlined, size: 18),
+          variant: PlinthVariant.subtle,
+          onPressed: () {},
+        ),
+      ],
     );
   }
 }
@@ -2809,58 +2742,41 @@ class NavbarWithSublevelsExample extends StatefulWidget {
 
 class _NavbarWithSublevelsExampleState
     extends State<NavbarWithSublevelsExample> {
-  static const _sections = [
-    (
-      label: 'Analytics',
-      icon: Icons.insights_outlined,
-      children: ['Traffic', 'Conversions', 'Retention'],
-    ),
-    (
-      label: 'Content',
-      icon: Icons.article_outlined,
-      children: ['Posts', 'Pages', 'Media'],
-    ),
-  ];
-
-  String _open = 'Analytics';
-  String _active = 'Conversions';
+  Set<String> _open = {'Analytics'};
+  String _active = 'Traffic';
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return PlinthSidebar(
       width: 240,
-      child: PlinthPaper(
-        p: PlinthSize.sm,
-        withBorder: true,
-        child: PlinthStack(
-          gap: PlinthSize.xs,
-          children: [
-            // A hierarchy you navigate *into*, where the sectioned
-            // navbar's headings are flat destinations that merely
-            // group. The difference shows in the state: only one
-            // branch is open at a time, and the parent is not itself
-            // a place you can be — which is why it takes
-            // onOpenedChanged and no onTap.
-            for (final section in _sections)
-              PlinthNavLink(
-                label: section.label,
-                leadingIcon: Icon(section.icon, size: 18),
-                opened: _open == section.label,
-                onOpenedChanged: (opened) => setState(
-                  () => _open = opened ? section.label : '',
-                ),
-                children: [
-                  for (final child in section.children)
-                    PlinthNavLink(
-                      label: child,
-                      active: _active == child,
-                      onTap: () => setState(() => _active = child),
-                    ),
-                ],
-              ),
+      activeValue: _active,
+      onSelect: (value) => setState(() => _active = value),
+      openValues: _open,
+      onOpenedChanged: (value, opened) => setState(() {
+        _open = opened ? {..._open, value} : (_open.toSet()..remove(value));
+      }),
+      sections: const [
+        PlinthNavSection(
+          items: [
+            PlinthNavItem(
+              label: 'Analytics',
+              icon: Icon(Icons.insights_outlined, size: 18),
+              children: [
+                PlinthNavItem(label: 'Traffic'),
+                PlinthNavItem(label: 'Conversions'),
+              ],
+            ),
+            PlinthNavItem(
+              label: 'Content',
+              icon: Icon(Icons.article_outlined, size: 18),
+              children: [
+                PlinthNavItem(label: 'Posts'),
+                PlinthNavItem(label: 'Media'),
+              ],
+            ),
           ],
         ),
-      ),
+      ],
     );
   }
 }
@@ -3541,55 +3457,40 @@ class _SecretFieldExampleState extends State<SecretFieldExample> {
 class SectionedNavbarExample extends StatelessWidget {
   const SectionedNavbarExample({super.key});
 
-  Widget _heading(String text) => Padding(
-        padding: const EdgeInsets.only(top: 12, bottom: 4, left: 8),
-        child: PlinthText(
-          text.toUpperCase(),
-          size: PlinthSize.xs,
-          color: 'gray',
-          weight: FontWeight.w700,
-        ),
-      );
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 220,
-      child: PlinthPaper(
-        p: PlinthSize.sm,
-        withBorder: true,
-        child: PlinthStack(
-          gap: PlinthSize.xs,
-          children: [
-            // Headings rather than a tree: these are flat destinations
-            // that happen to group, not a hierarchy you navigate into.
-            _heading('Workspace'),
-            PlinthNavLink(
+    // Headings rather than a tree: these are flat destinations that
+    // happen to group, not a hierarchy you navigate into.
+    return const PlinthSidebar(
+      activeValue: 'Overview',
+      sections: [
+        PlinthNavSection(
+          title: 'Workspace',
+          items: [
+            PlinthNavItem(
               label: 'Overview',
-              leadingIcon: const Icon(Icons.dashboard_outlined, size: 18),
-              active: true,
-              onTap: () {},
+              icon: Icon(Icons.dashboard_outlined, size: 18),
             ),
-            PlinthNavLink(
-              label: 'Reports',
-              leadingIcon: const Icon(Icons.insights_outlined, size: 18),
-              onTap: () {},
-            ),
-            _heading('Settings'),
-            PlinthNavLink(
-              label: 'Members',
-              leadingIcon: const Icon(Icons.people_outline, size: 18),
-              trailing: const PlinthBadge('4'),
-              onTap: () {},
-            ),
-            PlinthNavLink(
-              label: 'Billing',
-              leadingIcon: const Icon(Icons.credit_card, size: 18),
-              onTap: () {},
+            PlinthNavItem(
+              label: 'Projects',
+              icon: Icon(Icons.folder_outlined, size: 18),
             ),
           ],
         ),
-      ),
+        PlinthNavSection(
+          title: 'Account',
+          items: [
+            PlinthNavItem(
+              label: 'Settings',
+              icon: Icon(Icons.settings_outlined, size: 18),
+            ),
+            PlinthNavItem(
+              label: 'Billing',
+              icon: Icon(Icons.credit_card_outlined, size: 18),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -3764,27 +3665,16 @@ class SimpleNavbarExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PlinthPaper(
-      p: PlinthSize.md,
-      withBorder: true,
-      child: Row(
-        children: [
-          const PlinthText('Acme',
-              size: PlinthSize.lg, weight: FontWeight.w700),
-          const SizedBox(width: 32),
-          Expanded(
-            child: PlinthGroup(
-              gap: PlinthSize.lg,
-              children: [
-                PlinthAnchor('Product', onTap: () {}),
-                PlinthAnchor('Pricing', onTap: () {}),
-                PlinthAnchor('About', onTap: () {}),
-              ],
-            ),
-          ),
-          PlinthButton(onPressed: () {}, child: const Text('Sign in')),
-        ],
-      ),
+    return PlinthTopBar(
+      brand: const PlinthTopBarBrand(title: 'Acme'),
+      links: [
+        PlinthAnchor('Product', onTap: () {}),
+        PlinthAnchor('Pricing', onTap: () {}),
+        PlinthAnchor('About', onTap: () {}),
+      ],
+      actions: [
+        PlinthButton(onPressed: () {}, child: const Text('Sign in')),
+      ],
     );
   }
 }

@@ -28,6 +28,8 @@ export 'src/content/plinth_faq_block.dart';
 export 'src/feedback/plinth_banner_block.dart';
 export 'src/feedback/plinth_error_page_block.dart';
 export 'src/feedback/plinth_offline_notice.dart';
+export 'src/navigation/plinth_sidebar.dart';
+export 'src/navigation/plinth_top_bar.dart';
 export 'src/marketing/plinth_comparison_block.dart';
 export 'src/marketing/plinth_feature_block.dart';
 export 'src/marketing/plinth_hero_block.dart';

@@ -34,7 +34,7 @@ MaterialApp(
 
 ## What's here
 
-Every Page Sections arrangement, so far — and Application UI is next:
+Every Page Sections arrangement, plus the navigation chrome:
 
 | Block | What it is |
 |---|---|
@@ -55,6 +55,8 @@ Every Page Sections arrangement, so far — and Application UI is next:
 | `PlinthLogoStrip` | Customer names, scrolling only when they don't fit |
 | `PlinthContactBlock` | A form, with room beside it for hours or an address |
 | `PlinthSupportChannels` | Ways to reach you, as routes rather than a form |
+| `PlinthTopBar` | Brand, links, a flexible middle, actions |
+| `PlinthSidebar` | A nav rail: sections, sub-levels, collapsible to icons |
 
 ```dart
 PlinthSignInBlock(
