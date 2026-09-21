@@ -75,6 +75,7 @@ Every Page Sections arrangement, plus the navigation and page chrome:
 | `PlinthKanbanBoard` | A board whose every move works without a drag |
 | `PlinthArticleCard` | A feed entry — stacked, horizontal, or over an image |
 | `PlinthCommentThread` | Comments and replies, with the nesting said aloud |
+| `PlinthAddressForm` | A postal address, grouped so a field says which one |
 
 ```dart
 PlinthSignInBlock(

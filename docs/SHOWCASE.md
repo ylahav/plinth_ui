@@ -25,8 +25,8 @@ with a real API, which an app installs and calls. Twenty-six are there
 so far: **the whole Page Sections category** — every one of its 32
 arrangements — plus the navbars, headers, footers, most of the stats,
 most of the people rows, the two structural inputs, the two
-behavioural buttons and the board of Application UI, and the article
-cards and comments of Blog UI.
+behavioural buttons, the board and the address form of Application UI,
+and the article cards, comments and author info of Blog UI.
 
 | Widget | Replaces |
 |---|---|
@@ -67,6 +67,7 @@ cards and comments of Blog UI.
 | `PlinthKanbanBoard` | Kanban columns |
 | `PlinthArticleCard` | Simple, with author, horizontal, overlay, article list |
 | `PlinthCommentThread` | Single comment, Comment thread |
+| `PlinthAddressForm` | Address form |
 
 Four error pages became one widget with four named constructors,
 because they differ only in their words. **Offline did not**, and that
@@ -75,9 +76,7 @@ page should keep working around a notice rather than replace itself
 with an apology. The showcase had already made that call; collapsing it
 into the error page would have thrown the decision away.
 
-**`example/lib/src/showcase/`** is where the other 40 still are — the
-rest of Application UI, and the quote card, author info and contents
-rails of Blog UI — as
+**`example/lib/src/showcase/`** is where the other 36 still are — as
 fixed arrangements built for the gallery — `onPressed: () {}`
 throughout, hardcoded copy, no way for a caller to pass anything in.
 They demonstrate that an arrangement works; they are not yet something
@@ -89,6 +88,43 @@ string as a parameter rather than English baked in. Its showcase entry
 then becomes a *use* of the package block, so the "Show code" panel
 shows the call an adopter would write instead of the arrangement's
 internals — which is the point of moving it.
+
+### What is staying here, and why
+
+**Not everything left is waiting its turn.** Roughly two thirds of the
+remaining arrangements are a single component with content in it, and
+extracting those would produce widgets whose only shared ancestor is
+the component they are all built from. Three rounds of this have now
+reached the same answer, so it is written down rather than rediscovered:
+
+| Arrangement | Why it stays |
+|---|---|
+| Member / invoice / sortable table | `PlinthTable` with rows, sorting and money in it |
+| Dashboard, card gallery, asymmetric, image grids | `PlinthGrid` and `PlinthSimpleGrid` showing what their props do |
+| Image and product carousels | `PlinthCarousel` with two kinds of slide |
+| File dropzone, avatar upload | `PlinthFileInput` and `PlinthFileButton` |
+| Search bar, filter fields, formatted fields | one input each, with a placeholder |
+| Verification code | `PlinthPinInput`; the whole-screen case is `PlinthTwoFactorBlock` |
+| Toolbar, destructive, split button | `PlinthButton` with different props |
+| Price range, setting, marks, budget, colour sliders | the slider family's own props |
+| Project, task, media, activity cards | four different things sharing `PlinthCard`'s slots |
+| Quote card | a pull quote is `PlinthBlockquote`, not an article |
+| Article contents, contents rail | `PlinthTableOfContents` in two placements |
+| User menu | `PlinthMenu` with a person at the top |
+| Reorderable list | Flutter's own `ReorderableListView` |
+
+Three are waiting on something rather than declining:
+
+- **Stat with sparkline** wants `plinth_charts`. A block that draws its
+  own chart is a charts package in disguise.
+- **Live metrics** and **Stat by period** use `PlinthRollingNumber` as
+  the headline figure, and `PlinthStatTile.value` is a `String` on
+  purpose — formatting a number for display is a locale question this
+  package does not answer. A widget slot beside it would give one idea
+  two spellings.
+- **Contact card** builds each fact as a row carrying the action that
+  goes with it. That is closer to `PlinthSupportChannels` than to a
+  profile, and belongs there or nowhere.
 
 ## How it's structured
 

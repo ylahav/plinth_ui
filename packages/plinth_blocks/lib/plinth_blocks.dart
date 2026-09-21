@@ -36,6 +36,7 @@ export 'src/data/plinth_stat_tile.dart';
 export 'src/feedback/plinth_banner_block.dart';
 export 'src/feedback/plinth_error_page_block.dart';
 export 'src/feedback/plinth_offline_notice.dart';
+export 'src/forms/plinth_address_form.dart';
 export 'src/forms/plinth_password_strength.dart';
 export 'src/forms/plinth_secret_field.dart';
 export 'src/marketing/plinth_comparison_block.dart';

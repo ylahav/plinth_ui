@@ -231,6 +231,14 @@ Unreleased. The first blocks, and the shape the rest will follow.
   sound identical. Nesting stops at `maxDepth`, because a thread that
   indents forever runs out of page and a reply four levels in answers
   something nobody can still see.
+- `PlinthAddressForm` — street, city, postcode and country in a
+  `PlinthFieldset`, so a field is announced as "Shipping address, City"
+  rather than as a bare "City" — which matters most on the page that
+  has a billing address under it. The postcode column is narrower than
+  the street, because a field's width is the only hint about its length
+  that arrives before you start typing. A country's `postcodeMask` is
+  optional: a mask that is wrong rejects real addresses, which is worse
+  than no mask at all.
 
 ### Notes
 

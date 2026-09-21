@@ -96,74 +96,27 @@ class ActivityCardExample extends StatelessWidget {
 }
 ''',
   'AddressFormExample': r'''
-class AddressFormExample extends StatefulWidget {
+class AddressFormExample extends StatelessWidget {
   const AddressFormExample({super.key});
 
   @override
-  State<AddressFormExample> createState() => _AddressFormExampleState();
-}
-
-class _AddressFormExampleState extends State<AddressFormExample> {
-  String? _country = 'il';
-
-  @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 560,
-      // A fieldset rather than a heading above the fields: it names
-      // the group for a screen reader too, so the field is announced
-      // as "Shipping address, City" rather than a bare "City".
-      child: PlinthFieldset(
-        legend: 'Shipping address',
-        child: PlinthGrid(
-          gutter: PlinthSize.sm,
-          children: [
-            // Spans rather than a stack of full-width fields: a
-            // postcode box as wide as the street line invites the
-            // wrong thing to be typed into it.
-            const PlinthGridCol(
-              span: 12,
-              child: PlinthTextInput(label: 'Street address'),
-            ),
-            const PlinthGridCol(
-              span: 12,
-              spanXs: 7,
-              child: PlinthTextInput(label: 'City'),
-            ),
-            PlinthGridCol(
-              span: 12,
-              spanXs: 5,
-              child: PlinthMaskInput(
-                mask: '#######',
-                label: 'Postcode',
-                onChanged: (_) {},
-              ),
-            ),
-            PlinthGridCol(
-              span: 12,
-              spanXs: 7,
-              child: PlinthSelect<String>(
-                label: 'Country',
-                value: _country,
-                onChanged: (v) => setState(() => _country = v),
-                options: const [
-                  PlinthSelectOption('il', 'Israel'),
-                  PlinthSelectOption('uk', 'United Kingdom'),
-                  PlinthSelectOption('us', 'United States'),
-                ],
-              ),
-            ),
-            const PlinthGridCol(
-              span: 12,
-              spanXs: 5,
-              child: PlinthTextInput(
-                label: 'Phone',
-                placeholder: 'For delivery only',
-              ),
-            ),
-          ],
-        ),
-      ),
+    // 640 rather than 560: the grid's `xs` breakpoint is 576, and the
+    // fieldset's padding comes off before the grid measures — at 560
+    // every column was full width, so the 7/5 split this block exists
+    // to show had never actually rendered here.
+    return PlinthAddressForm(
+      width: 640,
+      legend: 'Shipping address',
+      initialCountry: 'il',
+      onChanged: (values) {},
+      countries: const [
+        PlinthAddressCountry(
+            code: 'il', label: 'Israel', postcodeMask: '#######'),
+        PlinthAddressCountry(code: 'gb', label: 'United Kingdom'),
+        PlinthAddressCountry(
+            code: 'pt', label: 'Portugal', postcodeMask: '####-###'),
+      ],
     );
   }
 }
@@ -426,47 +379,21 @@ class AuthorCardExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    // The profile card, centred, with a bio instead of counts.
+    return PlinthProfileCard(
       width: 260,
-      child: PlinthCard(
-        withBorder: true,
-        child: PlinthCenter(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const PlinthAvatar(initials: 'YL', size: PlinthSize.xl),
-              const SizedBox(height: 8),
-              const PlinthText('Yair Lahav', weight: FontWeight.w600),
-              const SizedBox(height: 4),
-              const PlinthText(
-                'Building Plinth UI, a Flutter component library.',
-                size: PlinthSize.xs,
-                color: 'gray',
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              PlinthGroup(
-                mainAxisAlignment: MainAxisAlignment.center,
-                gap: PlinthSize.xs,
-                children: [
-                  PlinthActionIcon(
-                    semanticLabel: 'Show code',
-                    icon: const Icon(Icons.code, size: 16),
-                    onPressed: () {},
-                    variant: PlinthVariant.subtle,
-                  ),
-                  PlinthActionIcon(
-                    semanticLabel: 'Copy link',
-                    icon: const Icon(Icons.link, size: 16),
-                    onPressed: () {},
-                    variant: PlinthVariant.subtle,
-                  ),
-                ],
-              ),
-            ],
-          ),
+      initials: 'YL',
+      name: 'Yair Lahav',
+      nameOrder: 5,
+      bio: 'Building Plinth UI, a Flutter component library.',
+      actions: [
+        PlinthButton(
+          variant: PlinthVariant.outline,
+          size: PlinthSize.sm,
+          onPressed: () {},
+          child: const Text('Follow'),
         ),
-      ),
+      ],
     );
   }
 }
@@ -477,20 +404,15 @@ class AuthorInlineExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PlinthGroup(
-      gap: PlinthSize.sm,
-      children: [
-        PlinthAvatar(initials: 'YL', size: PlinthSize.md),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            PlinthText('Yair Lahav', weight: FontWeight.w600),
-            PlinthText('Package maintainer',
-                size: PlinthSize.xs, color: 'gray'),
-          ],
-        ),
-      ],
+    // Already a block: an author byline is the same row as a team
+    // member and an account, so it is the same widget.
+    return const SizedBox(
+      width: 260,
+      child: PlinthUserTile(
+        initials: 'YL',
+        name: 'Yair Lahav',
+        detail: 'Package maintainer',
+      ),
     );
   }
 }
