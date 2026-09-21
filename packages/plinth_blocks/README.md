@@ -70,6 +70,8 @@ Every Page Sections arrangement, plus the navigation and page chrome:
 | `PlinthFooter` | A page footer, or a one-line status bar for an app |
 | `PlinthPasswordStrength` | A meter and a checklist whose rules carry their own tests |
 | `PlinthSecretField` | A server-issued value, masked, copyable, regenerable |
+| `PlinthAsyncButton` | Runs a future, and cannot be started twice |
+| `PlinthConfirmButton` | Asks once, in place, and says so out loud |
 
 ```dart
 PlinthSignInBlock(

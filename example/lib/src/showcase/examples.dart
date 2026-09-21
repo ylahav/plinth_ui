@@ -3220,93 +3220,37 @@ class _SplitButtonExampleState extends State<SplitButtonExample> {
   }
 }
 
-class AsyncButtonExample extends StatefulWidget {
+class AsyncButtonExample extends StatelessWidget {
   const AsyncButtonExample({super.key});
 
   @override
-  State<AsyncButtonExample> createState() => _AsyncButtonExampleState();
-}
-
-class _AsyncButtonExampleState extends State<AsyncButtonExample> {
-  bool _busy = false;
-  bool _done = false;
-
-  Future<void> _run() async {
-    setState(() {
-      _busy = true;
-      _done = false;
-    });
-    await Future<void>.delayed(const Duration(milliseconds: 900));
-    if (!mounted) return;
-    setState(() {
-      _busy = false;
-      _done = true;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return PlinthGroup(
-      gap: PlinthSize.sm,
-      children: [
-        PlinthButton(
-          // Null while busy rather than a flag: the button is disabled
-          // for the same reason it shows a spinner, so one piece of
-          // state drives both and they cannot disagree.
-          onPressed: _busy ? null : _run,
-          leadingIcon: _busy
-              ? const PlinthLoader(size: PlinthSize.xs)
-              : const Icon(Icons.cloud_upload_outlined, size: 16),
-          child: Text(_busy ? 'Publishing…' : 'Publish'),
-        ),
-        if (_done) const PlinthBadge('Published', color: 'green'),
-      ],
+    // The busy state and the disabling come from one piece of state, so
+    // they cannot disagree — and a second press while it runs cannot
+    // start a second run.
+    return PlinthAsyncButton(
+      onPressed: () => Future<void>.delayed(const Duration(milliseconds: 900)),
+      doneChild: const Text('Saved'),
+      doneLabel: 'Saved',
+      child: const Text('Save changes'),
     );
   }
 }
 
-class ConfirmInlineExample extends StatefulWidget {
+class ConfirmInlineExample extends StatelessWidget {
   const ConfirmInlineExample({super.key});
 
   @override
-  State<ConfirmInlineExample> createState() => _ConfirmInlineExampleState();
-}
-
-class _ConfirmInlineExampleState extends State<ConfirmInlineExample> {
-  bool _confirming = false;
-
-  @override
   Widget build(BuildContext context) {
-    // Two steps in place rather than a modal. A modal is right when
-    // the consequence needs explaining; for a single reversible row it
+    // Two steps in place rather than a modal. A modal is right when the
+    // consequence needs explaining; for a single reversible row it
     // costs a dialog to answer a question the button can ask itself.
-    if (!_confirming) {
-      return PlinthButton(
-        variant: PlinthVariant.subtle,
-        color: 'red',
-        onPressed: () => setState(() => _confirming = true),
-        leadingIcon: const Icon(Icons.delete_outline, size: 16),
-        child: const Text('Delete project'),
-      );
-    }
-
-    return PlinthGroup(
-      gap: PlinthSize.xs,
-      children: [
-        const PlinthText('Delete permanently?', size: PlinthSize.sm),
-        PlinthButton(
-          size: PlinthSize.sm,
-          color: 'red',
-          onPressed: () => setState(() => _confirming = false),
-          child: const Text('Delete'),
-        ),
-        PlinthButton(
-          size: PlinthSize.sm,
-          variant: PlinthVariant.subtle,
-          onPressed: () => setState(() => _confirming = false),
-          child: const Text('Cancel'),
-        ),
-      ],
+    return PlinthConfirmButton(
+      label: 'Delete project',
+      icon: const Icon(Icons.delete_outline, size: 16),
+      question: 'Delete permanently?',
+      confirmLabel: 'Delete',
+      onConfirm: () {},
     );
   }
 }

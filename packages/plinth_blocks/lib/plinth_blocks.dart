@@ -16,6 +16,8 @@ library;
 
 export 'package:plinth_components/plinth_components.dart';
 
+export 'src/actions/plinth_async_button.dart';
+export 'src/actions/plinth_confirm_button.dart';
 export 'src/auth/plinth_auth_card.dart';
 export 'src/auth/plinth_password_reset_block.dart';
 export 'src/auth/plinth_sign_in_block.dart';

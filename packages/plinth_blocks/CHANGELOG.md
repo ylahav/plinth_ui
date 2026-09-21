@@ -197,6 +197,19 @@ Unreleased. The first blocks, and the shape the rest will follow.
   which would take it out of the focus order. A `warning` renders as an
   alert: rotating a live key breaks whatever is using it, and that is
   not a footnote.
+- `PlinthAsyncButton` — runs a future, shows it, and **cannot be
+  started twice**, which is the bug every hand-rolled version has the
+  first time somebody double-clicks Save. One piece of state drives the
+  spinner and the disabling so they cannot disagree. `onError` exists
+  because the button never holds the result: without it a failure has
+  nowhere to go but the zone's handler, a long way from the button
+  somebody just pressed. The reset is a cancellable `Timer`, not an
+  awaited delay, so nothing is left running after dispose.
+- `PlinthConfirmButton` — a destructive action that asks in place
+  rather than in a modal, and **announces the question when it
+  appears**. Pressing "Delete project" and having the control silently
+  become three controls is the failure this avoids: a screen reader
+  user would hear nothing and find the button gone.
 
 ### Notes
 
