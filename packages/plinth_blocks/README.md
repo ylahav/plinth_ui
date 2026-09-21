@@ -66,6 +66,8 @@ Every Page Sections arrangement, plus the navigation and page chrome:
 | `PlinthUserTile` | A person: face, name, one line, and presence as a word |
 | `PlinthProfileCard` | A card about a person — centred profile or contact row |
 | `PlinthMemberList` | A team, with the people who didn't fit summarised |
+| `PlinthPricingCard` | A plan, with the price as the heading |
+| `PlinthFooter` | A page footer, or a one-line status bar for an app |
 
 ```dart
 PlinthSignInBlock(

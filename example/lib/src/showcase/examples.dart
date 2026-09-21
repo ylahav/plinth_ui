@@ -484,28 +484,15 @@ class SimpleFooterExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return PlinthFooter(
       width: 560,
-      child: PlinthPaper(
-        withBorder: true,
-        p: PlinthSize.md,
-        child: Row(
-          children: [
-            const PlinthText('Acme', weight: FontWeight.w700),
-            const SizedBox(width: 12),
-            const PlinthText('© 2026', size: PlinthSize.xs, color: 'gray'),
-            const Spacer(),
-            PlinthGroup(
-              gap: PlinthSize.md,
-              children: [
-                PlinthAnchor('Privacy', size: PlinthSize.sm, onTap: () {}),
-                PlinthAnchor('Terms', size: PlinthSize.sm, onTap: () {}),
-                PlinthAnchor('Contact', size: PlinthSize.sm, onTap: () {}),
-              ],
-            ),
-          ],
-        ),
-      ),
+      brand: 'Acme',
+      copyright: '© 2026',
+      links: [
+        PlinthAnchor('Privacy', size: PlinthSize.sm, onTap: () {}),
+        PlinthAnchor('Terms', size: PlinthSize.sm, onTap: () {}),
+        PlinthAnchor('Contact', size: PlinthSize.sm, onTap: () {}),
+      ],
     );
   }
 }
@@ -513,71 +500,35 @@ class SimpleFooterExample extends StatelessWidget {
 class FooterWithLinkColumnsExample extends StatelessWidget {
   const FooterWithLinkColumnsExample({super.key});
 
-  static const _columns = [
-    (title: 'Product', links: ['Features', 'Pricing', 'Changelog']),
-    (title: 'Company', links: ['About', 'Careers', 'Blog']),
-    (title: 'Support', links: ['Docs', 'Status', 'Contact']),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return PlinthFooter(
       width: 560,
-      child: PlinthPaper(
-        withBorder: true,
-        p: PlinthSize.lg,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            PlinthSimpleGrid(
-              columns: 3,
-              children: [
-                for (final column in _columns)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      PlinthText(column.title, weight: FontWeight.w600),
-                      const SizedBox(height: 8),
-                      for (final link in column.links)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 6),
-                          child: PlinthAnchor(link,
-                              size: PlinthSize.sm, onTap: () {}),
-                        ),
-                    ],
-                  ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const PlinthDivider(),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const PlinthText('© 2026 Acme, Inc.',
-                    size: PlinthSize.xs, color: 'gray'),
-                PlinthGroup(
-                  gap: PlinthSize.xs,
-                  children: [
-                    PlinthActionIcon(
-                      semanticLabel: 'Show code',
-                      icon: const Icon(Icons.code, size: 16),
-                      onPressed: () {},
-                      variant: PlinthVariant.subtle,
-                    ),
-                    PlinthActionIcon(
-                      semanticLabel: 'Subscribe',
-                      icon: const Icon(Icons.rss_feed, size: 16),
-                      onPressed: () {},
-                      variant: PlinthVariant.subtle,
-                    ),
-                  ],
-                ),
-              ],
-            ),
+      brand: 'Acme',
+      copyright: '© 2026',
+      columns: [
+        PlinthFooterColumn(
+          title: 'Product',
+          links: [
+            for (final link in ['Features', 'Pricing', 'Changelog'])
+              PlinthAnchor(link, size: PlinthSize.sm, onTap: () {}),
           ],
         ),
-      ),
+        PlinthFooterColumn(
+          title: 'Company',
+          links: [
+            for (final link in ['About', 'Careers', 'Blog'])
+              PlinthAnchor(link, size: PlinthSize.sm, onTap: () {}),
+          ],
+        ),
+        PlinthFooterColumn(
+          title: 'Support',
+          links: [
+            for (final link in ['Docs', 'Status', 'Contact'])
+              PlinthAnchor(link, size: PlinthSize.sm, onTap: () {}),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -2524,53 +2475,25 @@ class PricingCardExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    // The price is the thing being compared, so it carries the weight
+    // rather than the plan name above it — and it is the card's
+    // heading, which is how a reader tells three identical "Start
+    // trial" buttons apart.
+    return PlinthPricingCard(
       width: 260,
-      child: PlinthCard(
-        withBorder: true,
-        header: const PlinthGroup(
-          children: [
-            PlinthText('Pro', size: PlinthSize.lg, weight: FontWeight.w700),
-            PlinthBadge('Popular', color: 'violet'),
-          ],
-        ),
-        footer: PlinthButton(
-          fullWidth: true,
-          onPressed: () {},
-          child: const Text('Start trial'),
-        ),
-        child: const PlinthStack(
-          gap: PlinthSize.sm,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // The price is the thing being compared, so it carries the
-            // weight rather than the plan name above it.
-            PlinthGroup(
-              gap: PlinthSize.xs,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                PlinthNumberFormatter(
-                  value: 24,
-                  prefix: r'$',
-                  size: PlinthSize.xl,
-                  weight: FontWeight.w700,
-                ),
-                PlinthText('/ month', size: PlinthSize.xs, color: 'gray'),
-              ],
-            ),
-            PlinthList(
-              size: PlinthSize.sm,
-              items: [
-                PlinthListItem(PlinthText('Unlimited projects'),
-                    icon: Icon(Icons.check, size: 14)),
-                PlinthListItem(PlinthText('Priority support'),
-                    icon: Icon(Icons.check, size: 14)),
-                PlinthListItem(PlinthText('Audit log'),
-                    icon: Icon(Icons.check, size: 14)),
-              ],
-            ),
-          ],
-        ),
+      plan: 'Pro',
+      price: r'$24',
+      period: '/ month',
+      badge: const PlinthBadge('Popular', color: 'violet'),
+      features: const [
+        'Unlimited projects',
+        'Priority support',
+        'Custom themes',
+      ],
+      action: PlinthButton(
+        fullWidth: true,
+        onPressed: () {},
+        child: const Text('Start trial'),
       ),
     );
   }
@@ -3739,92 +3662,28 @@ class FooterWithNewsletterExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.plinth;
-
-    return SizedBox(
+    return PlinthFooter(
       width: 560,
-      child: PlinthStack(
-        gap: PlinthSize.md,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Expanded(
-                child: PlinthStack(
-                  gap: PlinthSize.xs,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    PlinthText('Plinth UI', weight: FontWeight.w700),
-                    PlinthText(
-                      'A themeable component library for Flutter.',
-                      size: PlinthSize.sm,
-                      color: 'gray',
-                    ),
-                  ],
-                ),
+      brand: 'Plinth UI',
+      copyright: 'A themeable component library for Flutter.',
+      trailing: SizedBox(
+        width: 260,
+        child: Row(
+          children: [
+            const Expanded(
+              child: PlinthTextInput(
+                placeholder: 'you@example.com',
+                size: PlinthSize.sm,
               ),
-              const SizedBox(width: 32),
-              // The signup lives in the footer because that is where
-              // someone who read the whole page ends up. Putting it
-              // only in the hero asks before they have a reason.
-              Expanded(
-                child: PlinthStack(
-                  gap: PlinthSize.xs,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const PlinthText('Release notes by email',
-                        size: PlinthSize.sm, weight: FontWeight.w600),
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: PlinthTextInput(
-                            placeholder: 'you@example.com',
-                            size: PlinthSize.sm,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        PlinthButton(
-                          size: PlinthSize.sm,
-                          onPressed: () {},
-                          child: const Text('Subscribe'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Divider(height: 1, color: theme.surfaceSunken),
-          Row(
-            children: [
-              const Expanded(
-                child: PlinthText('© 2026 Plinth',
-                    size: PlinthSize.xs, color: 'gray'),
-              ),
-              PlinthGroup(
-                gap: PlinthSize.xs,
-                children: [
-                  // Paired with their labels rather than looped over
-                  // bare: an icon-only button announces as nothing
-                  // without one, and three of them in a row announce as
-                  // nothing three times.
-                  for (final (icon, label) in [
-                    (Icons.code, 'Source'),
-                    (Icons.chat_bubble_outline, 'Chat'),
-                    (Icons.alternate_email, 'Email'),
-                  ])
-                    PlinthActionIcon(
-                      semanticLabel: label,
-                      icon: Icon(icon, size: 16),
-                      variant: PlinthVariant.subtle,
-                      onPressed: () {},
-                    ),
-                ],
-              ),
-            ],
-          ),
-        ],
+            ),
+            const SizedBox(width: 8),
+            PlinthButton(
+              size: PlinthSize.sm,
+              onPressed: () {},
+              child: const Text('Subscribe'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -3835,45 +3694,23 @@ class FooterMinimalExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.plinth;
-
-    return SizedBox(
-      // Wider than the other blocks on purpose: a single row of status
-      // plus three links needs the room, and squeezing the links would
-      // misrepresent how much space the arrangement actually takes.
+    // One line, for an app rather than a marketing page: the footer of
+    // a tool should take a row, not a screen, and status belongs where
+    // it can be glanced at rather than hunted for.
+    return PlinthFooter(
       width: 640,
-      // One line, for an app rather than a marketing page: the footer
-      // of a tool should take a row, not a screen, and status belongs
-      // where it can be glanced at rather than hunted for.
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: theme.spacing[PlinthSize.md]!,
-          vertical: theme.spacing[PlinthSize.xs]!,
-        ),
-        decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: theme.surfaceSunken)),
-        ),
-        child: Row(
-          children: [
-            const PlinthIndicator(
-              color: 'green',
-              child: SizedBox(width: 8, height: 8),
-            ),
-            const SizedBox(width: 12),
-            const PlinthText('All systems normal',
-                size: PlinthSize.xs, color: 'gray'),
-            const Spacer(),
-            PlinthGroup(
-              gap: PlinthSize.md,
-              children: [
-                PlinthAnchor('Privacy', onTap: () {}),
-                PlinthAnchor('Terms', onTap: () {}),
-                PlinthAnchor('Status', onTap: () {}),
-              ],
-            ),
-          ],
-        ),
+      dense: true,
+      leading: const PlinthIndicator(
+        color: 'green',
+        child: SizedBox(width: 8, height: 8),
       ),
+      brand: 'All systems normal',
+      copyright: 'v1.3.0',
+      links: [
+        PlinthAnchor('Status', size: PlinthSize.xs, onTap: () {}),
+        PlinthAnchor('Docs', size: PlinthSize.xs, onTap: () {}),
+        PlinthAnchor('Support', size: PlinthSize.xs, onTap: () {}),
+      ],
     );
   }
 }

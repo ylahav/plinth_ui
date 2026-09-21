@@ -170,6 +170,18 @@ Unreleased. The first blocks, and the shape the rest will follow.
   a badge, and the rest of the team collapsed into a `PlinthOverflowList`
   in the header. An empty team says so rather than rendering a blank
   card, which reads as one that failed to load.
+- `PlinthPricingCard` — a plan, its price, what it includes and the
+  way in. **The price is the card's heading, not the plan name**: it is
+  what gets compared across a row of these, and it is how a reader
+  tells three identical "Start trial" buttons apart. `price` is a
+  string, because `Free` and `Let's talk` are prices too. `highlighted`
+  draws a border rather than scaling the card, since a card that grows
+  breaks the alignment of the row it sits in.
+- `PlinthFooter` — the four footer arrangements: a row of links,
+  columns of them, one with a newsletter form, and `dense` for a
+  one-line app status bar with no card at all. Everything wraps rather
+  than clipping; a footer that clips drops the last link, which is
+  usually the one somebody was looking for.
 
 ### Notes
 
