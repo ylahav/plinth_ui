@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 // Blocks that have moved into `plinth_blocks` are demonstrated by
 // *using* them, so the "Show code" panel shows the call an adopter
@@ -9,6 +7,7 @@ import 'package:flutter/material.dart';
 // One import, not two: `plinth_blocks` re-exports `plinth_components`
 // the same way that re-exports `plinth_core` and `plinth_hooks`.
 import 'package:plinth_blocks/plinth_blocks.dart';
+import 'package:plinth_charts/plinth_charts.dart';
 
 // ─────────────────────────── Application UI: Navbars ───────────────────────────
 
@@ -3759,55 +3758,6 @@ class NavbarWithFooterUserExample extends StatelessWidget {
 /// Deliberately not a chart: no axes, no ticks, no labels. A sparkline
 /// answers "which way, and how steadily" beside a number that already
 /// answers "how much" — anything more turns the card into a report.
-class _SparklinePainter extends CustomPainter {
-  const _SparklinePainter({required this.values, required this.color});
-
-  final List<double> values;
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (values.length < 2) return;
-
-    final min = values.reduce(math.min);
-    final max = values.reduce(math.max);
-    // A flat series would divide by zero; drawing it down the middle
-    // is the honest answer rather than a line at the top or bottom.
-    final span = max - min;
-    final stepX = size.width / (values.length - 1);
-
-    Offset pointAt(int i) {
-      final t = span == 0 ? 0.5 : (values[i] - min) / span;
-      return Offset(stepX * i, size.height - t * size.height);
-    }
-
-    final line = Path()..moveTo(pointAt(0).dx, pointAt(0).dy);
-    for (var i = 1; i < values.length; i++) {
-      line.lineTo(pointAt(i).dx, pointAt(i).dy);
-    }
-
-    final fill = Path.from(line)
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-
-    canvas.drawPath(fill, Paint()..color = color.withValues(alpha: 0.12));
-    canvas.drawPath(
-      line,
-      Paint()
-        ..color = color
-        ..strokeWidth = 2
-        ..strokeCap = StrokeCap.round
-        ..strokeJoin = StrokeJoin.round
-        ..style = PaintingStyle.stroke,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_SparklinePainter old) =>
-      old.values != values || old.color != color;
-}
-
 class StatWithSparklineExample extends StatelessWidget {
   const StatWithSparklineExample({super.key});
 
@@ -3823,55 +3773,22 @@ class StatWithSparklineExample extends StatelessWidget {
     31,
     29,
     35,
-    38,
+    38
   ];
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.plinth;
-
-    return SizedBox(
-      width: 360,
-      child: PlinthPaper(
-        withBorder: true,
-        p: PlinthSize.md,
-        child: PlinthStack(
-          gap: PlinthSize.xs,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const PlinthText('Monthly revenue',
-                size: PlinthSize.sm, color: 'gray'),
-            const Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                PlinthNumberFormatter(
-                  value: 38400,
-                  prefix: r'$',
-                  size: PlinthSize.xl,
-                  weight: FontWeight.w700,
-                ),
-                SizedBox(width: 8),
-                PlinthBadge('+9%',
-                    color: 'green', variant: PlinthVariant.light),
-              ],
-            ),
-            const SizedBox(height: 4),
-            // The shape carries what the percentage can't: whether the
-            // rise was steady or one good month with a dip either side.
-            SizedBox(
-              height: 48,
-              width: double.infinity,
-              child: CustomPaint(
-                painter: _SparklinePainter(
-                  values: _series,
-                  color: theme.shaded('teal', 6),
-                ),
-              ),
-            ),
-            const PlinthText('Last 12 months',
-                size: PlinthSize.xs, color: 'gray'),
-          ],
-        ),
+    // The sparkline carries a sentence built from its own data, so a
+    // reader who cannot see it still hears where the series went.
+    return PlinthStatTile(
+      label: 'Monthly revenue',
+      uppercaseLabel: false,
+      value: r'$38.4k',
+      delta: '9.2%',
+      trend: PlinthTrend.up,
+      visual: const PlinthSparkline(
+        label: 'Monthly revenue',
+        values: _series,
       ),
     );
   }

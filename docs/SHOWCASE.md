@@ -68,6 +68,7 @@ and the article cards, comments and author info of Blog UI.
 | `PlinthArticleCard` | Simple, with author, horizontal, overlay, article list |
 | `PlinthCommentThread` | Single comment, Comment thread |
 | `PlinthAddressForm` | Address form |
+| `PlinthSparkline` (`plinth_charts`) | Stat with sparkline |
 
 Four error pages became one widget with four named constructors,
 because they differ only in their words. **Offline did not**, and that
@@ -115,8 +116,9 @@ reached the same answer, so it is written down rather than rediscovered:
 
 Three are waiting on something rather than declining:
 
-- **Stat with sparkline** wants `plinth_charts`. A block that draws its
-  own chart is a charts package in disguise.
+- ~~**Stat with sparkline** wants `plinth_charts`~~ — done. The block
+  hand-rolling a `CustomPaint` is what announced the gap, and
+  `PlinthSparkline` is the first thing in that package.
 - **Live metrics** and **Stat by period** use `PlinthRollingNumber` as
   the headline figure, and `PlinthStatTile.value` is a `String` on
   purpose — formatting a number for display is a locale question this

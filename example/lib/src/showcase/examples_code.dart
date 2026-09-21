@@ -3480,55 +3480,22 @@ class StatWithSparklineExample extends StatelessWidget {
     31,
     29,
     35,
-    38,
+    38
   ];
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.plinth;
-
-    return SizedBox(
-      width: 360,
-      child: PlinthPaper(
-        withBorder: true,
-        p: PlinthSize.md,
-        child: PlinthStack(
-          gap: PlinthSize.xs,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const PlinthText('Monthly revenue',
-                size: PlinthSize.sm, color: 'gray'),
-            const Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                PlinthNumberFormatter(
-                  value: 38400,
-                  prefix: r'$',
-                  size: PlinthSize.xl,
-                  weight: FontWeight.w700,
-                ),
-                SizedBox(width: 8),
-                PlinthBadge('+9%',
-                    color: 'green', variant: PlinthVariant.light),
-              ],
-            ),
-            const SizedBox(height: 4),
-            // The shape carries what the percentage can't: whether the
-            // rise was steady or one good month with a dip either side.
-            SizedBox(
-              height: 48,
-              width: double.infinity,
-              child: CustomPaint(
-                painter: _SparklinePainter(
-                  values: _series,
-                  color: theme.shaded('teal', 6),
-                ),
-              ),
-            ),
-            const PlinthText('Last 12 months',
-                size: PlinthSize.xs, color: 'gray'),
-          ],
-        ),
+    // The sparkline carries a sentence built from its own data, so a
+    // reader who cannot see it still hears where the series went.
+    return PlinthStatTile(
+      label: 'Monthly revenue',
+      uppercaseLabel: false,
+      value: r'$38.4k',
+      delta: '9.2%',
+      trend: PlinthTrend.up,
+      visual: const PlinthSparkline(
+        label: 'Monthly revenue',
+        values: _series,
       ),
     );
   }

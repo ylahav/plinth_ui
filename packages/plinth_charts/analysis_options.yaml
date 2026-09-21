@@ -1,0 +1,18 @@
+# pana analyses published packages against `package:lints/core.yaml`,
+# whatever a package configures for itself. This package had no
+# analysis options at all, so `melos run analyze` ran the SDK defaults
+# and reported clean while pub.dev deducted 10 points from 0.21.0 for
+# two `sections.length > 0` asserts that core lints reject.
+#
+# Including core here closes that gap: CI now fails on what the score
+# would dock, rather than finding out a release later.
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
+include: package:lints/core.yaml

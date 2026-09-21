@@ -235,6 +235,9 @@ plinth_ui/
     plinth_blocks/            # Composed sections — a sign-in card, a navbar.
     │                           Whole arrangements rather than the components
     │                           they are made of. See docs/SHOWCASE.md
+    plinth_charts/            # Charts, on the CVD-validated series palette.
+    │                           Every one carries a text alternative built
+    │                           from its own data
   example/                  # Showcase app — run this to see the components live
   widgetbook/               # Isolated component gallery (manual/non-codegen setup)
   tutorial/                 # Larder — the finished app from the tutorial,
