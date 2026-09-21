@@ -15,7 +15,8 @@ release rather than one to inherit from the number below.
 
 ## 0.1.0
 
-Unreleased. The first blocks, and the shape the rest will follow.
+Released 21 Sep 2026. The first blocks, and the shape the rest
+will follow.
 
 ### Added
 

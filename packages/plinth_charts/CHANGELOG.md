@@ -12,7 +12,8 @@ engine does not. See
 
 ## 0.1.0
 
-Unreleased. The first chart, and the shape the rest will follow.
+Released 21 Sep 2026. The first charts, and the shape the rest will
+follow.
 
 ### Added
 

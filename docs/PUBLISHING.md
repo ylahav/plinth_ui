@@ -9,17 +9,16 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.2.0** | 1.3.0 |
-| `plinth_hooks` | **1.2.0** | 1.3.0 |
-| `plinth_components` | **1.2.0** | 1.3.0 |
-| `plinth_blocks` | — | 0.1.0 |
-| `plinth_charts` | — | 0.1.0 |
+| `plinth_core` | **1.3.0** | 1.3.0 |
+| `plinth_hooks` | **1.3.0** | 1.3.0 |
+| `plinth_components` | **1.3.0** | 1.3.0 |
+| `plinth_blocks` | **0.1.0** | 0.1.0 |
+| `plinth_charts` | **0.1.0** | 0.1.0 |
 
-**1.2.0 shipped 23 Aug 2026**, in dependency order, 19 seconds end to
-end. **1.3.0 is cut and unreleased**, and `plinth_blocks` and
-`plinth_charts` have never been published at all — so the blocks,
-charts and starter templates are currently invisible to anyone not
-reading this repository.
+**1.3.0 shipped 21 Sep 2026**, in dependency order, alongside the first
+releases of `plinth_blocks` and `plinth_charts` — five packages in one
+sequence, the largest release so far. `1.2.0` shipped 23 Aug 2026 in 19
+seconds end to end.
 
 > This table said `1.0.0` until 1.2.0, having gone stale through two
 > releases, and said `1.2.0` in the right-hand column through the whole
@@ -33,6 +32,40 @@ reading this repository.
 > and in CI for reasons that have nothing to do with the change under
 > test. Update that column by hand when you publish. It is the one
 > number in this file still held up by nothing but attention.
+
+### What the `1.3.0` release proved
+
+**Two packages that had never been published could not have been.**
+`plinth_blocks` was refused by the dry run — *"You must have a LICENSE
+file in the root directory"* — and `plinth_charts` would have hit the
+same wall one package later, after blocks was already live. Both
+READMEs had said MIT since they were written. Nothing in the workspace
+asks for the file: melos resolves siblings from disk, and analyze,
+format and test never look. **The first thing that checks is pub, at
+the moment you publish**, which for a five-package sequence is the
+worst possible moment to find out.
+
+So: dry-run *every* package before starting, not just the first.
+
+**The stale version cache is real, and it lies in a way that looks
+like a broken release.** The first resolve check after publishing
+failed with *"plinth_charts depends on plinth_core ^1.3.0 which doesn't
+match any versions"* — with `plinth_core 1.3.0` already live and
+visible on pub.dev's API. Clearing
+`.cache/plinth_*-versions.json` fixed it.
+
+Worse, the *second* attempt in that same project then resolved
+`plinth_components` to **1.2.0** rather than 1.3.0, from a listing that
+was only half refreshed. A clean project resolved correctly. The
+lesson: **verify in a project that has never resolved these packages
+before**, because a project that failed once carries the evidence of
+its own failure.
+
+**A resolve is not a compile.** The check that actually means something
+is a consumer app that imports the published packages and builds —
+`flutter build web` on a block, a chart and a 1.3.0-only API. That is
+what confirms the five agree with each other as published, rather than
+as they sit on disk under melos overrides.
 
 ### What the `1.2.0` release proved
 
