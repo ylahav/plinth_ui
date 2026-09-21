@@ -13,9 +13,26 @@ changes; from `1.0.0` they cannot.
 
 ## 1.3.0
 
-**The contrast machinery is askable, not just answerable.** This
-package's whole claim is a number - 4.5:1 - and until now a caller
-could only ever receive the answer. `readableOn` hands back a colour;
+**The token engine went from four scales to nine, and one of the four
+turned out to have been painting nothing.**
+
+Colour, spacing, radius and font size are joined by font weight,
+duration, curve, border width and elevation — each driven by what
+`plinth_components` was already hardcoding rather than by what a token
+system usually has, so the defaults are the values that were there and
+nothing moved on screen.
+
+`shadow` is the other half. It has been public, documented, and carried
+through `copyWith` and `lerp` since `1.0.0`, while `PlinthPaper` built
+its shadows from a hardcoded `Colors.black`. A theme that set it got
+black shadows anyway. Elevation now resolves through it, and a test in
+`plinth_components` overrides each of the five new fields and asserts
+what *rendered* changed — because reading a value back off the theme
+only proves that a map holds what was put in it.
+
+**The contrast machinery also became askable, not just answerable.**
+This package's whole claim is a number — 4.5:1 — and until now a caller
+could only receive the answer. `readableOn` hands back a colour;
 nothing let you ask what the ratio actually was. Every contrast test in
 this repo, and the tutorial app's theme test, had re-implemented the
 WCAG formula locally to check its own work.

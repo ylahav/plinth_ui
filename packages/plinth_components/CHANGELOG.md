@@ -13,12 +13,31 @@ changes; from `1.0.0` they cannot.
 
 ## 1.3.0
 
-**Three controls whose state lived in a colour, a fill or an icon and
-reached the semantics tree as nothing.** Found in a full sweep of the
-component tour, once it was navigable enough to walk end to end - the
-two passes before it had reached a handful of controls each. None of
-the three was a missing label; each was a control a screen reader user
-could operate without learning the result.
+**Tier 1 is closed.** `docs/PRE_1_0_AUDIT.md` opened with six gaps it
+called "real gaps a 1.0 shouldn't ship with". The last two close here:
+`loading` reaches every input, and `clearable` reaches the two fields
+the earlier batch left.
+
+The interesting part is what stood behind them. Pricing `loading`
+turned up **eleven inputs carrying byte-identical copies of the same
+label/description/error chrome** — a duplication no gap list could
+have found, because every gap list in this repo compares Plinth's props
+against Mantine's, and the eleven agreed with each other perfectly.
+Extracting it turned both remaining props from eleven edits into one,
+and fixed a bug all eleven had identically: an empty error string was
+treated as an error, painting a red border around a field with nothing
+wrong with it.
+
+Every hardcoded weight, duration, curve and border width now reads from
+the theme's new scales in `plinth_core` 1.3.0, which is what makes them
+tokens rather than decoration.
+
+**And three controls whose state lived in a colour, a fill or an icon
+and reached the semantics tree as nothing.** Found in a full sweep of
+the component tour, once it was navigable enough to walk end to end —
+the two passes before it had reached a handful of controls each. None
+of the three was a missing label; each was a control a screen reader
+user could operate without learning the result.
 
 ### Added
 

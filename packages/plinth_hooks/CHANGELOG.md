@@ -14,9 +14,11 @@ changes; from `1.0.0` they cannot.
 ## 1.3.0
 
 No change in this package. Released in lockstep with `plinth_core`
-1.3.0, which makes `contrastRatio` and `relativeLuminance` public, and
-`plinth_components` 1.3.0, which fixes three controls that rendered
-their state without announcing it.
+1.3.0, which adds five token fields across four new axes and fixes a
+`shadow` token that had painted nothing since `1.0.0`, and
+`plinth_components` 1.3.0, which closes Tier 1 of the pre-1.0 audit —
+`loading` on every input, `clearable` across the select family, and the
+shared field chrome that made both one change rather than eleven.
 
 ## 1.2.0
 

@@ -9,18 +9,30 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.2.0** | 1.2.0 |
-| `plinth_hooks` | **1.2.0** | 1.2.0 |
-| `plinth_components` | **1.2.0** | 1.2.0 |
+| `plinth_core` | **1.2.0** | 1.3.0 |
+| `plinth_hooks` | **1.2.0** | 1.3.0 |
+| `plinth_components` | **1.2.0** | 1.3.0 |
+| `plinth_blocks` | — | 0.1.0 |
+| `plinth_charts` | — | 0.1.0 |
 
 **1.2.0 shipped 23 Aug 2026**, in dependency order, 19 seconds end to
-end.
+end. **1.3.0 is cut and unreleased**, and `plinth_blocks` and
+`plinth_charts` have never been published at all — so the blocks,
+charts and starter templates are currently invisible to anyone not
+reading this repository.
 
-> This table said `1.0.0` until then, having gone stale through two
-> releases. It is prose with nothing keeping it honest — the same shape
-> as the component counts on the pub.dev pages, which now have a test
-> holding them to `COMPONENTS.md`. Nothing holds this one. Update it
-> when you publish.
+> This table said `1.0.0` until 1.2.0, having gone stale through two
+> releases, and said `1.2.0` in the right-hand column through the whole
+> of 1.3.0's development. **The right-hand column now has a test** —
+> `publishing_doc_test.dart` holds it to the `version:` in each
+> `pubspec.yaml`, so it can no longer drift from the repo it describes.
+>
+> The **pub.dev column still cannot be tested from here**: this
+> repository has no way to know what is on pub.dev without asking it,
+> and a test that made a network call to find out would fail offline
+> and in CI for reasons that have nothing to do with the change under
+> test. Update that column by hand when you publish. It is the one
+> number in this file still held up by nothing but attention.
 
 ### What the `1.2.0` release proved
 
