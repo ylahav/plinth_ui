@@ -37,6 +37,7 @@ say something else entirely.
 | Chart | What it is |
 |---|---|
 | `PlinthSparkline` | A line with no axes, for beside a number |
+| `PlinthLineChart` | Several series, told apart by shape as well as colour |
 
 More to come. This package is new and its version says so.
 

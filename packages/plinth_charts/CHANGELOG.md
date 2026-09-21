@@ -32,6 +32,24 @@ Unreleased. The first chart, and the shape the rest will follow.
 
   Fewer than two points draws nothing. One reading is a dot, not a
   trend, and a flat line would claim a shape the data does not have.
+- `PlinthLineChart` — several series on one scale, with a legend.
+
+  **Colour is not load-bearing.** Each line gets its own dash pattern
+  as well as its own colour, and the legend swatch carries the pattern
+  too, so a reader who cannot tell the hues apart can still match a
+  line to a name.
+
+  **Faint lines are lifted to the non-text floor**, which is a finding
+  about the palette rather than about this chart. `seriesColors` varies
+  *lightness* on purpose so dichromats keep a second channel — and four
+  of its six defaults land between 1.48:1 and 2.09:1 against a light
+  surface, which is faint for everybody. Each colour resolves with
+  `PlinthContrast.nonText` starting from the palette's own shade, so
+  only the ones under 3:1 move and the rest keep their place in the
+  ordering the CVD work depends on.
+
+  One scale across every series, because two lines on their own axes
+  can cross without ever having met.
 
 ### Notes
 
