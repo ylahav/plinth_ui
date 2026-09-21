@@ -7,6 +7,7 @@ screenshot, and not a snippet.
 | Template | What it starts you with |
 |---|---|
 | [dashboard](dashboard/) | Sidebar shell, overview with charts, filterable orders table, settings form |
+| [account](account/) | Sign-in that can fail, then profile, security and team permissions |
 
 ## How to use one
 
