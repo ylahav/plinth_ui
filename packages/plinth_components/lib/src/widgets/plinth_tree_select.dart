@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 import 'package:plinth_hooks/plinth_hooks.dart';
 
-import 'plinth_announce.dart';
+import 'field_chrome.dart';
 import 'plinth_popover.dart';
 import 'plinth_scroll_area.dart';
 import 'plinth_text.dart';
@@ -155,7 +155,7 @@ class _PlinthTreeSelectState extends State<PlinthTreeSelect> {
   Widget build(BuildContext context) {
     final theme = context.plinth;
     final enabled = widget.enabled && widget.onChanged != null;
-    final hasError = widget.error != null && widget.error!.isNotEmpty;
+    final hasError = plinthHasError(widget.error);
     final selected = _find(widget.value);
 
     final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
@@ -195,20 +195,12 @@ class _PlinthTreeSelectState extends State<PlinthTreeSelect> {
       ),
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.label != null) ...[
-          PlinthText(widget.label!,
-              size: widget.size, weight: theme.weight(PlinthWeight.semibold)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        if (widget.description != null) ...[
-          PlinthText(widget.description!,
-              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        Semantics(
+    return PlinthFieldChrome(
+        label: widget.label,
+        description: widget.description,
+        error: widget.error,
+        size: widget.size,
+        child: Semantics(
           button: true,
           enabled: enabled,
           label: widget.label,
@@ -235,16 +227,6 @@ class _PlinthTreeSelectState extends State<PlinthTreeSelect> {
               ),
             ),
           ),
-        ),
-        if (hasError) ...[
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthLiveRegion(
-            message: widget.error,
-            child: PlinthText(widget.error!,
-                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
-          ),
-        ],
-      ],
-    );
+        ));
   }
 }

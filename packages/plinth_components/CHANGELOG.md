@@ -22,6 +22,28 @@ could operate without learning the result.
 
 ### Changed
 
+- **Eleven inputs shared one copy of their chrome instead of eleven.**
+  `PlinthTextInput`, `PlinthTextarea`, `PlinthPasswordInput`,
+  `PlinthNumberInput`, `PlinthPillsInput`, `PlinthTagsInput`,
+  `PlinthAutocomplete`, `PlinthSelect`, `PlinthMultiSelect`,
+  `PlinthFileInput` and `PlinthTreeSelect` each carried their own
+  label/description/error block — byte-identical, down to the same four
+  `hasError` branches and the same `* 0.4` gap.
+
+  No API change and nothing moved on screen: all 809 tests passed
+  unchanged, and 23 new ones in `field_chrome_test.dart` assert that
+  every one of the eleven still renders its label, description and
+  error, and that the error is still a live region.
+
+  The reason to care is the next prop, not the line count. `loading`
+  and `clearable` belong on every input, and until now each was eleven
+  edits that could be got subtly wrong in ten.
+
+  One behavioural fix fell out: an **empty error string** is no longer
+  treated as an error. A caller clearing an error often passes `''`
+  rather than null, which used to paint a red border around a field
+  with nothing wrong with it, under an empty message.
+
 - **Every hardcoded weight, duration, curve and border width now comes
   from the theme.** 58 `FontWeight` literals, 22 `Duration`s, 13
   `Curves` and 23 border widths, replaced with lookups into the new

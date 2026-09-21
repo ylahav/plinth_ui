@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
-import 'plinth_announce.dart';
+import 'field_chrome.dart';
 import 'plinth_close_button.dart';
-import 'plinth_text.dart';
 
 /// A single option for [PlinthSelect].
 class PlinthSelectOption<T> {
@@ -67,7 +66,7 @@ class PlinthSelect<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final hasError = error != null && error!.isNotEmpty;
+    final hasError = plinthHasError(error);
     final colorKey = color ?? theme.primaryColor;
 
     final resolvedRadius = theme.radius[radius ?? theme.defaultRadius]!;
@@ -78,20 +77,12 @@ class PlinthSelect<T> extends StatelessWidget {
     final borderColor =
         hasError ? theme.roleShaded(PlinthRole.error, 6) : theme.border;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (label != null) ...[
-          PlinthText(label!,
-              size: size, weight: theme.weight(PlinthWeight.semibold)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        if (description != null) ...[
-          PlinthText(description!,
-              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        Theme(
+    return PlinthFieldChrome(
+        label: label,
+        description: description,
+        error: error,
+        size: size,
+        child: Theme(
           // Strip Material's default dropdown underline/theming so
           // PlinthSelect can own its own border like PlinthTextInput.
           data: Theme.of(context).copyWith(
@@ -165,16 +156,6 @@ class PlinthSelect<T> extends StatelessWidget {
               ],
             ),
           ),
-        ),
-        if (hasError) ...[
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthLiveRegion(
-            message: error,
-            child: PlinthText(error!,
-                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
-          ),
-        ],
-      ],
-    );
+        ));
   }
 }

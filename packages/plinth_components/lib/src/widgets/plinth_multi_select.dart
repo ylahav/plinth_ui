@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
-import 'plinth_announce.dart';
+import 'field_chrome.dart';
 import 'plinth_close_button.dart';
 import 'plinth_pill.dart';
-import 'plinth_text.dart';
 
 /// A single option for [PlinthMultiSelect].
 class PlinthMultiSelectOption<T> {
@@ -184,7 +183,7 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final hasError = widget.error != null && widget.error!.isNotEmpty;
+    final hasError = plinthHasError(widget.error);
     final colorKey = widget.color ?? theme.primaryColor;
     final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
     final borderColor =
@@ -194,21 +193,13 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
       for (final o in widget.options) o.value: o.label,
     };
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (widget.label != null) ...[
-          PlinthText(widget.label!,
-              size: widget.size, weight: theme.weight(PlinthWeight.semibold)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        if (widget.description != null) ...[
-          PlinthText(widget.description!,
-              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        CompositedTransformTarget(
+    return PlinthFieldChrome(
+        label: widget.label,
+        description: widget.description,
+        error: widget.error,
+        size: widget.size,
+        mainAxisSize: MainAxisSize.min,
+        child: CompositedTransformTarget(
           key: _fieldKey,
           link: _layerLink,
           // The label is a sibling of the field, so it reaches sighted
@@ -285,16 +276,6 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
               ),
             ),
           ),
-        ),
-        if (hasError) ...[
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthLiveRegion(
-            message: widget.error,
-            child: PlinthText(widget.error!,
-                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
-          ),
-        ],
-      ],
-    );
+        ));
   }
 }

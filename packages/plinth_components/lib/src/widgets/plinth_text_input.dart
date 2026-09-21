@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:plinth_core/plinth_core.dart';
 
-import 'plinth_announce.dart';
-import 'plinth_text.dart';
+import 'field_chrome.dart';
 
 /// A themeable text field matching Mantine's `TextInput`: a `label`,
 /// optional `description`/`error` text, and border styling that
@@ -96,7 +95,7 @@ class _PlinthTextInputState extends State<PlinthTextInput> {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final hasError = widget.error != null && widget.error!.isNotEmpty;
+    final hasError = plinthHasError(widget.error);
     final colorKey = widget.color ?? theme.primaryColor;
 
     final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
@@ -104,85 +103,63 @@ class _PlinthTextInputState extends State<PlinthTextInput> {
     final verticalPadding = theme.spacing[widget.size]! * 0.5;
     final horizontalPadding = theme.spacing[widget.size]!;
 
-    final Color borderColor;
-    if (hasError) {
-      borderColor = theme.roleShaded(PlinthRole.error, 6);
-    } else if (_isFocused) {
-      borderColor = theme.shaded(colorKey, 6);
-    } else {
-      borderColor = theme.border;
-    }
+    final borderColor = plinthFieldBorderColor(
+      theme,
+      hasError: hasError,
+      focused: _isFocused,
+      colorKey: colorKey,
+    );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.label != null) ...[
-          PlinthText(
-            widget.label!,
-            size: widget.size,
-            weight: theme.weight(PlinthWeight.semibold),
-          ),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        if (widget.description != null) ...[
-          PlinthText(
-            widget.description!,
-            size: PlinthSize.xs,
-            color: theme.rampFor(PlinthRole.neutral),
-          ),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(resolvedRadius),
-            border: Border.all(
-              color: borderColor,
-              width: theme.borderWidth(
-                  _isFocused || hasError ? PlinthSize.md : PlinthSize.xs),
+    return PlinthFieldChrome(
+      label: widget.label,
+      description: widget.description,
+      error: widget.error,
+      size: widget.size,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(resolvedRadius),
+          border: Border.all(
+            color: borderColor,
+            width: plinthFieldBorderWidth(
+              theme,
+              hasError: hasError,
+              focused: _isFocused,
             ),
-            color: widget.enabled ? theme.surface : theme.surfaceMuted,
           ),
-          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-          child: Row(
-            children: [
-              if (widget.leadingIcon != null) ...[
-                widget.leadingIcon!,
-                SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
-              ],
-              Expanded(
-                child: Semantics(
-                  label: widget.label,
-                  child: TextField(
-                    controller: widget.controller,
-                    focusNode: _focusNode,
-                    onChanged: widget.onChanged,
-                    obscureText: widget.obscureText,
-                    enabled: widget.enabled,
-                    inputFormatters: widget.inputFormatters,
-                    keyboardType: widget.keyboardType,
-                    style: TextStyle(fontSize: fontSize),
-                    decoration: InputDecoration(
-                      hintText: widget.placeholder,
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: verticalPadding),
-                    ),
+          color: widget.enabled ? theme.surface : theme.surfaceMuted,
+        ),
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+        child: Row(
+          children: [
+            if (widget.leadingIcon != null) ...[
+              widget.leadingIcon!,
+              SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.6),
+            ],
+            Expanded(
+              child: Semantics(
+                label: widget.label,
+                child: TextField(
+                  controller: widget.controller,
+                  focusNode: _focusNode,
+                  onChanged: widget.onChanged,
+                  obscureText: widget.obscureText,
+                  enabled: widget.enabled,
+                  inputFormatters: widget.inputFormatters,
+                  keyboardType: widget.keyboardType,
+                  style: TextStyle(fontSize: fontSize),
+                  decoration: InputDecoration(
+                    hintText: widget.placeholder,
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: verticalPadding),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-        if (hasError) ...[
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthLiveRegion(
-            message: widget.error,
-            child: PlinthText(widget.error!,
-                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
-          ),
-        ],
-      ],
+      ),
     );
   }
 }

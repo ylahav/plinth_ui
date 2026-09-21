@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
-import 'plinth_announce.dart';
-import 'plinth_text.dart';
+import 'field_chrome.dart';
 
 /// A multi-line text field matching Mantine's `Textarea`. Shares
 /// [PlinthTextInput]'s label/description/error chrome and
@@ -78,7 +77,7 @@ class _PlinthTextareaState extends State<PlinthTextarea> {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final hasError = widget.error != null && widget.error!.isNotEmpty;
+    final hasError = plinthHasError(widget.error);
     final colorKey = widget.color ?? theme.primaryColor;
 
     final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
@@ -86,35 +85,25 @@ class _PlinthTextareaState extends State<PlinthTextarea> {
     final verticalPadding = theme.spacing[widget.size]! * 0.5;
     final horizontalPadding = theme.spacing[widget.size]!;
 
-    final Color borderColor;
-    if (hasError) {
-      borderColor = theme.roleShaded(PlinthRole.error, 6);
-    } else if (_isFocused) {
-      borderColor = theme.shaded(colorKey, 6);
-    } else {
-      borderColor = theme.border;
-    }
+    final borderColor = plinthFieldBorderColor(
+      theme,
+      hasError: hasError,
+      focused: _isFocused,
+      colorKey: colorKey,
+    );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.label != null) ...[
-          PlinthText(widget.label!,
-              size: widget.size, weight: theme.weight(PlinthWeight.semibold)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        if (widget.description != null) ...[
-          PlinthText(widget.description!,
-              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        Container(
+    return PlinthFieldChrome(
+        label: widget.label,
+        description: widget.description,
+        error: widget.error,
+        size: widget.size,
+        child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(resolvedRadius),
             border: Border.all(
               color: borderColor,
-              width: theme.borderWidth(
-                  _isFocused || hasError ? PlinthSize.md : PlinthSize.xs),
+              width: plinthFieldBorderWidth(theme,
+                  hasError: hasError, focused: _isFocused),
             ),
             color: widget.enabled ? theme.surface : theme.surfaceMuted,
           ),
@@ -140,16 +129,6 @@ class _PlinthTextareaState extends State<PlinthTextarea> {
               ),
             ),
           ),
-        ),
-        if (hasError) ...[
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthLiveRegion(
-            message: widget.error,
-            child: PlinthText(widget.error!,
-                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
-          ),
-        ],
-      ],
-    );
+        ));
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
-import 'plinth_announce.dart';
+import 'field_chrome.dart';
 import 'plinth_text.dart';
 
 /// A field that holds [PlinthPill]s, matching Mantine's `PillsInput`.
@@ -80,32 +80,22 @@ class PlinthPillsInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final hasError = error != null && error!.isNotEmpty;
+    final hasError = plinthHasError(error);
     final colorKey = color ?? theme.primaryColor;
 
-    final Color borderColor;
-    if (hasError) {
-      borderColor = theme.roleShaded(PlinthRole.error, 6);
-    } else if (focused) {
-      borderColor = theme.shaded(colorKey, 6);
-    } else {
-      borderColor = theme.border;
-    }
+    final borderColor = plinthFieldBorderColor(
+      theme,
+      hasError: hasError,
+      focused: focused,
+      colorKey: colorKey,
+    );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (label != null) ...[
-          PlinthText(label!,
-              size: size, weight: theme.weight(PlinthWeight.semibold)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        if (description != null) ...[
-          PlinthText(description!,
-              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        GestureDetector(
+    return PlinthFieldChrome(
+        label: label,
+        description: description,
+        error: error,
+        size: size,
+        child: GestureDetector(
           onTap: enabled ? onTap : null,
           child: Container(
             width: double.infinity,
@@ -118,8 +108,8 @@ class PlinthPillsInput extends StatelessWidget {
                   theme.radius[radius ?? theme.defaultRadius]!),
               border: Border.all(
                 color: borderColor,
-                width: theme.borderWidth(
-                    focused || hasError ? PlinthSize.md : PlinthSize.xs),
+                width: plinthFieldBorderWidth(theme,
+                    hasError: hasError, focused: focused),
               ),
               color: enabled ? theme.surface : theme.surfaceMuted,
             ),
@@ -133,16 +123,6 @@ class PlinthPillsInput extends StatelessWidget {
                     children: children,
                   ),
           ),
-        ),
-        if (hasError) ...[
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthLiveRegion(
-            message: error,
-            child: PlinthText(error!,
-                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
-          ),
-        ],
-      ],
-    );
+        ));
   }
 }

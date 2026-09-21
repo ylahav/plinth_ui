@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:plinth_core/plinth_core.dart';
 
-import 'plinth_announce.dart';
-import 'plinth_text.dart';
+import 'field_chrome.dart';
 
 /// A numeric input matching Mantine's `NumberInput`: a text field
 /// restricted to numbers, with increment/decrement buttons, sharing
@@ -117,7 +116,7 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final hasError = widget.error != null && widget.error!.isNotEmpty;
+    final hasError = plinthHasError(widget.error);
     final colorKey = widget.color ?? theme.primaryColor;
 
     final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
@@ -125,32 +124,22 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
     final verticalPadding = theme.spacing[widget.size]! * 0.5;
     final horizontalPadding = theme.spacing[widget.size]!;
 
-    final Color borderColor;
-    if (hasError) {
-      borderColor = theme.roleShaded(PlinthRole.error, 6);
-    } else if (_isFocused) {
-      borderColor = theme.shaded(colorKey, 6);
-    } else {
-      borderColor = theme.border;
-    }
+    final borderColor = plinthFieldBorderColor(
+      theme,
+      hasError: hasError,
+      focused: _isFocused,
+      colorKey: colorKey,
+    );
 
     final atMin = widget.min != null && widget.value <= widget.min!;
     final atMax = widget.max != null && widget.value >= widget.max!;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.label != null) ...[
-          PlinthText(widget.label!,
-              size: widget.size, weight: theme.weight(PlinthWeight.semibold)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        if (widget.description != null) ...[
-          PlinthText(widget.description!,
-              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        Container(
+    return PlinthFieldChrome(
+        label: widget.label,
+        description: widget.description,
+        error: widget.error,
+        size: widget.size,
+        child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(resolvedRadius),
             border: Border.all(
@@ -200,17 +189,7 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
               ),
             ],
           ),
-        ),
-        if (hasError) ...[
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthLiveRegion(
-            message: widget.error,
-            child: PlinthText(widget.error!,
-                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
-          ),
-        ],
-      ],
-    );
+        ));
   }
 }
 

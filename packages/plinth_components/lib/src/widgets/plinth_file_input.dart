@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
-import 'plinth_announce.dart';
+import 'field_chrome.dart';
 import 'plinth_close_button.dart';
-import 'plinth_text.dart';
 
 /// A file-selection field matching Mantine's `FileInput`, sharing
 /// [PlinthTextInput]'s label/description/error chrome.
@@ -108,26 +107,18 @@ class PlinthFileInput<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final hasError = error != null && error!.isNotEmpty;
+    final hasError = plinthHasError(error);
     final resolvedRadius = theme.radius[radius ?? theme.defaultRadius]!;
     final borderColor =
         hasError ? theme.roleShaded(PlinthRole.error, 6) : theme.border;
     final fontSize = theme.fontSizes[size]!;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (label != null) ...[
-          PlinthText(label!,
-              size: size, weight: theme.weight(PlinthWeight.semibold)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        if (description != null) ...[
-          PlinthText(description!,
-              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        Semantics(
+    return PlinthFieldChrome(
+        label: label,
+        description: description,
+        error: error,
+        size: size,
+        child: Semantics(
           button: true,
           enabled: enabled,
           label: label == null ? 'Choose files' : 'Choose files for $label',
@@ -204,17 +195,7 @@ class PlinthFileInput<T> extends StatelessWidget {
               ),
             ),
           ),
-        ),
-        if (hasError) ...[
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthLiveRegion(
-            message: error,
-            child: PlinthText(error!,
-                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
-          ),
-        ],
-      ],
-    );
+        ));
   }
 }
 

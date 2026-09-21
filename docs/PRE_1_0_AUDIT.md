@@ -79,23 +79,32 @@ so `loading` would be one implementation and a prop on each wrapper.
 That was asserted without grepping, and it is wrong.
 
 Three inputs delegate to `PlinthTextInput`: `PlinthColorInput`,
-`PlinthCombobox` and `PlinthMaskInput`. **Seven build their own** —
-`PlinthAutocomplete`, `PlinthNumberInput`, `PlinthPasswordInput`,
-`PlinthPillsInput`, `PlinthPinInput`, `PlinthTagsInput` and
-`PlinthTextarea` — and each carries its own copy of the same
-label/description/error block, down to the same four `hasError`
-branches.
+`PlinthCombobox` and `PlinthMaskInput`. **Eleven built their own** —
+`PlinthAutocomplete`, `PlinthFileInput`, `PlinthMultiSelect`,
+`PlinthNumberInput`, `PlinthPasswordInput`, `PlinthPillsInput`,
+`PlinthSelect`, `PlinthTagsInput`, `PlinthTextarea`,
+`PlinthTextInput` and `PlinthTreeSelect` — each with its own copy of
+the same label/description/error block, down to the same four
+`hasError` branches and the same `* 0.4` gap.
 
-So `loading` on the input family is seven implementations, not one.
+**This paragraph first said seven, and was corrected to eleven after
+the extraction turned the other four up.** Seven came from grepping
+for `TextField(`, which the dropdowns do not use — they are pickers,
+not text fields, and they wear exactly the same chrome. Worth leaving
+in: a count arrived at by grepping for an implementation detail will
+miss everything that shares the *behaviour* without sharing the
+detail, which is the same mistake this audit makes structurally.
 
 **Which makes the duplication the finding, not the prop.** This audit
 compared Plinth's props against Mantine's and so could not see it: the
-seven agree with each other about every prop they expose, and differ
-only in having written it out seven times. Any future prop on "every
-input" — `loading`, and `clearable` is the same shape — costs seven
-edits and can be got subtly wrong in six of them. Extracting the chrome
-first is the cheaper order, and it is a refactor with no API change,
-which is the kind that can land any time.
+eleven agree with each other about every prop they expose, and differ
+only in having written it out eleven times.
+
+**Extracted in 1.3.0** to an internal `PlinthFieldChrome`, plus
+`plinthHasError`, `plinthFieldBorderColor` and
+`plinthFieldBorderWidth`. No API change and nothing moved on screen —
+all 809 component tests passed unchanged. `loading` and `clearable` are
+now one implementation each rather than eleven.
 
 ### 2. `PlinthProgress` and `PlinthRingProgress` take one value, not sections — **closed**
 Both have a `.sections` named constructor taking
@@ -168,10 +177,11 @@ Two props, and one structural thing behind the first of them:
 
 - `clearable` on `PlinthColorInput` and `PlinthCascader` (item 5) —
   genuinely small, two components
-- `loading` on the input family (item 1) — seven implementations
-  unless the shared chrome is extracted first
-- **the shared input chrome itself**, which is not a gap against
-  Mantine and so appears nowhere else in this document
+- `loading` on the input family (item 1) — now one implementation,
+  since the shared chrome was extracted in 1.3.0
+- ~~the shared input chrome itself~~ — **done in 1.3.0.** It was never a
+  gap against Mantine, so it appeared nowhere else in this document; it
+  was found by trying to price item 1 and getting the price wrong
 
 **Neither blocks a 1.0** on the reading this document opened with — a
 component with the right name and a third of its behaviour. Both are

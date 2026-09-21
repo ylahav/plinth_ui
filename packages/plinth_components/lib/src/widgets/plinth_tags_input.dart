@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:plinth_core/plinth_core.dart';
 
-import 'plinth_announce.dart';
+import 'field_chrome.dart';
 import 'plinth_close_button.dart';
 import 'plinth_pill.dart';
-import 'plinth_text.dart';
 
 /// Free-text entry that turns what you type into removable chips,
 /// matching Mantine's `TagsInput`.
@@ -131,34 +130,24 @@ class _PlinthTagsInputState extends State<PlinthTagsInput> {
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
-    final hasError = widget.error != null && widget.error!.isNotEmpty;
+    final hasError = plinthHasError(widget.error);
     final colorKey = widget.color ?? theme.primaryColor;
     final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
     final fontSize = theme.fontSizes[widget.size]!;
 
-    final Color borderColor;
-    if (hasError) {
-      borderColor = theme.roleShaded(PlinthRole.error, 6);
-    } else if (_isFocused) {
-      borderColor = theme.shaded(colorKey, 6);
-    } else {
-      borderColor = theme.border;
-    }
+    final borderColor = plinthFieldBorderColor(
+      theme,
+      hasError: hasError,
+      focused: _isFocused,
+      colorKey: colorKey,
+    );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.label != null) ...[
-          PlinthText(widget.label!,
-              size: widget.size, weight: theme.weight(PlinthWeight.semibold)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        if (widget.description != null) ...[
-          PlinthText(widget.description!,
-              size: PlinthSize.xs, color: theme.rampFor(PlinthRole.neutral)),
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-        ],
-        GestureDetector(
+    return PlinthFieldChrome(
+        label: widget.label,
+        description: widget.description,
+        error: widget.error,
+        size: widget.size,
+        child: GestureDetector(
           // Tapping anywhere in the field focuses the input, matching
           // how a native text field behaves across its whole box.
           onTap: widget.enabled ? _focusNode.requestFocus : null,
@@ -241,16 +230,6 @@ class _PlinthTagsInputState extends State<PlinthTagsInput> {
               ],
             ),
           ),
-        ),
-        if (hasError) ...[
-          SizedBox(height: theme.spacing[PlinthSize.xs]! * 0.4),
-          PlinthLiveRegion(
-            message: widget.error,
-            child: PlinthText(widget.error!,
-                size: PlinthSize.xs, color: theme.rampFor(PlinthRole.error)),
-          ),
-        ],
-      ],
-    );
+        ));
   }
 }
