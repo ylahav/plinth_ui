@@ -2688,27 +2688,8 @@ class PasswordStrengthExample extends StatefulWidget {
 class _PasswordStrengthExampleState extends State<PasswordStrengthExample> {
   String _value = 'plinth';
 
-  // Not const: a record holding a closure can't be. Keeping the rule
-  // and its test together is what stops the checklist from drifting
-  // out of step with what actually passes.
-  static final _rules = <({String label, bool Function(String) met})>[
-    (label: 'At least 8 characters', met: (v) => v.length >= 8),
-    (label: 'Includes a number', met: (v) => v.contains(RegExp(r'\d'))),
-    (
-      label: 'Includes a capital letter',
-      met: (v) => v.contains(RegExp('[A-Z]')),
-    ),
-    (
-      label: 'Includes a symbol',
-      met: (v) => v.contains(RegExp(r'[!@#$%^&*(),.?:{}|<>]')),
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    final met = _rules.where((r) => r.met(_value)).length;
-    final strength = met / _rules.length;
-
     return SizedBox(
       width: 460,
       child: PlinthStack(
@@ -2720,40 +2701,10 @@ class _PasswordStrengthExampleState extends State<PasswordStrengthExample> {
             placeholder: 'Choose a password',
             onChanged: (v) => setState(() => _value = v),
           ),
-          PlinthProgress(
-            value: strength,
-            size: PlinthSize.xs,
-            // Three bands rather than a gradient: the useful question
-            // is whether this will be accepted, and a colour that
-            // creeps toward green answers it less clearly than one
-            // that changes when the answer changes.
-            color: strength == 1
-                ? 'green'
-                : strength >= 0.5
-                    ? 'yellow'
-                    : 'red',
-          ),
-          // Every rule stays on screen, met or not. A checklist that
-          // hides what you have satisfied leaves you re-reading the
-          // remainder to work out what changed.
-          for (final rule in _rules)
-            Row(
-              children: [
-                Icon(
-                  rule.met(_value) ? Icons.check_circle : Icons.circle_outlined,
-                  size: 16,
-                  color: rule.met(_value)
-                      ? context.plinth.shaded('green', 6)
-                      : Colors.grey,
-                ),
-                const SizedBox(width: 8),
-                PlinthText(
-                  rule.label,
-                  size: PlinthSize.sm,
-                  color: rule.met(_value) ? null : 'gray',
-                ),
-              ],
-            ),
+          // The meter is display only, so the field stays yours. Three
+          // bands rather than a gradient, and every rule on screen
+          // whether or not it is met.
+          PlinthPasswordStrength(value: _value),
         ],
       ),
     );
@@ -3164,58 +3115,22 @@ class SecretFieldExample extends StatefulWidget {
 class _SecretFieldExampleState extends State<SecretFieldExample> {
   // A field nobody types into: the value arrives from the server, and
   // the whole arrangement exists to get it back out again intact.
-  final _controller = TextEditingController(text: 'pk_live_4f8Xq2Lm90Zt');
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  String _key = 'pk_live_4f8Xq2Lm90Zt';
 
   void _regenerate() {
     final stamp = DateTime.now().millisecondsSinceEpoch.toRadixString(36);
-    _controller.text = 'pk_live_$stamp';
-    setState(() {});
+    setState(() => _key = 'pk_live_$stamp');
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return PlinthSecretField(
       width: 520,
-      child: PlinthStack(
-        gap: PlinthSize.xs,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(
-                // A password field for its reveal toggle rather than
-                // for secrecy — the point is that a key on screen in a
-                // shared window is a key in a screenshot.
-                child: PlinthPasswordInput(
-                  label: 'Publishable key',
-                  controller: _controller,
-                ),
-              ),
-              const SizedBox(width: 8),
-              PlinthCopyButton(value: _controller.text),
-              const SizedBox(width: 4),
-              PlinthButton(
-                variant: PlinthVariant.outline,
-                onPressed: _regenerate,
-                child: const Text('Regenerate'),
-              ),
-            ],
-          ),
-          const PlinthText(
-            'Regenerating takes effect immediately. Existing calls with the '
-            'old key will start failing.',
-            size: PlinthSize.xs,
-            color: 'gray',
-          ),
-        ],
-      ),
+      label: 'Publishable key',
+      value: _key,
+      onRegenerate: _regenerate,
+      warning: 'Regenerating takes effect immediately. Existing calls with '
+          'the old key will start failing.',
     );
   }
 }

@@ -182,6 +182,21 @@ Unreleased. The first blocks, and the shape the rest will follow.
   one-line app status bar with no card at all. Everything wraps rather
   than clipping; a footer that clips drops the last link, which is
   usually the one somebody was looking for.
+- `PlinthPasswordStrength` — a meter and the checklist behind it.
+  Each `PlinthPasswordRule` carries its label *and* its test, which is
+  what stops a checklist drifting out of step with what actually
+  passes. Three bands rather than a gradient, because the question is
+  whether this will be accepted. Every rule stays on screen met or not,
+  and each announces "met" or "not met" as a word rather than as a tick
+  whose meaning is its shape. The defaults are a starting set, not a
+  policy — your server's rules are the ones that decide.
+- `PlinthSecretField` — a server-issued value you need back out
+  intact. Masked for the screenshot rather than from its owner, and
+  read-only by omitting `onChanged`, which is this library's way of
+  saying "selectable but not editable" as opposed to `enabled: false`,
+  which would take it out of the focus order. A `warning` renders as an
+  alert: rotating a live key breaks whatever is using it, and that is
+  not a footnote.
 
 ### Notes
 

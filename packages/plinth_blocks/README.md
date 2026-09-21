@@ -68,6 +68,8 @@ Every Page Sections arrangement, plus the navigation and page chrome:
 | `PlinthMemberList` | A team, with the people who didn't fit summarised |
 | `PlinthPricingCard` | A plan, with the price as the heading |
 | `PlinthFooter` | A page footer, or a one-line status bar for an app |
+| `PlinthPasswordStrength` | A meter and a checklist whose rules carry their own tests |
+| `PlinthSecretField` | A server-issued value, masked, copyable, regenerable |
 
 ```dart
 PlinthSignInBlock(
