@@ -307,7 +307,7 @@ answered rather than forgotten. Tracked as **V1** in
 Decided when the package was first versioned, at `0.1.0`.
 
 **Lockstep would import a churning catalogue's version into a stable
-foundation.** `plinth_blocks` holds 18 of the ~110 arrangements the
+foundation.** `plinth_blocks` holds 38 of the 113 arrangements the
 showcase has, and the rest will land over time; the API will move as
 they do. Under lockstep, renaming a parameter on `PlinthFaqBlock` is a
 breaking change that drags `plinth_core` to `2.0.0` with it — a major

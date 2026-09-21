@@ -91,6 +91,13 @@ final List<CategoryData> showcaseCategories = [
         ExampleEntry('Top pages leaderboard', _statLeaderboard,
             exampleCode['StatLeaderboardExample']!),
       ]),
+      SubcategoryData('Charts', Icons.show_chart, [
+        ExampleEntry(
+            'Line chart', _lineChart, exampleCode['LineChartExample']!),
+        ExampleEntry('Bar chart', _barChart, exampleCode['BarChartExample']!),
+        ExampleEntry(
+            'Donut chart', _donutChart, exampleCode['DonutChartExample']!),
+      ]),
       SubcategoryData('User Info & Controls', Icons.account_circle_outlined, [
         ExampleEntry(
             'User button', _userButton, exampleCode['UserButtonExample']!),
@@ -378,6 +385,9 @@ Widget _navbarWithFooterUser(BuildContext context) =>
 Widget _statWithSparkline(BuildContext context) =>
     const StatWithSparklineExample();
 Widget _statLeaderboard(BuildContext context) => const StatLeaderboardExample();
+Widget _lineChart(BuildContext context) => const LineChartExample();
+Widget _barChart(BuildContext context) => const BarChartExample();
+Widget _donutChart(BuildContext context) => const DonutChartExample();
 Widget _imageCarousel(BuildContext context) => const ImageCarouselExample();
 Widget _productCarousel(BuildContext context) => const ProductCarouselExample();
 Widget _accountSwitcher(BuildContext context) => const AccountSwitcherExample();

@@ -92,7 +92,7 @@ PlinthSignInBlock(
 )
 ```
 
-More are moving here from the demo app's showcase, which has 110 of
+More are moving here from the demo app's showcase, which has 113 of
 them — see
 [SHOWCASE.md](https://github.com/ylahav/plinth_ui/blob/main/docs/SHOWCASE.md).
 

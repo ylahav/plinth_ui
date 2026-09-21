@@ -160,14 +160,18 @@ them yet.
 
 ## What exists
 
-110 examples across 3 categories, borrowing Mantine UI's own category
-names so the two are directly comparable.
+113 examples across 3 categories. The category names are borrowed from
+Mantine UI so the two are directly comparable — **Charts is the one
+subcategory that is not**, because `ui.mantine.dev` has no charts to
+compare against. It is the first of the sections this catalogue has
+that its reference does not.
 
 | Category | Subcategory | Examples |
 |---|---|---|
 | Application UI | Navbars | Simple navbar, Navbar with avatar, Collapsible navbar, Sectioned navbar, Navbar with search, Navbar with sublevels, Navbar with user footer |
 | Application UI | Headers | Centered header, Header with breadcrumbs, Header with tabs, Header with filters, Sticky header |
 | Application UI | Stats | Stat tiles, Stat with progress, Live metrics, Stat by period, Stat breakdown, Goal rings, Stat with sparkline, Top pages leaderboard |
+| Application UI | Charts | Line chart, Bar chart, Donut chart |
 | Application UI | User Info & Controls | User button, Profile card, User menu, Member list, Presence status, Account switcher, Contact card |
 | Application UI | Application Cards | Project card, Task card, Pricing card, Media card, Activity card |
 | Application UI | Inputs | Search bar, Filter fields, Formatted fields, Password strength, Verification code, Secret field, Address form |
@@ -193,8 +197,9 @@ names so the two are directly comparable.
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 110. The gap is now depth
-rather than absence: **every subcategory has something in it.**
+Mantine UI has ~123 blocks against these 113. The gap is now depth
+rather than absence: **every subcategory has something in it**, and
+Charts is three that Mantine UI has nothing to compare with.
 
 Almost none of it was ever blocked on missing components. The four
 subcategories that were empty are done: Dropzones and Drag'n'Drop from

@@ -207,6 +207,17 @@ Today's checkable claim: *117 components on a shared token system — 112
 tracking `@mantine/core`, five answering questions only Flutter has —
 with 43 golden images and 74 test files behind them.*
 
+Alongside them, and counted separately because they version separately:
+*38 blocks in `plinth_blocks` and 4 charts in `plinth_charts`, with 18
+and 4 test files behind them.* The demo app browses **113**
+arrangements across 3 categories, of which the 38 are the ones that
+have become real widgets with real APIs; the rest are still component
+demos and [SHOWCASE.md](SHOWCASE.md) says which, and why.
+
+**Do not quote a block count from another document.** These two
+packages are moving, every count above is derived from source, and the
+one number that has gone stale in every past round is this one.
+
 **`B0c` has run**, so the token-engine framing is publishable: the
 accessibility work has been heard, not only asserted against simulated
 semantics trees.

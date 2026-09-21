@@ -477,6 +477,29 @@ class _AvatarUploadExampleState extends State<AvatarUploadExample> {
   }
 }
 ''',
+  'BarChartExample': r'''
+class BarChartExample extends StatelessWidget {
+  const BarChartExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Horizontal, because category names are words. Every bar is its
+    // own semantics node, so a reader walks the figures rather than
+    // hearing one sentence about all of them.
+    return PlinthBarChart(
+      width: 420,
+      label: 'Sessions by source',
+      describeValue: (v) => '${(v / 1000).toStringAsFixed(1)}k',
+      bars: const [
+        PlinthBar(label: 'Direct', value: 5200, seriesKey: 'direct'),
+        PlinthBar(label: 'Search', value: 3100, seriesKey: 'search'),
+        PlinthBar(label: 'Social', value: 1400, seriesKey: 'social'),
+        PlinthBar(label: 'Referral', value: 820, seriesKey: 'referral'),
+      ],
+    );
+  }
+}
+''',
   'BudgetSliderExample': r'''
 class BudgetSliderExample extends StatefulWidget {
   const BudgetSliderExample({super.key});
@@ -948,6 +971,36 @@ class DestructiveActionsExample extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+''',
+  'DonutChartExample': r'''
+class DonutChartExample extends StatelessWidget {
+  const DonutChartExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // A ring rather than a bar because the total is the headline, which
+    // is the one thing a segmented bar has nowhere to put. For every
+    // other part-to-whole question, PlinthProgress.sections reads
+    // better.
+    return PlinthDonutChart(
+      width: 320,
+      label: 'Sessions by source',
+      centreLabel: '10.5k',
+      centreCaption: 'sessions',
+      describeValue: (v) => '${(v / 1000).toStringAsFixed(1)}k',
+      segments: const [
+        PlinthDonutSegment(label: 'Direct', value: 5200, seriesKey: 'direct'),
+        PlinthDonutSegment(label: 'Search', value: 3100, seriesKey: 'search'),
+        PlinthDonutSegment(label: 'Social', value: 1400, seriesKey: 'social'),
+        PlinthDonutSegment(
+          label: 'Referral',
+          value: 820,
+          seriesKey: 'referral',
+        ),
+      ],
     );
   }
 }
@@ -1888,6 +1941,40 @@ class _KanbanDropExampleState extends State<KanbanDropExample> {
           cards: _cards['todo']!,
         ),
         PlinthKanbanColumn(id: 'done', title: 'Done', cards: _cards['done']!),
+      ],
+    );
+  }
+}
+''',
+  'LineChartExample': r'''
+class LineChartExample extends StatelessWidget {
+  const LineChartExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Each line carries its own dash pattern as well as its own colour,
+    // so the legend maps shape to name and not only hue — and the faint
+    // series colours are lifted to the 3:1 non-text floor.
+    return const PlinthLineChart(
+      width: 460,
+      label: 'Sessions by source',
+      showArea: true,
+      series: [
+        PlinthChartSeries(
+          name: 'Direct',
+          seriesKey: 'direct',
+          values: [820, 910, 880, 1040, 1180, 1120, 1310],
+        ),
+        PlinthChartSeries(
+          name: 'Search',
+          seriesKey: 'search',
+          values: [540, 600, 720, 690, 810, 900, 980],
+        ),
+        PlinthChartSeries(
+          name: 'Social',
+          seriesKey: 'social',
+          values: [210, 260, 240, 330, 300, 380, 420],
+        ),
       ],
     );
   }
