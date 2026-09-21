@@ -3866,61 +3866,42 @@ class StatBreakdownExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.plinth;
-
     return SizedBox(
       width: 360,
-      child: PlinthPaper(
-        withBorder: true,
-        p: PlinthSize.md,
-        child: PlinthStack(
-          gap: PlinthSize.sm,
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: PlinthStatTile(
+        label: 'Sessions',
+        uppercaseLabel: false,
+        value: '18,420',
+        // A part-to-whole bar rather than three separate figures: the
+        // point of this arrangement is the proportion, which separate
+        // numbers make you compute yourself.
+        //
+        // This was a hand-rolled Row of Expandeds until 0.19.0, when
+        // PlinthProgress learned sections — the audit found the gap by
+        // noticing this block routing around it.
+        visual: PlinthProgress.sections(
+          size: PlinthSize.sm,
+          sections: [
+            for (final s in _segments)
+              PlinthProgressSection(
+                value: s.share / 10,
+                color: s.color,
+                label: s.label,
+              ),
+          ],
+        ),
+        action: PlinthGroup(
+          gap: PlinthSize.md,
           children: [
-            const PlinthText('Sessions', size: PlinthSize.sm, color: 'gray'),
-            const PlinthNumberFormatter(
-              value: 18420,
-              size: PlinthSize.xl,
-              weight: FontWeight.w700,
-            ),
-            // A part-to-whole bar rather than three separate figures:
-            // the point of this arrangement is the proportion, which
-            // separate numbers make you compute yourself.
-            //
-            // This was a hand-rolled Row of Expandeds until 0.19.0,
-            // when PlinthProgress learned sections — the audit found
-            // the gap by noticing this block routing around it.
-            PlinthProgress.sections(
-              size: PlinthSize.sm,
-              sections: [
-                for (final s in _segments)
-                  PlinthProgressSection(
-                    value: s.share / 10,
-                    color: s.color,
-                    label: s.label,
-                  ),
-              ],
-            ),
-            PlinthGroup(
-              gap: PlinthSize.md,
-              children: [
-                for (final s in _segments)
-                  PlinthGroup(
-                    gap: PlinthSize.xs,
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: theme.shaded(s.color, 6),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      PlinthText(s.label, size: PlinthSize.xs),
-                    ],
-                  ),
-              ],
-            ),
+            for (final s in _segments)
+              PlinthGroup(
+                gap: PlinthSize.xs,
+                wrap: false,
+                children: [
+                  PlinthColorSwatch(color: s.color, size: PlinthSize.xs),
+                  PlinthText(s.label, size: PlinthSize.xs, color: 'gray'),
+                ],
+              ),
           ],
         ),
       ),
@@ -4047,59 +4028,34 @@ class StatLeaderboardExample extends StatelessWidget {
 class StatTileRowExample extends StatelessWidget {
   const StatTileRowExample({super.key});
 
-  static const _stats = [
-    (label: 'Revenue', value: r'$13,456', delta: '+12.4%', up: true),
-    (label: 'Active users', value: '2,340', delta: '+3.1%', up: true),
-    (label: 'Churn', value: '1.8%', delta: '-0.4%', up: false),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    // `higherIsBetter: false` on churn is the whole point: a falling
+    // churn number is the best news on the board, and the version of
+    // this block before the move painted it red.
+    return const PlinthStatGrid(
       width: 560,
-      child: PlinthSimpleGrid(
-        columns: 3,
-        children: [
-          for (final stat in _stats)
-            PlinthPaper(
-              withBorder: true,
-              p: PlinthSize.md,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  PlinthText(
-                    stat.label.toUpperCase(),
-                    size: PlinthSize.xs,
-                    color: 'gray',
-                    weight: FontWeight.w700,
-                  ),
-                  const SizedBox(height: 8),
-                  PlinthTitle(stat.value, order: 3),
-                  const SizedBox(height: 8),
-                  PlinthGroup(
-                    gap: PlinthSize.xs,
-                    children: [
-                      Icon(
-                        stat.up ? Icons.trending_up : Icons.trending_down,
-                        size: 14,
-                        color:
-                            context.plinth.color(stat.up ? 'green' : 'red', 6),
-                      ),
-                      PlinthText(
-                        stat.delta,
-                        size: PlinthSize.xs,
-                        color: stat.up ? 'green' : 'red',
-                        weight: FontWeight.w600,
-                      ),
-                      const PlinthText('vs last month',
-                          size: PlinthSize.xs, color: 'gray'),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-        ],
-      ),
+      tiles: [
+        PlinthStatTile(
+          label: 'Revenue',
+          value: r'$13,456',
+          delta: '12.4%',
+          trend: PlinthTrend.up,
+        ),
+        PlinthStatTile(
+          label: 'Active users',
+          value: '2,340',
+          delta: '3.1%',
+          trend: PlinthTrend.up,
+        ),
+        PlinthStatTile(
+          label: 'Churn',
+          value: '1.8%',
+          delta: '0.4%',
+          trend: PlinthTrend.down,
+          higherIsBetter: false,
+        ),
+      ],
     );
   }
 }
@@ -4164,28 +4120,14 @@ class StatWithProgressExample extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 320,
-      child: PlinthPaper(
-        withBorder: true,
-        p: PlinthSize.md,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                PlinthText('Storage used', weight: FontWeight.w600),
-                PlinthBadge('Pro', color: 'grape'),
-              ],
-            ),
-            const SizedBox(height: 4),
-            const PlinthText('68 GB of 100 GB',
-                size: PlinthSize.sm, color: 'gray'),
-            const SizedBox(height: 16),
-            const PlinthProgress(value: 0.68),
-            const SizedBox(height: 12),
-            PlinthAnchor('Manage plan', size: PlinthSize.sm, onTap: () {}),
-          ],
-        ),
+      child: PlinthStatTile(
+        label: 'Storage used',
+        uppercaseLabel: false,
+        value: '68 GB',
+        caption: 'of 100 GB',
+        badge: const PlinthBadge('Pro', color: 'grape'),
+        visual: const PlinthProgress(value: 0.68),
+        action: PlinthAnchor('Manage plan', size: PlinthSize.sm, onTap: () {}),
       ),
     );
   }

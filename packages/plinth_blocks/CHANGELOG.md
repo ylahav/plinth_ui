@@ -130,6 +130,17 @@ Unreleased. The first blocks, and the shape the rest will follow.
   `Column` rather than a sliver arrangement, because the header never
   moves: there is no collapse behaviour to tune, and the body gets a
   bounded height so a plain `ListView` works inside it.
+- `PlinthStatTile` and `PlinthStatGrid` — a dashboard figure with a
+  label, a value, a movement and room for a bar, ring or breakdown
+  under it. **Direction and sentiment are separate**: `trend` says
+  which way it went, `higherIsBetter` says whether that is good. The
+  version this replaced had one flag, so churn falling 0.4% rendered
+  red with a downward arrow — bad news about the best number on the
+  board. The movement is also spoken: each tile is one semantics node
+  reading "Churn, 1.8%, down 0.4%", because a green arrow is not
+  information anyone can hear. The arrow's colour resolves through
+  `readableOn` rather than the raw `color(ramp, 6)` the showcase used,
+  which sits under the floor for a 14px mark on white.
 
 ### Notes
 

@@ -59,6 +59,8 @@ Every Page Sections arrangement, plus the navigation and page chrome:
 | `PlinthSidebar` | A nav rail: sections, sub-levels, collapsible to icons |
 | `PlinthPageHeader` | Breadcrumbs, a real heading, actions, and a row beneath |
 | `PlinthStickyHeader` | A header that stays while the body under it scrolls |
+| `PlinthStatTile` | A dashboard figure that knows up from good |
+| `PlinthStatGrid` | Those tiles in a row that becomes a column |
 
 ```dart
 PlinthSignInBlock(
