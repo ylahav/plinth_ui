@@ -1,8 +1,8 @@
 # Pre-1.0 audit — Plinth against Mantine
 
 The gap lists in [COMPONENTS.md](COMPONENTS.md) and [SHOWCASE.md](SHOWCASE.md)
-answer *"what is missing?"* — and as of 0.18.0 the answer is "nothing
-that isn't a deliberate scope call". This document answers the harder
+answer *"what is missing?"* — and since 0.18.0 the answer has been
+"nothing that isn't a deliberate scope call". This document answers the harder
 question underneath a 1.0: **of the components that exist, how much of
 each one exists?**
 
@@ -44,61 +44,77 @@ them here so the same question isn't re-litigated per component.
 | `*Props` pass-throughs (`inputProps`, `portalProps`, …) | none | These exist because React composes by spreading props onto inner DOM nodes |
 | `leftSection` / `rightSection` | `leadingIcon` / `trailing` | See the naming section — the *concept* is kept, the names are not consistent yet |
 
-## Tier 1 — real gaps a 1.0 shouldn't ship with
+## Tier 1 — the gaps a 1.0 shouldn't ship with
 
-Ranked by how often an app hits them.
+**Four of the six are closed, and this section said otherwise for
+several releases.** It was written at 0.19.0 and read as a list of
+open blockers long after four of them shipped — which is worse than
+having the gaps, because a reader deciding whether to adopt was being
+told about holes that had been filled. Re-checked against source at
+1.3.0; every status line below names what was grepped.
 
-### 1. No loading state anywhere
-`PlinthButton` and `PlinthActionIcon` have no `loading`, and no input
-has `loading`/`loadingPosition`. A form that submits over a network is
-the ordinary case, and right now every app using this library has to
-swap the child for a `PlinthLoader` itself and remember to keep the
-button's width from jumping. Mantine has it on both buttons and every
-input.
+| # | Gap | Status at 1.3.0 |
+|---|---|---|
+| 1 | No loading state anywhere | **Partly.** Buttons done, inputs open |
+| 2 | Progress takes one value, not sections | **Closed** |
+| 3 | Slider has no marks | **Closed** |
+| 4 | Tooltip can't be positioned | **Closed** (0.19.0, as a divergence) |
+| 5 | Nothing in the select family is clearable | **Partly.** 5 of 7 |
+| 6 | `radius` and `size` cover only part of the library | **Closed** (0.19.0 / 0.23.0) |
 
-**Cost:** small on `PlinthButton` (a spinner in place of the leading
-icon, width held), larger to do consistently across the input family.
+### 1. Loading state — **buttons done, the input family still open**
+`PlinthButton` and `PlinthActionIcon` both take `loading` now. No input
+does: `loadingPosition` appears nowhere in the library, against
+Mantine having it on every input.
 
-### 2. `PlinthProgress` and `PlinthRingProgress` take one value, not sections
-Mantine's take `sections` — several coloured segments summing to the
-whole. The evidence that this matters is in this repo: the **Stat
-breakdown** showcase block hand-rolls a segmented bar out of `Row` +
-`Expanded` + `ClipRRect`, because the component couldn't express it.
-When a demo has to route around a component, that's the component's
-bug.
+So the original complaint — "a form that submits over a network is the
+ordinary case" — is half answered. The submit button holds its width
+and shows a spinner; the fields beside it cannot show that they are
+waiting on anything. `PlinthAsyncButton` in `plinth_blocks` covers the
+button half again at the block level.
 
-### 3. `PlinthSlider` has no marks
-Mantine's `marks` puts labelled ticks under the track;
-`restrictToMarks` snaps to them. Ours has `divisions` (the snap) and a
-drag label, but no marks. Again the showcase proves it — the **Slider
-with marks** block draws its own row of labels under a slider and
-aligns them by hand.
+**Cost of the rest:** the input family shares chrome through
+`PlinthTextInput`, so this is one implementation and a prop on each
+wrapper, not eleven.
 
-### 4. `PlinthTooltip` can't be positioned — **done in 0.19.0, partly**
-`PlinthPopover`, `PlinthMenu` and `PlinthHoverCard` all take
-`position`. `PlinthTooltip` did not — it was always placed the same
-way, with a fixed 400ms delay besides.
+### 2. `PlinthProgress` and `PlinthRingProgress` take one value, not sections — **closed**
+Both have a `.sections` named constructor taking
+`List<PlinthProgressSection>`.
 
-It now takes `position`, `offset`, `openDelay` and `color`. **`position`
-has two values, not four**: Flutter's tooltip decides its own horizontal
-placement and exposes only a vertical preference, so `left`/`right`
-would mean re-deriving hover, long-press, focus and dismissal on our own
-overlay — the work the component exists to avoid. Flutter already flips
-to the opposite side when the preferred one won't fit, which was the
-part that actually mattered near a screen edge.
+The evidence cited here was that the **Stat breakdown** showcase block
+hand-rolled a segmented bar out of `Row` + `Expanded` + `ClipRRect`.
+It no longer does — it calls `PlinthProgress.sections`, which is the
+check that the component actually replaced the workaround rather than
+sitting beside it.
+
+### 3. `PlinthSlider` has no marks — **closed**
+`marks` takes `List<PlinthSliderMark>` and `restrictToMarks` snaps to
+them. The **Slider with marks** block that used to draw its own row of
+labels now passes `marks:`.
+
+### 4. `PlinthTooltip` can't be positioned — **closed in 0.19.0, as a divergence**
+It takes `position`, `offset`, `openDelay` and `color`. **`position`
+has two values, not four**: Flutter's tooltip decides its own
+horizontal placement and exposes only a vertical preference, so
+`left`/`right` would mean re-deriving hover, long-press, focus and
+dismissal on our own overlay — the work the component exists to avoid.
+Flutter already flips to the opposite side when the preferred one won't
+fit, which was the part that actually mattered near a screen edge.
 
 Recorded as a divergence rather than a gap: if a caller genuinely needs
 a tooltip beside its target, `PlinthHoverCard` is the four-sided
 component and takes arbitrary content.
 
-### 5. Nothing in the select family is clearable
-`clearable`/`onClear` appears on Mantine's Select, MultiSelect,
-TagsInput, FileInput, ColorInput, Cascader and Autocomplete. Plinth has
-it on none of them. "I picked a value and now want none" is a normal
-thing to want, and the caller currently has to build the clear affordance
-outside the field.
+### 5. Nothing in the select family is clearable — **5 of 7 now**
+`clearable`/`onClear` is on `PlinthSelect`, `PlinthMultiSelect`,
+`PlinthTagsInput`, `PlinthFileInput` and `PlinthAutocomplete`.
 
-### 6. `radius` and `size` cover only part of the library — **radius done in 0.19.0**
+**Still absent on `PlinthColorInput` and `PlinthCascader`** — the last
+two, and the last genuine component gap in the library. Nothing about
+either makes it harder; they were simply not in the batch that closed
+the other five.
+
+### 6. `radius` and `size` cover only part of the library — **closed**
 `radius` was accepted by 41 of ~112 components. The theme defines a
 radius scale and `defaultRadius`, so the ones that didn't take it
 weren't unstyled — they were un-overridable, with no pattern to what
@@ -112,9 +128,9 @@ loader's dots, a splitter's handle — and adding the prop there would be
 answering a question nobody asks. Every default is unchanged, which is
 what the tests pin in both directions.
 
-~~**`size` is still open**~~ — **closed in 0.23.0**, and the guess that
-"two of those are really the naming question in disguise" was right.
-The 0.20.0 rules decided it; this applied them.
+`size` closed in 0.23.0, and the guess that "two of those are really
+the naming question in disguise" was right. The 0.20.0 rules decided
+it; this applied them.
 
 | Component | Call |
 |---|---|
@@ -125,6 +141,17 @@ The 0.20.0 rules decided it; this applied them.
 
 Two of the three "built" rows turned out to be bug fixes wearing a
 prop's clothes, which is the section below.
+
+### What is actually left
+
+Two things, both small:
+
+- `loading` on the input family (item 1)
+- `clearable` on `PlinthColorInput` and `PlinthCascader` (item 5)
+
+**Neither blocks a 1.0** on the reading this document opened with — a
+component with the right name and a third of its behaviour. Both are
+one prop on a component that otherwise does its whole job.
 
 ## Tier 2 — closed
 
@@ -319,10 +346,17 @@ than a silent behaviour change.
 
 A proposal, not a decision:
 
-1. ~~**Tier 1 closed.**~~ Done in 0.19.0 — loading states, progress
-   sections, slider marks, tooltip position, clearable fields, and
-   `radius` coverage. `size` coverage was carried forward and finally
-   closed in 0.23.0, which is the last of Tier 1 to land.
+1. **Tier 1 — four of six closed.** Progress sections, slider marks,
+   tooltip position and `radius` landed in 0.19.0; `size` coverage was
+   carried forward and closed in 0.23.0.
+
+   **This item said "Tier 1 closed" for several releases and was
+   wrong.** Loading states shipped on buttons only, never on the input
+   family, and `clearable` reached five of the seven select-family
+   components rather than all seven. Both were counted as done here
+   because the release that started them was the release this line was
+   written in. Corrected at 1.3.0 against source; the two remainders
+   are named at the end of the Tier 1 section above.
 2. ~~**The naming table applied.**~~ Done in 0.20.0, and it is the last
    breaking change planned before 1.0.
 3. ~~**Tier 2 triaged**, not necessarily done.~~ Triaged in 0.21.0 and
@@ -343,7 +377,7 @@ A proposal, not a decision:
    ~~Still worth doing: the overlay components (menu, popover, drawer,
    modal), which no image covers because each needs an interaction
    pumped first.~~ **Done** — eight images in
-   `plinth_overlay_golden_test.dart`, 42 across eight files.
+   `plinth_overlay_golden_test.dart`, 43 across eight files.
 
    The interaction turned out to be the smaller half of the problem: a
    controller opened and a `pumpAndSettle` is one line. The real
@@ -355,9 +389,11 @@ A proposal, not a decision:
    rather than a crop, and therefore also makes the page something the
    helper has to paint.
 
-**With that, every item on this list is closed** — and Tier 3 followed
-in 0.24.0, so all three tiers are now triaged. What remains before 1.0
-is not a gap list:
+**With that, every item on this list is triaged** — and Tier 3 followed
+in 0.24.0, so all three tiers are done being *found*. Two Tier 1 props
+are still unbuilt, as above; neither is a component missing most of
+itself, which is what this audit set out to catch. What remains before
+1.0 is not a gap list:
 
 1. ~~**Keyboard navigation on `PlinthTabs`**~~ — done in 0.25.0, on
    `PlinthSegmentedControl` too. `PlinthStepper` was assessed and left
@@ -371,7 +407,9 @@ is not a gap list:
 
 **This list is now empty.** Everything this audit set out to find has
 been found, and everything it found has been built or written down as a
-deliberate exclusion. What remains before 1.0 is the release itself.
+deliberate exclusion — bar the two props named in Tier 1, which are
+written down here rather than built. What remains before 1.0 is those
+two and the release itself.
 
 Beta, by contrast, is where the library is now: the API is stable
 enough to build against, and the remaining changes are additive except
@@ -379,7 +417,7 @@ for the naming table.
 
 **What comes after 1.0 is a different question**, and this document is
 not the place for it: this one asked how complete each *component* is,
-and the answer is "complete". The gaps that remain are in the token
+and the answer is "complete, bar two props on three components". The gaps that remain are in the token
 layer, in accessibility evidence, in `plinth_hooks`, and in the eleven
 Mantine packages scoped out at the top of this file. Those are
 inventoried and sequenced in

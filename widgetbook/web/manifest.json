@@ -1,11 +1,11 @@
 {
-    "name": "plinth_widgetbook",
-    "short_name": "plinth_widgetbook",
+    "name": "Plinth UI — component gallery",
+    "short_name": "Plinth gallery",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Every Plinth UI component in every state, with knobs.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

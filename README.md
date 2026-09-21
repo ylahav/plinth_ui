@@ -325,6 +325,11 @@ leaves the docs drifting from the code:
    covers them, and they are the only thing in this repo that uses the
    packages the way somebody else's app would. A rename that every
    package test survives can still break all four
+9. If you added or removed a **block**, `example/web/index.html` quotes
+   the count too — the landing page is the whole public description of
+   this project to a crawler, since Flutter web renders to canvas.
+   `example/test/web_metadata_test.dart` fails if it drifts, so this is
+   a reminder rather than a thing to remember
 
 Then verify exactly what CI verifies, from the repo root:
 

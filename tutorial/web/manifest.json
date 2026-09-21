@@ -1,11 +1,11 @@
 {
-    "name": "plinth_tutorial",
-    "short_name": "plinth_tutorial",
+    "name": "Larder — a Plinth UI tutorial app",
+    "short_name": "Larder",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "The finished app from the six-part Plinth UI tutorial.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

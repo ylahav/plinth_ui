@@ -1,11 +1,11 @@
 {
-    "name": "plinth_example",
-    "short_name": "plinth_example",
+    "name": "Plinth UI",
+    "short_name": "Plinth UI",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "117 Flutter components on a design-token engine that holds a WCAG contrast floor through a rebrand.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
