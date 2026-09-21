@@ -72,6 +72,7 @@ Every Page Sections arrangement, plus the navigation and page chrome:
 | `PlinthSecretField` | A server-issued value, masked, copyable, regenerable |
 | `PlinthAsyncButton` | Runs a future, and cannot be started twice |
 | `PlinthConfirmButton` | Asks once, in place, and says so out loud |
+| `PlinthKanbanBoard` | A board whose every move works without a drag |
 
 ```dart
 PlinthSignInBlock(

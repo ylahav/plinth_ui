@@ -2030,64 +2030,32 @@ class KanbanDropExample extends StatefulWidget {
 }
 
 class _KanbanDropExampleState extends State<KanbanDropExample> {
-  final Map<String, List<String>> _columns = {
-    'To do': ['Write tests'],
-    'Done': ['Set up CI'],
+  final Map<String, List<String>> _cards = {
+    'todo': ['Write tests'],
+    'done': ['Set up CI'],
   };
 
   void _move(String card, String from, String to) {
-    if (from == to) return;
     setState(() {
-      _columns[from]!.remove(card);
-      _columns[to]!.add(card);
+      _cards[from]!.remove(card);
+      _cards[to]!.add(card);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return PlinthGroup(
-      gap: PlinthSize.sm,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        for (final column in _columns.keys)
-          SizedBox(
-            width: 180,
-            child: DragTarget<({String card, String from})>(
-              onAcceptWithDetails: (details) =>
-                  _move(details.data.card, details.data.from, column),
-              builder: (context, candidate, rejected) => PlinthPaper(
-                p: PlinthSize.sm,
-                withBorder: true,
-                child: PlinthStack(
-                  gap: PlinthSize.xs,
-                  children: [
-                    PlinthText(
-                      column,
-                      size: PlinthSize.sm,
-                      weight: FontWeight.w700,
-                      // Highlighting the target is the whole feedback
-                      // loop of a drag — without it you are guessing.
-                      color: candidate.isEmpty ? 'gray' : 'blue',
-                    ),
-                    for (final card in _columns[column]!)
-                      Draggable<({String card, String from})>(
-                        data: (card: card, from: column),
-                        feedback: PlinthBadge(card, color: 'blue'),
-                        childWhenDragging: const SizedBox.shrink(),
-                        child: PlinthPaper(
-                          p: PlinthSize.xs,
-                          withBorder: true,
-                          child: PlinthText(card, size: PlinthSize.sm),
-                        ),
-                      ),
-                    if (_columns[column]!.isEmpty)
-                      const PlinthText('Drop here',
-                          size: PlinthSize.xs, color: 'gray'),
-                  ],
-                ),
-              ),
-            ),
-          ),
+    // Every move is available without a drag: each card is a button
+    // that lists the other columns. A board that only accepts a pointer
+    // gesture cannot be operated by keyboard at all.
+    return PlinthKanbanBoard(
+      onMove: _move,
+      columns: [
+        PlinthKanbanColumn(
+          id: 'todo',
+          title: 'To do',
+          cards: _cards['todo']!,
+        ),
+        PlinthKanbanColumn(id: 'done', title: 'Done', cards: _cards['done']!),
       ],
     );
   }

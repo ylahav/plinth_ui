@@ -210,6 +210,15 @@ Unreleased. The first blocks, and the shape the rest will follow.
   appears**. Pressing "Delete project" and having the control silently
   become three controls is the failure this avoids: a screen reader
   user would hear nothing and find the button gone.
+- `PlinthKanbanBoard` — columns of cards that move between them.
+  **Every move is available without a drag.** A drag is a pointer
+  gesture, so a board that only accepts one cannot be operated by
+  keyboard at all — WCAG 2.1.1, the same class of defect the `F-4` pass
+  found by ear on this library's own anchors. Each card is a button
+  that opens a menu of the other columns; dragging is the shortcut
+  rather than the mechanism. A completed move is announced, because a
+  card that silently leaves one column and appears in another has told
+  the person watching and nobody else.
 
 ### Notes
 
