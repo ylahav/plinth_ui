@@ -219,6 +219,18 @@ Unreleased. The first blocks, and the shape the rest will follow.
   rather than the mechanism. A completed move is announced, because a
   card that silently leaves one column and appears in another has told
   the person watching and nobody else.
+- `PlinthArticleCard` — stacked, horizontal or over an image, plus
+  the dense list that is the same card without a picture. **The
+  headline is a heading**: a feed is a list of documents and a reader
+  skims it by heading, so a page of cards whose titles are bold text is
+  one undifferentiated run. The image is excluded from semantics — the
+  headline beside it already says what the article is.
+- `PlinthCommentThread` — comments and their replies, built on
+  `PlinthUserTile`. **The indent is only visual, so the nesting is said
+  as well as shown**; without that a reply and a top-level comment
+  sound identical. Nesting stops at `maxDepth`, because a thread that
+  indents forever runs out of page and a reply four levels in answers
+  something nobody can still see.
 
 ### Notes
 

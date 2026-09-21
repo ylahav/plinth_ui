@@ -25,7 +25,8 @@ with a real API, which an app installs and calls. Twenty-six are there
 so far: **the whole Page Sections category** — every one of its 32
 arrangements — plus the navbars, headers, footers, most of the stats,
 most of the people rows, the two structural inputs, the two
-behavioural buttons and the board of Application UI.
+behavioural buttons and the board of Application UI, and the article
+cards and comments of Blog UI.
 
 | Widget | Replaces |
 |---|---|
@@ -64,6 +65,8 @@ behavioural buttons and the board of Application UI.
 | `PlinthAsyncButton` | Async button |
 | `PlinthConfirmButton` | Inline confirm |
 | `PlinthKanbanBoard` | Kanban columns |
+| `PlinthArticleCard` | Simple, with author, horizontal, overlay, article list |
+| `PlinthCommentThread` | Single comment, Comment thread |
 
 Four error pages became one widget with four named constructors,
 because they differ only in their words. **Offline did not**, and that
@@ -72,8 +75,9 @@ page should keep working around a notice rather than replace itself
 with an apology. The showcase had already made that call; collapsing it
 into the error page would have thrown the decision away.
 
-**`example/lib/src/showcase/`** is where the other 47 still are — the
-rest of Application UI, and Blog UI — as
+**`example/lib/src/showcase/`** is where the other 40 still are — the
+rest of Application UI, and the quote card, author info and contents
+rails of Blog UI — as
 fixed arrangements built for the gallery — `onPressed: () {}`
 throughout, hardcoded copy, no way for a caller to pass anything in.
 They demonstrate that an arrangement works; they are not yet something

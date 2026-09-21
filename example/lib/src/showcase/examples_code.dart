@@ -194,33 +194,19 @@ class ArticleCardWithAuthorExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
-      width: 280,
-      child: PlinthCard(
-        withBorder: true,
-        footer: PlinthGroup(
-          gap: PlinthSize.xs,
-          children: [
-            PlinthAvatar(initials: 'YL', size: PlinthSize.sm),
-            PlinthText('Yair Lahav',
-                size: PlinthSize.xs, weight: FontWeight.w600),
-            PlinthText('· Jan 12', size: PlinthSize.xs, color: 'gray'),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            PlinthText('Publishing your first Flutter package',
-                weight: FontWeight.w600),
-            SizedBox(height: 4),
-            PlinthText(
-              'From pubspec.yaml to a green checkmark on pub.dev.',
-              size: PlinthSize.xs,
-              color: 'gray',
-            ),
-          ],
-        ),
+    return PlinthArticleCard(
+      width: 300,
+      category: const PlinthBadge('Engineering', color: 'blue'),
+      title: 'Why the contrast floor is checked at lookup time',
+      excerpt: 'Resolving colour when it is asked for, not when it is '
+          'defined.',
+      author: const PlinthUserTile(
+        initials: 'YL',
+        name: 'Yair Lahav',
+        size: PlinthSize.sm,
       ),
+      meta: '6 min',
+      onTap: () {},
     );
   }
 }
@@ -271,60 +257,28 @@ class ArticleListItemExample extends StatelessWidget {
   const ArticleListItemExample({super.key});
 
   static const _articles = [
-    (n: '01', title: 'Why the theme is a ThemeExtension', read: '4 min'),
-    (n: '02', title: 'Controlled components, and when not to', read: '7 min'),
-    (n: '03', title: 'Goldens catch what assertions cannot', read: '5 min'),
+    'Building a design system from scratch',
+    'Why the contrast floor is checked at lookup time',
+    'Shade mirroring, and why dark mode is not an inversion',
   ];
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.plinth;
-
+    // A dense feed: the same card with no picture, which is what a
+    // list of headlines actually is.
     return SizedBox(
-      width: 420,
-      child: PlinthPaper(
-        p: PlinthSize.md,
-        withBorder: true,
-        child: PlinthStack(
-          gap: PlinthSize.xs,
-          children: [
-            const PlinthText('Most read', weight: FontWeight.w700),
-            // Dense rows rather than cards: a "related articles" list
-            // is scanned, not browsed, so every pixel of chrome per
-            // item is one fewer item on screen.
-            for (final a in _articles) ...[
-              const PlinthDivider(),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 28,
-                    child: PlinthText(
-                      a.n,
-                      size: PlinthSize.lg,
-                      weight: FontWeight.w700,
-                      color: 'gray',
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        PlinthText(a.title, size: PlinthSize.sm),
-                        PlinthText(
-                          a.read,
-                          size: PlinthSize.xs,
-                          color: 'gray',
-                        ),
-                      ],
-                    ),
-                  ),
-                  Icon(Icons.chevron_right, size: 16, color: theme.textMuted),
-                ],
-              ),
-            ],
-          ],
-        ),
+      width: 460,
+      child: PlinthStack(
+        gap: PlinthSize.xs,
+        children: [
+          for (final article in _articles)
+            PlinthArticleCard(
+              layout: PlinthArticleLayout.horizontal,
+              title: article,
+              meta: '5 min',
+              onTap: () {},
+            ),
+        ],
       ),
     );
   }
@@ -828,39 +782,29 @@ class CommentThreadExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    // Indent marks the reply as a reply — the whole reason a thread
+    // reads differently to a list. It is also only visual, so the
+    // nesting is announced as well as shown.
+    return const PlinthCommentThread(
       width: 460,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const _ThreadComment(
-            initials: 'AB',
-            name: 'Ada Byron',
-            when: '2 hours ago',
-            body: 'Does the shade mirroring apply to custom palettes too, '
-                'or only the built-in ramps?',
-          ),
-          Padding(
-            // Indent marks the reply as a reply — the whole reason a
-            // thread reads differently to a list.
-            padding: const EdgeInsets.only(left: 32, top: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const _ThreadComment(
-                  initials: 'YL',
-                  name: 'Yair Lahav',
-                  when: '1 hour ago',
-                  body: 'Any ramp registered on the theme — mirroring is '
-                      'by shade index, not by colour name.',
-                ),
-                const SizedBox(height: 12),
-                PlinthAnchor('Reply', size: PlinthSize.xs, onTap: () {}),
-              ],
+      comments: [
+        PlinthCommentData(
+          initials: 'AB',
+          author: 'Ada Byron',
+          when: '2 hours ago',
+          body: 'Does the shade mirroring apply to custom palettes too, '
+              'or only the built-in ramps?',
+          replies: [
+            PlinthCommentData(
+              initials: 'YL',
+              author: 'Yair Lahav',
+              when: '1 hour ago',
+              body: 'Any ramp registered on the theme — mirroring is by '
+                  'shade index, not by colour name.',
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -1834,51 +1778,17 @@ class HorizontalArticleCardExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    // Horizontal rather than stacked: a feed of these fits far more
+    // articles on screen, and the image can shrink without the
+    // headline reflowing.
+    return const PlinthArticleCard(
       width: 460,
-      child: PlinthPaper(
-        p: PlinthSize.sm,
-        withBorder: true,
-        // Horizontal rather than stacked: a feed of these fits far
-        // more articles on screen, and the image can shrink without
-        // the headline reflowing.
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: const PlinthImage(
-                src: 'https://picsum.photos/seed/plinth-row/240/240',
-                width: 96,
-                height: 96,
-              ),
-            ),
-            const SizedBox(width: 12),
-            const Expanded(
-              child: PlinthStack(
-                gap: PlinthSize.xs,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  PlinthBadge('Engineering', color: 'blue'),
-                  PlinthText(
-                    'What a render object is actually for',
-                    weight: FontWeight.w700,
-                  ),
-                  PlinthText(
-                    'Most layout problems are solved by composition. '
-                    'A few are not, and knowing which is the skill.',
-                    size: PlinthSize.sm,
-                    color: 'gray',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  PlinthText('6 min read', size: PlinthSize.xs, color: 'gray'),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      layout: PlinthArticleLayout.horizontal,
+      title: 'Shade mirroring, and why dark mode is not an inversion',
+      excerpt: 'The ramps are shared between the themes; only the '
+          'chrome flips.',
+      meta: '4 min read',
+      image: PlinthImage(src: 'https://picsum.photos/seed/plinth-row/480/480'),
     );
   }
 }
@@ -2536,32 +2446,16 @@ class OverlayArticleCardExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
-      width: 300,
-      // Text over the photograph rather than beneath it. This only
-      // works because PlinthBackgroundImage lays a scrim between the
-      // two — over a light photo the same text would be unreadable.
-      child: PlinthBackgroundImage(
-        src: 'https://picsum.photos/seed/plinth-overlay/600/400',
-        height: 200,
-        alignment: Alignment.bottomLeft,
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: PlinthStack(
-            gap: PlinthSize.xs,
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              PlinthBadge('Travel', color: 'teal'),
-              PlinthText(
-                'Two days in Kyoto',
-                size: PlinthSize.lg,
-                weight: FontWeight.w700,
-              ),
-              PlinthText('12 August · 4 min read', size: PlinthSize.xs),
-            ],
-          ),
-        ),
+    // The scrim is doing real work: a headline over a photograph is
+    // legible or not depending on which photograph.
+    return const PlinthArticleCard(
+      width: 320,
+      layout: PlinthArticleLayout.overlay,
+      category: PlinthBadge('Field notes', color: 'grape'),
+      title: 'A week of listening to the library',
+      image: PlinthImage(
+        src: 'https://picsum.photos/seed/plinth-overlay/640/360',
+        fit: BoxFit.cover,
       ),
     );
   }
@@ -3187,36 +3081,20 @@ class SimpleArticleCardExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    // The headline is a heading, not bold text: a feed is a list of
+    // documents, and a reader skims it by heading.
+    return PlinthArticleCard(
       width: 280,
-      child: PlinthCard(
-        withBorder: true,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            PlinthAspectRatio(
-              ratio: 16 / 9,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFF0E6),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            const PlinthBadge('Design', color: 'orange'),
-            const SizedBox(height: 8),
-            const PlinthText('Building a design system from scratch',
-                weight: FontWeight.w600),
-            const SizedBox(height: 4),
-            const PlinthText(
-              'A practical guide to tokens, theming, and component APIs.',
-              size: PlinthSize.xs,
-              color: 'gray',
-            ),
-          ],
-        ),
+      category: const PlinthBadge('Design', color: 'orange'),
+      title: 'Building a design system from scratch',
+      excerpt: 'What we learned shipping one set of tokens to three '
+          'applications.',
+      meta: '12 Aug',
+      image: PlinthAspectRatio(
+        ratio: 16 / 9,
+        child: Container(color: context.plinth.shaded('orange', 0)),
       ),
+      onTap: () {},
     );
   }
 }
@@ -3266,42 +3144,20 @@ class SingleCommentExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return PlinthCommentThread(
       width: 460,
-      child: PlinthPaper(
-        withBorder: true,
-        p: PlinthSize.md,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const PlinthAvatar(initials: 'AB', size: PlinthSize.sm),
-                const SizedBox(width: 8),
-                const PlinthText('Ada Byron',
-                    weight: FontWeight.w600, size: PlinthSize.sm),
-                const SizedBox(width: 8),
-                const PlinthText('2 hours ago',
-                    size: PlinthSize.xs, color: 'gray'),
-                const Spacer(),
-                PlinthActionIcon(
-                  semanticLabel: 'More actions',
-                  icon: const Icon(Icons.more_horiz, size: 16),
-                  variant: PlinthVariant.subtle,
-                  onPressed: () {},
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            const PlinthText(
-              'The contrast work is the part I would have missed — a '
-              'colour being visible is not the same as it being '
-              'readable.',
-              size: PlinthSize.sm,
-            ),
+      comments: [
+        PlinthCommentData(
+          initials: 'AB',
+          author: 'Ada Byron',
+          when: '2 hours ago',
+          body: 'Does the shade mirroring apply to custom palettes too, '
+              'or only the built-in ramps?',
+          actions: [
+            PlinthAnchor('Reply', size: PlinthSize.xs, onTap: () {}),
           ],
         ),
-      ),
+      ],
     );
   }
 }

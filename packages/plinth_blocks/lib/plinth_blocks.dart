@@ -27,6 +27,8 @@ export 'src/auth/plinth_two_factor_block.dart';
 export 'src/board/plinth_kanban_board.dart';
 export 'src/contact/plinth_contact_block.dart';
 export 'src/contact/plinth_support_channels.dart';
+export 'src/content/plinth_article_card.dart';
+export 'src/content/plinth_comment.dart';
 export 'src/content/plinth_faq_block.dart';
 export 'src/data/plinth_goal_rings.dart';
 export 'src/data/plinth_leaderboard.dart';

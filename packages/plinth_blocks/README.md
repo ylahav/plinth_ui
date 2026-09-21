@@ -73,6 +73,8 @@ Every Page Sections arrangement, plus the navigation and page chrome:
 | `PlinthAsyncButton` | Runs a future, and cannot be started twice |
 | `PlinthConfirmButton` | Asks once, in place, and says so out loud |
 | `PlinthKanbanBoard` | A board whose every move works without a drag |
+| `PlinthArticleCard` | A feed entry — stacked, horizontal, or over an image |
+| `PlinthCommentThread` | Comments and replies, with the nesting said aloud |
 
 ```dart
 PlinthSignInBlock(
