@@ -1,0 +1,25 @@
+name: plinth_template_blog
+description: >-
+  Content and blog starter for Plinth UI — an article list, an article
+  with a table of contents that follows the scroll, and a comment
+  thread. Copy the directory and run `flutter create .`.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plinth_blocks:
+    path: ../../packages/plinth_blocks
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

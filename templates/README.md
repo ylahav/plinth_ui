@@ -8,6 +8,7 @@ screenshot, and not a snippet.
 |---|---|
 | [dashboard](dashboard/) | Sidebar shell, overview with charts, filterable orders table, settings form |
 | [account](account/) | Sign-in that can fail, then profile, security and team permissions |
+| [blog](blog/) | Article list, article with a derived table of contents, comment thread |
 
 ## How to use one
 
