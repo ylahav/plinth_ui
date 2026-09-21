@@ -1,0 +1,13 @@
+.dart_tool/
+.packages
+build/
+pubspec.lock
+pubspec_overrides.yaml
+
+# Platform folders are not committed. Run `flutter create .` to make them.
+android/
+ios/
+linux/
+macos/
+web/
+windows/

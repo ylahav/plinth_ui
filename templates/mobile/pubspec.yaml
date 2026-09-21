@@ -1,0 +1,27 @@
+name: plinth_template_mobile
+description: >-
+  Mobile list–detail starter for Plinth UI — a searchable list that
+  becomes a two-pane layout on a tablet, with detail as a route on a
+  phone. Copy the directory and run `flutter create .`.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plinth_blocks:
+    path: ../../packages/plinth_blocks
+  plinth_charts:
+    path: ../../packages/plinth_charts
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
