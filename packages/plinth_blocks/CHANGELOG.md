@@ -161,6 +161,15 @@ Unreleased. The first blocks, and the shape the rest will follow.
   the label with the palette key, so a green dot always arrives with
   "online" attached. A null presence renders no dot at all rather than
   a grey one, which would read as "offline" when it means "unknown".
+- `PlinthProfileCard` — centred it is a profile, left-aligned it is a
+  contact row, because those differ in alignment and in what fills the
+  middle rather than in what they are. Counts reuse `PlinthStatStrip`
+  and facts reuse `PlinthDataList`, so neither arrangement reimplements
+  a thing this package already had.
+- `PlinthMemberList` — a `PlinthUserTile` per person with their role as
+  a badge, and the rest of the team collapsed into a `PlinthOverflowList`
+  in the header. An empty team says so rather than rendering a blank
+  card, which reads as one that failed to load.
 
 ### Notes
 

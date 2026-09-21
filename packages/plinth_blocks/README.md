@@ -64,6 +64,8 @@ Every Page Sections arrangement, plus the navigation and page chrome:
 | `PlinthGoalRings` | Separate targets as rings, because they do not add up |
 | `PlinthLeaderboard` | A ranking whose bars are measured against the leader |
 | `PlinthUserTile` | A person: face, name, one line, and presence as a word |
+| `PlinthProfileCard` | A card about a person — centred profile or contact row |
+| `PlinthMemberList` | A team, with the people who didn't fit summarised |
 
 ```dart
 PlinthSignInBlock(

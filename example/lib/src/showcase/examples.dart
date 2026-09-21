@@ -673,57 +673,28 @@ class UserButtonExample extends StatelessWidget {
 class UserProfileCardExample extends StatelessWidget {
   const UserProfileCardExample({super.key});
 
-  static const _stats = [
-    (label: 'Posts', value: '128'),
-    (label: 'Followers', value: '2.4k'),
-    (label: 'Following', value: '312'),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return PlinthProfileCard(
       width: 300,
-      child: PlinthCard(
-        withBorder: true,
-        child: Column(
-          children: [
-            const PlinthAvatar(initials: 'YL', size: PlinthSize.xl),
-            const SizedBox(height: 12),
-            const PlinthTitle('Yair Lahav', order: 4),
-            const SizedBox(height: 4),
-            const PlinthBadge('Maintainer', color: 'grape'),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                // Expanded rather than spaceEvenly: three fixed-width
-                // columns overflow a narrow card once the labels grow
-                // or the text scale does.
-                for (final stat in _stats)
-                  Expanded(
-                    child: Column(
-                      children: [
-                        PlinthText(stat.value, weight: FontWeight.w700),
-                        PlinthText(
-                          stat.label,
-                          size: PlinthSize.xs,
-                          color: 'gray',
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            PlinthButton(
-              fullWidth: true,
-              variant: PlinthVariant.light,
-              onPressed: () {},
-              child: const Text('Follow'),
-            ),
-          ],
+      initials: 'YL',
+      name: 'Yair Lahav',
+      badge: const PlinthBadge('Maintainer', color: 'grape'),
+      // The counts come from PlinthStatStrip, which merges each value
+      // with its label — "128 posts" rather than a number and a
+      // caption that happen to be stacked.
+      stats: const [
+        PlinthStat(value: '128', label: 'Posts'),
+        PlinthStat(value: '2.4k', label: 'Followers'),
+        PlinthStat(value: '312', label: 'Following'),
+      ],
+      actions: [
+        PlinthButton(
+          fullWidth: true,
+          onPressed: () {},
+          child: const Text('Follow'),
         ),
-      ),
+      ],
     );
   }
 }
@@ -2464,55 +2435,39 @@ class _UserMenuExampleState extends State<UserMenuExample> {
 class MemberListExample extends StatelessWidget {
   const MemberListExample({super.key});
 
-  static const _members = [
-    (initials: 'AN', name: 'Alice Nguyen', role: 'Owner', color: 'green'),
-    (initials: 'BK', name: 'Ben Kaur', role: 'Editor', color: 'blue'),
-    (initials: 'CD', name: 'Cara Diaz', role: 'Viewer', color: 'gray'),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return const PlinthMemberList(
       width: 360,
-      child: PlinthPaper(
-        p: PlinthSize.md,
-        withBorder: true,
-        child: PlinthStack(
-          gap: PlinthSize.sm,
-          children: [
-            const Row(
-              children: [
-                Expanded(
-                  child: PlinthText('Members', weight: FontWeight.w700),
-                ),
-                // The people beyond the first few, without a second row.
-                PlinthOverflowList(
-                  children: [
-                    PlinthAvatar(initials: 'AN', size: PlinthSize.sm),
-                    PlinthAvatar(initials: 'BK', size: PlinthSize.sm),
-                    PlinthAvatar(initials: 'CD', size: PlinthSize.sm),
-                    PlinthAvatar(initials: 'EF', size: PlinthSize.sm),
-                    PlinthAvatar(initials: 'GH', size: PlinthSize.sm),
-                  ],
-                ),
-              ],
-            ),
-            for (final m in _members)
-              // A Row rather than PlinthGroup: Group wraps by default,
-              // and Expanded's parent data means nothing to a Wrap.
-              Row(
-                children: [
-                  PlinthAvatar(initials: m.initials, size: PlinthSize.sm),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: PlinthText(m.name, size: PlinthSize.sm),
-                  ),
-                  PlinthBadge(m.role, color: m.color),
-                ],
-              ),
-          ],
+      title: 'Members',
+      members: [
+        PlinthMember(
+          initials: 'AN',
+          name: 'Alice Nguyen',
+          role: 'Owner',
+          roleColor: 'green',
         ),
-      ),
+        PlinthMember(
+          initials: 'BK',
+          name: 'Ben Kaur',
+          role: 'Editor',
+          roleColor: 'blue',
+        ),
+        PlinthMember(
+          initials: 'CD',
+          name: 'Cara Diaz',
+          role: 'Viewer',
+          roleColor: 'gray',
+        ),
+      ],
+      // The people beyond the first few, without a second row.
+      overflowAvatars: [
+        PlinthAvatar(initials: 'AN', size: PlinthSize.sm),
+        PlinthAvatar(initials: 'BK', size: PlinthSize.sm),
+        PlinthAvatar(initials: 'CD', size: PlinthSize.sm),
+        PlinthAvatar(initials: 'EF', size: PlinthSize.sm),
+        PlinthAvatar(initials: 'GH', size: PlinthSize.sm),
+      ],
     );
   }
 }
