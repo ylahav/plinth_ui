@@ -107,7 +107,7 @@ class PlinthPasswordStrength extends StatelessWidget {
           value: strength,
           size: PlinthSize.xs,
           color: _band,
-          semanticLabel: 'Password strength',
+          semanticLabel: context.plinthStrings.passwordStrength,
         ),
         if (showChecklist)
           for (final rule in all)

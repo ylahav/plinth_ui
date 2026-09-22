@@ -4,6 +4,7 @@ import 'package:plinth_core/plinth_core.dart';
 
 import 'plinth_alpha_slider.dart';
 import 'plinth_hue_slider.dart';
+import 'plinth_localizations.dart';
 import 'plinth_stack.dart';
 
 /// A full colour picker — saturation/brightness area, hue, and
@@ -211,7 +212,7 @@ class _SaturationBrightnessAreaState extends State<_SaturationBrightnessArea> {
     final pure = HSVColor.fromAHSV(1, hsv.hue, 1, 1).toColor();
 
     return Semantics(
-      label: 'Saturation and brightness',
+      label: context.plinthStrings.saturationAndBrightness,
       value: '${(hsv.saturation * 100).round()}% saturation, '
           '${(hsv.value * 100).round()}% brightness',
       child: Focus(

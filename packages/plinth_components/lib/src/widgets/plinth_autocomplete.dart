@@ -4,6 +4,7 @@ import 'package:plinth_core/plinth_core.dart';
 import 'field_chrome.dart';
 import 'plinth_close_button.dart';
 import 'plinth_highlight.dart';
+import 'plinth_localizations.dart';
 
 /// A text field with suggestions, matching Mantine's `Autocomplete`.
 ///
@@ -308,7 +309,7 @@ class _PlinthAutocompleteState extends State<PlinthAutocomplete> {
                       widget.enabled)
                     PlinthCloseButton(
                       size: PlinthSize.xs,
-                      semanticLabel: 'Clear search',
+                      semanticLabel: context.plinthStrings.clearSearch,
                       onPressed: () {
                         _controller.clear();
                         widget.onChanged('');

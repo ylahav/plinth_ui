@@ -4,6 +4,7 @@ import 'package:plinth_core/plinth_core.dart';
 
 import 'field_chrome.dart';
 import 'plinth_close_button.dart';
+import 'plinth_localizations.dart';
 import 'plinth_pill.dart';
 
 /// Free-text entry that turns what you type into removable chips,
@@ -235,7 +236,7 @@ class _PlinthTagsInputState extends State<PlinthTagsInput> {
                     widget.enabled)
                   PlinthCloseButton(
                     size: PlinthSize.xs,
-                    semanticLabel: 'Clear all tags',
+                    semanticLabel: context.plinthStrings.clearAllTags,
                     onPressed: () => widget.onChanged(const []),
                   ),
               ],

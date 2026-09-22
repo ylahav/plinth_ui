@@ -3,6 +3,7 @@ import 'package:plinth_core/plinth_core.dart';
 import 'package:plinth_hooks/plinth_hooks.dart';
 
 import 'plinth_close_button.dart';
+import 'plinth_localizations.dart';
 import 'plinth_text.dart';
 
 /// Where a [PlinthDialog] sits on screen.
@@ -175,7 +176,7 @@ class _PlinthDialogState extends State<PlinthDialog> {
                           if (widget.withCloseButton)
                             PlinthCloseButton(
                               onPressed: widget.controller.close,
-                              semanticLabel: 'Close dialog',
+                              semanticLabel: context.plinthStrings.closeDialog,
                             ),
                         ],
                       ),

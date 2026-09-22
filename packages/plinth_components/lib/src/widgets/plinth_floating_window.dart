@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
 import 'plinth_close_button.dart';
+import 'plinth_localizations.dart';
 import 'plinth_text.dart';
 
 /// A draggable, resizable panel, matching Mantine's `FloatingWindow`.
@@ -191,7 +192,7 @@ class _PlinthFloatingWindowState extends State<PlinthFloatingWindow> {
                     behavior: HitTestBehavior.opaque,
                     onPanUpdate: (d) => _resize(d.delta, constraints),
                     child: Semantics(
-                      label: 'Resize window',
+                      label: context.plinthStrings.resizeWindow,
                       child: SizedBox(
                         width: 16,
                         height: 16,

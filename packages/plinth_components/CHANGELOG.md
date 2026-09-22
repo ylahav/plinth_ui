@@ -11,6 +11,47 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## Unreleased
+
+### Added
+
+- **`PlinthLocalizations` and `PlinthStrings` — a translation seam.**
+
+  Twenty-one strings in this package were hardcoded, and **every one
+  was a screen-reader label**: "Previous slide", "Close dialog",
+  "Dismiss alert". A visible English string in a Spanish app is obvious
+  to whoever sees it. An audible one is not — the person it fails is
+  the person who cannot see that it is wrong. They are now all
+  overridable.
+
+  ```dart
+  MaterialApp(
+    localizationsDelegates: [
+      PlinthLocalizations.override(
+        const PlinthStrings(closeDialog: 'Cerrar diálogo'),
+      ),
+    ],
+  )
+  ```
+
+  **This ships the seam, not translations.** No `.arb` files, no
+  generated code, and **no `intl` dependency** — which `plinth_blocks`
+  promises in its README and this keeps. The library provides the one
+  thing an app cannot add from outside; the app provides the language.
+
+  Three properties it deliberately has:
+
+  - **It works with nothing registered.** `PlinthLocalizations.of`
+    returns the English defaults rather than asserting, unlike
+    `MaterialLocalizations.of`. A library whose accessibility labels
+    vanish unless you opt in has made things worse, and most apps will
+    never add a delegate.
+  - **An explicit parameter still wins.** The seam sits beneath the
+    existing API; nothing about the per-widget label parameters
+    changed.
+  - **Every field has a default**, so overriding two of twenty-one is
+    two lines rather than a file.
+
 ## 1.4.0
 
 ### Added

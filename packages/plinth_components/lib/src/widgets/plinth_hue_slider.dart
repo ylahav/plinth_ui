@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
 import 'color_slider_base.dart';
+import 'plinth_localizations.dart';
 
 /// Picks a hue from the full colour wheel, matching Mantine's
 /// `HueSlider`.
@@ -66,7 +67,7 @@ class PlinthHueSlider extends StatelessWidget {
       step: 1 / 72,
       height: height,
       radius: radius,
-      semanticLabel: 'Hue',
+      semanticLabel: context.plinthStrings.hue,
       semanticFormatter: (v) => '${(v * 360).round()} degrees',
     );
   }

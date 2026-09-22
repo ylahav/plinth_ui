@@ -119,7 +119,7 @@ starting, not evidence that somebody did.
 | | What it is | Notes |
 |---|---|---|
 | **CLI** | `plinth theme create` — scaffold a light/dark theme from one seed colour | A thin shell over `PlinthTheme.fromSeed`, which does not exist yet either. Forui already ships a CLI, so this is catch-up |
-| **i18n / l10n** | Translatable strings in the components that have them | **A hard blocker for non-English-first teams**, and the one item here with no ticket anywhere before now. Distinct from RTL, which already works — RTL is layout, this is strings and formats |
+| ~~**i18n / l10n**~~ | **The seam is in.** `PlinthLocalizations` + `PlinthStrings`, with every widget falling back to it and every explicit label parameter still winning | Twenty-one strings were hardcoded, and **every one was a screen-reader label** — an English string a Spanish user could not see was wrong. Those are now overridable. **No translations ship, and no `intl` dependency was taken**: the library provides the seam an app cannot add from outside, and the app provides the language. Still open: locale-aware **number and date formatting** (10 `toStringAsFixed` sites), and **plurals** in the four interpolated announcements, both of which genuinely need `intl` and belong in the app |
 | **Theme previewer** | Try seed colours against real components in a browser before installing | Mostly the token explorer below, with a component view attached. Reuse the Widgetbook build |
 
 ### Tokens

@@ -3,6 +3,7 @@ import 'package:plinth_core/plinth_core.dart';
 
 import 'field_chrome.dart';
 import 'plinth_close_button.dart';
+import 'plinth_localizations.dart';
 
 /// A single option for [PlinthSelect].
 class PlinthSelectOption<T> {
@@ -162,7 +163,7 @@ class PlinthSelect<T> extends StatelessWidget {
                 else if (clearable && value != null && enabled)
                   PlinthCloseButton(
                     size: PlinthSize.xs,
-                    semanticLabel: 'Clear selection',
+                    semanticLabel: context.plinthStrings.clearSelection,
                     onPressed: () => onChanged?.call(null),
                   ),
               ],

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:plinth_core/plinth_core.dart';
 
 import 'field_chrome.dart';
+import 'plinth_localizations.dart';
 
 /// A numeric input matching Mantine's `NumberInput`: a text field
 /// restricted to numbers, with increment/decrement buttons, sharing
@@ -190,13 +191,13 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
               ],
               _StepButton(
                 icon: Icons.remove,
-                semanticLabel: 'Decrease',
+                semanticLabel: context.plinthStrings.decrease,
                 enabled: widget.enabled && !atMin,
                 onTap: () => _step(-widget.step),
               ),
               _StepButton(
                 icon: Icons.add,
-                semanticLabel: 'Increase',
+                semanticLabel: context.plinthStrings.increase,
                 enabled: widget.enabled && !atMax,
                 onTap: () => _step(widget.step),
               ),

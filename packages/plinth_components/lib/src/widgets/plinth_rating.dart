@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'plinth_localizations.dart';
+
 /// A star rating selector matching Mantine's `Rating`.
 ///
 /// Pass `onChanged: null` (the default) for a read-only display —
@@ -105,7 +107,7 @@ class PlinthRating extends StatelessWidget {
     // so the stars are excluded and the widget speaks for itself.
     return Semantics(
       container: true,
-      label: 'Rating',
+      label: context.plinthStrings.rating,
       value: '${_ratingText(value)} of $count',
       child: ExcludeSemantics(child: row),
     );

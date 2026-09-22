@@ -3,6 +3,7 @@ import 'package:plinth_core/plinth_core.dart';
 
 import 'field_chrome.dart';
 import 'plinth_close_button.dart';
+import 'plinth_localizations.dart';
 import 'plinth_pill.dart';
 
 /// A single option for [PlinthMultiSelect].
@@ -280,7 +281,7 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
                         widget.enabled)
                       PlinthCloseButton(
                         size: PlinthSize.xs,
-                        semanticLabel: 'Clear all selections',
+                        semanticLabel: context.plinthStrings.clearAllSelections,
                         onPressed: () => widget.onChanged(const []),
                       ),
                   ],

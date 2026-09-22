@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:plinth_core/plinth_core.dart';
 
 import 'plinth_action_icon.dart';
+import 'plinth_localizations.dart';
 
 /// A slide carousel matching Mantine's `Carousel`: swipeable slides
 /// with optional arrows, dot indicators, and looping.
@@ -269,13 +270,13 @@ class _PlinthCarouselState extends State<PlinthCarousel> {
                   _control(
                     alignment: Alignment.centerLeft,
                     icon: Icons.chevron_left,
-                    label: 'Previous slide',
+                    label: context.plinthStrings.previousSlide,
                     onPressed: _canGoBack ? () => _step(-1) : null,
                   ),
                   _control(
                     alignment: Alignment.centerRight,
                     icon: Icons.chevron_right,
-                    label: 'Next slide',
+                    label: context.plinthStrings.nextSlide,
                     onPressed: _canGoForward ? () => _step(1) : null,
                   ),
                 ],

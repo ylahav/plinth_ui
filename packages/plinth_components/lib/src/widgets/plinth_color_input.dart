@@ -4,6 +4,7 @@ import 'package:plinth_hooks/plinth_hooks.dart';
 
 import 'plinth_close_button.dart';
 import 'plinth_color_picker.dart';
+import 'plinth_localizations.dart';
 import 'plinth_popover.dart';
 import 'plinth_text_input.dart';
 
@@ -202,7 +203,7 @@ class _PlinthColorInputState extends State<PlinthColorInput> {
       trailing: widget.clearable && widget.onClear != null && enabled
           ? PlinthCloseButton(
               size: PlinthSize.xs,
-              semanticLabel: 'Clear colour',
+              semanticLabel: context.plinthStrings.clearColor,
               onPressed: widget.onClear,
             )
           : null,
@@ -214,7 +215,7 @@ class _PlinthColorInputState extends State<PlinthColorInput> {
         width: 240,
         target: Semantics(
           button: true,
-          label: 'Choose colour',
+          label: context.plinthStrings.chooseColor,
           child: Container(
             width: swatchSize,
             height: swatchSize,

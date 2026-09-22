@@ -3,6 +3,7 @@ import 'package:plinth_core/plinth_core.dart';
 
 import 'field_chrome.dart';
 import 'plinth_close_button.dart';
+import 'plinth_localizations.dart';
 
 /// A file-selection field matching Mantine's `FileInput`, sharing
 /// [PlinthTextInput]'s label/description/error chrome.
@@ -198,7 +199,7 @@ class PlinthFileInput<T> extends StatelessWidget {
                       onTap: () => onChanged(const []),
                       child: PlinthCloseButton(
                         size: PlinthSize.xs,
-                        semanticLabel: 'Clear selected files',
+                        semanticLabel: context.plinthStrings.clearSelectedFiles,
                         onPressed: () => onChanged(const []),
                       ),
                     ),

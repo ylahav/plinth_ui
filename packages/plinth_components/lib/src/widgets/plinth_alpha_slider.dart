@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
 import 'color_slider_base.dart';
+import 'plinth_localizations.dart';
 
 /// Picks an opacity for a given colour, matching Mantine's
 /// `AlphaSlider`.
@@ -57,7 +58,7 @@ class PlinthAlphaSlider extends StatelessWidget {
       checkerboard: true,
       height: height,
       radius: radius,
-      semanticLabel: 'Opacity',
+      semanticLabel: context.plinthStrings.opacity,
       semanticFormatter: (v) => '${(v * 100).round()}%',
     );
   }

@@ -3,6 +3,7 @@ import 'package:plinth_core/plinth_core.dart';
 
 import 'plinth_announce.dart';
 import 'plinth_close_button.dart';
+import 'plinth_localizations.dart';
 import 'plinth_text.dart';
 
 /// A colored callout box matching Mantine's `Alert`: an icon, optional
@@ -126,7 +127,7 @@ class PlinthAlert extends StatelessWidget {
               onPressed: onClose,
               size: PlinthSize.md,
               color: color,
-              semanticLabel: 'Dismiss alert',
+              semanticLabel: context.plinthStrings.dismissAlert,
             ),
           ],
         ],

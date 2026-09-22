@@ -60,6 +60,7 @@ export 'src/widgets/plinth_indicator.dart';
 export 'src/widgets/plinth_json_input.dart';
 export 'src/widgets/plinth_kbd.dart';
 export 'src/widgets/plinth_list.dart';
+export 'src/widgets/plinth_localizations.dart';
 export 'src/widgets/plinth_loader.dart';
 export 'src/widgets/plinth_loading_overlay.dart';
 export 'src/widgets/plinth_ltr.dart';

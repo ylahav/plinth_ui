@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'plinth_localizations.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -114,7 +115,7 @@ class _PlinthAngleSliderState extends State<PlinthAngleSlider> {
     return Semantics(
       slider: true,
       enabled: _enabled,
-      label: 'Angle',
+      label: context.plinthStrings.angle,
       value: '${degrees.round()} degrees',
       // Required alongside the actions below: the framework asserts on
       // a value with no stepped counterpart to announce.
