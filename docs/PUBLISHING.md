@@ -77,6 +77,21 @@ something they fixed last week.
 
 ### What the `1.3.1` release proved
 
+**It is not the local cache, and four releases of this file said it
+was.** The advice below — clear `.cache/plinth_*-versions.json` — was
+written three times and is close enough to work by accident, because
+clearing forces a refetch and by then some time has passed.
+
+What actually happens: after 1.5.0 the cache file was rewritten *by a
+fresh fetch* and still contained only the previous version, while
+`pub.dev/api/packages/<name>` already listed the new one. **pub's
+resolution endpoint lags its own API by minutes.** Deleting a local
+file cannot fix a stale answer from the server.
+
+So the remedy is to **wait** and retry, not to clear anything. Budget a
+few minutes between publishing and believing any resolve, and do not
+read the first failure as a broken release.
+
 **The stale version cache is not a one-off, it is the default.** It bit
 1.3.0's verification and it bit this one in the same place: a project
 created *after* the release still resolved `plinth_components` to
