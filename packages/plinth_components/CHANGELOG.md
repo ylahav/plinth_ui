@@ -11,7 +11,13 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
-## Unreleased
+## 1.3.1
+
+**A patch, not a minor.** Nothing was added to the public API —
+`PlinthFocusRing` is internal, like `PlinthFieldChrome` — and nothing
+changed shape or size. What changed is that five controls now paint
+something when the keyboard is on them, which they should always have
+done.
 
 ### Fixed
 

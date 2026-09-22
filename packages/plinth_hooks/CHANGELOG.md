@@ -11,6 +11,17 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.3.1
+
+No change in this package. Released in lockstep with
+`plinth_components` 1.3.1, which fixes five controls that were
+reachable by keyboard and invisible once reached — WCAG 2.4.7.
+
+The constraint on this package is deliberately still `^1.3.0`. Nothing
+here moved, so a consumer who already has 1.3.0 has no reason to be
+made to take 1.3.1; lockstep is a release convention, not a reason to
+force an upgrade that buys nobody anything.
+
 ## 1.3.0
 
 No change in this package. Released in lockstep with `plinth_core`
