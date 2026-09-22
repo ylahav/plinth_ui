@@ -9,15 +9,22 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.3.0** | 1.3.1 |
-| `plinth_hooks` | **1.3.0** | 1.3.1 |
-| `plinth_components` | **1.3.0** | 1.3.1 |
+| `plinth_core` | **1.3.1** | 1.3.1 |
+| `plinth_hooks` | **1.3.1** | 1.3.1 |
+| `plinth_components` | **1.3.1** | 1.3.1 |
 | `plinth_blocks` | **0.2.0** | 0.2.0 |
 | `plinth_charts` | **0.1.0** | 0.1.0 |
 
 **1.3.0 shipped 21 Sep 2026**, in dependency order, alongside the first
 releases of `plinth_blocks` and `plinth_charts` — five packages in one
-sequence, the largest release so far. **`plinth_blocks` 0.2.0 shipped 22 Sep 2026** —
+sequence, the largest release so far. **1.3.1 shipped 22 Sep 2026** — the focus-visibility fix, as a patch,
+with both leaf packages carried along saying "no change in this
+package". Their constraint in `plinth_components` stayed at `^1.3.0`
+rather than moving to `^1.3.1`, because neither leaf moved and lockstep
+is a release convention rather than a reason to force an upgrade that
+buys nobody anything.
+
+**`plinth_blocks` 0.2.0 shipped 22 Sep 2026** —
 four input blocks, one command, no dependency sequence. The first
 release to exercise the reason that package sits outside the lockstep
 at all: a block catalogue grows on its own cadence, and this one did so
@@ -39,6 +46,26 @@ seconds end to end.
 > and in CI for reasons that have nothing to do with the change under
 > test. Update that column by hand when you publish. It is the one
 > number in this file still held up by nothing but attention.
+
+### What the `1.3.1` release proved
+
+**The stale version cache is not a one-off, it is the default.** It bit
+1.3.0's verification and it bit this one in the same place: a project
+created *after* the release still resolved `plinth_components` to
+1.3.0, because `flutter create` runs `pub get` and caches the listing
+before you ever ask for anything. Clearing
+`.cache/plinth_*-versions.json` and re-resolving fixed it both times.
+
+Assume the first resolve after a release is lying. It is not evidence
+of a broken publish, and it is not evidence of a working one either.
+
+**The check worth running is the one that uses the thing you fixed.**
+A resolve proves versions exist; a compile proves the API is intact.
+Neither proves the *fix* shipped. For 1.3.1 that meant copying
+`plinth_focus_visible_test.dart`'s assertion into a scratch project and
+running it against the packages as published — five controls, pixels
+before and after Tab. That is the only check that would have caught a
+fix left behind in the working tree.
 
 ### What the `1.3.0` release proved
 
