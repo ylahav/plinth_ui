@@ -13,6 +13,35 @@ changes; from `1.0.0` they cannot.
 
 ## Unreleased
 
+### Fixed
+
+- **`PlinthAutocomplete` and `PlinthMultiSelect` opened lists a
+  keyboard could not use.** Arrows did nothing, Enter did nothing, and
+  the only way to choose an option was to click it. **WCAG 2.1.1** —
+  the same guideline `F-4` broke.
+
+  No existing test looked there, and none would have: Tab reachability
+  and focus order are both perfectly satisfied by a field whose *list*
+  is inert. The list is not in the focus tree at all, which is the
+  correct design and also the reason it was invisible.
+
+  Arrow keys now move a highlight, Enter commits it, Escape closes, and
+  Home/End jump. Each move is announced — unlike the loading spinner
+  and the character counter, which stay silent on purpose. The
+  difference is that here the user pressed a key *to find out*, so
+  silence is the failure rather than the courtesy.
+
+  **`PlinthSelect` was never affected**, since it wraps Material's
+  `DropdownButton`. The ROADMAP said "the dropdown family leaks Tab";
+  that was one component too broad, and there is now a regression test
+  pinning the one it wrongly implicated.
+
+- **`PlinthMultiSelect` did not take the keyboard when opened.** An
+  `InkWell` does not focus on tap, so clicking to open left focus
+  wherever it was and the first arrow key went nowhere — the list
+  looked inert to anyone who reached for the keyboard after reaching
+  for the mouse.
+
 ### Added
 
 - **`PlinthLocalizations` and `PlinthStrings` — a translation seam.**

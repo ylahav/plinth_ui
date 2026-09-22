@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
 import 'field_chrome.dart';
+import 'plinth_announce.dart';
 import 'plinth_close_button.dart';
 import 'plinth_highlight.dart';
+import 'option_keyboard.dart';
 import 'plinth_localizations.dart';
 
 /// A text field with suggestions, matching Mantine's `Autocomplete`.
@@ -100,6 +102,13 @@ class _PlinthAutocompleteState extends State<PlinthAutocomplete> {
   OverlayEntry? _entry;
   bool _isFocused = false;
 
+  /// Which match the keyboard is on, or null for none.
+  ///
+  /// A highlight rather than focus: the keyboard stays in the text
+  /// field because the user is still typing, so nothing in the list is
+  /// focusable. Enter commits whatever this points at.
+  int? _active;
+
   @override
   void initState() {
     super.initState();
@@ -152,6 +161,7 @@ class _PlinthAutocompleteState extends State<PlinthAutocomplete> {
     if (!widget.enabled || _matches.isEmpty) return;
 
     final theme = context.plinth;
+    final colorKey = widget.color ?? theme.primaryColor;
     final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
     final fieldWidth =
         (_fieldKey.currentContext?.findRenderObject() as RenderBox?)
@@ -186,19 +196,26 @@ class _PlinthAutocompleteState extends State<PlinthAutocomplete> {
                 vertical: theme.spacing[PlinthSize.xs]! * 0.5,
               ),
               children: [
-                for (final option in _matches)
+                for (final (index, option) in _matches.indexed)
                   InkWell(
                     key: ValueKey('plinth_autocomplete_option_$option'),
                     onTap: () => _select(option),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: theme.spacing[PlinthSize.sm]!,
-                        vertical: theme.spacing[PlinthSize.xs]!,
-                      ),
-                      child: PlinthHighlight(
-                        option,
-                        highlight: [_controller.text.trim()],
-                        size: widget.size,
+                    // Not `focused`: nothing here holds focus, which is
+                    // the point of the pattern. `selected` is what a
+                    // reader has a word for.
+                    child: Container(
+                      color:
+                          index == _active ? theme.shaded(colorKey, 0) : null,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: theme.spacing[PlinthSize.sm]!,
+                          vertical: theme.spacing[PlinthSize.xs]!,
+                        ),
+                        child: PlinthHighlight(
+                          option,
+                          highlight: [_controller.text.trim()],
+                          size: widget.size,
+                        ),
                       ),
                     ),
                   ),
@@ -214,9 +231,32 @@ class _PlinthAutocompleteState extends State<PlinthAutocomplete> {
   void _hideOptions() {
     _entry?.remove();
     _entry = null;
+    _active = null;
+  }
+
+  /// Moves the highlight and says what it landed on.
+  ///
+  /// Announced on every arrow press, unlike the loading spinner and the
+  /// character counter, which are deliberately silent. The difference
+  /// is that the user pressed a key *to find out* — silence here is the
+  /// failure, where there it was the courtesy.
+  void _highlight(int? index) {
+    // Deliberately no `setState`. The highlight is painted only in the
+    // overlay, and rebuilding the field would recreate the `InkWell`
+    // that currently holds focus — which drops it, so the *next* arrow
+    // key goes nowhere. The same shape of bug as the focus ring's.
+    _active = index;
+    _entry?.markNeedsBuild();
+    if (index != null && index < _matches.length) {
+      PlinthAnnounce.say(context, _matches[index]);
+    }
   }
 
   void _refreshOptions() {
+    // The matches just changed, so an index into the previous list
+    // points at something else now. Highlighting the wrong row is
+    // worse than highlighting none.
+    _active = null;
     if (_focusNode.hasFocus) _showOptions();
   }
 
@@ -251,75 +291,88 @@ class _PlinthAutocompleteState extends State<PlinthAutocomplete> {
       label: widget.label,
       textField: true,
       child: PlinthFieldChrome(
-          label: widget.label,
-          description: widget.description,
-          error: widget.error,
-          size: widget.size,
-          mainAxisSize: MainAxisSize.min,
-          child: CompositedTransformTarget(
-            link: _layerLink,
-            child: Container(
-              key: _fieldKey,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(resolvedRadius),
-                border: Border.all(
-                  color: borderColor,
-                  width: plinthFieldBorderWidth(theme,
-                      hasError: hasError, focused: _isFocused),
+        label: widget.label,
+        description: widget.description,
+        error: widget.error,
+        size: widget.size,
+        mainAxisSize: MainAxisSize.min,
+        child: Focus(
+            // `onKeyEvent` rather than a traversal policy: the handler
+            // claims only the keys it acts on, so typing and Tab carry
+            // on to the field underneath.
+            onKeyEvent: (node, event) => plinthHandleOptionKeys(
+                  event,
+                  count: _entry == null ? 0 : _matches.length,
+                  active: _active,
+                  onActiveChanged: _highlight,
+                  onSelect: (i) => _select(_matches[i]),
+                  onDismiss: _hideOptions,
                 ),
-                color: widget.enabled ? theme.surface : theme.surfaceMuted,
-              ),
-              padding:
-                  EdgeInsets.symmetric(horizontal: theme.spacing[widget.size]!),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Semantics(
-                      label: widget.label,
-                      child: TextField(
-                        controller: _controller,
-                        focusNode: _focusNode,
-                        enabled: widget.enabled,
-                        style: TextStyle(fontSize: fontSize),
-                        onChanged: (text) {
-                          widget.onChanged(text);
-                          // Rebuild the overlay so the list narrows as they
-                          // type.
-                          _refreshOptions();
-                        },
-                        decoration: InputDecoration(
-                          hintText: widget.placeholder,
-                          border: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: theme.spacing[widget.size]! * 0.5,
+            child: CompositedTransformTarget(
+              link: _layerLink,
+              child: Container(
+                key: _fieldKey,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(resolvedRadius),
+                  border: Border.all(
+                    color: borderColor,
+                    width: plinthFieldBorderWidth(theme,
+                        hasError: hasError, focused: _isFocused),
+                  ),
+                  color: widget.enabled ? theme.surface : theme.surfaceMuted,
+                ),
+                padding: EdgeInsets.symmetric(
+                    horizontal: theme.spacing[widget.size]!),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Semantics(
+                        label: widget.label,
+                        child: TextField(
+                          controller: _controller,
+                          focusNode: _focusNode,
+                          enabled: widget.enabled,
+                          style: TextStyle(fontSize: fontSize),
+                          onChanged: (text) {
+                            widget.onChanged(text);
+                            // Rebuild the overlay so the list narrows as they
+                            // type.
+                            _refreshOptions();
+                          },
+                          decoration: InputDecoration(
+                            hintText: widget.placeholder,
+                            border: InputBorder.none,
+                            isDense: true,
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: theme.spacing[widget.size]! * 0.5,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  // The controller is cleared as well as the value
-                  // reported: this field owns the text it displays, so
-                  // reporting an empty string alone would leave the old
-                  // text sitting there.
-                  if (widget.loading)
-                    PlinthFieldLoader(size: widget.size)
-                  else if (widget.clearable &&
-                      _controller.text.isNotEmpty &&
-                      widget.enabled)
-                    PlinthCloseButton(
-                      size: PlinthSize.xs,
-                      semanticLabel: context.plinthStrings.clearSearch,
-                      onPressed: () {
-                        _controller.clear();
-                        widget.onChanged('');
-                        _refreshOptions();
-                      },
-                    ),
-                ],
+                    // The controller is cleared as well as the value
+                    // reported: this field owns the text it displays, so
+                    // reporting an empty string alone would leave the old
+                    // text sitting there.
+                    if (widget.loading)
+                      PlinthFieldLoader(size: widget.size)
+                    else if (widget.clearable &&
+                        _controller.text.isNotEmpty &&
+                        widget.enabled)
+                      PlinthCloseButton(
+                        size: PlinthSize.xs,
+                        semanticLabel: context.plinthStrings.clearSearch,
+                        onPressed: () {
+                          _controller.clear();
+                          widget.onChanged('');
+                          _refreshOptions();
+                        },
+                      ),
+                  ],
+                ),
               ),
-            ),
-          )),
+            )),
+      ),
     );
   }
 }

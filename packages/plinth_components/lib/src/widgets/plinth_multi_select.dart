@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
 import 'field_chrome.dart';
+import 'option_keyboard.dart';
+import 'plinth_announce.dart';
 import 'plinth_close_button.dart';
 import 'plinth_localizations.dart';
 import 'plinth_pill.dart';
@@ -97,6 +99,21 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
   final _fieldKey = GlobalKey();
   OverlayEntry? _entry;
 
+  /// The trigger's own node, so opening the list can put the keyboard
+  /// somewhere the arrow keys are answered.
+  ///
+  /// Without it, clicking to open leaves focus wherever it was — an
+  /// `InkWell` does not take focus on tap — so the first Down after a
+  /// click goes nowhere and the list looks inert to anyone who reaches
+  /// for the keyboard after reaching for the mouse.
+  final _focusNode = FocusNode();
+
+  /// Which unselected option the keyboard is on, or null for none.
+  ///
+  /// A highlight rather than focus: the trigger keeps the keyboard, so
+  /// Escape and Tab still mean what they mean to a field.
+  int? _active;
+
   List<PlinthMultiSelectOption<T>> get _unselected =>
       widget.options.where((o) => !widget.value.contains(o.value)).toList();
 
@@ -110,7 +127,9 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
 
   void _openDropdown() {
     if (!widget.enabled || _unselected.isEmpty) return;
+    _focusNode.requestFocus();
     final theme = context.plinth;
+    final colorKey = widget.color ?? theme.primaryColor;
     final resolvedRadius = theme.radius[widget.radius ?? theme.defaultRadius]!;
     final renderBox =
         _fieldKey.currentContext?.findRenderObject() as RenderBox?;
@@ -146,21 +165,22 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
                   padding: EdgeInsets.symmetric(
                       vertical: theme.spacing[PlinthSize.xs]! * 0.5),
                   children: [
-                    for (final option in _unselected)
+                    for (final (index, option) in _unselected.indexed)
                       InkWell(
                         key: ValueKey(
                             'plinth_multi_select_option_${option.value}'),
-                        onTap: () {
-                          widget.onChanged([...widget.value, option.value]);
-                          setState(() {});
-                          _closeDropdown();
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: theme.spacing[PlinthSize.sm]!,
-                            vertical: theme.spacing[PlinthSize.xs]!,
+                        onTap: () => _pick(index),
+                        child: Container(
+                          color: index == _active
+                              ? theme.shaded(colorKey, 0)
+                              : null,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: theme.spacing[PlinthSize.sm]!,
+                              vertical: theme.spacing[PlinthSize.xs]!,
+                            ),
+                            child: Text(option.label),
                           ),
-                          child: Text(option.label),
                         ),
                       ),
                   ],
@@ -175,9 +195,30 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
     setState(() {});
   }
 
+  /// Moves the highlight and says what it landed on.
+  void _highlight(int? index) {
+    // Deliberately no `setState`. The highlight is painted only in the
+    // overlay, and rebuilding the field would recreate the `InkWell`
+    // that currently holds focus — which drops it, so the *next* arrow
+    // key goes nowhere. The same shape of bug as the focus ring's.
+    _active = index;
+    _entry?.markNeedsBuild();
+    if (index != null && index < _unselected.length) {
+      PlinthAnnounce.say(context, _unselected[index].label);
+    }
+  }
+
+  void _pick(int index) {
+    final option = _unselected[index];
+    widget.onChanged([...widget.value, option.value]);
+    setState(() {});
+    _closeDropdown();
+  }
+
   void _closeDropdown() {
     _entry?.remove();
     _entry = null;
+    _active = null;
     if (mounted) setState(() {});
   }
 
@@ -188,6 +229,7 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
   @override
   void dispose() {
     _entry?.remove();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -219,72 +261,84 @@ class _PlinthMultiSelectState<T> extends State<PlinthMultiSelect<T>> {
           child: Semantics(
             button: true,
             label: widget.label,
-            child: InkWell(
-              // Kept as-is: existing tests and callers target this key.
-              key: const Key('plinth_multi_select_field'),
-              onTap: _toggleDropdown,
-              borderRadius: BorderRadius.circular(resolvedRadius),
-              child: Container(
-                constraints: BoxConstraints(
-                    minHeight: theme.spacing[widget.size]! * 2.2),
-                padding: EdgeInsets.symmetric(
-                  horizontal: theme.spacing[PlinthSize.xs]!,
-                  vertical: theme.spacing[PlinthSize.xs]! * 0.6,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(resolvedRadius),
-                  border: Border.all(
-                      color: borderColor,
-                      width: theme.borderWidth(
-                          hasError ? PlinthSize.md : PlinthSize.xs)),
-                  color: widget.enabled ? theme.surface : theme.surfaceMuted,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: widget.value.isEmpty
-                          ? Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 4, vertical: 6),
-                              child: Text(
-                                widget.placeholder ?? '',
-                                style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: theme.fontSizes[widget.size]),
+            child: Focus(
+              focusNode: _focusNode,
+              onKeyEvent: (node, event) => plinthHandleOptionKeys(
+                event,
+                count: _entry == null ? 0 : _unselected.length,
+                active: _active,
+                onActiveChanged: _highlight,
+                onSelect: _pick,
+                onDismiss: _closeDropdown,
+              ),
+              child: InkWell(
+                // Kept as-is: existing tests and callers target this key.
+                key: const Key('plinth_multi_select_field'),
+                onTap: _toggleDropdown,
+                borderRadius: BorderRadius.circular(resolvedRadius),
+                child: Container(
+                  constraints: BoxConstraints(
+                      minHeight: theme.spacing[widget.size]! * 2.2),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: theme.spacing[PlinthSize.xs]!,
+                    vertical: theme.spacing[PlinthSize.xs]! * 0.6,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(resolvedRadius),
+                    border: Border.all(
+                        color: borderColor,
+                        width: theme.borderWidth(
+                            hasError ? PlinthSize.md : PlinthSize.xs)),
+                    color: widget.enabled ? theme.surface : theme.surfaceMuted,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: widget.value.isEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 4, vertical: 6),
+                                child: Text(
+                                  widget.placeholder ?? '',
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: theme.fontSizes[widget.size]),
+                                ),
+                              )
+                            : Wrap(
+                                spacing: 4,
+                                runSpacing: 4,
+                                children: [
+                                  for (final v in widget.value)
+                                    PlinthPill(
+                                      selectedLabels[v] ?? '$v',
+                                      size: widget.size == PlinthSize.xs
+                                          ? PlinthSize.xs
+                                          : PlinthSize.sm,
+                                      color: colorKey,
+                                      onRemove: widget.enabled
+                                          ? () => _removeValue(v)
+                                          : null,
+                                    ),
+                                ],
                               ),
-                            )
-                          : Wrap(
-                              spacing: 4,
-                              runSpacing: 4,
-                              children: [
-                                for (final v in widget.value)
-                                  PlinthPill(
-                                    selectedLabels[v] ?? '$v',
-                                    size: widget.size == PlinthSize.xs
-                                        ? PlinthSize.xs
-                                        : PlinthSize.sm,
-                                    color: colorKey,
-                                    onRemove: widget.enabled
-                                        ? () => _removeValue(v)
-                                        : null,
-                                  ),
-                              ],
-                            ),
-                    ),
-                    // Each pill removes itself; this empties the field in
-                    // one move, which is the difference between undoing a
-                    // choice and starting the filter over.
-                    if (widget.loading)
-                      PlinthFieldLoader(size: widget.size)
-                    else if (widget.clearable &&
-                        widget.value.isNotEmpty &&
-                        widget.enabled)
-                      PlinthCloseButton(
-                        size: PlinthSize.xs,
-                        semanticLabel: context.plinthStrings.clearAllSelections,
-                        onPressed: () => widget.onChanged(const []),
                       ),
-                  ],
+                      // Each pill removes itself; this empties the field in
+                      // one move, which is the difference between undoing a
+                      // choice and starting the filter over.
+                      if (widget.loading)
+                        PlinthFieldLoader(size: widget.size)
+                      else if (widget.clearable &&
+                          widget.value.isNotEmpty &&
+                          widget.enabled)
+                        PlinthCloseButton(
+                          size: PlinthSize.xs,
+                          semanticLabel:
+                              context.plinthStrings.clearAllSelections,
+                          onPressed: () => widget.onChanged(const []),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
