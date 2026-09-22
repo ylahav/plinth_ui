@@ -145,7 +145,7 @@ starting, not evidence that somebody did.
 | | What it is |
 |---|---|
 | **Roving focus** | Arrow-key navigation within a control. Starts by extracting the logic welded inside `PlinthTabs`. **This is the right fix for the dropdown family**, which leaks Tab — a focus *trap* there would be wrong, because focus belongs in the text field while arrows move a highlighted option |
-| **A second keyboard sweep** | `F-4` was found by ear, not by any test, because every accessibility test here walks the semantics tree and the tree was right. `plinth_keyboard_reachable_test.dart` now covers Tab reachability; **focus order and focus visibility are still unchecked** anywhere |
+| ~~**A second keyboard sweep**~~ | **Done.** `F-4` was found by ear, not by any test, because every accessibility test here walks the semantics tree and the tree was right. All three keyboard questions now have coverage: `plinth_keyboard_reachable_test.dart` (can Tab reach it), `plinth_focus_visible_test.dart` (can you see where it landed — found five controls that were reachable and invisible, fixed in 1.3.1), and `plinth_focus_order_test.dart` + `plinth_blocks/test/focus_order_test.dart` (is the route between them sane — **no defects found**, and the check carries a negative control so that means something) |
 
 ### Trust and distribution
 
