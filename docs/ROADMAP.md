@@ -91,14 +91,33 @@ else built** is worth more than any further feature.
 
 ## Next
 
-**1. The token hierarchy.** Formalise primitive / semantic /
-component tiers. The gate on everything in interop, and the last
-structural piece.
+**1. ~~The token hierarchy.~~ Done.** `PlinthToken`, `PlinthTier` and
+`theme.tokens` — every token addressable by a stable path and sorted
+into primitive or semantic. Purely additive; no field changed.
 
-**2. DTCG import.** `PlinthTheme.fromDtcg(json)`. **Re-ranked up:**
-it is the one planned item neither competitor has, which makes it the
-strongest remaining differentiator rather than only an audience-B
-enabler. Depends on the token hierarchy above.
+**Two tiers, not three.** Component tokens (`button.primary.background`)
+do not exist yet, and an empty tier would have described an intention
+rather than the theme. The enum gains a value when that lands.
+
+**One thing it does not claim.** A `PlinthTheme` stores `surface` as a
+`Color`, not as `{color.gray.0}`, so the enumeration reports resolved
+values rather than references. A reference layer is a separate change
+with a breaking edge, and claiming a reference the theme does not hold
+would turn a round-tripping export into one that quietly flattens.
+
+**2. ~~DTCG import.~~ Done, and export with it.** `PlinthDtcg.parse`
+and `PlinthDtcg.export`. A mapping rather than a translation, because
+the hierarchy already names types the way DTCG names them — which is
+most of why it had to land first.
+
+`parse` returns a **result, not a theme**: what it applied and what it
+ignored, with a reason for each. An importer that silently drops half a
+file produces a theme that looks right and is not, and the person who
+finds out is whoever trusted the colours. References are resolved, and
+a cycle is reported rather than overflowing the stack.
+
+Still open: emitting *references* rather than resolved values on
+export, which needs the reference layer above.
 
 **3. One real app, built by somebody else.** The only thing that
 produces undiscounted evidence. The validation app's author is also

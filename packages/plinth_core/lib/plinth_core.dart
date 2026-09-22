@@ -3,4 +3,6 @@ library plinth_core;
 
 export 'src/material_bridge.dart';
 export 'src/plinth_theme.dart';
+export 'src/plinth_dtcg.dart';
+export 'src/plinth_token.dart';
 export 'src/tokens.dart';
