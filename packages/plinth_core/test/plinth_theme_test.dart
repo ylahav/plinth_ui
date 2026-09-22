@@ -83,11 +83,18 @@ void main() {
       // they became tokens. Pinning them here is what makes that
       // extraction provably appearance-neutral — if one drifts, the
       // light theme changed and the goldens are stale.
+      //
+      // `border` has since drifted on purpose. It was #CED4DA, which
+      // is 1.49:1 on `surface` and 1.26:1 on `surfaceSunken`, and it
+      // is the resting boundary of every input in the library — WCAG
+      // 1.4.11 asks 3:1 of that. `theme.validate()` found it against
+      // this library's own defaults. This line is still here to catch
+      // the *next* drift, which will not be deliberate.
       final theme = PlinthTheme.defaultTheme;
       expect(theme.surface, const Color(0xFFFFFFFF));
       expect(theme.surfaceMuted, const Color(0xFFF1F3F5));
       expect(theme.surfaceSunken, const Color(0xFFE9ECEF));
-      expect(theme.border, const Color(0xFFCED4DA));
+      expect(theme.border, const Color(0xFF808890));
       expect(theme.borderMuted, const Color(0xFFDEE2E6));
       expect(theme.text, const Color(0xDD000000)); // was Colors.black87
       expect(theme.textMuted, const Color(0x8A000000)); // was black54

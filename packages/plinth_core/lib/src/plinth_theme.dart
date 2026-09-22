@@ -204,7 +204,18 @@ const Map<PlinthSize, double> kDefaultFontSizes = {
 const Color kLightSurface = Color(0xFFFFFFFF);
 const Color kLightSurfaceMuted = Color(0xFFF1F3F5);
 const Color kLightSurfaceSunken = Color(0xFFE9ECEF);
-const Color kLightBorder = Color(0xFFCED4DA);
+// 3.03:1 against the darkest surface it can sit on, which is the
+// floor WCAG 1.4.11 asks of the visual information required to
+// *identify* a component. `plinthFieldBorderColor` returns this for
+// every input that is neither focused nor in error, so it is the
+// resting boundary of every field in the library — and at the old
+// #CED4DA it was 1.26:1 on `surfaceSunken` and 1.49:1 on `surface`.
+//
+// Found by `theme.validate()` pointed at this library's own defaults.
+// The lightest colour on the ramp's hue line that clears 3:1 against
+// all three surfaces, because the point was to meet the floor rather
+// than to restyle.
+const Color kLightBorder = Color(0xFF808890);
 const Color kLightBorderMuted = Color(0xFFDEE2E6);
 const Color kLightText = Color(0xDD000000);
 const Color kLightTextMuted = Color(0x8A000000);
@@ -214,10 +225,18 @@ const Color kLightTextDisabled = Color(0x42000000);
 const Color kDarkSurface = Color(0xFF1A1B1E);
 const Color kDarkSurfaceMuted = Color(0xFF25262B);
 const Color kDarkSurfaceSunken = Color(0xFF2C2E33);
-const Color kDarkBorder = Color(0xFF373A40);
+
+/// 3.01:1 against `kDarkSurfaceSunken`, for the same reason as
+/// [kLightBorder]. Was #373A40, which was 1.19:1 there.
+const Color kDarkBorder = Color(0xFF71777F);
 const Color kDarkBorderMuted = Color(0xFF2C2E33);
 const Color kDarkText = Color(0xFFC1C2C5);
-const Color kDarkTextMuted = Color(0xFF909296);
+
+/// 4.53:1 against `kDarkSurfaceSunken`. Was #909296, which was
+/// 4.36:1 — under the 4.5 floor by a margin small enough that nobody
+/// checking by eye would ever have caught it, which is the argument
+/// for checking by arithmetic.
+const Color kDarkTextMuted = Color(0xFF939599);
 const Color kDarkTextDisabled = Color(0xFF5C5F66);
 
 /// The contrast floor a colour has to clear, by what it is being used

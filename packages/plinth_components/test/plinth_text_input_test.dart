@@ -32,7 +32,11 @@ Future<void> _focusField(WidgetTester tester) async {
 
 void main() {
   final theme = PlinthTheme.defaultTheme;
-  const unfocusedGray = Color(0xFFCED4DA);
+  // The token, not a literal. This was `const Color(0xFFCED4DA)` until
+  // `theme.validate()` found that value was 1.49:1 against `surface`
+  // and had to change — at which point two tests failed for spelling
+  // out a colour whose identity, not whose value, was the point.
+  final unfocusedGray = theme.border;
 
   group('PlinthTextInput', () {
     testWidgets('renders label, description, and placeholder', (tester) async {

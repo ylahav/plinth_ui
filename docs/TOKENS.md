@@ -199,10 +199,10 @@ values and the same readers.
 | `surface` | semantic | `#ffffff` | `#1a1b1e` | 44 |
 | `surfaceMuted` | semantic | `#f1f3f5` | `#25262b` | 24 |
 | `surfaceSunken` | semantic | `#e9ecef` | `#2c2e33` | 15 |
-| `border` | semantic | `#ced4da` | `#373a40` | 24 |
+| `border` | semantic | `#808890` | `#71777f` | 24 |
 | `borderMuted` | semantic | `#dee2e6` | `#2c2e33` | 5 |
 | `text` | semantic | `#000000` | `#c1c2c5` | 17 |
-| `textMuted` | semantic | `#000000` | `#909296` | 15 |
+| `textMuted` | semantic | `#000000` | `#939599` | 15 |
 | `textDisabled` | semantic | `#000000` | `#5c5f66` | 7 |
 | `onFilled` | semantic | `#ffffff` | `#ffffff` | 3 |
 | `onFilledInverse` | semantic | `#1a1b1e` | `#1a1b1e` | — |

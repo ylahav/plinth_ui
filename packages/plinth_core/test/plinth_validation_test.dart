@@ -12,49 +12,23 @@ import 'package:plinth_core/plinth_core.dart';
 
 void main() {
   group('the default themes', () {
-    test('what the defaults actually fail, stated rather than assumed', () {
-      // A validator that passes its author's theme and fails everyone
-      // else's is a validator nobody trusts. Pointed at Plinth's own
-      // defaults it finds two things, and both are left as-is on
-      // purpose -- fixing either changes the look of every screen in
-      // every app already on Plinth, which is a decision for a release
-      // rather than something to slip into a validator's first commit.
+    test('the defaults now pass everything but the series palette', () {
+      // This test used to record two failures, with a note that both
+      // were left alone because fixing them changes the look of every
+      // app already on Plinth. They were then fixed, deliberately, and
+      // the note said that a fixed finding should be deleted rather
+      // than loosened — so it was.
       //
-      // 1. `border` is 1.26-1.49:1 against the three surfaces, where
-      //    WCAG 1.4.11 asks 3:1 of the visual information required to
-      //    *identify* a component. `plinthFieldBorderColor` returns it
-      //    for every input that is neither focused nor in error, so it
-      //    is the resting boundary of every field in the library.
-      //
-      // 2. In the dark theme only, `textMuted` on `surfaceSunken` is
-      //    4.36:1 against a 4.5 floor. A narrow miss, and narrow misses
-      //    are exactly what a person checking by eye lets through.
-      //
-      // This fails if either changes in either direction. A new finding
-      // is a regression; a missing one means somebody fixed it and
-      // should delete the line rather than loosen it.
-      final light = PlinthTheme.defaultTheme.validate(includeSeries: false);
-      expect(
-        light.map((i) => '${i.foreground} on ${i.background}').toSet(),
-        {
-          'border on surface',
-          'border on surfaceMuted',
-          'border on surfaceSunken',
-        },
-        reason: light.join(', '),
-      );
-
-      final dark = PlinthTheme.darkTheme.validate(includeSeries: false);
-      expect(
-        dark.map((i) => '${i.foreground} on ${i.background}').toSet(),
-        {
-          'border on surface',
-          'border on surfaceMuted',
-          'border on surfaceSunken',
-          'textMuted on surfaceSunken',
-        },
-        reason: dark.join(', '),
-      );
+      // What went: `border` at 1.26-1.49:1 against the three surfaces,
+      // where WCAG 1.4.11 asks 3:1 of a control boundary, and the dark
+      // theme's `textMuted` on `surfaceSunken` at 4.36:1 against a 4.5
+      // floor. Both found by this file's subject pointed at its own
+      // library, which is the only reason to trust what it says about
+      // anyone else's.
+      for (final theme in [PlinthTheme.defaultTheme, PlinthTheme.darkTheme]) {
+        final issues = theme.validate(includeSeries: false);
+        expect(issues, isEmpty, reason: issues.join(', '));
+      }
     });
 
     test('body text itself is clear on both themes', () {
