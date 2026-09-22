@@ -13,6 +13,20 @@ Whether it joins, or versions on its own because a block catalogue will
 churn while a token engine does not, is a decision for the first
 release rather than one to inherit from the number below.
 
+## 0.2.2
+
+### Added
+
+- **An `example/`.** Worth 10 pub points, which this package had been
+  losing since its first release without anything saying so — the dry
+  run is silent about it and the score is computed after publishing.
+
+### Changed
+
+- **Requires `plinth_components` ^1.5.0**, not a preference: the
+  password-strength block reads `context.plinthStrings`, which is new
+  in that release, and does not compile against 1.4.0.
+
 ## 0.2.1
 
 ### Changed

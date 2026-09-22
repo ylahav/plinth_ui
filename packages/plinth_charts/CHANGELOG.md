@@ -10,6 +10,13 @@ three keep from `1.0.0` — a chart catalogue will churn while a token
 engine does not. See
 [PUBLISHING.md](../../docs/PUBLISHING.md#plinth_blocks-is-outside-the-lockstep-for-now).
 
+## 0.1.1
+
+### Added
+
+- **An `example/`.** Worth 10 pub points, lost since the first release
+  because nothing asks for one until pana scores the published package.
+
 ## 0.1.0
 
 Released 21 Sep 2026. The first charts, and the shape the rest will

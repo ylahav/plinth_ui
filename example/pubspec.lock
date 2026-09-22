@@ -193,35 +193,35 @@ packages:
       path: "../packages/plinth_blocks"
       relative: true
     source: path
-    version: "0.2.1"
+    version: "0.2.2"
   plinth_charts:
     dependency: "direct main"
     description:
       path: "../packages/plinth_charts"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "0.1.1"
   plinth_components:
     dependency: "direct main"
     description:
       path: "../packages/plinth_components"
       relative: true
     source: path
-    version: "1.4.0"
+    version: "1.5.0"
   plinth_core:
     dependency: "direct overridden"
     description:
       path: "../packages/plinth_core"
       relative: true
     source: path
-    version: "1.4.0"
+    version: "1.5.0"
   plinth_hooks:
     dependency: "direct main"
     description:
       path: "../packages/plinth_hooks"
       relative: true
     source: path
-    version: "1.4.0"
+    version: "1.5.0"
   pub_semver:
     dependency: transitive
     description:

@@ -11,6 +11,13 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.5.0
+
+No change in this package. Released in lockstep with `plinth_core`
+1.5.0, which fixes two contrast floors its own new validator found, and
+`plinth_components` 1.5.0, which adds a translation seam and fixes two
+dropdowns a keyboard could not use.
+
 ## 1.4.0
 
 No change in this package. Released in lockstep with

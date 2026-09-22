@@ -11,7 +11,13 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
-## Unreleased
+## 1.5.0
+
+**Borders look different in this release**, because `plinth_core` 1.5.0
+raised `border` from 1.49:1 to 3.59:1 against `surface` — see its
+changelog. The constraint moves to `^1.5.0` for exactly that reason:
+the fix lives in core and this package is what paints it, so a consumer
+on 1.5.0 with an older core would have the claim without the change.
 
 ### Fixed
 

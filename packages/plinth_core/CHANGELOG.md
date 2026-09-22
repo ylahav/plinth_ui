@@ -11,7 +11,41 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
-## Unreleased
+## 1.5.0
+
+**Your borders will look different, and that is the headline.**
+
+`border` was `#CED4DA`, which is **1.49:1** against `surface` and
+1.26:1 against `surfaceSunken`. `plinthFieldBorderColor` returns it for
+every input that is neither focused nor in error, so it is the resting
+boundary of every field in the library — and WCAG 1.4.11 asks **3:1**
+of the visual information required to identify a component. It is now
+`#808890`: 3.59, 3.23 and 3.03 against the three surfaces.
+
+Every input, card outline and divider will read noticeably stronger.
+There is no version of this fix that looks the same, and the old value
+was short by a factor of two.
+
+Chosen as the lightest colour on the ramp's own hue line that clears
+3:1 everywhere, because the job was to meet the floor rather than to
+restyle. Gray shade 6 was the obvious candidate and misses by 0.01 on
+`surfaceMuted`; shade 7 clears at 7:1 and would have painted a far
+heavier border than anybody asked for.
+
+### Fixed
+
+- **`border` contrast**, as above. Dark likewise: `#373A40` →
+  `#71777F`, which was 1.19:1 on `surfaceSunken`.
+
+- **Dark `textMuted`** `#909296` → `#939599`. It was **4.36:1** on
+  `surfaceSunken` against a 4.5 floor — a miss small enough that nobody
+  checking by eye would ever have caught it, which is the whole
+  argument for checking by arithmetic.
+
+  Both were found by `theme.validate()`, below, pointed at this
+  library's own defaults one commit after it was written. A validator
+  that passes its author's theme and fails everyone else's is one
+  nobody should trust.
 
 ### Added
 

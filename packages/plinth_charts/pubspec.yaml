@@ -5,7 +5,7 @@ description: >-
 # Unreleased, and outside the lockstep for the same reason
 # plinth_blocks is: a chart catalogue will churn while a token engine
 # does not. See docs/PUBLISHING.md.
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/ylahav/plinth_ui
 repository: https://github.com/ylahav/plinth_ui
 issue_tracker: https://github.com/ylahav/plinth_ui/issues
