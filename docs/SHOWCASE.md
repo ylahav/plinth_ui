@@ -160,7 +160,7 @@ them yet.
 
 ## What exists
 
-113 examples across 3 categories. The category names are borrowed from
+117 examples across 3 categories. The category names are borrowed from
 Mantine UI so the two are directly comparable — **Charts is the one
 subcategory that is not**, because `ui.mantine.dev` has no charts to
 compare against. It is the first of the sections this catalogue has
@@ -174,7 +174,7 @@ that its reference does not.
 | Application UI | Charts | Line chart, Bar chart, Donut chart |
 | Application UI | User Info & Controls | User button, Profile card, User menu, Member list, Presence status, Account switcher, Contact card |
 | Application UI | Application Cards | Project card, Task card, Pricing card, Media card, Activity card |
-| Application UI | Inputs | Search bar, Filter fields, Formatted fields, Password strength, Verification code, Secret field, Address form |
+| Application UI | Inputs | Search bar, Filter fields, Formatted fields, Password strength, Verification code, Secret field, Address form, Availability check, Repeatable fields, Character limit, Dependent selects |
 | Application UI | Buttons | Toolbar actions, Destructive actions, Split button, Async button, Inline confirm |
 | Application UI | Sliders | Price range filter, Setting sliders, Slider with marks, Budget slider, Colour controls |
 | Application UI | Grids | Dashboard grid, Card gallery, Asymmetric grid, Image gallery |
@@ -197,7 +197,7 @@ that its reference does not.
 
 ## What's missing
 
-Mantine UI has ~123 blocks against these 113. The gap is now depth
+Mantine UI has ~123 blocks against these 117. The gap is now depth
 rather than absence: **every subcategory has something in it**, and
 Charts is three that Mantine UI has nothing to compare with.
 
@@ -217,7 +217,7 @@ genuinely waiting on one.
 | Footers | 4 | 4 | Complete — newsletter signup and a one-line app footer added |
 | Grids | 3 | 4 | Complete — twelve-column spans and a fixed-ratio gallery added |
 | User info and controls | 8 | 7 | Account switching and a person-as-facts contact card added |
-| Inputs | 14 | 7 | Live validation, code entry, a read-only secret and a spanned form |
+| Inputs | 14 | 11 | Live validation, code entry, a read-only secret and a spanned form. **Four added in `plinth_blocks` 0.2.0**, each differing in *kind*: an async availability check, variable-arity rows, a hard character limit, and two selects where one bounds the other |
 | Buttons | 6 | 5 | Split, async and inline-confirm variants added |
 | Sliders | 6 | 5 | Marks, formatted output and colour controls added |
 | Application cards | 7 | 5 | Pricing, media and activity variants added |

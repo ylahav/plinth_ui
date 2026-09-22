@@ -12,12 +12,16 @@ now covers releasing an update.
 | `plinth_core` | **1.3.0** | 1.3.0 |
 | `plinth_hooks` | **1.3.0** | 1.3.0 |
 | `plinth_components` | **1.3.0** | 1.3.0 |
-| `plinth_blocks` | **0.1.0** | 0.1.0 |
+| `plinth_blocks` | **0.1.0** | 0.2.0 |
 | `plinth_charts` | **0.1.0** | 0.1.0 |
 
 **1.3.0 shipped 21 Sep 2026**, in dependency order, alongside the first
 releases of `plinth_blocks` and `plinth_charts` — five packages in one
-sequence, the largest release so far. `1.2.0` shipped 23 Aug 2026 in 19
+sequence, the largest release so far. **`plinth_blocks` 0.2.0 is cut
+and unreleased**: four input blocks, and the first release to exercise
+the reason that package sits outside the lockstep at all — a block
+catalogue grows on its own cadence, and this one did so four days
+later without moving `plinth_core` at all. `1.2.0` shipped 23 Aug 2026 in 19
 seconds end to end.
 
 > This table said `1.0.0` until 1.2.0, having gone stale through two
@@ -352,7 +356,7 @@ answered rather than forgotten. Tracked as **V1** in
 Decided when the package was first versioned, at `0.1.0`.
 
 **Lockstep would import a churning catalogue's version into a stable
-foundation.** `plinth_blocks` holds 38 of the 113 arrangements the
+foundation.** `plinth_blocks` holds 42 of the 117 arrangements the
 showcase has, and the rest will land over time; the API will move as
 they do. Under lockstep, renaming a parameter on `PlinthFaqBlock` is a
 breaking change that drags `plinth_core` to `2.0.0` with it — a major

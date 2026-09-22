@@ -137,6 +137,14 @@ final List<CategoryData> showcaseCategories = [
             exampleCode['VerificationCodeExample']!),
         ExampleEntry(
             'Secret field', _secretField, exampleCode['SecretFieldExample']!),
+        ExampleEntry('Availability check', _availabilityField,
+            exampleCode['AvailabilityFieldExample']!),
+        ExampleEntry('Repeatable fields', _repeatableFields,
+            exampleCode['RepeatableFieldsExample']!),
+        ExampleEntry('Character limit', _characterLimitField,
+            exampleCode['CharacterLimitFieldExample']!),
+        ExampleEntry('Dependent selects', _dependentSelects,
+            exampleCode['DependentSelectsExample']!),
         ExampleEntry(
             'Address form', _addressForm, exampleCode['AddressFormExample']!),
       ]),
@@ -385,6 +393,14 @@ Widget _navbarWithFooterUser(BuildContext context) =>
 Widget _statWithSparkline(BuildContext context) =>
     const StatWithSparklineExample();
 Widget _statLeaderboard(BuildContext context) => const StatLeaderboardExample();
+Widget _availabilityField(BuildContext context) =>
+    const AvailabilityFieldExample();
+Widget _repeatableFields(BuildContext context) =>
+    const RepeatableFieldsExample();
+Widget _characterLimitField(BuildContext context) =>
+    const CharacterLimitFieldExample();
+Widget _dependentSelects(BuildContext context) =>
+    const DependentSelectsExample();
 Widget _lineChart(BuildContext context) => const LineChartExample();
 Widget _barChart(BuildContext context) => const BarChartExample();
 Widget _donutChart(BuildContext context) => const DonutChartExample();

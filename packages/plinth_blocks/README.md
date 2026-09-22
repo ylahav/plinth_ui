@@ -76,6 +76,10 @@ Every Page Sections arrangement, plus the navigation and page chrome:
 | `PlinthArticleCard` | A feed entry — stacked, horizontal, or over an image |
 | `PlinthCommentThread` | Comments and replies, with the nesting said aloud |
 | `PlinthAddressForm` | A postal address, grouped so a field says which one |
+| `PlinthAvailabilityField` | Asks another system if a name is free — debounced, and immune to answers arriving out of order |
+| `PlinthRepeatableFields` | Rows you can add and remove, which focus the new one and say what went |
+| `PlinthCharacterLimitField` | A limit that is enforced rather than reported, and announced once |
+| `PlinthDependentSelects` | Two selects where changing the first clears a second that no longer applies |
 
 ```dart
 PlinthSignInBlock(
@@ -92,7 +96,7 @@ PlinthSignInBlock(
 )
 ```
 
-More are moving here from the demo app's showcase, which has 113 of
+More are moving here from the demo app's showcase, which has 117 of
 them — see
 [SHOWCASE.md](https://github.com/ylahav/plinth_ui/blob/main/docs/SHOWCASE.md).
 

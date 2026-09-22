@@ -13,6 +13,77 @@ Whether it joins, or versions on its own because a block catalogue will
 churn while a token engine does not, is a decision for the first
 release rather than one to inherit from the number below.
 
+## 0.2.0
+
+**Four input blocks, chosen because they differ in *kind*.**
+
+`docs/SHOWCASE.md` has Inputs at 14 against Mantine's, the one
+subcategory more than two behind — and its own note says most of the
+remainder are "styling variations on arrangements already here
+(contained fields, floating labels)". Adding those would have closed
+the number and taught nobody anything, so these four close the part
+that was actually missing: asynchrony, variable arity, a hard limit,
+and one field bounding another. Inputs goes 7 → 11, and the three
+styling variants are declined rather than padded.
+
+### Added
+
+- **`PlinthAvailabilityField`** — asks another system whether a name is
+  free. Usernames, workspace slugs, emails at signup.
+
+  Three things go wrong in hand-rolled versions and each is handled
+  and tested. It debounces, so typing `ada` is one request rather than
+  three about prefixes nobody chose. **It drops answers that arrive out
+  of order** — `ad` is slow and `ada` is fast, so the answer about `ad`
+  lands last and overwrites the right one. That bug needs two requests
+  in flight and a particular ordering to appear, which is why it
+  survives review; a test removes the guard and proves it returns. And
+  a failed check is *not* a taken name, because telling somebody their
+  preferred name is gone when the network hiccuped is a different lie.
+
+  The result is a live region; the spinner is not. The answer arrives
+  after the user stopped typing, which is exactly when nothing else
+  would tell a reader it came.
+
+- **`PlinthRepeatableFields`** — rows you can add to and take away from.
+
+  The visible part is a button and a list. The part that is usually
+  wrong is that **adding leaves focus on the button** while a new empty
+  field appears out of sight, and **removing destroys the row the user
+  was in** and drops focus wherever Flutter decides. So adding focuses
+  the new row, and removing says what went and how many remain.
+
+- **`PlinthCharacterLimitField`** — a limit that is enforced, not
+  merely reported. A counter that goes red while the field keeps
+  accepting text is a counter that lied; the form rejects the value
+  later, elsewhere, in different words.
+
+  It counts graphemes rather than code units, so a flag emoji is one
+  character to the limit as it is to the person typing it. It announces
+  **once**, when the remaining count first crosses the threshold — a
+  live region on a counter reads a number after every letter, which
+  makes the field unusable with a screen reader.
+
+- **`PlinthDependentSelects`** — two selects where the first determines
+  the second's options.
+
+  Pick Portugal, then Porto, then change the country to Spain: Porto is
+  not in Spain, and the form now holds a combination that cannot exist.
+  Clearing the child is the obvious half; **saying so** is the half
+  that gets missed, because the reset happens below where the user is
+  looking and a reader hears nothing at all. A parent with no children
+  disables the child rather than opening it onto an empty menu.
+
+### Known gap
+
+`PlinthCharacterLimitField` enforces its limit by truncating in a
+controller listener rather than with a `LengthLimitingTextInputFormatter`,
+because `PlinthTextarea` does not take `inputFormatters` and
+`PlinthTextInput` does. That disagreement is a real gap in
+`plinth_components` rather than a decision. When it closes, this should
+become a formatter — one runs before the value is committed, where this
+runs after and corrects it.
+
 ## 0.1.0
 
 Released 21 Sep 2026. The first blocks, and the shape the rest

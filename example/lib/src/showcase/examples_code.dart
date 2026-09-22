@@ -417,6 +417,30 @@ class AuthorInlineExample extends StatelessWidget {
   }
 }
 ''',
+  'AvailabilityFieldExample': r'''
+class AvailabilityFieldExample extends StatelessWidget {
+  const AvailabilityFieldExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // The demo's "server": everything short is taken, which is roughly
+    // true of every username system ever built.
+    Future<bool> check(String value) async {
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      return value.length > 6;
+    }
+
+    return PlinthAvailabilityField(
+      width: 380,
+      label: 'Workspace URL',
+      description: 'Letters, numbers and hyphens.',
+      placeholder: 'northwind-trading',
+      prefix: const Text('plinth.app/'),
+      check: check,
+    );
+  }
+}
+''',
   'AvatarUploadExample': r'''
 class AvatarUploadExample extends StatefulWidget {
   const AvatarUploadExample({super.key});
@@ -616,6 +640,23 @@ class CenteredHeaderExample extends StatelessWidget {
       centered: true,
       title: 'Settings',
       subtitle: 'Manage your account preferences and integrations',
+    );
+  }
+}
+''',
+  'CharacterLimitFieldExample': r'''
+class CharacterLimitFieldExample extends StatelessWidget {
+  const CharacterLimitFieldExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const PlinthCharacterLimitField(
+      width: 420,
+      label: 'Bio',
+      description: 'Shown on your public profile.',
+      placeholder: 'Signing things off since 2019.',
+      maxLength: 160,
+      warnAt: 25,
     );
   }
 }
@@ -925,6 +966,53 @@ class DashboardGridExample extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+''',
+  'DependentSelectsExample': r'''
+class DependentSelectsExample extends StatefulWidget {
+  const DependentSelectsExample({super.key});
+
+  @override
+  State<DependentSelectsExample> createState() =>
+      _DependentSelectsExampleState();
+}
+
+class _DependentSelectsExampleState extends State<DependentSelectsExample> {
+  static const _regions = <String, List<PlinthSelectOption<String>>>{
+    'pt': [
+      PlinthSelectOption('porto', 'Porto'),
+      PlinthSelectOption('lisboa', 'Lisboa'),
+      PlinthSelectOption('faro', 'Faro'),
+    ],
+    'es': [
+      PlinthSelectOption('madrid', 'Madrid'),
+      PlinthSelectOption('barcelona', 'Barcelona'),
+    ],
+  };
+
+  String? _country = 'pt';
+  String? _region = 'porto';
+
+  @override
+  Widget build(BuildContext context) {
+    // Pick Porto, then change the country to Spain: the region clears
+    // and says so, rather than leaving a combination that cannot exist.
+    return PlinthDependentSelects<String, String>(
+      width: 380,
+      parentLabel: 'Country',
+      childLabel: 'Region',
+      childDescription: 'Clears if you change the country above it.',
+      parentOptions: const [
+        PlinthSelectOption('pt', 'Portugal'),
+        PlinthSelectOption('es', 'Spain'),
+      ],
+      parentValue: _country,
+      onParentChanged: (v) => setState(() => _country = v),
+      childOptionsFor: (p) => _regions[p] ?? const [],
+      childValue: _region,
+      onChildChanged: (v) => setState(() => _region = v),
     );
   }
 }
@@ -2870,6 +2958,39 @@ class _ReorderableListExampleState extends State<ReorderableListExample> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+''',
+  'RepeatableFieldsExample': r'''
+class RepeatableFieldsExample extends StatefulWidget {
+  const RepeatableFieldsExample({super.key});
+
+  @override
+  State<RepeatableFieldsExample> createState() =>
+      _RepeatableFieldsExampleState();
+}
+
+class _RepeatableFieldsExampleState extends State<RepeatableFieldsExample> {
+  var _emails = <String>[''];
+
+  @override
+  Widget build(BuildContext context) {
+    return PlinthRepeatableFields(
+      width: 420,
+      label: 'Invite your team',
+      description: 'They will get an email with a join link.',
+      rowName: 'invitation',
+      addLabel: 'Add another',
+      maxRows: 5,
+      count: _emails.length,
+      onAdd: () => setState(() => _emails = [..._emails, '']),
+      onRemove: (i) => setState(() => _emails = [..._emails]..removeAt(i)),
+      rowBuilder: (context, i) => PlinthTextInput(
+        label: 'Email ${i + 1}',
+        placeholder: 'name@example.com',
+        onChanged: (v) => _emails[i] = v,
       ),
     );
   }

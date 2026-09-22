@@ -562,7 +562,7 @@ intentional rather than bugs:
   (fine) but blue toward cyan (worse). Doing it properly needs per-hue
   drift tables rather than a formula. Contrast wasn't the blocker —
   the WCAG suite passed throughout. See `_generateShades`.
-- Extend the composed-blocks showcase — 113 examples against Mantine
+- Extend the composed-blocks showcase — 117 examples against Mantine
   UI's ~123. **Page Sections is complete**, no subcategory is empty
   since `PlinthCarousel` closed Carousels, and none is more than two
   behind except Inputs. Nothing is blocked on a missing component. See

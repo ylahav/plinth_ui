@@ -214,8 +214,8 @@ tracking `@mantine/core`, five answering questions only Flutter has —
 with 43 golden images and 74 test files behind them.*
 
 Alongside them, and counted separately because they version separately:
-*38 blocks in `plinth_blocks` and 4 charts in `plinth_charts`, with 18
-and 4 test files behind them.* The demo app browses **113**
+*42 blocks in `plinth_blocks` and 4 charts in `plinth_charts`, with 22
+and 4 test files behind them.* The demo app browses **117**
 arrangements across 3 categories, of which the 38 are the ones that
 have become real widgets with real APIs; the rest are still component
 demos and [SHOWCASE.md](SHOWCASE.md) says which, and why.
