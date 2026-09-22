@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'focus_ring.dart';
+
 import 'plinth_tap_target.dart';
 
 /// A selectable pill toggle matching Mantine's `Chip`: shows a
@@ -90,43 +92,47 @@ class PlinthChip extends StatelessWidget {
       // Inside the Semantics: the button role covers the whole hit
       // area, and `getSemantics` resolves from the widget's root.
       child: PlinthTapTarget(
-        child: InkWell(
-          onTap: enabled ? () => onSelected!(!selected) : null,
-          borderRadius: BorderRadius.circular(resolvedRadius),
-          child: AnimatedContainer(
-            duration: theme.duration(PlinthSize.sm),
-            padding: EdgeInsets.symmetric(
-              horizontal: _horizontalPadding[size]!,
-              vertical: _verticalPadding[size]!,
-            ),
-            decoration: BoxDecoration(
-              color: selected ? baseColor : theme.surface,
-              borderRadius: BorderRadius.circular(resolvedRadius),
-              border: Border.all(
-                color: selected ? baseColor : theme.border,
+        child: PlinthFocusRing(
+          builder: (onFocusChange) => InkWell(
+            onFocusChange: onFocusChange,
+            onTap: enabled ? () => onSelected!(!selected) : null,
+            borderRadius: BorderRadius.circular(resolvedRadius),
+            child: AnimatedContainer(
+              duration: theme.duration(PlinthSize.sm),
+              padding: EdgeInsets.symmetric(
+                horizontal: _horizontalPadding[size]!,
+                vertical: _verticalPadding[size]!,
               ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (selected) ...[
-                  Icon(Icons.check,
-                      size: _fontSizes[size]! + 2,
-                      color: theme.contrastingOn(baseColor)),
-                  const SizedBox(width: 4),
-                ],
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: _fontSizes[size],
-                    color:
-                        selected ? theme.contrastingOn(baseColor) : theme.text,
-                    fontWeight: selected
-                        ? theme.weight(PlinthWeight.semibold)
-                        : theme.weight(PlinthWeight.regular),
-                  ),
+              decoration: BoxDecoration(
+                color: selected ? baseColor : theme.surface,
+                borderRadius: BorderRadius.circular(resolvedRadius),
+                border: Border.all(
+                  color: selected ? baseColor : theme.border,
                 ),
-              ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (selected) ...[
+                    Icon(Icons.check,
+                        size: _fontSizes[size]! + 2,
+                        color: theme.contrastingOn(baseColor)),
+                    const SizedBox(width: 4),
+                  ],
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: _fontSizes[size],
+                      color: selected
+                          ? theme.contrastingOn(baseColor)
+                          : theme.text,
+                      fontWeight: selected
+                          ? theme.weight(PlinthWeight.semibold)
+                          : theme.weight(PlinthWeight.regular),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

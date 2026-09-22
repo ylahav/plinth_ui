@@ -12,16 +12,19 @@ now covers releasing an update.
 | `plinth_core` | **1.3.0** | 1.3.0 |
 | `plinth_hooks` | **1.3.0** | 1.3.0 |
 | `plinth_components` | **1.3.0** | 1.3.0 |
-| `plinth_blocks` | **0.1.0** | 0.2.0 |
+| `plinth_blocks` | **0.2.0** | 0.2.0 |
 | `plinth_charts` | **0.1.0** | 0.1.0 |
 
 **1.3.0 shipped 21 Sep 2026**, in dependency order, alongside the first
 releases of `plinth_blocks` and `plinth_charts` — five packages in one
-sequence, the largest release so far. **`plinth_blocks` 0.2.0 is cut
-and unreleased**: four input blocks, and the first release to exercise
-the reason that package sits outside the lockstep at all — a block
-catalogue grows on its own cadence, and this one did so four days
-later without moving `plinth_core` at all. `1.2.0` shipped 23 Aug 2026 in 19
+sequence, the largest release so far. **`plinth_blocks` 0.2.0 shipped 22 Sep 2026** —
+four input blocks, one command, no dependency sequence. The first
+release to exercise the reason that package sits outside the lockstep
+at all: a block catalogue grows on its own cadence, and this one did so
+a day later without moving `plinth_core`, `plinth_hooks` or
+`plinth_components` at all. Under lockstep it would have dragged three
+stable packages to a new version for four widgets none of them
+reference. `1.2.0` shipped 23 Aug 2026 in 19
 seconds end to end.
 
 > This table said `1.0.0` until 1.2.0, having gone stale through two

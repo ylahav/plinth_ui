@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 
+import 'focus_ring.dart';
+
 import 'plinth_announce.dart';
 import 'plinth_stack.dart';
 import 'plinth_text.dart';
@@ -111,44 +113,47 @@ class PlinthCheckbox extends StatelessWidget {
       checked: indeterminate ? null : value,
       mixed: indeterminate ? true : null,
       enabled: enabled,
-      child: InkWell(
-        onTap: enabled ? () => onChanged!(!value) : null,
-        borderRadius: BorderRadius.circular(resolvedRadius),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              box,
-              if (label != null) ...[
-                SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.8),
-                // Flexible so a long label wraps instead of
-                // overflowing when the row is width-constrained by its
-                // parent — a consent checkbox in a narrow form is the
-                // usual case.
-                Flexible(
-                  child: PlinthStack(
-                    gap: PlinthSize.xs,
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      PlinthText(label!, size: size),
-                      if (description != null)
-                        PlinthText(description!,
-                            size: PlinthSize.xs,
-                            color: theme.rampFor(PlinthRole.neutral)),
-                      if (hasError)
-                        PlinthLiveRegion(
-                          message: error,
-                          child: PlinthText(error!,
+      child: PlinthFocusRing(
+        builder: (onFocusChange) => InkWell(
+          onFocusChange: onFocusChange,
+          onTap: enabled ? () => onChanged!(!value) : null,
+          borderRadius: BorderRadius.circular(resolvedRadius),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                box,
+                if (label != null) ...[
+                  SizedBox(width: theme.spacing[PlinthSize.xs]! * 0.8),
+                  // Flexible so a long label wraps instead of
+                  // overflowing when the row is width-constrained by its
+                  // parent — a consent checkbox in a narrow form is the
+                  // usual case.
+                  Flexible(
+                    child: PlinthStack(
+                      gap: PlinthSize.xs,
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        PlinthText(label!, size: size),
+                        if (description != null)
+                          PlinthText(description!,
                               size: PlinthSize.xs,
-                              color: theme.rampFor(PlinthRole.error)),
-                        ),
-                    ],
+                              color: theme.rampFor(PlinthRole.neutral)),
+                        if (hasError)
+                          PlinthLiveRegion(
+                            message: error,
+                            child: PlinthText(error!,
+                                size: PlinthSize.xs,
+                                color: theme.rampFor(PlinthRole.error)),
+                          ),
+                      ],
+                    ),
                   ),
-                ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

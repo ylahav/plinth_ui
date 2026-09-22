@@ -11,6 +11,50 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## Unreleased
+
+### Fixed
+
+- **Five controls were reachable by keyboard and invisible once
+  reached** — `PlinthCloseButton`, `PlinthCheckbox`, `PlinthRadio`,
+  `PlinthSwitch` and `PlinthChip`. Tab landed on them, a screen reader
+  announced them correctly, and a sighted keyboard user had no way to
+  see where they were. **WCAG 2.4.7 Focus Visible.**
+
+  Each wrapped an `InkWell`, whose focus highlight is a fill drawn from
+  `ThemeData.focusColor`, and that fill was not painting. They now draw
+  a ring, held to 3:1 against the surface — WCAG 1.4.11's floor for a
+  non-text indicator, not the 4.5:1 it asks of body text.
+
+  Nothing moved on screen. The ring is a foreground decoration, so it
+  costs no layout: `plinth_density_test.dart` pins `PlinthCloseButton`
+  at exactly 24 logical pixels and `PlinthChip` at 36, and its comment
+  is explicit that a control changing size "ships as a silent restyle
+  of every screen". A first attempt added 8px to both and that test
+  caught it.
+
+### Added
+
+- **`plinth_focus_visible_test.dart`** — the test that found them, and
+  the reason it could.
+
+  `plinth_keyboard_reachable_test.dart` proves Tab can *reach* a
+  control. It cannot prove you can see where Tab went, because it walks
+  the semantics tree and a focus ring is not in the semantics tree. It
+  is paint. So this one renders each control, presses Tab, renders it
+  again, and requires the two **images** to differ.
+
+  Same shape as `F-4` one layer over: the tree was right and the screen
+  was wrong. Two cheaper proxies were tried first and both lied — a
+  render-tree diff under-reports, because Material paints the focus
+  highlight on an ancestor rather than on the widget, and a whole-tree
+  diff over-reports, because focus state appears in the tree as data
+  whether or not anything is drawn.
+
+  It asserts focus actually landed before comparing anything, which is
+  what caught two attempted fixes that made the five controls
+  *unreachable* rather than merely invisible.
+
 ## 1.3.0
 
 **Tier 1 is closed.** `docs/PRE_1_0_AUDIT.md` opened with six gaps it
