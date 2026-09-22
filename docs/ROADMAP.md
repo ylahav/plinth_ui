@@ -155,8 +155,8 @@ starting, not evidence that somebody did.
 | | What it is |
 |---|---|
 | **DTCG export** | Emit tokens a web codebase can consume, the reverse of the import above |
-| **Theme validation** | Ship the contrast machinery as something a team runs in CI against *its own* tokens |
-| **Token explorer** | Every token, its value per theme, and which components read it |
+| ~~**Theme validation**~~ | **Done.** `theme.validate()` returns every pair that falls short of its floor, worst first, naming tokens by their hierarchy path. Pointed at Plinth's own defaults it found two real problems — `border` at 1.26–1.49:1 where WCAG 1.4.11 asks 3:1 of a control boundary, and dark-theme `textMuted` on `surfaceSunken` at 4.36:1 — **both recorded and left alone**, because fixing either changes the look of every app already on Plinth. Pinned by a test that fails in either direction |
+| ~~**Token explorer**~~ | **Done**, as `docs/TOKENS.md` — generated, committed, and held fresh by `token_usage_fresh_test.dart`. All three parts: every token, both themes side by side, and which components read each. The third needed writing because `theme.surface`, `theme.spacing[PlinthSize.md]` and `theme.space(4)` are all token reads and none of them look alike. Dynamic reads (`theme.shaded(colorKey, 6)`) are reported as a *kind* rather than guessed at — assuming `color.blue.6` because blue is the default would be a lie that survives until somebody rebrands |
 | **Golden helpers** | Let an adopter pin their own token usage the way this repo pins its own |
 
 ### Accessibility

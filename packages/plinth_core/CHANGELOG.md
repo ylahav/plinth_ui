@@ -15,6 +15,25 @@ changes; from `1.0.0` they cannot.
 
 ### Added
 
+- **`theme.validate()`** — the contrast machinery pointed at a theme
+  instead of a colour. Returns every pair that falls short of its
+  floor, worst first, naming tokens by their `PlinthToken` path so a
+  finding can be looked up or grepped for in the design file it came
+  from.
+
+  The tokens it checks are the ones an adopter sets **by hand**:
+  `text`, `surface`, `border` and the series palette are literal
+  colours that nothing lifts, because they are the input. Everything
+  routed through `readableOn` passes by construction and is not worth
+  reporting.
+
+  Pointed at Plinth's own defaults it finds two things, both left
+  as-is: `border` is 1.26–1.49:1 against the three surfaces where WCAG
+  1.4.11 asks 3:1 of a control boundary, and the dark theme's
+  `textMuted` on `surfaceSunken` is 4.36:1 against a 4.5 floor. A
+  validator that passes its author's theme and fails everyone else's is
+  one nobody trusts.
+
 - **The token hierarchy** — `PlinthToken`, `PlinthTier`,
   `PlinthTokenType`, and `theme.tokens`. Every token in a theme,
   addressable by a stable path (`color.blue.6`, `spacing.md`,
