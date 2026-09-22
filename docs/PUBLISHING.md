@@ -196,6 +196,22 @@ That is easy to reintroduce by accident: removing the line locally to
 publish, then committing it back. `dart pub publish` confirms
 interactively regardless, so the guard was never buying much.
 
+## Ship an `example/`, or lose 10 pub points
+
+`plinth_blocks` and `plinth_charts` both scored **150/160** on their
+first release. `plinth_core`, `plinth_components` and `plinth_hooks`
+all scored 160. The whole difference was an `example/lib/main.dart`,
+which pana awards 10 points for under *Provide documentation*.
+
+It needs no pubspec of its own — the three that scored full marks are a
+single file under `example/lib/`, and that is enough.
+
+Like the description length below, **the dry run does not warn about
+it**: the score is computed by pana after publishing, so the first sign
+is the listing. Both new packages shipped without one because nothing
+asked, and the packages that had one had it from a time when somebody
+happened to think of it.
+
 ## Keep the description between 60 and 180 characters
 
 pub.dev scores `Provide a valid pubspec.yaml` at 0/10 if the
