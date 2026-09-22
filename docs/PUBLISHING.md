@@ -9,15 +9,20 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.3.1** | 1.4.0 |
-| `plinth_hooks` | **1.3.1** | 1.4.0 |
-| `plinth_components` | **1.3.1** | 1.4.0 |
-| `plinth_blocks` | **0.2.0** | 0.2.1 |
+| `plinth_core` | **1.4.0** | 1.4.0 |
+| `plinth_hooks` | **1.4.0** | 1.4.0 |
+| `plinth_components` | **1.4.0** | 1.4.0 |
+| `plinth_blocks` | **0.2.1** | 0.2.1 |
 | `plinth_charts` | **0.1.0** | 0.1.0 |
 
 **1.3.0 shipped 21 Sep 2026**, in dependency order, alongside the first
 releases of `plinth_blocks` and `plinth_charts` — five packages in one
-sequence, the largest release so far. **1.3.1 shipped 22 Sep 2026** — the focus-visibility fix, as a patch,
+sequence, the largest release so far. **1.4.0 shipped 22 Sep 2026**, with `plinth_blocks` 0.2.1 behind it —
+`inputFormatters` on `PlinthTextarea`, and the block that needed it.
+The first release where `plinth_blocks` raised its floor off `^1.2.0`,
+so the first where its position in the sequence mattered.
+
+**1.3.1 shipped 22 Sep 2026** — the focus-visibility fix, as a patch,
 with both leaf packages carried along saying "no change in this
 package". Their constraint in `plinth_components` stayed at `^1.3.0`
 rather than moving to `^1.3.1`, because neither leaf moved and lockstep
@@ -46,6 +51,20 @@ seconds end to end.
 > and in CI for reasons that have nothing to do with the change under
 > test. Update that column by hand when you publish. It is the one
 > number in this file still held up by nothing but attention.
+
+### What the `1.4.0` release proved
+
+**The stale cache is now three for three.** It misreported the resolve
+after 1.3.0, after 1.3.1 and after 1.4.0 — every time, in a project
+created *after* the release. Stop treating it as a surprise: clear
+`.cache/plinth_*-versions.json` as the first step of verification
+rather than as a reaction to a failure.
+
+**Verify across releases, not just the newest one.** The check for
+1.4.0 asserted the new parameter, the block that uses it, *and* that
+1.3.1's focus fix was still there. A release that quietly undid the one
+before it would otherwise look perfect, because nobody re-checks
+something they fixed last week.
 
 ### What the `1.3.1` release proved
 
