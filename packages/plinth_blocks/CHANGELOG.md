@@ -13,6 +13,19 @@ Whether it joins, or versions on its own because a block catalogue will
 churn while a token engine does not, is a decision for the first
 release rather than one to inherit from the number below.
 
+## 0.2.1
+
+### Changed
+
+- **`PlinthCharacterLimitField` enforces its limit with a formatter**,
+  now that `plinth_components` 1.4.0 gives `PlinthTextarea`
+  `inputFormatters`. It refuses an over-long paste rather than
+  accepting and correcting one — the gap 0.2.0 recorded under "Known
+  gap", closed.
+
+  The dependency floor moves to `^1.4.0` for that reason, and only that
+  reason.
+
 ## 0.2.0
 
 **Four input blocks, chosen because they differ in *kind*.**

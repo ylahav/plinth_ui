@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:plinth_core/plinth_core.dart';
 
 import 'field_chrome.dart';
@@ -32,6 +33,7 @@ class PlinthTextarea extends StatefulWidget {
     this.loading = false,
     this.minLines = 3,
     this.maxLines = 6,
+    this.inputFormatters,
   });
 
   final String? label;
@@ -59,6 +61,17 @@ class PlinthTextarea extends StatefulWidget {
   /// The field grows up to this many lines before scrolling
   /// internally rather than growing further.
   final int maxLines;
+
+  /// Formatters applied as the value is committed — a length limit, a
+  /// character whitelist.
+  ///
+  /// `PlinthTextInput` has had this since it was written; this field
+  /// not having it was an oversight rather than a decision, and it had
+  /// a cost. `PlinthCharacterLimitField` in `plinth_blocks` enforced
+  /// its limit by truncating in a controller listener, which runs
+  /// *after* the value is committed and corrects it, where a formatter
+  /// runs before and prevents it.
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<PlinthTextarea> createState() => _PlinthTextareaState();
@@ -131,6 +144,7 @@ class _PlinthTextareaState extends State<PlinthTextarea> {
                   enabled: widget.enabled,
                   minLines: widget.minLines,
                   maxLines: widget.maxLines,
+                  inputFormatters: widget.inputFormatters,
                   style: TextStyle(fontSize: fontSize),
                   decoration: InputDecoration(
                     hintText: widget.placeholder,

@@ -9,10 +9,10 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.3.1** | 1.3.1 |
-| `plinth_hooks` | **1.3.1** | 1.3.1 |
-| `plinth_components` | **1.3.1** | 1.3.1 |
-| `plinth_blocks` | **0.2.0** | 0.2.0 |
+| `plinth_core` | **1.3.1** | 1.4.0 |
+| `plinth_hooks` | **1.3.1** | 1.4.0 |
+| `plinth_components` | **1.3.1** | 1.4.0 |
+| `plinth_blocks` | **0.2.0** | 0.2.1 |
 | `plinth_charts` | **0.1.0** | 0.1.0 |
 
 **1.3.0 shipped 21 Sep 2026**, in dependency order, alongside the first

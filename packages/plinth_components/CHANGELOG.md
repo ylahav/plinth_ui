@@ -11,6 +11,21 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.4.0
+
+### Added
+
+- **`inputFormatters` on `PlinthTextarea`.** `PlinthTextInput` has had
+  it since it was written; this field not having it was an oversight
+  rather than a decision.
+
+  It had a cost, which is why it is being fixed rather than left:
+  `PlinthCharacterLimitField` in `plinth_blocks` enforced its limit by
+  truncating in a controller listener, because a formatter was not
+  available to it. A formatter runs *before* the value is committed, so
+  an over-long paste never lands; truncating afterwards corrects a
+  committed value, which flickers and fights the caret.
+
 ## 1.3.1
 
 **A patch, not a minor.** Nothing was added to the public API —

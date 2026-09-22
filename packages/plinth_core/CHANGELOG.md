@@ -11,6 +11,13 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.4.0
+
+No change in this package. Released in lockstep with
+`plinth_components` 1.4.0, which adds `inputFormatters` to
+`PlinthTextarea` — the one parameter that kept `PlinthCharacterLimitField`
+correcting a committed value instead of refusing one.
+
 ## 1.3.1
 
 No change in this package. Released in lockstep with

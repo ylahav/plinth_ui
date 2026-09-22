@@ -14,6 +14,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_components/plinth_components.dart';
 
@@ -98,6 +99,8 @@ final _fields = <String, Widget Function()>{
 };
 
 void main() {
+  _textareaFormatters();
+
   group('every field renders the same chrome', () {
     _fields.forEach((name, build) {
       testWidgets(name, (tester) async {
@@ -152,5 +155,53 @@ void main() {
       PlinthTheme.defaultTheme.border,
       reason: 'an empty error string painted the error border',
     );
+  });
+}
+
+void _textareaFormatters() {
+  group('PlinthTextarea.inputFormatters', () {
+    testWidgets('a length limit prevents rather than corrects', (tester) async {
+      // The distinction the parameter exists for: a formatter runs
+      // before the value is committed, so the over-long text never
+      // lands. Truncating afterwards is visible as a flicker and
+      // fights the caret.
+      final controller = TextEditingController();
+      await tester.pumpWidget(_wrap(PlinthTextarea(
+        label: 'Bio',
+        controller: controller,
+        inputFormatters: [LengthLimitingTextInputFormatter(10)],
+      )));
+
+      await tester.enterText(find.byType(TextField), 'a' * 400);
+      await tester.pumpAndSettle();
+
+      expect(controller.text.length, 10);
+    });
+
+    testWidgets('a whitelist refuses what does not match', (tester) async {
+      final controller = TextEditingController();
+      await tester.pumpWidget(_wrap(PlinthTextarea(
+        label: 'Digits',
+        controller: controller,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      )));
+
+      await tester.enterText(find.byType(TextField), 'a1b2c3');
+      await tester.pumpAndSettle();
+
+      expect(controller.text, '123');
+    });
+
+    testWidgets('and nothing changes when none are given', (tester) async {
+      final controller = TextEditingController();
+      await tester.pumpWidget(
+        _wrap(PlinthTextarea(label: 'Bio', controller: controller)),
+      );
+
+      await tester.enterText(find.byType(TextField), 'anything at all');
+      await tester.pumpAndSettle();
+
+      expect(controller.text, 'anything at all');
+    });
   });
 }

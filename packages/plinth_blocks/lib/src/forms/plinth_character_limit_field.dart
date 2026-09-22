@@ -3,6 +3,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:plinth_components/plinth_components.dart';
 
 /// A field that counts down to a limit it will not let you cross.
@@ -22,13 +23,13 @@ import 'package:plinth_components/plinth_components.dart';
 /// the form will reject the value later, somewhere else, in different
 /// words.
 ///
-/// That enforcement happens here rather than through a
-/// `LengthLimitingTextInputFormatter`, because `PlinthTextarea` does
-/// not take `inputFormatters` — `PlinthTextInput` does, and the two
-/// disagreeing is a real gap in `plinth_components` rather than a
-/// decision. When it gains them, this should become a formatter and
-/// the truncation below should go: a formatter runs before the value
-/// is committed, where this runs after and corrects it.
+/// Enforced with a `LengthLimitingTextInputFormatter`, which runs
+/// *before* the value is committed. An earlier version truncated in a
+/// controller listener instead, because `PlinthTextarea` took no
+/// `inputFormatters` while `PlinthTextInput` did — a gap in
+/// `plinth_components` rather than a decision, closed in 1.4.0. The
+/// difference is real: correcting a committed value flickers and
+/// fights the caret, where refusing one never shows.
 class PlinthCharacterLimitField extends StatefulWidget {
   const PlinthCharacterLimitField({
     super.key,
@@ -78,9 +79,6 @@ class _PlinthCharacterLimitFieldState extends State<PlinthCharacterLimitField> {
   /// once per crossing rather than once per keystroke after it.
   var _warned = false;
 
-  /// Guards the listener against the edit it makes itself.
-  var _truncating = false;
-
   @override
   void initState() {
     super.initState();
@@ -97,24 +95,6 @@ class _PlinthCharacterLimitFieldState extends State<PlinthCharacterLimitField> {
   int get _remaining => widget.maxLength - _controller.text.characters.length;
 
   void _onChanged() {
-    if (_truncating) return;
-
-    // Paste is the case that matters: typing cannot exceed the limit by
-    // more than one character, but pasting an article into a 280-limit
-    // field can exceed it by thousands.
-    final text = _controller.text;
-    if (text.characters.length > widget.maxLength) {
-      final kept = text.characters.take(widget.maxLength).toString();
-      _truncating = true;
-      _controller.value = TextEditingValue(
-        text: kept,
-        // Caret at the end of what survived, not wherever it was in
-        // text that no longer exists.
-        selection: TextSelection.collapsed(offset: kept.length),
-      );
-      _truncating = false;
-    }
-
     final remaining = _remaining;
 
     if (remaining <= widget.warnAt && !_warned) {
@@ -150,6 +130,12 @@ class _PlinthCharacterLimitFieldState extends State<PlinthCharacterLimitField> {
             minLines: widget.minLines,
             maxLines: widget.maxLines,
             size: widget.size,
+
+            // Before the value is committed, so an over-long paste
+            // never lands rather than landing and being corrected.
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(widget.maxLength),
+            ],
           ),
           SizedBox(height: theme.space(1)),
           Align(

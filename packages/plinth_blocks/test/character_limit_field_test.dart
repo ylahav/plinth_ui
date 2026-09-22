@@ -39,12 +39,16 @@ void main() {
     expect(find.text('45'), findsOneWidget);
   });
 
-  testWidgets('a paste over the limit is truncated, not just flagged',
+  testWidgets('a paste over the limit is refused, not just flagged',
       (tester) async {
     // Typing cannot exceed a limit by more than one character. Pasting
     // an article into a 280-limit field exceeds it by thousands, and a
     // counter that only goes red has let a value through that the form
     // will reject later, elsewhere, in different words.
+    //
+    // Refused rather than corrected, since 1.4.0: the formatter runs
+    // before the value is committed, so the over-long text never lands
+    // at all.
     final controller = TextEditingController();
     await tester.pumpWidget(_wrap(PlinthCharacterLimitField(
       label: 'Bio',
@@ -59,9 +63,12 @@ void main() {
     expect(find.text('0'), findsOneWidget);
   });
 
-  testWidgets('the caret survives truncation', (tester) async {
-    // Left where it was in text that no longer exists, the next
-    // keystroke lands somewhere baffling.
+  testWidgets('the caret ends up somewhere sensible', (tester) async {
+    // When the block truncated after the fact, the caret could be left
+    // pointing into text that no longer existed and the next keystroke
+    // landed somewhere baffling. A formatter cannot produce that state,
+    // which is most of the argument for using one — the assertion stays
+    // so a future change back would have to explain itself.
     final controller = TextEditingController();
     await tester.pumpWidget(_wrap(PlinthCharacterLimitField(
       label: 'Bio',
