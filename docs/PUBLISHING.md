@@ -9,15 +9,15 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.4.0** | 1.5.0 |
-| `plinth_hooks` | **1.4.0** | 1.5.0 |
-| `plinth_components` | **1.4.0** | 1.5.0 |
-| `plinth_blocks` | **0.2.1** | 0.2.2 |
-| `plinth_charts` | **0.1.0** | 0.1.1 |
+| `plinth_core` | **1.5.0** | 1.5.1 |
+| `plinth_hooks` | **1.5.0** | 1.5.0 |
+| `plinth_components` | **1.5.0** | 1.5.0 |
+| `plinth_blocks` | **0.2.2** | 0.2.2 |
+| `plinth_charts` | **0.1.1** | 0.1.1 |
 
 **1.3.0 shipped 21 Sep 2026**, in dependency order, alongside the first
 releases of `plinth_blocks` and `plinth_charts` — five packages in one
-sequence, the largest release so far. **1.5.0 is cut and unreleased** — the largest release since 1.3.0, and
+sequence, the largest release so far. **1.5.0 shipped 22 Sep 2026**, all five packages — the largest release since 1.3.0, and
 the first to change how existing apps *look*: `border` moves from
 1.49:1 to 3.59:1 against `surface`, which every input, card outline and
 divider will show. **All five packages move**, and the order matters in

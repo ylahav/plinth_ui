@@ -156,6 +156,11 @@ abstract final class PlinthDtcg {
     final spacing = <PlinthSize, double>{};
     final radius = <PlinthSize, double>{};
     final fontSizes = <PlinthSize, double>{};
+    final borderWidths = <PlinthSize, double>{};
+    final durations = <PlinthSize, Duration>{};
+    final fontWeights = <PlinthWeight, FontWeight>{};
+    final curves = <PlinthCurve, Curve>{};
+    final semantics = <String, Color>{};
 
     for (final entry in flat.entries) {
       final path = entry.key;
@@ -181,6 +186,18 @@ abstract final class PlinthDtcg {
         continue;
       }
 
+      // A semantic colour is a single-segment path: `surface`, `text`.
+      if (parts.length == 1 && _semanticNames.contains(path)) {
+        final color = _color(raw);
+        if (color == null) {
+          ignored[path] = 'not a colour this reader understands: $raw';
+          continue;
+        }
+        semantics[path] = color;
+        applied.add(path);
+        continue;
+      }
+
       if (parts.length == 2) {
         final size =
             PlinthSize.values.where((s) => s.name == parts[1]).firstOrNull;
@@ -199,7 +216,60 @@ abstract final class PlinthDtcg {
               fontSizes[size] = number;
               applied.add(path);
               continue;
+            case 'borderWidth':
+              borderWidths[size] = number;
+              applied.add(path);
+              continue;
           }
+        }
+        if (size != null && parts.first == 'duration') {
+          final ms = _milliseconds(raw);
+          if (ms != null) {
+            durations[size] = Duration(milliseconds: ms);
+            applied.add(path);
+            continue;
+          }
+        }
+        if (parts.first == 'fontWeight') {
+          final role =
+              PlinthWeight.values.where((w) => w.name == parts[1]).firstOrNull;
+          final value = raw is num ? raw.toInt() : int.tryParse('$raw');
+          final weight =
+              FontWeight.values.where((w) => w.value == value).firstOrNull;
+          if (role != null && weight != null) {
+            fontWeights[role] = weight;
+            applied.add(path);
+            continue;
+          }
+        }
+        if (parts.first == 'curve') {
+          final role =
+              PlinthCurve.values.where((c) => c.name == parts[1]).firstOrNull;
+          final curve = _curve(raw);
+          if (role != null && curve != null) {
+            curves[role] = curve;
+            applied.add(path);
+            continue;
+          }
+        }
+
+        // Three kinds genuinely cannot come back, and say so
+        // specifically rather than under the catch-all below.
+        //
+        // `series` and `role` export the colour they *resolved to*,
+        // where a theme stores a ramp name plus a shade. The name is
+        // not recoverable from the colour, and reading it back would
+        // need the reference layer the hierarchy deliberately does not
+        // claim to have.
+        if (parts.first == 'series' || parts.first == 'role') {
+          ignored[path] = '${parts.first} exports as a resolved colour, and '
+              'the ramp name behind it cannot be recovered from one';
+          continue;
+        }
+        if (parts.first == 'elevation') {
+          ignored[path] = 'DTCG shadow import is not implemented; the '
+              'geometry round-trips through `elevations` directly';
+          continue;
         }
       }
 
@@ -221,6 +291,26 @@ abstract final class PlinthDtcg {
         radius: radius.isEmpty ? null : {...theme.radius, ...radius},
         fontSizes:
             fontSizes.isEmpty ? null : {...theme.fontSizes, ...fontSizes},
+        borderWidths: borderWidths.isEmpty
+            ? null
+            : {...theme.borderWidths, ...borderWidths},
+        durations:
+            durations.isEmpty ? null : {...theme.durations, ...durations},
+        fontWeights:
+            fontWeights.isEmpty ? null : {...theme.fontWeights, ...fontWeights},
+        curves: curves.isEmpty ? null : {...theme.curves, ...curves},
+        surface: semantics['surface'],
+        surfaceMuted: semantics['surfaceMuted'],
+        surfaceSunken: semantics['surfaceSunken'],
+        border: semantics['border'],
+        borderMuted: semantics['borderMuted'],
+        text: semantics['text'],
+        textMuted: semantics['textMuted'],
+        textDisabled: semantics['textDisabled'],
+        onFilled: semantics['onFilled'],
+        onFilledInverse: semantics['onFilledInverse'],
+        shadow: semantics['shadow'],
+        scrim: semantics['scrim'],
       ),
       applied: applied..sort(),
       ignored: ignored,
@@ -268,6 +358,44 @@ abstract final class PlinthDtcg {
     final value = int.tryParse(hex, radix: 16);
     return value == null ? null : Color(value);
   }
+
+  /// The semantic colour paths, which are single-segment.
+  static const _semanticNames = {
+    'surface',
+    'surfaceMuted',
+    'surfaceSunken',
+    'border',
+    'borderMuted',
+    'text',
+    'textMuted',
+    'textDisabled',
+    'onFilled',
+    'onFilledInverse',
+    'shadow',
+    'scrim',
+  };
+
+  static int? _milliseconds(Object? raw) {
+    if (raw is num) return raw.toInt();
+    if (raw is! String) return null;
+    final text = raw.trim();
+    if (text.endsWith('ms')) {
+      return int.tryParse(text.substring(0, text.length - 2));
+    }
+    if (text.endsWith('s')) {
+      final seconds = double.tryParse(text.substring(0, text.length - 1));
+      return seconds == null ? null : (seconds * 1000).round();
+    }
+    return int.tryParse(text);
+  }
+
+  /// Named curves, matching what [export] writes.
+  static Curve? _curve(Object? raw) => switch (raw) {
+        'linear' => Curves.linear,
+        'easeOut' => Curves.easeOut,
+        'easeOutCubic' => Curves.easeOutCubic,
+        _ => null,
+      };
 
   static double? _dimension(Object? raw) {
     if (raw is num) return raw.toDouble();

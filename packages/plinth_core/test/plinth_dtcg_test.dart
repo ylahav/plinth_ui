@@ -178,6 +178,65 @@ void main() {
       }
     });
 
+    test('a self-export loses nothing it could have kept', () {
+      // The test that should have existed from the start, and did not.
+      //
+      // The original round-trip checked colours and three scales, so it
+      // passed while `parse` silently dropped 46 of the 191 tokens
+      // `export` had written — border widths, durations, weights,
+      // curves and every semantic colour. It shipped in 1.5.0 that way
+      // and was found by running the round trip against the *published*
+      // package with a stricter assertion than the repo's own.
+      //
+      // Checking `applied` is not enough: what matters is that nothing
+      // is in `ignored` except the three kinds that genuinely cannot
+      // come back.
+      final result = PlinthDtcg.parse(PlinthDtcg.export(theme));
+
+      final unexpected = {
+        for (final entry in result.ignored.entries)
+          if (!entry.key.startsWith('series.') &&
+              !entry.key.startsWith('role.') &&
+              !entry.key.startsWith('elevation.'))
+            entry.key: entry.value,
+      };
+      expect(unexpected, isEmpty, reason: unexpected.toString());
+    });
+
+    test('and the three kinds that cannot say why', () {
+      // `series` and `role` export the colour they resolved to, and a
+      // theme stores a ramp name plus a shade — not recoverable from a
+      // colour. They each carry a specific reason rather than the
+      // catch-all, so a reader can tell "not supported" from "not
+      // recognised".
+      final result = PlinthDtcg.parse(PlinthDtcg.export(theme));
+      for (final entry in result.ignored.entries) {
+        expect(
+          entry.value,
+          isNot('no Plinth token matches this path'),
+          reason: '${entry.key} fell through to the catch-all',
+        );
+      }
+    });
+
+    test('the values survive, not just the paths', () {
+      final back = PlinthDtcg.parse(PlinthDtcg.export(theme)).theme;
+
+      expect(back.border, theme.border);
+      expect(back.text, theme.text);
+      expect(back.surfaceSunken, theme.surfaceSunken);
+      for (final size in PlinthSize.values) {
+        expect(back.borderWidth(size), theme.borderWidth(size));
+        expect(back.duration(size), theme.duration(size));
+      }
+      for (final w in PlinthWeight.values) {
+        expect(back.weight(w), theme.weight(w));
+      }
+      for (final c in PlinthCurve.values) {
+        expect(back.curve(c), theme.curve(c));
+      }
+    });
+
     test('and the scales it started with', () {
       final back = PlinthDtcg.parse(PlinthDtcg.export(theme));
       for (final size in PlinthSize.values) {

@@ -11,6 +11,33 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.5.1
+
+### Fixed
+
+- **`PlinthDtcg.parse` dropped 46 of the 191 tokens `export` writes.**
+  Border widths, durations, font weights, curves and *every* semantic
+  colour came back as "no Plinth token matches this path", so a
+  round-trip through this library's own format silently flattened a
+  theme to its ramps and three scales.
+
+  All of them now read back, and `parse` reports `surface`, `text`,
+  `border` and the rest as applied rather than ignored.
+
+  Three kinds still cannot come back and now say so *specifically*
+  rather than falling through the catch-all: `series` and `role` export
+  the colour they resolved to, where a theme stores a ramp name plus a
+  shade — the name is not recoverable from a colour without the
+  reference layer the hierarchy deliberately does not claim. DTCG
+  shadow import is unimplemented.
+
+  **Found by running the round trip against the published 1.5.0 with a
+  stricter assertion than the repo's own.** The original test checked
+  colours and three scales and passed while everything else was
+  dropped; it now asserts that nothing lands in `ignored` except those
+  three kinds, and that the *values* survive rather than only the
+  paths.
+
 ## 1.5.0
 
 **Your borders will look different, and that is the headline.**
