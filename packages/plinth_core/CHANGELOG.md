@@ -11,6 +11,49 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## Unreleased
+
+### Added
+
+- **The token hierarchy** — `PlinthToken`, `PlinthTier`,
+  `PlinthTokenType`, and `theme.tokens`. Every token in a theme,
+  addressable by a stable path (`color.blue.6`, `spacing.md`,
+  `surface`) and sorted into primitive or semantic.
+
+  `docs/ROADMAP.md` calls this the gate on everything in interop, and
+  the reason is narrow: a `PlinthTheme` was thirty-odd fields that only
+  Dart could read. You could ask it for `surface`; you could not ask it
+  *what it has*. Export, a token explorer and theme validation all need
+  the second question.
+
+  Two tiers, not three. Component tokens do not exist yet, and an empty
+  tier would describe an intention rather than the theme.
+
+  Purely additive: no field changed and nothing is deprecated.
+
+- **DTCG, both directions** — `PlinthDtcg.export` and
+  `PlinthDtcg.parse`. A design team publishes tokens from Figma as DTCG
+  JSON and a web codebase consumes them through Style Dictionary; a
+  Flutter app in the same organisation had to re-type the palette by
+  hand and drift from it quietly.
+
+  **`parse` returns a result, not a theme.** It reports what it applied
+  *and what it ignored, with a reason for each* — because an importer
+  that silently drops what it does not understand produces a theme that
+  looks right and is not, and the person who finds out is whoever
+  trusted the colours. References (`{color.blue.6}`) are resolved, and
+  a reference cycle is reported rather than overflowing the stack.
+
+  Curves export as names rather than control points: `Curves.bounceIn`
+  is piecewise and has no four-number cubic-bézier form, and a name
+  that round-trips is worth more than four numbers wrong for half the
+  values.
+
+  What the enumeration reports is **resolved values, not references**.
+  A theme stores `surface` as a `Color`, so that is what it can
+  honestly report; emitting references needs a reference layer, which
+  is a separate change with a breaking edge to it.
+
 ## 1.4.0
 
 No change in this package. Released in lockstep with
