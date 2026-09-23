@@ -71,8 +71,11 @@ you already have.** Four things neither competitor documents:
 **Adoption is the open question, not features.** Two mature packages
 hold adjacent ground with real usage, and none of the above is visible
 from a pub.dev listing. Plinth is two weeks old, so its own numbers say
-nothing yet either way — which is exactly why **one real app somebody
-else built** is worth more than any further feature.
+nothing yet either way — which is exactly why **anything somebody else
+reports** is worth more than any further feature. Since 1.5.0 that no
+longer means a whole app: the cheapest useful version is somebody
+running `theme.validate()` against their own tokens, which costs them
+an afternoon. See Next item 3.
 
 ---
 
@@ -119,15 +122,45 @@ a cycle is reported rather than overflowing the stack.
 Still open: emitting *references* rather than resolved values on
 export, which needs the reference layer above.
 
-**3. One real app, built by somebody else.** The only thing that
-produces undiscounted evidence. The validation app's author is also
-Plinth's author, and that discount is applied everywhere it is cited.
+**3. Evidence from somebody else.** The discount comes from
+*authorship*, not from scale: the validation app's author is also
+Plinth's author, and that is applied everywhere it is cited.
 
-The four starters in `templates/` **do not close this** — they are also
-written by Plinth's author and carry exactly the same discount. What
-they change is the cost of the first hour for somebody else: `cp -r`,
-`flutter create .`, and the app runs. That is a lower bar to somebody
-starting, not evidence that somebody did.
+This item said "one real app" until 1.5.0, which was the most expensive
+form of the thing and — until 1.5.0 — the only available one. It is no
+longer. `theme.validate()` and `PlinthDtcg.parse` both take somebody
+else's *tokens* rather than their project, and tokens are a far smaller
+thing to ask for than a migration.
+
+So this is a ladder, cheapest first. Every rung produces evidence this
+repo cannot write for itself, and the bottom rung costs an afternoon:
+
+| Rung | The ask | What it proves |
+|---|---|---|
+| **Run the validator** | `expect(ourTheme.validate(), isEmpty)` against their own tokens. No adoption, no migration, no dependency on anything Plinth paints | That the contrast machinery finds real failures in a palette nobody here chose. It found two in Plinth's own defaults, so it will find some |
+| **Import a real design file** | `PlinthDtcg.parse` on their Figma export, and report what landed in `ignored` | That the format claim survives a file this repo did not author. `ignored` is the interesting half — it is the list of things the reader does not understand yet |
+| **Rebrand a starter** | `cp -r templates/dashboard`, change `brandColor`, say whether anything became unreadable | The rebrand-survival claim, exercised by somebody with no stake in it holding |
+| **Build an app** | The original item | Everything above, plus whatever nobody thought to ask |
+
+**Which app, if it gets that far.** Not any app — the shape decides how
+much it is worth:
+
+- **White-label or multi-tenant, one brand colour per customer.** The
+  only shape that exercises rebrand survival *continuously* rather than
+  once, and the only one where a failure is reported by a customer
+  rather than noticed by the author.
+- **Something audited under Israeli accessibility law** (IS 5568 / the
+  Equal Rights for Persons with Disabilities regulations). A
+  third-party auditor renders a verdict on precisely the claim this
+  library makes. An audit report is evidence that cannot be
+  self-issued.
+- **A team with an existing Figma design system**, which exercises the
+  token hierarchy and DTCG against a file written elsewhere.
+
+The four starters in `templates/` **still do not close this** — they are
+written by Plinth's author and carry the same discount. What they
+changed is the cost of the first hour, which is the third rung above,
+not the fourth.
 
 ## Later
 

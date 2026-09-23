@@ -600,7 +600,9 @@ intentional rather than bugs:
 
 **The plan itself lives in [docs/ROADMAP.md](docs/ROADMAP.md)**, not
 here — the list above is the residue of work that ran through this
-file. The three things actually next are the token hierarchy
-(primitive / semantic / component tiers, which gates all interop),
-`PlinthTheme.fromDtcg(json)`, and one real app built by somebody who
-isn't the author.
+file. The token hierarchy and `PlinthDtcg` both landed in 1.5.0, so
+what is actually next is the one thing this repository cannot write for
+itself: **evidence from somebody who isn't the author**. It is a ladder
+rather than a single ask, and the bottom rung is running
+`theme.validate()` against your own tokens — no adoption, no migration,
+about an afternoon. See ROADMAP Next item 3.
