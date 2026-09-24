@@ -13,7 +13,7 @@ Whether it joins, or versions on its own because a block catalogue will
 churn while a token engine does not, is a decision for the first
 release rather than one to inherit from the number below.
 
-## Unreleased
+## 0.3.0
 
 ### Added
 

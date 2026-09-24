@@ -11,6 +11,16 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.6.0
+
+No change in this package. Released in lockstep with
+`plinth_components` 1.6.0, which adds `PlinthDrawer.extent` — the
+full-screen sheet the size scale could not express, reported by
+somebody building a real screen.
+
+This also brings the three back into line after `plinth_core` 1.5.1,
+which went out alone because the bug it fixed was core's alone.
+
 ## 1.5.0
 
 No change in this package. Released in lockstep with `plinth_core`
