@@ -9,19 +9,23 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.5.1** | 1.6.0 |
-| `plinth_hooks` | **1.5.0** | 1.6.0 |
-| `plinth_components` | **1.5.0** | 1.6.0 |
-| `plinth_blocks` | **0.2.2** | 0.3.0 |
+| `plinth_core` | **1.6.0** | 1.6.0 |
+| `plinth_hooks` | **1.6.0** | 1.6.0 |
+| `plinth_components` | **1.6.0** | 1.6.0 |
+| `plinth_blocks` | **0.3.0** | 0.3.0 |
 | `plinth_charts` | **0.1.1** | 0.1.1 |
 
 **1.3.0 shipped 21 Sep 2026**, in dependency order, alongside the first
 releases of `plinth_blocks` and `plinth_charts` — five packages in one
-sequence, the largest release so far. **1.6.0 and `plinth_blocks` 0.3.0 are cut and unreleased** — the first
-release driven by somebody else's report rather than by a gap list.
-`plinth_blocks` keeps its `^1.5.0` constraint: `PlinthPhotoHeader` uses
-nothing from 1.6.0, so raising it would force an upgrade that buys
-nobody anything. **The order therefore does not matter this time.**
+sequence, the largest release so far.
+
+**1.6.0 shipped 24 Sep 2026** with `plinth_blocks` 0.3.0 — the first
+release driven by *using* the library rather than by a gap list, both
+items found while converting an existing app onto Plinth rather than by
+comparing catalogues. `plinth_blocks` kept its `^1.5.0` constraint:
+`PlinthPhotoHeader` uses nothing from 1.6.0, so raising it would have
+forced an upgrade that buys nobody anything, and **the order therefore
+did not matter this time**.
 
 **`plinth_core` 1.5.1 shipped 22 Sep 2026** — a DTCG round-trip bug
 found by verifying 1.5.0 against pub.dev with a stricter check than the
