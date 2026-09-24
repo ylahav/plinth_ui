@@ -11,6 +11,13 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.7.0
+
+No change in this package. Released in lockstep with
+`plinth_components` 1.7.0, which completes the full-screen sheet:
+`PlinthDrawer` can now hand its child the whole panel, which
+`extent` alone did not do.
+
 ## 1.6.0
 
 No change in this package. Released in lockstep with

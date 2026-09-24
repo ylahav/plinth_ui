@@ -163,7 +163,7 @@ String _render(
     ..writeln('# Tokens')
     ..writeln()
     ..writeln('**Generated — do not edit.** Run')
-    ..writeln('`dart run tool/generate_token_usage.dart` from')
+    ..writeln('`flutter test tool/generate_token_usage.dart` from')
     ..writeln('`packages/plinth_components`. `token_usage_fresh_test.dart`')
     ..writeln('fails if this file falls behind the source.')
     ..writeln()

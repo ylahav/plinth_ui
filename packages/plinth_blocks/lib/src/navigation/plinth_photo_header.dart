@@ -9,6 +9,30 @@
 ///
 /// Found while converting an existing app onto Plinth, where it was
 /// assembled from a bare photo widget and a `PlinthActionIcon`.
+///
+/// ## Inside a full-screen sheet
+///
+/// The screen this came from is a covering bottom sheet, and the
+/// drawer's own chrome has to be turned off or it insets the
+/// photograph by `lg` and pushes it below the status bar:
+///
+/// ```dart
+/// PlinthDrawer(
+///   controller: controller,
+///   position: PlinthDrawerPosition.bottom,
+///   extent: double.infinity,
+///   contentPadding: EdgeInsets.zero,   // reach the side edges
+///   useSafeArea: false,                // run under the status bar
+///   child: PlinthPhotoHeader(image: photo, title: 'Scene', onClose: pop),
+/// )
+/// ```
+///
+/// Dropping the drawer's `SafeArea` is safe here and nowhere else:
+/// this header keeps its own controls inside the safe area while
+/// letting the photograph bleed past it. Both halves are pinned by
+/// `test/photo_header_in_sheet_test.dart`.
+///
+/// Needs `plinth_components` 1.7.0.
 library;
 
 import 'package:flutter/material.dart';

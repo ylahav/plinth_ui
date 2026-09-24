@@ -1,7 +1,7 @@
 # Tokens
 
 **Generated — do not edit.** Run
-`dart run tool/generate_token_usage.dart` from
+`flutter test tool/generate_token_usage.dart` from
 `packages/plinth_components`. `token_usage_fresh_test.dart`
 fails if this file falls behind the source.
 
@@ -165,7 +165,7 @@ values and the same readers.
 | `fontSize.md` | primitive | 16 | 16 | — |
 | `borderWidth.md` | primitive | 2 | 2 | 8 |
 | `duration.md` | primitive | 200ms | 200ms | 3 |
-| `spacing.lg` | primitive | 20 | 20 | 2 |
+| `spacing.lg` | primitive | 20 | 20 | 3 |
 | `radius.lg` | primitive | 16 | 16 | — |
 | `fontSize.lg` | primitive | 18 | 18 | — |
 | `borderWidth.lg` | primitive | 3 | 3 | 1 |
@@ -238,7 +238,7 @@ values and the same readers.
 | `radius.xs` | PlinthColorInput, PlinthColorPicker, PlinthTree |
 | `scrim` | PlinthBackgroundImage |
 | `shadow` | ColorSliderBase, PlinthCombobox, PlinthDialog, PlinthFloatingWindow, PlinthSwitch |
-| `spacing.lg` | PlinthEmptyState, PlinthNavLink |
+| `spacing.lg` | PlinthDrawer, PlinthEmptyState, PlinthNavLink |
 | `spacing.md` | PlinthAlert, PlinthBlockquote, PlinthDialog, PlinthEmptyState, PlinthStepper, PlinthTimeline |
 | `spacing.sm` | **22 components**, including PlinthAccordion, PlinthAlert, PlinthAutocomplete, PlinthBlockquote |
 | `spacing.xl` | PlinthEmptyState |

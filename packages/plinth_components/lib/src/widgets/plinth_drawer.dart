@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:plinth_core/plinth_core.dart';
 import 'package:plinth_hooks/plinth_hooks.dart';
 
-import 'plinth_box.dart';
 import 'plinth_close_button.dart';
 import 'plinth_text.dart';
 import 'overlay_host.dart';
@@ -43,6 +42,8 @@ class PlinthDrawer extends StatelessWidget {
     this.position = PlinthDrawerPosition.right,
     this.size = PlinthSize.md,
     this.extent,
+    this.contentPadding,
+    this.useSafeArea = true,
     this.closeOnBackdropTap = true,
   });
 
@@ -68,6 +69,27 @@ class PlinthDrawer extends StatelessWidget {
   /// A fraction is the other common want, and is arithmetic the caller
   /// already has: `MediaQuery.sizeOf(context).height * 0.9`.
   final double? extent;
+
+  /// Insets [child] within the panel. Defaults to `lg` on every side.
+  ///
+  /// `EdgeInsets.zero` hands [child] the full panel width, which is what
+  /// edge-to-edge content needs — see [useSafeArea] for the other half
+  /// of that.
+  final EdgeInsetsGeometry? contentPadding;
+
+  /// Keeps the panel clear of notches, status bars and home indicators.
+  ///
+  /// **Set it false only for content that handles its own insets**, and
+  /// expect to set [contentPadding] to zero at the same time: together
+  /// they are what a full-bleed sheet needs. `PlinthPhotoHeader` is
+  /// built for exactly this — it runs its photograph under the status
+  /// bar while keeping its close button inside the safe area, and the
+  /// drawer's own `SafeArea` would otherwise push the photograph down
+  /// and leave a band of [PlinthTheme.surface] above it.
+  ///
+  /// It does not mix with [title]: the drawer's title row would lose the
+  /// same protection. Content that bleeds supplies its own header.
+  final bool useSafeArea;
 
   final bool closeOnBackdropTap;
 
@@ -137,41 +159,42 @@ class PlinthDrawer extends StatelessWidget {
     final theme = context.plinth;
     final extent = this.extent ?? _extents[size]!;
 
+    Widget content = Padding(
+      padding: contentPadding ?? EdgeInsets.all(theme.spacing[PlinthSize.lg]!),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (title != null) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: PlinthText(
+                    title!,
+                    size: PlinthSize.lg,
+                    weight: theme.weight(PlinthWeight.bold),
+                  ),
+                ),
+                PlinthCloseButton(
+                  size: PlinthSize.lg,
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+            SizedBox(height: theme.spacing[PlinthSize.sm]),
+          ],
+          if (_isHorizontal) Expanded(child: child) else Flexible(child: child),
+        ],
+      ),
+    );
+
+    if (useSafeArea) {
+      content = SafeArea(child: content);
+    }
+
     final panel = Material(
       color: theme.surface,
       elevation: 8,
-      child: SafeArea(
-        child: PlinthBox(
-          p: PlinthSize.lg,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (title != null) ...[
-                Row(
-                  children: [
-                    Expanded(
-                      child: PlinthText(
-                        title!,
-                        size: PlinthSize.lg,
-                        weight: theme.weight(PlinthWeight.bold),
-                      ),
-                    ),
-                    PlinthCloseButton(
-                      size: PlinthSize.lg,
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
-                SizedBox(height: theme.spacing[PlinthSize.sm]),
-              ],
-              if (_isHorizontal)
-                Expanded(child: child)
-              else
-                Flexible(child: child),
-            ],
-          ),
-        ),
-      ),
+      child: content,
     );
 
     return Align(

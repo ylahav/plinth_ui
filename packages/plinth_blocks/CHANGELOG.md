@@ -13,6 +13,26 @@ Whether it joins, or versions on its own because a block catalogue will
 churn while a token engine does not, is a decision for the first
 release rather than one to inherit from the number below.
 
+## 0.3.1
+
+### Changed
+
+- **`plinth_components` constraint raised to `^1.7.0`.** No block code
+  changed, but `PlinthPhotoHeader` now documents how to put itself in a
+  full-screen sheet, and that recipe needs `PlinthDrawer.contentPadding`
+  and `useSafeArea` from 1.7.0. A documented recipe that does not
+  compile is worse than no recipe, so the constraint guarantees it.
+
+  **This makes the publish order matter:** `plinth_components` 1.7.0
+  first, then this.
+
+### Added
+
+- `test/photo_header_in_sheet_test.dart` pins the composition — the
+  photograph reaching the top edge and the close button staying inside
+  the safe area are now asserted together, which is where 1.6.0's gap
+  actually lived.
+
 ## 0.3.0
 
 ### Added

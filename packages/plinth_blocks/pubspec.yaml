@@ -9,7 +9,7 @@ description: >-
 # its own version because its surface will churn while the token engine
 # does not, is a decision to take at the first release rather than one
 # to inherit from a number picked here.
-version: 0.3.0
+version: 0.3.1
 homepage: https://github.com/ylahav/plinth_ui
 repository: https://github.com/ylahav/plinth_ui
 issue_tracker: https://github.com/ylahav/plinth_ui/issues
@@ -31,7 +31,7 @@ dependencies:
     sdk: flutter
   # Blocks are arrangements of components, so this is the whole
   # dependency. It brings plinth_core with it.
-  plinth_components: ^1.5.0
+  plinth_components: ^1.7.0
 
 dev_dependencies:
   flutter_test:

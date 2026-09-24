@@ -11,6 +11,31 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.7.0
+
+### Added
+
+- **`PlinthDrawer.contentPadding` and `PlinthDrawer.useSafeArea`** —
+  the other half of the full-screen sheet 1.6.0 shipped. `extent:
+  double.infinity` made the *panel* fill the screen, but the drawer
+  still wrapped its child in `SafeArea` and `lg` padding, so content
+  meant to reach the edges started 20px in and, on a notched phone,
+  67px down. A covering sheet now needs all three:
+
+  ```dart
+  extent: double.infinity, contentPadding: EdgeInsets.zero,
+  useSafeArea: false,
+  ```
+
+  **Found by composing 1.6.0's own two features.** `PlinthPhotoHeader`
+  was built to run a photograph under the status bar while keeping its
+  close button inside the safe area; the drawer's `SafeArea` undid
+  exactly that. Neither feature's tests could see it, because each
+  tested itself alone.
+
+  Defaults are unchanged and pinned by two regression tests, so
+  existing drawers keep their padding and their safe area.
+
 ## 1.6.0
 
 ### Added
