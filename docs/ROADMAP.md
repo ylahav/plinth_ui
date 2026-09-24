@@ -142,6 +142,20 @@ repo cannot write for itself, and the bottom rung costs an afternoon:
 | **Rebrand a starter** | `cp -r templates/dashboard`, change `brandColor`, say whether anything became unreadable | The rebrand-survival claim, exercised by somebody with no stake in it holding |
 | **Build an app** | The original item | Everything above, plus whatever nobody thought to ask |
 
+**The fourth rung has produced its first report.** Somebody building a
+real screen wanted a full-screen bottom sheet and a photo header, found
+neither, and worked around both — `PlinthDrawer` tops out at 600px so
+they used a plain route, and nothing put a photograph edge to edge with
+a close button over it so they assembled one. Both landed:
+`PlinthDrawer.extent` and `PlinthPhotoHeader`.
+
+Worth noting what kind of evidence that is. Neither gap was in any
+audit, any parity table or any roadmap — `COMPONENTS.md` and
+`SHOWCASE.md` compare against Mantine, and Mantine has no
+full-screen-sheet entry to be missing. **A gap list built by comparison
+can only find what the other library has.** This is the first thing
+here found by somebody needing it.
+
 **Which app, if it gets that far.** Not any app — the shape decides how
 much it is worth:
 
@@ -266,7 +280,7 @@ tracking `@mantine/core`, five answering questions only Flutter has —
 with 43 golden images and 74 test files behind them.*
 
 Alongside them, and counted separately because they version separately:
-*42 blocks in `plinth_blocks` and 4 charts in `plinth_charts`, with 22
+*43 blocks in `plinth_blocks` and 4 charts in `plinth_charts`, with 24
 and 4 test files behind them.* The demo app browses **117**
 arrangements across 3 categories, of which the 38 are the ones that
 have become real widgets with real APIs; the rest are still component

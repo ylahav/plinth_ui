@@ -58,6 +58,7 @@ Every Page Sections arrangement, plus the navigation and page chrome:
 | `PlinthTopBar` | Brand, links, a flexible middle, actions |
 | `PlinthSidebar` | A nav rail: sections, sub-levels, collapsible to icons |
 | `PlinthPageHeader` | Breadcrumbs, a real heading, actions, and a row beneath |
+| `PlinthPhotoHeader` | A photograph edge to edge with a way back out of it, the controls in the safe area and the photograph not |
 | `PlinthStickyHeader` | A header that stays while the body under it scrolls |
 | `PlinthStatTile` | A dashboard figure that knows up from good |
 | `PlinthStatGrid` | Those tiles in a row that becomes a column |

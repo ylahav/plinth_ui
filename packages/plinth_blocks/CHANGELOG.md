@@ -13,6 +13,32 @@ Whether it joins, or versions on its own because a block catalogue will
 churn while a token engine does not, is a decision for the first
 release rather than one to inherit from the number below.
 
+## Unreleased
+
+### Added
+
+- **`PlinthPhotoHeader`** — a photograph across the top of a page with
+  a dismiss control over it. The detail-page header.
+
+  **Reported by somebody building a real screen**, who found the parts
+  and not the arrangement: `PlinthBackgroundImage` does photo and
+  scrim, `PlinthHeroBlock` does a marketing hero over a photograph, and
+  neither is a page header with a close button. They built it from
+  their own photo widget and a `PlinthActionIcon`.
+
+  It takes the image as a **widget**, not a URL —
+  `PlinthBackgroundImage` calls `Image.network`, which is why the
+  reporter had their own photo widget at all. A widget costs the caller
+  `Image.asset(...)` and buys every image source Flutter has.
+
+  Three things it gets right that are easy to miss: the controls take
+  the safe area and the photograph does not, because edge to edge is
+  the point of the photograph and a close button under a notch is the
+  point of nothing; the photograph is **decorative unless labelled**,
+  since most detail-page photos repeat the title and "image" announced
+  repeatedly is noise; and the close button is named through
+  `PlinthLocalizations` rather than a hardcoded "Close".
+
 ## 0.2.2
 
 ### Added

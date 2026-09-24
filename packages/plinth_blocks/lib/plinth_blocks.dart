@@ -51,6 +51,7 @@ export 'src/marketing/plinth_pricing_card.dart';
 export 'src/marketing/plinth_stat_strip.dart';
 export 'src/navigation/plinth_footer.dart';
 export 'src/navigation/plinth_page_header.dart';
+export 'src/navigation/plinth_photo_header.dart';
 export 'src/navigation/plinth_sidebar.dart';
 export 'src/navigation/plinth_top_bar.dart';
 export 'src/people/plinth_member_list.dart';

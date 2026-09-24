@@ -42,6 +42,7 @@ class PlinthDrawer extends StatelessWidget {
     required this.child,
     this.position = PlinthDrawerPosition.right,
     this.size = PlinthSize.md,
+    this.extent,
     this.closeOnBackdropTap = true,
   });
 
@@ -54,6 +55,19 @@ class PlinthDrawer extends StatelessWidget {
   /// top/bottom) via a fixed size map, mirroring [PlinthModal]'s
   /// [PlinthSize]-keyed sizing.
   final PlinthSize size;
+
+  /// Overrides [size] with an explicit extent in logical pixels.
+  ///
+  /// **`double.infinity` gives a full-screen sheet**, which the scale
+  /// cannot express: it tops out at 600 at `xl`, and every phone is
+  /// taller than that. Reported by somebody building a real screen who
+  /// wanted a bottom sheet that covers the page, hit the ceiling, and
+  /// dropped to a plain full-screen route instead — which works, and
+  /// loses the drawer's dismissal, scrim and animation.
+  ///
+  /// A fraction is the other common want, and is arithmetic the caller
+  /// already has: `MediaQuery.sizeOf(context).height * 0.9`.
+  final double? extent;
 
   final bool closeOnBackdropTap;
 
@@ -121,7 +135,7 @@ class PlinthDrawer extends StatelessWidget {
 
   Widget _buildContent(BuildContext context) {
     final theme = context.plinth;
-    final extent = _extents[size]!;
+    final extent = this.extent ?? _extents[size]!;
 
     final panel = Material(
       color: theme.surface,

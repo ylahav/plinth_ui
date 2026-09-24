@@ -11,6 +11,23 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## Unreleased
+
+### Added
+
+- **`PlinthDrawer.extent`** — an explicit extent in logical pixels,
+  overriding the `size` scale. `double.infinity` gives a full-screen
+  sheet.
+
+  **Reported by somebody building a real screen.** The scale tops out
+  at 600 at `xl` and every phone is taller than that, so a bottom sheet
+  meant to cover the page could not be expressed — they dropped to a
+  plain full-screen route, which works and loses the drawer's scrim,
+  dismissal and animation.
+
+  The scale is unchanged and still the default, so nothing moves for
+  anyone who was not asking for this.
+
 ## 1.5.0
 
 **Borders look different in this release**, because `plinth_core` 1.5.0
