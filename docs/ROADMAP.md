@@ -142,19 +142,32 @@ repo cannot write for itself, and the bottom rung costs an afternoon:
 | **Rebrand a starter** | `cp -r templates/dashboard`, change `brandColor`, say whether anything became unreadable | The rebrand-survival claim, exercised by somebody with no stake in it holding |
 | **Build an app** | The original item | Everything above, plus whatever nobody thought to ask |
 
-**The fourth rung has produced its first report.** Somebody building a
-real screen wanted a full-screen bottom sheet and a photo header, found
-neither, and worked around both — `PlinthDrawer` tops out at 600px so
-they used a plain route, and nothing put a photograph edge to edge with
-a close button over it so they assembled one. Both landed:
-`PlinthDrawer.extent` and `PlinthPhotoHeader`.
+### Conversion, which is not on the ladder
 
-Worth noting what kind of evidence that is. Neither gap was in any
-audit, any parity table or any roadmap — `COMPONENTS.md` and
-`SHOWCASE.md` compare against Mantine, and Mantine has no
-full-screen-sheet entry to be missing. **A gap list built by comparison
-can only find what the other library has.** This is the first thing
-here found by somebody needing it.
+**Plinth's author is converting his own applications onto it.** That is
+not a rung above — it carries exactly the discount this section is
+about, the same one the validation app carries. Nobody outside has
+reported anything yet.
+
+It is worth its own heading anyway, because it produces a *different
+kind* of finding from everything else here, and the difference survives
+the discount:
+
+> A gap list built by comparison can only find what the other library
+> has.
+
+`COMPONENTS.md` and `SHOWCASE.md` both compare against Mantine, and
+Mantine has no full-screen-sheet entry to be missing. The first two
+conversion findings were exactly that shape — `PlinthDrawer` topping
+out at 600px so a covering bottom sheet was impossible, and no page
+header putting a photograph edge to edge with a close button over it.
+Neither appeared in any audit, parity table or roadmap, and neither
+could have.
+
+So: **conversion finds gaps that comparison cannot, and outside
+adoption finds what conversion cannot.** They are different axes, not
+the same axis at different strengths, and this section previously had
+only the second one written down.
 
 **Which app, if it gets that far.** Not any app — the shape decides how
 much it is worth:

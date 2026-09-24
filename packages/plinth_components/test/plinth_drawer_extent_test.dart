@@ -1,16 +1,15 @@
 /// A bottom sheet that covers the page, which the size scale could not
 /// express.
 ///
-/// Reported by somebody building a real screen: `PlinthDrawer` from the
-/// bottom tops out at 600px at `xl`, every phone is taller than that,
-/// so they dropped to a plain full-screen route — which works, and
-/// loses the drawer's scrim, dismissal and animation.
+/// Found while converting an existing app onto Plinth: `PlinthDrawer`
+/// from the bottom tops out at 600px at `xl`, every phone is taller
+/// than that, so the screen became a plain full-screen route — which
+/// works, and loses the drawer's scrim, dismissal and animation.
 library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_components/plinth_components.dart';
-import 'package:plinth_hooks/plinth_hooks.dart';
 
 /// Builds a drawer with a controller, since `PlinthDrawer` requires
 /// one and this file is about extent rather than disclosure.

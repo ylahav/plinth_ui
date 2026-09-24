@@ -19,7 +19,7 @@ changes; from `1.0.0` they cannot.
   overriding the `size` scale. `double.infinity` gives a full-screen
   sheet.
 
-  **Reported by somebody building a real screen.** The scale tops out
+  **Found by converting an existing app onto Plinth.** The scale tops out
   at 600 at `xl` and every phone is taller than that, so a bottom sheet
   meant to cover the page could not be expressed — they dropped to a
   plain full-screen route, which works and loses the drawer's scrim,

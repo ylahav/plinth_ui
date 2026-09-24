@@ -7,8 +7,8 @@
 /// scrim, `PlinthHeroBlock` does a marketing hero over a photograph,
 /// and neither is a page header with a close button.
 ///
-/// Reported by somebody building a real screen, who assembled it from
-/// their own photo widget and a `PlinthActionIcon`.
+/// Found while converting an existing app onto Plinth, where it was
+/// assembled from a bare photo widget and a `PlinthActionIcon`.
 library;
 
 import 'package:flutter/material.dart';

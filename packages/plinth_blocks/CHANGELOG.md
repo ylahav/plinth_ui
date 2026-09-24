@@ -20,7 +20,7 @@ release rather than one to inherit from the number below.
 - **`PlinthPhotoHeader`** — a photograph across the top of a page with
   a dismiss control over it. The detail-page header.
 
-  **Reported by somebody building a real screen**, who found the parts
+  **Found by converting an existing app onto Plinth**, which had the parts
   and not the arrangement: `PlinthBackgroundImage` does photo and
   scrim, `PlinthHeroBlock` does a marketing hero over a photograph, and
   neither is a page header with a close button. They built it from

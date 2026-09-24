@@ -60,9 +60,9 @@ class PlinthDrawer extends StatelessWidget {
   ///
   /// **`double.infinity` gives a full-screen sheet**, which the scale
   /// cannot express: it tops out at 600 at `xl`, and every phone is
-  /// taller than that. Reported by somebody building a real screen who
-  /// wanted a bottom sheet that covers the page, hit the ceiling, and
-  /// dropped to a plain full-screen route instead — which works, and
+  /// taller than that. Found while converting an existing app onto
+  /// Plinth — a bottom sheet meant to cover the page hit the ceiling
+  /// and became a plain full-screen route instead, which works, and
   /// loses the drawer's dismissal, scrim and animation.
   ///
   /// A fraction is the other common want, and is arithmetic the caller
