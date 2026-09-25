@@ -9,19 +9,45 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.6.0** | 1.7.0 |
-| `plinth_hooks` | **1.6.0** | 1.7.0 |
-| `plinth_components` | **1.6.0** | 1.7.0 |
-| `plinth_blocks` | **0.3.0** | 0.4.0 |
+| `plinth_core` | **1.7.0** | 1.8.0 |
+| `plinth_hooks` | **1.7.0** | 1.8.0 |
+| `plinth_components` | **1.7.0** | 1.8.0 |
+| `plinth_blocks` | **0.4.0** | 0.4.0 |
 | `plinth_charts` | **0.1.1** | 0.1.1 |
 
 **1.3.0 shipped 21 Sep 2026**, in dependency order, alongside the first
 releases of `plinth_blocks` and `plinth_charts` — five packages in one
 sequence, the largest release so far.
 
-**1.7.0 and `plinth_blocks` 0.4.0 are cut and unreleased.** Six items,
-every one of them found by converting an application onto Plinth rather
-than by comparing catalogues:
+**1.7.0 shipped 25 Sep 2026 with `plinth_blocks` 0.4.0 — and the two
+came from different trees.** `plinth_blocks` 0.4.0 is complete;
+`plinth_components` 1.7.0 is the drawer fix alone, because it was
+published before `PlinthClock` and the `PlinthImage` work were written.
+Those two are now **1.8.0**, cut and unreleased.
+
+**How it was caught, and what would have missed it.** pub.dev reported
+1.7.0. A scratch project resolved 1.7.0. A scratch project *compiled*
+against 1.7.0. All three were true and all three were useless — the
+check that found it was copying the new tests out of the repo and
+running them against the published package, where `PlinthClock` did not
+exist. This is the second time that exact check has caught a release
+that looked fine by every cheaper measure; the first was 1.5.0 dropping
+46 of 191 DTCG tokens.
+
+**Nothing needs retracting.** 1.7.0 is smaller than intended, not
+wrong: its own changelog entry describes only what it contains, and
+`plinth_blocks` 0.4.0 constrains `^1.7.0` and uses nothing from 1.8.0,
+so every published combination resolves and works. The cost is one
+extra release.
+
+**A note for next time.** Publish from a tree you have just committed
+and verified, and re-read the changelog entry for the version you are
+about to push — the entry for 1.7.0 listed four items at the moment
+1.7.0 was published with one.
+
+The six items across both versions, every one of them found by
+converting an application onto Plinth rather than by comparing
+catalogues:
 
 | | |
 |---|---|
@@ -32,12 +58,10 @@ than by comparing catalogues:
 | `PlinthPageHeader.leading` | a back button, start-side and RTL-aware |
 | `PlinthAuthScreen`, `PlinthAccentBar` | the sign-in shell and its strip of brand colour |
 
-**Order matters this time** — `plinth_blocks` 0.4.0 raises its
-constraint to `^1.7.0` so the recipe it now documents compiles, so
-`plinth_components` must go first.
-
-`plinth_blocks` takes a **minor** rather than a patch because it gains
-three blocks; 43 exports against 41 in 0.3.0.
+`plinth_blocks` took a **minor** rather than a patch because it gained
+three blocks; 43 exports against 41 in 0.3.0. Its `^1.7.0` constraint
+admits 1.8.0, and it uses nothing from it, so **1.8.0 can go out on its
+own** — `plinth_blocks` does not need republishing.
 
 **1.6.0 shipped 24 Sep 2026** with `plinth_blocks` 0.3.0 — the first
 release driven by *using* the library rather than by a gap list, both

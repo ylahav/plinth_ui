@@ -11,13 +11,19 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.8.0
+
+No change in this package. Released in lockstep with
+`plinth_components` 1.8.0, which adds `PlinthClock` and asset, header
+and fallback support on `PlinthImage` — both written for 1.7.0 and
+missed by it, because that release was published from an earlier tree.
+
 ## 1.7.0
 
 No change in this package. Released in lockstep with
-`plinth_components` 1.7.0, which completes the full-screen sheet
-(`PlinthDrawer` can now hand its child the whole panel, which `extent`
-alone did not do) and adds `PlinthClock` plus asset, header and
-fallback support on `PlinthImage`.
+`plinth_components` 1.7.0, which completes the full-screen sheet:
+`PlinthDrawer` can now hand its child the whole panel, which `extent`
+alone did not do.
 
 ## 1.6.0
 

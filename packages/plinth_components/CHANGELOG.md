@@ -11,12 +11,17 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
-## 1.7.0
+## 1.8.0
 
-**Three of the four items in this release came from converting a second
-application onto Plinth**, and none of them appear in any parity table —
-`@mantine/core` has no clock, and the drawer gap only exists once you
-put two Plinth widgets together.
+**1.7.0 went to pub.dev without these.** The release was published from
+an earlier tree than the one they were written in, so the version that
+shipped is the drawer fix alone — and a published version cannot be
+reused. Nothing is wrong with 1.7.0; it is simply smaller than this
+file previously claimed. Caught by running these assertions against the
+published package rather than the repo.
+
+**Both items came from converting a second application onto Plinth**, and
+neither appears in any parity table — `@mantine/core` has no clock.
 
 ### Added
 
@@ -47,6 +52,12 @@ put two Plinth widgets together.
   shape and a list of placeholders stays distinct without reshuffling
   on every rebuild. It depicts nothing on purpose. The figure clears
   3:1 against its own fill.
+
+## 1.7.0
+
+Completes the full-screen sheet 1.6.0 started.
+
+### Added
 
 - **`PlinthDrawer.contentPadding` and `PlinthDrawer.useSafeArea`** —
   the other half of the full-screen sheet 1.6.0 shipped. `extent:
