@@ -288,16 +288,40 @@ purpose.
 **Do not publish interaction-state or variant language** — it does not
 exist here, and it is Mix's, by name.
 
-Today's checkable claim: *117 components on a shared token system — 112
-tracking `@mantine/core`, five answering questions only Flutter has —
-with 43 golden images and 74 test files behind them.*
+Today's checkable claim: *118 components on a shared token system — 112
+tracking `@mantine/core`, five answering questions only Flutter has, one
+found by converting an app onto it — with 43 golden images and 87 test
+files behind them.*
 
 Alongside them, and counted separately because they version separately:
-*43 blocks in `plinth_blocks` and 4 charts in `plinth_charts`, with 24
+*43 blocks in `plinth_blocks` and 4 charts in `plinth_charts`, with 28
 and 4 test files behind them.* The demo app browses **117**
 arrangements across 3 categories, of which the 38 are the ones that
 have become real widgets with real APIs; the rest are still component
 demos and [SHOWCASE.md](SHOWCASE.md) says which, and why.
+
+**Derive these, do not edit them.** Three of the numbers above were
+wrong before 1.7.0 — blocks read 43 against an actual 41, and the two
+test-file counts were stale by 11 and 1 — because each was hand-updated
+in one place and not the others. The commands are the definition:
+
+```bash
+# components — the barrel and the reference must agree, and do
+grep -c "^export 'src/" packages/plinth_components/lib/plinth_components.dart
+grep -cE '^#{2,3} `?Plinth' docs/COMPONENTS.md
+# blocks, charts
+grep -c "^export 'src/" packages/plinth_blocks/lib/plinth_blocks.dart
+grep -c "^export 'src/" packages/plinth_charts/lib/plinth_charts.dart
+# tests, goldens
+ls packages/plinth_components/test/*_test.dart | wc -l
+ls packages/plinth_blocks/test/*_test.dart | wc -l
+ls packages/plinth_components/test/goldens/*.png | wc -l
+```
+
+That the component count and the reference-doc count are the same number
+is not a coincidence and is worth keeping: a component with no entry in
+[COMPONENTS.md](COMPONENTS.md) is undocumented, and the two counts
+diverging is how you find out.
 
 The token engine carries **nine** scales, not four: colour, spacing,
 radius and font size, plus font weight, duration, curve, border width

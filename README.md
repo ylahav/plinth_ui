@@ -1,6 +1,6 @@
 # Plinth UI
 
-**A design-token engine for Flutter — and 117 components built on it, so
+**A design-token engine for Flutter — and 118 components built on it, so
 you can see that it holds up.**
 
 - **Colour resolves against a WCAG contrast floor**, not a fixed shade.
@@ -167,7 +167,7 @@ pixel values, so `spacing`, `radius`, and `fontSizes` can be retuned in
 one place.
 
 **[docs/COMPONENTS.md](docs/COMPONENTS.md)** is the full prop reference
-for all 117 components, and the theme-token table there explains which
+for all 118 components, and the theme-token table there explains which
 color method to reach for (`shaded`, `contrastingOn`, `readableOn`)
 when you build your own widget on the same foundation.
 
@@ -435,7 +435,7 @@ the sidebar.
   shared between them (a blue button is the same blue either way); only
   the chrome inverts. See
   **[docs/COMPONENTS.md § Theme tokens](docs/COMPONENTS.md#theme-tokens)**.
-- **117 components** across Primitives, Forms, Feedback, Data Display,
+- **118 components** across Primitives, Forms, Feedback, Data Display,
   Navigation, Surfaces, and Overlays — full list with props in
   **[docs/COMPONENTS.md](docs/COMPONENTS.md)**, kept current every round
   rather than duplicated here. A few architectural patterns worth
@@ -456,7 +456,7 @@ the sidebar.
     caller rather than managing it internally.
 - **Widgetbook gallery** (`widgetbook/`) — manual (non-codegen)
   registration of every component's key states as browsable use cases,
-  with a knob-driven **Playground** for 108 of the 117 components
+  with a knob-driven **Playground** for 108 of the 118 components
   alongside the static variant grids (the two answer different
   questions: a playground explores combinations, a grid compares
   options side by side). A smoke test builds all 238 use cases in CI,

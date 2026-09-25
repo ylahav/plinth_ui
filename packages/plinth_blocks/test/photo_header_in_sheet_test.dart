@@ -10,7 +10,6 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plinth_blocks/plinth_blocks.dart';
-import 'package:plinth_components/plinth_components.dart';
 
 const _notch = EdgeInsets.only(top: 47, bottom: 34);
 const _photo = Key('photo');

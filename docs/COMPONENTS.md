@@ -447,11 +447,61 @@ needs to vary (horizontal on wide screens, vertical on narrow ones)
 rather than always being a row.
 
 ### `PlinthImage`
-`src`, `width`, `height`, `fit` (default `BoxFit.cover`), `radius`. A
-network image with an automatic loading placeholder and error
-fallback — Flutter's own `Image.network` shows nothing while loading
-and lets a failed URL surface as a raw render error, so this fills
-both gaps with a themed spinner and a broken-image icon.
+`src`, `width`, `height`, `fit` (default `BoxFit.cover`), `radius`,
+`headers`, `fallback`, `semanticLabel`. An image with an automatic
+loading placeholder and error fallback — Flutter's own `Image.network`
+shows nothing while loading and lets a failed URL surface as a raw
+render error, so this fills both gaps with a themed spinner and a
+broken-image icon.
+
+**`src` chooses the loader**, so one widget serves an API photo and a
+bundled illustration without the caller branching: `http(s)://` is a
+network image, anything with a `/` or a file extension is an asset, and
+anything else — an empty string, a bare id like `hero-42` — loads
+nothing and renders the fallback. That last rule matters: an id reaching
+`Image.asset` throws instead of falling back. `PlinthImage.sourceOf`
+exposes the same decision, for an app choosing whether to build an image
+at all.
+
+`headers` goes on network requests only, for a photo behind a login.
+`fallback` replaces the broken-image icon; omitted, the icon stands.
+`semanticLabel` describes the image, and without it the image is
+decorative and announced as nothing — right for a thumbnail beside a
+label that already says it, wrong for one carrying information.
+
+**`PlinthImageFallback`** (`seed`, `color`, `strokeWidth`) is the
+generic placeholder: a muted wash with a **seed-stable** figure over it,
+so the same `seed` always draws the same shape and a list keeps its
+placeholders distinct without reshuffling on every rebuild. It
+deliberately depicts nothing — a library placeholder drawing a person or
+a product would be wrong more often than right. The figure is resolved
+at the non-text floor (3:1, WCAG 1.4.11) against its own fill, because a
+placeholder nobody can see is not a placeholder.
+
+### `PlinthClock`
+`value`, `size` (default `72`), `color`, `on`, `weight` (default
+`w700`), `letterSpacing`, `semanticLabel`, `textAlign`. A duration as a
+display number — a rest timer, a countdown, a lap time.
+
+Not `PlinthText` at a large `fontSize`, for three reasons. **Tabular
+figures**: proportional digits are different widths, so a countdown
+shifts sideways every second. **Line height 1 and tight tracking**:
+display type set at body leading floats in a box far taller than the
+glyphs. And **a different contrast floor** — WCAG large text is 3:1, and
+holding a 72px number to 4.5:1 darkens a brand colour that was already
+legible. The floor follows `size` and `weight` rather than assuming, so
+below 24px regular or 18.66px bold it falls back to 4.5:1.
+
+**It does not tick.** The caller owns the timer and passes a formatted
+string, because whoever owns the clock decides whether it pauses.
+
+Set `semanticLabel`: `'01:30'` is announced as a time of day — "one
+thirty" — which is wrong for a duration. There is deliberately no
+automatic spoken form, because `'1 minutes'` needs plural rules and
+`PlinthStrings` is a seam of plain strings with no `intl` dependency;
+the caller has the number before it was formatted. It is also
+deliberately not a live region, which would talk over everything else
+once a second.
 
 ### `PlinthBackgroundImage`
 `src`, `child`, `width`, `height`, `fit` (default `BoxFit.cover`),

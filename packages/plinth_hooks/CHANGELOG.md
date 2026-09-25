@@ -14,9 +14,10 @@ changes; from `1.0.0` they cannot.
 ## 1.7.0
 
 No change in this package. Released in lockstep with
-`plinth_components` 1.7.0, which completes the full-screen sheet:
-`PlinthDrawer` can now hand its child the whole panel, which
-`extent` alone did not do.
+`plinth_components` 1.7.0, which completes the full-screen sheet
+(`PlinthDrawer` can now hand its child the whole panel, which `extent`
+alone did not do) and adds `PlinthClock` plus asset, header and
+fallback support on `PlinthImage`.
 
 ## 1.6.0
 

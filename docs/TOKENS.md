@@ -196,12 +196,12 @@ values and the same readers.
 | `series.7` | primitive | `#a4500a` | `#a4500a` | — |
 | `series.8` | primitive | `#d7ebba` | `#d7ebba` | — |
 | `series.9` | primitive | `#ea86a9` | `#ea86a9` | — |
-| `surface` | semantic | `#ffffff` | `#1a1b1e` | 44 |
+| `surface` | semantic | `#ffffff` | `#1a1b1e` | 45 |
 | `surfaceMuted` | semantic | `#f1f3f5` | `#25262b` | 24 |
 | `surfaceSunken` | semantic | `#e9ecef` | `#2c2e33` | 15 |
 | `border` | semantic | `#808890` | `#71777f` | 24 |
 | `borderMuted` | semantic | `#dee2e6` | `#2c2e33` | 5 |
-| `text` | semantic | `#000000` | `#c1c2c5` | 17 |
+| `text` | semantic | `#000000` | `#c1c2c5` | 18 |
 | `textMuted` | semantic | `#000000` | `#939599` | 15 |
 | `textDisabled` | semantic | `#000000` | `#5c5f66` | 7 |
 | `onFilled` | semantic | `#ffffff` | `#ffffff` | 3 |
@@ -243,10 +243,10 @@ values and the same readers.
 | `spacing.sm` | **22 components**, including PlinthAccordion, PlinthAlert, PlinthAutocomplete, PlinthBlockquote |
 | `spacing.xl` | PlinthEmptyState |
 | `spacing.xs` | **39 components**, including FieldChrome, PlinthAccordion, PlinthAlert, PlinthAutocomplete |
-| `surface` | **44 components**, including ColorSliderBase, FocusRing, PlinthActionIcon, PlinthAnchor |
+| `surface` | **45 components**, including ColorSliderBase, FocusRing, PlinthActionIcon, PlinthAnchor |
 | `surfaceMuted` | **24 components**, including PlinthActionIcon, PlinthAutocomplete, PlinthBackgroundImage, PlinthBadge |
 | `surfaceSunken` | **15 components**, including ColorSliderBase, PlinthAccordion, PlinthAngleSlider, PlinthCarousel |
-| `text` | **17 components**, including PlinthActionIcon, PlinthAlert, PlinthBadge, PlinthButton |
+| `text` | **18 components**, including PlinthActionIcon, PlinthAlert, PlinthBadge, PlinthButton |
 | `textDisabled` | **7 components**, including PlinthActionIcon, PlinthButton, PlinthCloseButton, PlinthFileInput |
 | `textMuted` | **15 components**, including FieldChrome, PlinthCascader, PlinthCloseButton, PlinthDataList |
 
@@ -261,7 +261,7 @@ that survives until somebody rebrands.
 | Kind of read | Components |
 |---|---|
 | a ramp chosen at runtime | **54 components**, including FieldChrome, PlinthActionIcon, PlinthAlert, PlinthAngleSlider |
-| a ramp, resolved against the contrast floor | **17 components**, including FocusRing, PlinthActionIcon, PlinthAlert, PlinthAnchor |
+| a ramp, resolved against the contrast floor | **19 components**, including FocusRing, PlinthActionIcon, PlinthAlert, PlinthAnchor |
 | the spacing unit, by multiple | PlinthCascader |
 
 ## Tokens nothing reads

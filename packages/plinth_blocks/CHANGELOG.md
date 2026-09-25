@@ -13,7 +13,35 @@ Whether it joins, or versions on its own because a block catalogue will
 churn while a token engine does not, is a decision for the first
 release rather than one to inherit from the number below.
 
-## 0.3.1
+## 0.4.0
+
+### Added
+
+- **`PlinthPage`** — the shell around `PlinthPageHeader`. That widget
+  was only ever the header, so every app using it still hand-wrote the
+  same `Scaffold` + `SafeArea` + `Column` + `Expanded`, which is how a
+  `ListView` gets an unbounded height to work in. No `AppBar`: the
+  title stays a real heading at `titleOrder`, rather than taking
+  Material's app-bar typography and fixed height. Background defaults
+  to `surfaceMuted`, so papers in the body read as raised off it.
+
+- **`PlinthPageHeader.leading`** — a control before the title, usually
+  a back button. On the start side, so it moves to the right in RTL
+  with nothing asked of the caller, and **outside the heading's
+  `MergeSemantics`**: merged in, a back button stops being its own
+  focusable control and gets announced as part of the title.
+
+- **`PlinthAuthScreen` and `PlinthAccentBar`** — the shell a sign-in
+  form sits in, and the strip of brand colour across the top of it. The
+  boot screen is the same call with a `PlinthLoader` as the child.
+  Neither knows anything about authentication; `PlinthAuthCard` is
+  still the form.
+
+  **The bar is painted from the physical top edge and extends through
+  the status-bar inset.** An 8px strip drawn at the top edge is hidden
+  under a notch, and drawn below the inset it floats under a band of
+  background — this is the only version that cannot look broken. Only
+  the content takes the safe area, and it takes it once.
 
 ### Changed
 

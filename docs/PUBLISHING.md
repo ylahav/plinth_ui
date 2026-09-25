@@ -12,20 +12,32 @@ now covers releasing an update.
 | `plinth_core` | **1.6.0** | 1.7.0 |
 | `plinth_hooks` | **1.6.0** | 1.7.0 |
 | `plinth_components` | **1.6.0** | 1.7.0 |
-| `plinth_blocks` | **0.3.0** | 0.3.1 |
+| `plinth_blocks` | **0.3.0** | 0.4.0 |
 | `plinth_charts` | **0.1.1** | 0.1.1 |
 
 **1.3.0 shipped 21 Sep 2026**, in dependency order, alongside the first
 releases of `plinth_blocks` and `plinth_charts` — five packages in one
 sequence, the largest release so far.
 
-**1.7.0 and `plinth_blocks` 0.3.1 are cut and unreleased.** They
-complete the full-screen sheet: `extent` filled the panel, but the
-drawer still padded and `SafeArea`-wrapped its child, so 1.6.0's own
-photo header could not reach the edges inside 1.6.0's own sheet.
-**Order matters this time** — `plinth_blocks` 0.3.1 raises its
+**1.7.0 and `plinth_blocks` 0.4.0 are cut and unreleased.** Six items,
+every one of them found by converting an application onto Plinth rather
+than by comparing catalogues:
+
+| | |
+|---|---|
+| `PlinthDrawer.contentPadding`, `useSafeArea` | `extent` filled the panel, but the drawer still padded and `SafeArea`-wrapped its child, so 1.6.0's own photo header could not reach the edges inside 1.6.0's own sheet |
+| `PlinthClock` | a duration as a display number, with the contrast floor computed from the size |
+| `PlinthImage` + `PlinthImageFallback` | assets, request headers, a themed placeholder |
+| `PlinthPage` | the shell every app wrote around `PlinthPageHeader` |
+| `PlinthPageHeader.leading` | a back button, start-side and RTL-aware |
+| `PlinthAuthScreen`, `PlinthAccentBar` | the sign-in shell and its strip of brand colour |
+
+**Order matters this time** — `plinth_blocks` 0.4.0 raises its
 constraint to `^1.7.0` so the recipe it now documents compiles, so
 `plinth_components` must go first.
+
+`plinth_blocks` takes a **minor** rather than a patch because it gains
+three blocks; 43 exports against 41 in 0.3.0.
 
 **1.6.0 shipped 24 Sep 2026** with `plinth_blocks` 0.3.0 — the first
 release driven by *using* the library rather than by a gap list, both

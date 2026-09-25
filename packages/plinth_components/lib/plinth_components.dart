@@ -30,6 +30,7 @@ export 'src/widgets/plinth_cascader.dart';
 export 'src/widgets/plinth_center.dart';
 export 'src/widgets/plinth_checkbox.dart';
 export 'src/widgets/plinth_chip.dart';
+export 'src/widgets/plinth_clock.dart';
 export 'src/widgets/plinth_close_button.dart';
 export 'src/widgets/plinth_code.dart';
 export 'src/widgets/plinth_collapse.dart';

@@ -25,6 +25,7 @@ class PlinthPageHeader extends StatelessWidget {
     super.key,
     required this.title,
     this.subtitle,
+    this.leading,
     this.breadcrumbs,
     this.titleTrailing,
     this.actions = const [],
@@ -38,6 +39,17 @@ class PlinthPageHeader extends StatelessWidget {
 
   /// One line under the title.
   final String? subtitle;
+
+  /// A control before the title — a back button, most often.
+  ///
+  /// Sits on the **start** side, so it moves to the right in an RTL
+  /// locale without the caller doing anything: this is a [Row], and a
+  /// Row's first child is its start child.
+  ///
+  /// Deliberately outside the heading's [MergeSemantics]. A back button
+  /// merged into the title would stop being its own focusable control
+  /// and would be announced as part of the heading text.
+  final Widget? leading;
 
   /// Where this page sits, above the title. Usually [PlinthBreadcrumbs].
   final Widget? breadcrumbs;
@@ -84,6 +96,18 @@ class PlinthPageHeader extends StatelessWidget {
       ),
     );
 
+    // Outside the MergeSemantics above, and outside `heading`, so the
+    // control keeps its own semantics node.
+    final titleRow = leading == null
+        ? heading
+        : Row(
+            children: [
+              leading!,
+              SizedBox(width: theme.space(2)),
+              Expanded(child: heading),
+            ],
+          );
+
     final body = Column(
       crossAxisAlignment:
           centered ? CrossAxisAlignment.center : CrossAxisAlignment.start,
@@ -94,12 +118,12 @@ class PlinthPageHeader extends StatelessWidget {
           SizedBox(height: theme.space(2)),
         ],
         if (actions.isEmpty)
-          heading
+          titleRow
         else
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(child: heading),
+              Expanded(child: titleRow),
               SizedBox(width: theme.space(4)),
               PlinthGroup(gap: PlinthSize.sm, children: actions),
             ],

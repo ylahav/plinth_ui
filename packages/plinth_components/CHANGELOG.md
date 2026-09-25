@@ -13,7 +13,40 @@ changes; from `1.0.0` they cannot.
 
 ## 1.7.0
 
+**Three of the four items in this release came from converting a second
+application onto Plinth**, and none of them appear in any parity table —
+`@mantine/core` has no clock, and the drawer gap only exists once you
+put two Plinth widgets together.
+
 ### Added
+
+- **`PlinthClock`** — a duration as a display number, for a rest timer
+  or a countdown. Not `PlinthText` at a large `fontSize`: proportional
+  digits are different widths, so a countdown set in them shifts
+  sideways every second. Tabular figures, line height 1, tight tracking.
+
+  **It reads the contrast floor off the size.** WCAG large text is 3:1,
+  a clock is always large text, and holding a 72px number to 4.5:1
+  darkens a brand colour that was already legible — `'yellow'` shade 6
+  clears 3:1 on a light surface and would be pushed several shades down
+  to reach 4.5:1. Below 24px regular or 18.66px bold it falls back to
+  4.5:1, because then it really is body text. This is the first
+  component where the floor is computed rather than chosen.
+
+  It does not tick; the caller owns the timer.
+
+- **`PlinthImage` now takes `headers`, `fallback` and `semanticLabel`,
+  and loads assets.** `src` chooses the loader — `http(s)://` is a
+  network image, a path or a filename is an asset, and anything else
+  loads nothing and renders the fallback. That last rule is the one
+  worth having: a bare id like `hero-42` reaching `Image.asset` throws
+  instead of falling back. `PlinthImage.sourceOf` exposes the decision.
+
+- **`PlinthImageFallback`** — a generic placeholder: a muted wash with a
+  seed-stable figure over it, so the same seed always draws the same
+  shape and a list of placeholders stays distinct without reshuffling
+  on every rebuild. It depicts nothing on purpose. The figure clears
+  3:1 against its own fill.
 
 - **`PlinthDrawer.contentPadding` and `PlinthDrawer.useSafeArea`** —
   the other half of the full-screen sheet 1.6.0 shipped. `extent:
