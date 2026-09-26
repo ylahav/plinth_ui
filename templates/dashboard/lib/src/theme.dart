@@ -19,7 +19,7 @@ import 'package:plinth_blocks/plinth_blocks.dart';
 ///
 /// `generateShades` anchors shade 6 to exactly this value, so what a
 /// filled button paints is this colour and not something near it —
-/// `test/theme_test.dart` asserts that, so a bad brand fails the build
+/// `test/dashboard_test.dart` asserts that, so a bad brand fails the build
 /// rather than shipping.
 const brandColor = Color(0xFF3B5BDB);
 
@@ -64,7 +64,7 @@ final dashboardDark = _brand(PlinthTheme.darkTheme);
 /// An ordinary `ThemeData` with the Plinth tokens riding along.
 ///
 /// Material's theme is not generated from Plinth — the two are kept in
-/// agreement about the fields Plinth owns, and `theme_test.dart` asserts
+/// agreement about the fields Plinth owns, and `dashboard_test.dart` asserts
 /// that rather than assuming it.
 ThemeData dashboardThemeData(PlinthTheme plinth) => ThemeData(
       useMaterial3: true,

@@ -43,3 +43,16 @@ something that works.
 They are not a framework. There is no `plinth_template` package to
 depend on, no base class to extend, nothing to keep in sync. You copy
 the directory and it becomes yours — including the parts you delete.
+
+## The shape they share
+
+All four are built the same way, and that shape is a contract rather than
+a habit: seven fixed files, the whole brand in `lib/src/theme.dart`, and
+three assertions in the test file that make rebrand survival checkable —
+the brand is exactly what was asked for, every domain value has a role,
+and every role is readable in both themes.
+
+**[docs/BUILDING_A_TEMPLATE.md](../docs/BUILDING_A_TEMPLATE.md)** writes
+it down: read it to add a fifth starter, or to know which parts of the
+one you copied are load-bearing. `templates_shape_test.dart` holds all
+four to it.

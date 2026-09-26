@@ -28,6 +28,8 @@ needed a component for it and Flutter has nothing at all.
 
 📖 **[Component reference](docs/COMPONENTS.md)** · 🧭 **[Adopting tokens](docs/ADOPTING_TOKENS.md)** · 🧱 **[Showcase blocks](docs/SHOWCASE.md)** · 🧪 **[Testing guide](docs/TESTING.md)** · 🔍 **[Pre-1.0 audit](docs/PRE_1_0_AUDIT.md)** · 🗺️ **[Roadmap](docs/ROADMAP.md)**
 
+🧩 **[Anatomy of a template](docs/BUILDING_A_TEMPLATE.md)** — what the four starters in [templates/](templates/) are made of. Read it to add a fifth, or to understand the one you just copied.
+
 🍳 **[Build Larder](docs/TUTORIAL_LARDER_APP.md)** — a six-part tutorial that ends with a real app: what food is in the house, what to cook, and how to cook it. The finished code is in [tutorial/](tutorial/), compiled and tested by CI.
 
 🚀 **[Start from a template](templates/)** — four apps you copy rather than read: a dashboard, an account shell, a blog, a mobile list–detail. Change one colour in `theme.dart` and the whole app re-skins, contrast floor included. Each is compiled and tested by CI, so one that has stopped working fails here rather than in your hands.
@@ -258,6 +260,9 @@ plinth_ui/
     ADOPTING_TOKENS.md        # What adopting tokens costs an app, and
     │                           the five patterns every adopter hits
     TUTORIAL_LARDER_APP.md    # The six-part tutorial that builds tutorial/
+    BUILDING_A_TEMPLATE.md    # The shape the four starters share, and the
+    │                           three theme assertions that make rebrand
+    │                           survival checkable rather than claimed
     TESTING.md                # How to verify this locally — SDK setup
     │                           through golden tests
     PUBLISHING.md             # Release order, and the mistake that has
