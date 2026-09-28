@@ -27,12 +27,47 @@ needs, plus one source of truth shared with a codebase that is not
 Flutter. They already have tokens in Figma or Style Dictionary; what
 they lack is a Flutter runtime that consumes them properly.
 
-**B is A plus interop**, which is why this is one sequence.
+**C — somebody starting an app.** Added 26 Sep 2026, having been
+explicitly excluded before. They want a screen that works today and do
+not yet have an opinion about tokens. `plinth_blocks` and
+[`templates/`](../templates) are for them, and the token engine is what
+they get without asking.
 
-Neither is a solo developer starting greenfield, and that reorders
-everything: **`plinth_core` is the product, `plinth_components` is the
-evidence.** Nobody installs 115 components on day one. For audience A,
-`plinth_components` may never be installed at all.
+**B is A plus interop**, which is why those two are one sequence. C comes
+at the same library from the other end — in through what it builds rather
+than what it themes — and leaves by the same door, because a starter
+whose brand colour is a token is a token adopter who never had to be
+sold one.
+
+### How this changed, and why it is written down rather than replaced
+
+This section said **"neither is a solo developer starting greenfield, and
+that reorders everything: `plinth_core` is the product,
+`plinth_components` is the evidence"** until 26 Sep 2026. That was a
+reasonable reading of an 115-component library with nothing above it. It
+is no longer one, and three things falsified it rather than one opinion
+replacing another:
+
+| What happened | Why it moved the thesis |
+|---|---|
+| **43 blocks and 4 charts shipped** as their own packages | "Components are the evidence for the tokens" undersells two thirds of what is installable |
+| **Four starters landed in `templates/`** | A starter is only useful to somebody starting, which is exactly the audience the old sentence excluded |
+| **The author began converting his own applications onto it** | Every gap that work has found — a full-screen sheet, a photo header, a page shell, a display clock — is a *composition* gap, not a token gap. See [Conversion, which is not on the ladder](#conversion-which-is-not-on-the-ladder) |
+
+So the thesis is now **both layers serve one goal: getting a Flutter app
+built and keeping it correct.** That was first recorded in
+[PUBLISHING.md](PUBLISHING.md#reopened-after-10-and-closed-again) while
+settling lockstep, and took until now to reach this file and the README —
+which is its own small lesson about where a decision gets written down
+versus where it is read.
+
+**What did not change.** `plinth_core` is still the differentiator, and
+breadth is still evidence rather than the pitch — see [the claims
+gate](#the-claims-gate) and *A component count target* under [Not
+doing](#not-doing). The move is from *"tokens are the product, components
+prove it"* to *"you come for what you can build, you stay because it
+survives a rebrand"*. Audience A still exists and may still never install
+`plinth_components`.
 
 ## What makes it different
 

@@ -151,12 +151,21 @@ covers the rest of what that migration cost.
   `toColorScheme`, `toTextTheme`.
 - **`context.plinth`** — the accessor.
 
-## The widgets
+## The layers above it
 
-If you want components rather than only tokens — buttons, inputs,
-cards, and 115 others —
-[`plinth_components`](https://pub.dev/packages/plinth_components) is
-built entirely on this package, and is the evidence that the token
-layer holds up at scale.
+This package is the foundation, and there are three layers on it you can
+take or leave:
+
+- **Components** — buttons, inputs, cards, and 115 others, in
+  [`plinth_components`](https://pub.dev/packages/plinth_components).
+- **Blocks** — whole arrangements rather than primitives, in
+  [`plinth_blocks`](https://pub.dev/packages/plinth_blocks).
+- **Starters** — four apps you copy, in
+  [templates/](https://github.com/ylahav/plinth_ui/tree/main/templates).
+
+All three are built entirely on this package, which is what makes the
+contrast claim checkable at scale rather than in isolation: change one
+brand colour in a starter and every screen re-skins without dropping
+below AA.
 
 🌐 **[Live demo](https://ylahav.github.io/plinth_ui/)** · 📖 **[Full documentation](https://github.com/ylahav/plinth_ui)**

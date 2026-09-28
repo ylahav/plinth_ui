@@ -67,6 +67,28 @@ void main() {
     );
   });
 
+  test('the root README states the same block, chart and starter counts', () {
+    // These landed in the README when the positioning moved from "tokens
+    // are the product, components prove it" to both layers — see
+    // docs/ROADMAP.md "How this changed". They are the first line an
+    // adopter reads, which is exactly where the component count drifted
+    // for months before readme_counts_test.dart.
+    final readme = File('${root.path}/README.md')
+        .readAsStringSync()
+        .replaceAll(RegExp(r'\s+'), ' ');
+    final starters = Directory('${root.path}/templates')
+        .listSync()
+        .whereType<Directory>()
+        .length;
+
+    expect(readme, contains('**$blocks blocks**'),
+        reason: 'the barrel exports $blocks blocks');
+    expect(readme, contains('**$charts charts**'),
+        reason: 'the barrel exports $charts charts');
+    expect(readme, contains('**$starters starter apps**'),
+        reason: 'templates/ holds $starters starters');
+  });
+
   test('and the test-file counts behind them', () {
     expect(
       roadmap,

@@ -1,7 +1,28 @@
 # Plinth UI
 
-**A design-token engine for Flutter — and 118 components built on it, so
-you can see that it holds up.**
+**Build a Flutter app quickly, and keep it accessible when the brand
+changes.** 118 components, 43 blocks and four starter apps, on a token
+engine that resolves colour against a WCAG contrast floor.
+
+Two layers, one goal. The first gets the screen built; the second is why
+it is still correct after somebody changes the brand colour — and the
+second is the part no other Flutter kit does.
+
+### What you build with
+
+- **118 components** — inputs, tables, overlays, navigation. 112 track
+  `@mantine/core`; the rest answer questions only Flutter has.
+- **43 blocks** in [`plinth_blocks`](packages/plinth_blocks) — whole
+  arrangements, not primitives: a sign-in form, a sidebar, a stat grid, a
+  comment thread, a page with its heading levels already right.
+- **4 charts** in [`plinth_charts`](packages/plinth_charts), on a
+  categorical palette validated against all three kinds of colour
+  blindness.
+- **4 starter apps** in [`templates/`](templates/) you copy rather than
+  read — dashboard, account, blog, mobile list–detail. Each compiles and
+  is tested in CI.
+
+### Why it stays correct
 
 - **Colour resolves against a WCAG contrast floor**, not a fixed shade.
   Ask for a palette colour as *text* and you get a shade that clears
@@ -13,6 +34,13 @@ you can see that it holds up.**
 - **Keep your existing `ThemeData`.** `colorSchemeDisagreements` reports
   where your `ColorScheme` and your tokens disagree, instead of asking
   you to replace one with the other.
+- **`theme.validate()`** lists every pair in your own theme that falls
+  short of its floor. Pointed at Plinth's defaults it found two.
+
+Those two halves meet in one place worth naming: **change `brandColor` in
+a starter's `theme.dart` and the whole app re-skins, contrast floor
+included.** Every other kit's blocks break AA the moment the brand
+changes, because their colours are shades rather than lookups.
 
 Mantine-inspired rather than a port: 112 components track
 `@mantine/core` because its answer was right, and five exist because

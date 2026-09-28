@@ -44,8 +44,58 @@ const _contract = <String, String>{
       r"clear the contrast floor on both surfaces",
 };
 
+/// Every public class `plinth_blocks` defines.
+Set<String> _blockNames(Directory root) {
+  final names = <String>{};
+  for (final entity in Directory('${root.path}/packages/plinth_blocks/lib/src')
+      .listSync(recursive: true)) {
+    if (entity is! File || !entity.path.endsWith('.dart')) continue;
+    for (final m in RegExp(r'^class\s+(Plinth\w+)', multiLine: true)
+        .allMatches(entity.readAsStringSync())) {
+      names.add(m.group(1)!);
+    }
+  }
+  return names;
+}
+
+/// Every `Plinth*` identifier a template's `lib/` mentions.
+Set<String> _used(Directory template) {
+  final names = <String>{};
+  for (final entity
+      in Directory('${template.path}/lib').listSync(recursive: true)) {
+    if (entity is! File || !entity.path.endsWith('.dart')) continue;
+    for (final m
+        in RegExp(r'\b(Plinth\w+)\b').allMatches(entity.readAsStringSync())) {
+      names.add(m.group(1)!);
+    }
+  }
+  return names;
+}
+
+/// The "Blocks it leans on" table in docs/BUILDING_A_TEMPLATE.md, as
+/// `{template: {block, ...}}`. Rows whose first cell is not a directory
+/// under templates/ are ignored, so the doc's other tables do not match.
+Map<String, Set<String>> _documentedBlocks(Directory root) {
+  final doc =
+      File('${root.path}/docs/BUILDING_A_TEMPLATE.md').readAsLinesSync();
+  final out = <String, Set<String>>{};
+  for (final line in doc) {
+    final row = RegExp(r'^\| `(\w+)` \| (.+) \|\s*$').firstMatch(line);
+    if (row == null) continue;
+    final name = row.group(1)!;
+    if (!Directory('${root.path}/templates/$name').existsSync()) continue;
+    out[name] = RegExp(r'`(Plinth\w+)`')
+        .allMatches(row.group(2)!)
+        .map((m) => m.group(1)!)
+        .toSet();
+  }
+  return out;
+}
+
 void main() {
   final root = _repoRoot();
+  final blockNames = _blockNames(root);
+  final documented = _documentedBlocks(root);
   final templates = Directory('${root.path}/templates')
       .listSync()
       .whereType<Directory>()
@@ -56,6 +106,10 @@ void main() {
     // Guards the guard: an empty list makes every group below vacuous.
     expect(templates.length, greaterThanOrEqualTo(4),
         reason: 'templates/ should hold at least the four starters');
+    expect(blockNames.length, greaterThan(20),
+        reason: 'the class pattern probably stopped matching plinth_blocks');
+    expect(documented, isNotEmpty,
+        reason: "the doc's block table stopped parsing");
   });
 
   for (final dir in templates) {
@@ -93,6 +147,36 @@ void main() {
         final pubspec = File('${dir.path}/pubspec.yaml').readAsStringSync();
         expect(pubspec, contains('plinth_blocks:'));
         expect(pubspec, isNot(contains('plinth_components:')));
+      });
+
+      group('is assembled from the library', () {
+        final used = _used(dir);
+
+        test('uses blocks rather than hand-rolling arrangements', () {
+          // A starter that composes nothing demonstrates nothing.
+          expect(used.intersection(blockNames), isNotEmpty,
+              reason: 'templates/$name uses no plinth_blocks widget');
+        });
+
+        test('uses every block the guide says it does', () {
+          expect(documented, contains(name),
+              reason: 'docs/BUILDING_A_TEMPLATE.md has no block row for '
+                  'templates/$name');
+          for (final block in documented[name] ?? const <String>{}) {
+            expect(used, contains(block),
+                reason: 'the guide lists $block under templates/$name, and '
+                    'the template does not use it');
+          }
+        });
+
+        test('and the guide names every block it uses', () {
+          final missing =
+              used.intersection(blockNames).difference(documented[name] ?? {});
+          expect(missing, isEmpty,
+              reason: 'templates/$name uses ${missing.join(', ')}, which the '
+                  "guide's table omits — add them, or the table becomes a "
+                  'sample rather than a list');
+        });
       });
 
       group('holds the theme contract', () {

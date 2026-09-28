@@ -5,7 +5,15 @@ a component library in the spirit of [Mantine](https://mantine.dev).
 
 Every component reads its color, spacing, and radius from a single
 `PlinthTheme` ([`plinth_core`](https://pub.dev/packages/plinth_core)),
-so swapping a palette restyles the whole app.
+so swapping a palette restyles the whole app — and text colours resolve
+against a WCAG contrast floor at lookup time, so it restyles without
+dropping below AA.
+
+Above these sit [`plinth_blocks`](https://pub.dev/packages/plinth_blocks)
+(whole arrangements — a sign-in form, a sidebar, a stat grid) and
+[four starter apps](https://github.com/ylahav/plinth_ui/tree/main/templates)
+you copy rather than read. Reach for a block before assembling one out of
+these.
 
 ## Getting started
 

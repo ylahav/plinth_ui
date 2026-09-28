@@ -10,6 +10,14 @@ from nothing to teach you the library. This describes the *shape* the
 four starters share, because that shape is a contract and nothing else
 writes it down.
 
+**A template has two halves, and they matter equally.** What it is
+assembled from — blocks, then components, then charts — and how it is
+themed. Get the first right and a screen is fifty lines instead of five
+hundred; get the second right and it survives a rebrand. A starter that
+hand-rolls its widgets demonstrates nothing, and a beautifully composed
+one with a hardcoded palette breaks the moment somebody changes the
+brand.
+
 ---
 
 ## What a template is
@@ -29,6 +37,45 @@ flutter run
 
 `flutter create .` writes the platform folders, which are not committed —
 see [`.gitignore`](#the-seven-files-every-template-has) below.
+
+## What a template is assembled from
+
+**Blocks first.** `plinth_blocks` is where a whole arrangement lives — a
+sign-in form, a sidebar, a stat grid, a page header with its heading
+level already right. Reach for one before writing a `Column`. None of the
+four starters builds a page header, a top bar or a sign-in form by hand,
+and none should:
+
+| Template | Blocks it leans on |
+|---|---|
+| `account` | `PlinthSignInBlock`, `PlinthSplitAuthBlock`, `PlinthPasswordStrength`, `PlinthProfileCard`, `PlinthConfirmButton`, `PlinthPageHeader`, `PlinthTopBar`, `PlinthTopBarBrand`, `PlinthUserTile` |
+| `blog` | `PlinthArticleCard`, `PlinthCommentThread`, `PlinthCommentData`, `PlinthFooter`, `PlinthPageHeader`, `PlinthTopBar`, `PlinthTopBarBrand`, `PlinthUserTile` |
+| `dashboard` | `PlinthSidebar`, `PlinthNavSection`, `PlinthNavItem`, `PlinthStatGrid`, `PlinthStatTile`, `PlinthAsyncButton`, `PlinthPageHeader`, `PlinthTopBar`, `PlinthTopBarBrand` |
+| `mobile` | `PlinthStatGrid`, `PlinthStatTile`, `PlinthAsyncButton`, `PlinthUserTile` |
+
+`templates_shape_test.dart` holds that table in **both** directions:
+every block named is really used by the template it sits under, and every
+block a template uses is named. So it is a list rather than a sample, and
+adding a block to a starter without adding it here fails the build.
+
+**The recurring spine** is `PlinthPageHeader`, `PlinthTopBar` +
+`PlinthTopBarBrand`, and `PlinthUserTile` — three of the four use each.
+If you are starting a fifth, start there. `PlinthPage` (0.4.0) now wraps
+the header in the whole screen shell, which is the newer way to do what
+these templates do by hand, and is what a new starter should reach for.
+
+**Then components.** Seven to twelve per template — `PlinthTable`,
+`PlinthSelect`, `PlinthBadge`, `PlinthTextInput`, `PlinthEmptyState`,
+`PlinthLiveRegion`. See [COMPONENTS.md](COMPONENTS.md).
+
+**Then charts, only if it charts.** `dashboard` takes four
+(`PlinthLineChart`, `PlinthDonutChart` and their data types), `mobile`
+one (`PlinthSparkline`), and the other two do not take the dependency at
+all.
+
+The proportion is the point: **a template is mostly assembly.** `mobile`
+is the leanest at four blocks and nine components, and it is still a
+searchable master–detail app that works on a phone and a tablet.
 
 ## The seven files every template has
 
@@ -101,10 +148,10 @@ separate because it versions separately.
 rather than at the next release. Someone who copies the directory changes
 these two lines to hosted versions — and the template's README says so.
 
-## `theme.dart`, which is the point
+## `theme.dart` — the other half
 
-Every template puts its whole identity in one file, and it is the file
-worth copying even if you take nothing else.
+Composition gets you the screen. This is what keeps it legible when the
+brand changes — every template puts its whole identity in one file.
 
 ```dart
 /// The one colour to change.
@@ -156,11 +203,11 @@ ThemeData dashboardThemeData(PlinthTheme plinth) => ThemeData(
     );
 ```
 
-## The contract its test holds
+## The theme contract its test holds
 
-This is the part that is easy to leave out and expensive to leave out.
-All four templates end with **the same three plain `test()` assertions**,
-worded for their own domain:
+Easy to leave out, expensive to leave out. All four templates end with
+**the same three plain `test()` assertions**, worded for their own
+domain:
 
 ```dart
 test('the brand colour is the one the theme paints', () {
@@ -255,9 +302,19 @@ none of them touch `theme.dart`.
 ## What keeps this honest
 
 `templates_shape_test.dart` asserts, for every directory in
-`templates/`, that the seven fixed files exist and that the test file
-holds all three theme assertions. It carries a negative control, because
-a structural check that cannot fail is worse than none.
+`templates/`:
+
+- the seven fixed files exist, and there is exactly one test file named
+  after the directory
+- `publish_to: none`, and a `plinth_blocks` dependency with no direct
+  `plinth_components` one
+- it uses at least one block — a starter that composes nothing
+  demonstrates nothing
+- the block table above is right in both directions
+- the test file holds all three theme assertions
+
+Sixty-one checks, each with a negative control run against it, because a
+structural check that cannot fail is worse than none.
 
 It does **not** check prose. If you change the shape and not this
 document, the test tells you about the files and nobody tells you about
