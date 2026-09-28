@@ -11,7 +11,8 @@ second is the part no other Flutter kit does.
 ### What you build with
 
 - **118 components** — inputs, tables, overlays, navigation. 112 track
-  `@mantine/core`; the rest answer questions only Flutter has.
+  `@mantine/core`, five answer questions only Flutter has, and one exists
+  because an app needed it.
 - **43 blocks** in [`plinth_blocks`](packages/plinth_blocks) — whole
   arrangements, not primitives: a sign-in form, a sidebar, a stat grid, a
   comment thread, a page with its heading levels already right.
@@ -49,6 +50,12 @@ Flutter asked a question a web library never had to — `PlinthLtr`,
 `PlinthAnnounceWhen`. The last two are the clearest case of the
 pattern: the web spells a live region as an attribute, so Mantine never
 needed a component for it and Flutter has nothing at all.
+
+The 118th came from neither list. `PlinthClock` exists because an app
+being converted onto Plinth needed a rest timer, and a countdown set in
+proportional digits shifts sideways every second. That is the shape of
+the third source now: not what Mantine has, and not what Flutter lacks,
+but what using the library turns up.
 
 [![CI](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml/badge.svg)](https://github.com/ylahav/plinth_ui/actions/workflows/ci.yml)
 

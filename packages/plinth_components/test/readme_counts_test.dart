@@ -51,6 +51,32 @@ void main() {
             'shown on pub.dev');
   });
 
+  test('the attribution buckets still add up to the total', () {
+    // The root README and the claims gate both split the total three
+    // ways: tracking @mantine/core, answering a Flutter-only question,
+    // and found by using the library. 112 + 5 = 117 was true until
+    // PlinthClock, and the README said "the rest answer questions only
+    // Flutter has" for one release after that stopped being so. Prose
+    // sums stop adding up silently.
+    for (final file in ['README.md', 'docs/ROADMAP.md']) {
+      final text = File('${root.path}/$file')
+          .readAsStringSync()
+          .replaceAll(RegExp(r'\s+'), ' ');
+      final buckets =
+          RegExp(r'112 (?:components track|tracking)').allMatches(text).length;
+      expect(buckets, greaterThan(0),
+          reason: '$file no longer states the Mantine-tracking count');
+    }
+
+    // The three buckets are 112 / 5 / 1 against a documented total.
+    expect(112 + 5 + 1, documented,
+        reason: 'COMPONENTS.md documents $documented components, but the '
+            'attribution split quoted in README.md and docs/ROADMAP.md '
+            'sums to ${112 + 5 + 1}. One of them is now wrong — a new '
+            'component belongs in a bucket, and the prose has to say '
+            'which');
+  });
+
   test('plinth_core README states the documented count', () {
     final readme =
         File('${root.path}/packages/plinth_core/README.md').readAsStringSync();
