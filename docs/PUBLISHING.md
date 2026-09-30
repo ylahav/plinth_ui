@@ -9,15 +9,34 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.7.0** | 1.8.0 |
-| `plinth_hooks` | **1.7.0** | 1.8.0 |
-| `plinth_components` | **1.7.0** | 1.8.0 |
+| `plinth_core` | **1.8.0** | 1.8.0 |
+| `plinth_hooks` | **1.8.0** | 1.8.0 |
+| `plinth_components` | **1.8.0** | 1.8.0 |
 | `plinth_blocks` | **0.4.0** | 0.4.0 |
 | `plinth_charts` | **0.1.1** | 0.1.1 |
 
 **1.3.0 shipped 21 Sep 2026**, in dependency order, alongside the first
 releases of `plinth_blocks` and `plinth_charts` — five packages in one
 sequence, the largest release so far.
+
+**1.8.0 shipped 30 Sep 2026**, carrying `PlinthClock`, the `PlinthImage`
+rewrite and `PlinthImageFallback` — the three things 1.7.0 was published
+without. `plinth_blocks` did not move: 0.4.0 was already complete and its
+`^1.7.0` constraint admits 1.8.0, so blocks users pick the new components
+up on their next `pub upgrade` with no blocks release at all.
+
+**All five packages now describe the same commit**, which closes the
+two-tree gap below. Verified the way that gap was found: the three
+assertions that could not compile against 1.7.0 were run against the
+published 1.8.0 and pass, and `plinth_clock.dart` is in the archive.
+
+**The resolution lag held for the third release running.** The first
+`flutter pub get` after publishing failed outright — *"Consider
+downgrading your constraint on plinth_components"* — and the second, with
+nothing changed, resolved 1.8.0. **Retry; do not clear the cache.** The
+older advice in this file to delete the `-versions.json` cache file was
+wrong and is corrected under
+[What the `1.3.1` release proved](#what-the-131-release-proved).
 
 **1.7.0 shipped 25 Sep 2026 with `plinth_blocks` 0.4.0 — and the two
 came from different trees.** `plinth_blocks` 0.4.0 is complete;
