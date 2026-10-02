@@ -9,9 +9,9 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.8.0** | 1.9.0 |
-| `plinth_hooks` | **1.8.0** | 1.9.0 |
-| `plinth_components` | **1.8.0** | 1.9.0 |
+| `plinth_core` | **1.9.0** | 1.9.0 |
+| `plinth_hooks` | **1.9.0** | 1.9.0 |
+| `plinth_components` | **1.9.0** | 1.9.0 |
 | `plinth_blocks` | **0.4.0** | 0.4.0 |
 | `plinth_charts` | **0.1.1** | 0.1.1 |
 
@@ -19,12 +19,33 @@ now covers releasing an update.
 releases of `plinth_blocks` and `plinth_charts` — five packages in one
 sequence, the largest release so far.
 
-**1.9.0 is cut and unreleased.** `autofocus` and `onSubmitted` across
-the input family, in `plinth_components` only. `plinth_blocks` and
-`plinth_charts` do not move — no block or chart code changed, and blocks'
-`^1.7.0` constraint already admits 1.9.0 — so **this release is the three
-lockstep packages and nothing else, and the order among them does not
-matter** since none of them gained a dependency on the others.
+**1.9.0 shipped 2 Oct 2026** — `autofocus` and `onSubmitted` across the
+input family, `plinth_components` only. `plinth_blocks` and
+`plinth_charts` did not move: no block or chart code changed, and blocks'
+`^1.7.0` constraint already admits 1.9.0. The order among the three did
+not matter, since none gained a dependency on the others.
+
+Verified against the published archive, including **the four deliberate
+absences** — a release that quietly grew `onSubmitted` on a multiline
+field would ship a parameter that never fires, and the repo's own test
+cannot see what the archive contains. The shipped matrix is exactly the
+intended one: ten inputs with `autofocus`, six with `onSubmitted`, two
+with neither.
+
+**The resolution lag is now four for four.** First `flutter pub get`
+failed outright, second succeeded unchanged. Retry; do not clear the
+cache.
+
+### On pana scores after a release
+
+They lag the publish by minutes to hours, and an unanalysed package
+reports `0/0` through the API rather than "pending" — which looks alarming
+and is not. The reading that matters is the *unchanged* packages:
+immediately after 1.9.0, `plinth_blocks` and `plinth_charts` still showed
+**160/160** while the three new ones showed `0/0`. That is the baseline,
+and an additive release to packages that already scored 160 has no reason
+to drop — the 10 points this repo has actually lost before came from
+shipping no `example/`, and all three have one.
 
 **1.8.0 shipped 30 Sep 2026**, carrying `PlinthClock`, the `PlinthImage`
 rewrite and `PlinthImageFallback` — the three things 1.7.0 was published
