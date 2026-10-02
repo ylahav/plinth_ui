@@ -200,6 +200,28 @@ void main() {
       expect(find.byIcon(Icons.search), findsOneWidget);
     });
 
+    testWidgets('autofocus takes focus without a tap', (tester) async {
+      await tester.pumpWidget(_wrap(const PlinthTextInput(autofocus: true)));
+      await tester.pump();
+
+      final field = tester.widget<TextField>(find.byType(TextField));
+      expect(field.focusNode!.hasFocus, isTrue);
+      // The focus border follows, not just the caret.
+      expect(_border(tester).top.color, isNot(unfocusedGray));
+    });
+
+    testWidgets('onSubmitted gets the text on Enter', (tester) async {
+      String? submitted;
+      await tester.pumpWidget(
+        _wrap(PlinthTextInput(onSubmitted: (v) => submitted = v)),
+      );
+      await _focusField(tester);
+      await tester.enterText(find.byType(TextField), 'Gym');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+
+      expect(submitted, 'Gym');
+    });
+
     testWidgets('every size renders', (tester) async {
       for (final size in PlinthSize.values) {
         await tester.pumpWidget(

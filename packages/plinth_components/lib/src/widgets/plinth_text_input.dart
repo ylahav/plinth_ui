@@ -37,6 +37,8 @@ class PlinthTextInput extends StatefulWidget {
     this.loading = false,
     this.inputFormatters,
     this.keyboardType,
+    this.autofocus = false,
+    this.onSubmitted,
   });
 
   final String? label;
@@ -86,6 +88,14 @@ class PlinthTextInput extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
 
   final TextInputType? keyboardType;
+
+  /// Takes focus when first built — for a field that is the whole point
+  /// of a modal (rename, search), so the user can type without a click.
+  final bool autofocus;
+
+  /// Called with the current text when the user presses Enter, so a
+  /// one-field form can submit without reaching for its button.
+  final ValueChanged<String>? onSubmitted;
 
   @override
   State<PlinthTextInput> createState() => _PlinthTextInputState();
@@ -162,6 +172,8 @@ class _PlinthTextInputState extends State<PlinthTextInput> {
                   controller: widget.controller,
                   focusNode: _focusNode,
                   onChanged: widget.onChanged,
+                  onSubmitted: widget.onSubmitted,
+                  autofocus: widget.autofocus,
                   obscureText: widget.obscureText,
                   enabled: widget.enabled,
                   inputFormatters: widget.inputFormatters,

@@ -11,6 +11,17 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## Unreleased
+
+### Added
+
+- **`PlinthTextInput.autofocus` and `PlinthTextInput.onSubmitted`**,
+  passed straight to the `TextField`. A modal whose only content is
+  one field (rename, search) had no way to take focus on open or
+  submit on Enter, so it needed a click and then the mouse again.
+  Found converting bClock, whose alarm-label and add-city dialogs had
+  both regressed from the Material `TextField` they replaced.
+
 ## 1.8.0
 
 **1.7.0 went to pub.dev without these.** The release was published from
