@@ -31,6 +31,7 @@ class PlinthPinInput extends StatefulWidget {
     this.error = false,
     this.statusText,
     this.radius,
+    this.autofocus = false,
   });
 
   final int length;
@@ -64,6 +65,15 @@ class PlinthPinInput extends StatefulWidget {
 
   /// Overrides the theme's default radius for this one instance.
   final PlinthSize? radius;
+
+  /// Takes focus when first built, on the **first box** — the others
+  /// are reached by typing, so autofocusing any of them would be wrong
+  /// and autofocusing all four is a fight.
+  ///
+  /// **There is no `onSubmitted` here, deliberately.** [onCompleted]
+  /// already fires when the last box is filled, which is what submit
+  /// means for a code of known length; Enter never had a job to do.
+  final bool autofocus;
 
   @override
   State<PlinthPinInput> createState() => _PlinthPinInputState();
@@ -227,6 +237,7 @@ class _PlinthPinInputState extends State<PlinthPinInput> {
                 child: TextField(
                   controller: _controllers[i],
                   focusNode: _nodes[i],
+                  autofocus: widget.autofocus && i == 0,
                   textAlign: TextAlign.center,
                   obscureText: widget.obscureText,
                   keyboardType: widget.numbersOnly

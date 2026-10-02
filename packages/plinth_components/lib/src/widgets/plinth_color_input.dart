@@ -50,6 +50,8 @@ class PlinthColorInput extends StatefulWidget {
     this.size = PlinthSize.md,
     this.radius,
     this.enabled = true,
+    this.autofocus = false,
+    this.onSubmitted,
   });
 
   final Color value;
@@ -136,6 +138,14 @@ class PlinthColorInput extends StatefulWidget {
     return value == null ? null : Color(value);
   }
 
+  /// Takes focus when first built — for a field that is the whole point
+  /// of a modal. Two of these on one screen fight over focus.
+  final bool autofocus;
+
+  /// Called with the current text when the user presses Enter, so a
+  /// one-field form submits without reaching for its button.
+  final ValueChanged<String>? onSubmitted;
+
   @override
   State<PlinthColorInput> createState() => _PlinthColorInputState();
 }
@@ -196,6 +206,8 @@ class _PlinthColorInputState extends State<PlinthColorInput> {
       error: widget.error,
       controller: _controller,
       onChanged: enabled ? _onTyped : null,
+      onSubmitted: widget.onSubmitted,
+      autofocus: widget.autofocus,
       size: widget.size,
       radius: widget.radius,
       enabled: enabled,

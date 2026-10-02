@@ -34,6 +34,7 @@ class PlinthTextarea extends StatefulWidget {
     this.minLines = 3,
     this.maxLines = 6,
     this.inputFormatters,
+    this.autofocus = false,
   });
 
   final String? label;
@@ -72,6 +73,15 @@ class PlinthTextarea extends StatefulWidget {
   /// *after* the value is committed and corrects it, where a formatter
   /// runs before and prevents it.
   final List<TextInputFormatter>? inputFormatters;
+
+  /// Takes focus when first built — for a field that is the whole point
+  /// of a modal.
+  ///
+  /// **There is no `onSubmitted` here, deliberately.** This is multiline
+  /// by default, and Flutter never calls `onSubmitted` on a multiline
+  /// field — Enter inserts a newline. The parameter would compile,
+  /// document, and silently never fire. `PlinthTextInput` has it.
+  final bool autofocus;
 
   @override
   State<PlinthTextarea> createState() => _PlinthTextareaState();
@@ -141,6 +151,7 @@ class _PlinthTextareaState extends State<PlinthTextarea> {
                   controller: widget.controller,
                   focusNode: _focusNode,
                   onChanged: widget.onChanged,
+                  autofocus: widget.autofocus,
                   enabled: widget.enabled,
                   minLines: widget.minLines,
                   maxLines: widget.maxLines,

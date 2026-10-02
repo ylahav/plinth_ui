@@ -46,6 +46,8 @@ class PlinthAutocomplete extends StatefulWidget {
     this.loading = false,
     this.limit = 8,
     this.onOptionSelected,
+    this.autofocus = false,
+    this.onSubmitted,
   });
 
   /// The field's text. Controlled by the caller, like every other
@@ -85,6 +87,21 @@ class PlinthAutocomplete extends StatefulWidget {
   /// for when choosing from the list should do more than set the text —
   /// filling the rest of a form from the chosen record, say.
   final ValueChanged<String>? onOptionSelected;
+
+  /// Takes focus when first built — for a field that is the whole point
+  /// of a modal. Two of these on one screen fight over focus.
+  final bool autofocus;
+
+  /// Called with the current text when Enter is pressed **and no option
+  /// is highlighted**.
+  ///
+  /// Enter is shared with the option list, and the split is already the
+  /// documented behaviour of `plinthHandleOptionKeys`: highlighted means
+  /// Enter picks the option and [onOptionSelected] fires, nothing
+  /// highlighted means Enter belongs to the form and reaches here. So a
+  /// search field can submit a free-text query without losing the
+  /// ability to pick a suggestion.
+  final ValueChanged<String>? onSubmitted;
 
   @override
   State<PlinthAutocomplete> createState() => _PlinthAutocompleteState();
@@ -331,6 +348,8 @@ class _PlinthAutocompleteState extends State<PlinthAutocomplete> {
                         child: TextField(
                           controller: _controller,
                           focusNode: _focusNode,
+                          autofocus: widget.autofocus,
+                          onSubmitted: widget.onSubmitted,
                           enabled: widget.enabled,
                           style: TextStyle(fontSize: fontSize),
                           onChanged: (text) {

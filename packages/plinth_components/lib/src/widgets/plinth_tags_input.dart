@@ -44,6 +44,7 @@ class PlinthTagsInput extends StatefulWidget {
     this.loading = false,
     this.maxTags,
     this.allowDuplicates = false,
+    this.autofocus = false,
   });
 
   final List<String> value;
@@ -77,6 +78,15 @@ class PlinthTagsInput extends StatefulWidget {
   /// everything but type, and two identical chips give the user no way
   /// to tell which is which.
   final bool allowDuplicates;
+
+  /// Takes focus when first built — for a field that is the whole point
+  /// of a modal.
+  ///
+  /// **There is no `onSubmitted` here, deliberately.** Enter already
+  /// commits the tag being typed, and a second meaning for the same key
+  /// would make it unclear which one a press did. Use [onChanged] on the
+  /// tag list to react to a tag landing.
+  final bool autofocus;
 
   @override
   State<PlinthTagsInput> createState() => _PlinthTagsInputState();
@@ -206,6 +216,7 @@ class _PlinthTagsInputState extends State<PlinthTagsInput> {
                         style: TextStyle(fontSize: fontSize),
                         onChanged: _onChanged,
                         onSubmitted: _commit,
+                        autofocus: widget.autofocus,
                         decoration: InputDecoration(
                           isDense: true,
                           border: InputBorder.none,

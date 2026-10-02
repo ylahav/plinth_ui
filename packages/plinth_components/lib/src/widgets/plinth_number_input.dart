@@ -35,10 +35,24 @@ class PlinthNumberInput extends StatefulWidget {
     this.radius,
     this.enabled = true,
     this.loading = false,
+    this.autofocus = false,
+    this.onSubmitted,
   });
 
   final num value;
   final ValueChanged<num>? onChanged;
+
+  /// Takes focus when first built — for a field that is the whole point
+  /// of a modal. Two of these on one screen fight over focus, so it
+  /// belongs on the field that *is* the screen, not on the first of
+  /// several.
+  final bool autofocus;
+
+  /// Called on Enter with the clamped value, matching [onChanged]'s type
+  /// rather than handing back the raw text. Unparseable text does not
+  /// fire it — there is no number to submit.
+  final ValueChanged<num>? onSubmitted;
+
   final num? min;
   final num? max;
   final num step;
@@ -123,6 +137,13 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
     }
   }
 
+  void _onSubmitted(String text) {
+    final parsed = num.tryParse(text);
+    if (parsed != null) {
+      widget.onSubmitted?.call(_clamp(parsed));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = context.plinth;
@@ -175,6 +196,8 @@ class _PlinthNumberInputState extends State<PlinthNumberInput> {
                           RegExp(r'^-?\d*\.?\d*')),
                     ],
                     onChanged: _onTextChanged,
+                    onSubmitted: _onSubmitted,
+                    autofocus: widget.autofocus,
                     style: TextStyle(fontSize: fontSize),
                     decoration: InputDecoration(
                       border: InputBorder.none,

@@ -22,6 +22,44 @@ changes; from `1.0.0` they cannot.
   Found converting bClock, whose alarm-label and add-city dialogs had
   both regressed from the Material `TextField` they replaced.
 
+  **A different kind of finding from the rest of the conversion work.**
+  The others were "Plinth has no X" — a full-screen sheet, a photo
+  header, a page shell. This one is "Plinth's X lost something the thing
+  it replaced had", which only surfaces by substitution and which no
+  parity table or audit could show.
+
+- **The same two across the rest of the input family**, because the
+  one-field-modal argument does not stop at plain text:
+  `PlinthPasswordInput`, `PlinthNumberInput`, `PlinthMaskInput` and
+  `PlinthColorInput` take both; `PlinthTextarea`, `PlinthJsonInput`,
+  `PlinthTagsInput` and `PlinthPinInput` take `autofocus` only.
+  `PlinthNumberInput.onSubmitted` hands back a clamped `num` rather than
+  the raw text, matching its `onChanged`, and unparseable text does not
+  fire it. `PlinthPinInput.autofocus` targets the first box only.
+
+  **`onSubmitted` is deliberately absent from four of them**, which is
+  the part worth reading: a multiline field never receives it from
+  Flutter at all, so on `PlinthTextarea` and `PlinthJsonInput` it would
+  have compiled, documented and silently never fired. On
+  `PlinthTagsInput` Enter already commits a tag, and on `PlinthPinInput`
+  `onCompleted` already is the submit. Each absence is argued in the
+  widget's own doc comment and asserted by a test, because an
+  unexplained missing parameter reads as an oversight and gets "fixed".
+
+  `PlinthAutocomplete` takes both and splits the key — highlighted means
+  the list claims Enter, nothing highlighted means the form gets it,
+  which is behaviour `option_keyboard.dart` was already written for.
+
+  `PlinthPillsInput` and `PlinthFileInput` take neither: the first is a
+  container whose field the caller supplies, the second has no text
+  entry.
+
+- **`input_family_test.dart`** asks the family a question no per-widget
+  test could: every input owning a text field exposes `autofocus`, every
+  exemption is classified, and every `onSubmitted` omission is explained
+  in prose. Nine widgets had the same hole and nothing noticed, because
+  each only ever tested itself.
+
 ## 1.8.0
 
 **1.7.0 went to pub.dev without these.** The release was published from

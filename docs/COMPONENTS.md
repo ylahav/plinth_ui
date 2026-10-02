@@ -651,10 +651,39 @@ left `null` are simply omitted, not rendered empty.
 
 ## Forms
 
+### Focus and Enter across the input family
+
+Every input that owns a text field takes **`autofocus`**, for the field
+that *is* a modal — a rename box, a search box. Two of them on one screen
+fight over focus, so it belongs on the field that is the screen rather
+than on the first of several. `input_family_test.dart` asserts the whole
+family has it, because the gap it closes was found by an app rather than
+by this repo: `PlinthTextInput` had neither this nor `onSubmitted` until
+a one-field dialog regressed against the Material `TextField` it
+replaced.
+
+**`onSubmitted` is not universal, and the three absences are decisions
+rather than oversights:**
+
+| | Why Enter is not yours to take |
+|---|---|
+| `PlinthTextarea`, `PlinthJsonInput` | Multiline. Flutter does not call `onSubmitted` on a multiline field — Enter inserts a newline, so the parameter would compile, document, and never fire |
+| `PlinthTagsInput` | Enter already commits the tag being typed. A second meaning would make it unclear which one a press did |
+| `PlinthPinInput` | `onCompleted` already fires when the last box fills, which is what submit means for a code of known length |
+
+`PlinthAutocomplete` has both, and splits the key: with an option
+highlighted Enter picks it and `onOptionSelected` fires; with nothing
+highlighted Enter belongs to the form and reaches `onSubmitted`. So a
+search field can submit a free-text query without losing the ability to
+pick a suggestion.
+
+`PlinthPillsInput` and `PlinthFileInput` take neither — the first is a
+container whose field you supply, the second has no text entry.
+
 ### `PlinthTextInput`
 `label`, `description`, `placeholder`, `error`, `controller`, `onChanged`,
 `size`, `color`, `radius`, `obscureText`, `enabled`, `leadingIcon`,
-`trailing`.
+`trailing`, `autofocus`, `onSubmitted`.
 Border color: gray (default) -> theme color at shade 6 (focused) -> red
 (error present) — error takes precedence over focus.
 
@@ -687,18 +716,19 @@ message.
 ### `PlinthTextarea`
 `label`, `description`, `placeholder`, `error`, `controller`, `onChanged`,
 `size`, `color`, `radius`, `enabled`, `minLines` (default `3`), `maxLines`
-(default `6`). Shares `PlinthTextInput`'s chrome and border styling.
+(default `6`), `autofocus`. Shares `PlinthTextInput`'s chrome and border styling.
 
 ### `PlinthPasswordInput`
 `label`, `description`, `placeholder`, `error`, `controller`, `onChanged`,
-`size`, `color`, `radius`, `enabled`. Shares `PlinthTextInput`'s chrome,
-with a show/hide visibility toggle icon instead of a plain `obscureText`
+`size`, `color`, `radius`, `enabled`, `autofocus`, `onSubmitted`. Shares
+`PlinthTextInput`'s chrome, with a show/hide visibility toggle icon instead of a plain `obscureText`
 flag.
 
 ### `PlinthPinInput`
 `length` (default `4`), `value`, `onChanged`, `onCompleted` (fires once
 when the value reaches `length` characters), `obscureText`, `numbersOnly`
-(default `true`), `size`, `color`, `radius`, `error`. One box per character, with
+(default `true`), `size`, `color`, `radius`, `error`, `autofocus` (the
+first box only). One box per character, with
 auto-advancing focus as each digit is typed and auto-retreating focus on
 backspace from an already-empty box.
 
@@ -753,8 +783,8 @@ untouched rather than clearing it.
 ### `PlinthTagsInput`
 `value` (`List<String>`), `onChanged`, `label`, `description`,
 `placeholder`, `error`, `size`, `color`, `radius`, `enabled`,
-`clearable`, `maxTags`, `allowDuplicates`. Free-text entry producing
-removable chips.
+`clearable`, `maxTags`, `allowDuplicates`, `autofocus`. Free-text entry
+producing removable chips.
 
 `PlinthMultiSelect` is the fixed-options equivalent, where the user
 picks from a list you supply; this is where they invent the values.
@@ -766,7 +796,8 @@ tell them apart.
 ### `PlinthAutocomplete`
 `value`, `onChanged`, `options`, `label`, `description`, `placeholder`,
 `error`, `size`, `color`, `radius`, `enabled`, `clearable`, `limit`
-(default `8`), `onOptionSelected`. A text field with suggestions.
+(default `8`), `onOptionSelected`, `autofocus`, `onSubmitted`. A text
+field with suggestions.
 
 The difference from `PlinthSelect` is what the field accepts, not how
 it looks: a select constrains the user to your list, while this takes
@@ -852,7 +883,8 @@ driven.
 
 ### `PlinthNumberInput`
 `value` (`num`), `onChanged`, `min`, `max`, `step` (default `1`), `label`,
-`description`, `error`, `size`, `color`, `radius`, `enabled`. Shares
+`description`, `error`, `size`, `color`, `radius`, `enabled`,
+`autofocus`, `onSubmitted` (a clamped `num`, not the raw text). Shares
 `PlinthTextInput`'s label/description/error chrome and focus/error border
 styling, with +/- step buttons that respect `min`/`max`. Typing a value
 directly is also supported and clamped the same way.
@@ -899,8 +931,8 @@ than a bare "Street".
 
 ### `PlinthMaskInput`
 `mask`, `value`, `onChanged`, plus `PlinthTextInput`'s label,
-description, placeholder, error, size, colour, radius and enabled. A
-field that formats as you type. `#` is a digit, `A` a letter, `*`
+description, placeholder, error, size, colour, radius, enabled,
+autofocus and onSubmitted. A field that formats as you type. `#` is a digit, `A` a letter, `*`
 either; everything else is a literal the field inserts.
 
 `onChanged` reports the masked text as shown. The static
@@ -918,8 +950,8 @@ the paste.
 ### `PlinthJsonInput`
 `value`, `onChanged`, `onValidChanged`, `label`, `description`,
 `placeholder`, `error`, `formatOnBlur`, `validationMessage`,
-`minLines`, `maxLines`, `size`, `color`, `radius`, `enabled`. A
-textarea that validates JSON.
+`minLines`, `maxLines`, `size`, `color`, `radius`, `enabled`,
+`autofocus`. A textarea that validates JSON.
 
 **Validation runs on blur, not on every keystroke.** Half-typed JSON is
 invalid by definition — an object is broken from the opening brace
@@ -1073,8 +1105,8 @@ means it composes into a filter bar or a settings panel just as easily.
 ### `PlinthColorInput`
 `value` (a `Color`), `onChanged`, `label`, `description`,
 `placeholder`, `error`, `withAlpha`, `swatches`, `clearable`,
-`onClear`, `size`, `radius`, `enabled`. A hex text field with a
-preview swatch that opens a `PlinthColorPicker`.
+`onClear`, `size`, `radius`, `enabled`, `autofocus`, `onSubmitted`. A
+hex text field with a preview swatch that opens a `PlinthColorPicker`.
 
 Both halves matter: typing `#2f9e44` is the fastest way in when you
 know the value, and the picker is the only way in when you don't. The

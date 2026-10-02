@@ -39,6 +39,8 @@ class PlinthMaskInput extends StatefulWidget {
     this.enabled = true,
     this.loading = false,
     this.leadingIcon,
+    this.autofocus = false,
+    this.onSubmitted,
   });
 
   /// `#` = digit, `A` = letter, `*` = either. Anything else is a
@@ -74,6 +76,14 @@ class PlinthMaskInput extends StatefulWidget {
 
   static bool _isPlaceholder(String c) => c == '#' || c == 'A' || c == '*';
 
+  /// Takes focus when first built — for a field that is the whole point
+  /// of a modal. Two of these on one screen fight over focus.
+  final bool autofocus;
+
+  /// Called with the current text when the user presses Enter, so a
+  /// one-field form submits without reaching for its button.
+  final ValueChanged<String>? onSubmitted;
+
   @override
   State<PlinthMaskInput> createState() => _PlinthMaskInputState();
 }
@@ -107,6 +117,8 @@ class _PlinthMaskInputState extends State<PlinthMaskInput> {
       error: widget.error,
       controller: _controller,
       onChanged: widget.onChanged,
+      onSubmitted: widget.onSubmitted,
+      autofocus: widget.autofocus,
       size: widget.size,
       color: widget.color,
       radius: widget.radius,

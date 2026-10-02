@@ -27,6 +27,8 @@ class PlinthPasswordInput extends StatefulWidget {
     this.radius,
     this.enabled = true,
     this.loading = false,
+    this.autofocus = false,
+    this.onSubmitted,
   });
 
   final String? label;
@@ -47,6 +49,16 @@ class PlinthPasswordInput extends StatefulWidget {
   /// unavailable. A field that went dead mid-request would eat the
   /// keystroke that arrived during it.
   final bool loading;
+
+  /// Takes focus when first built — for a field that is the whole point
+  /// of a modal. Two of these on one screen fight over focus, so it
+  /// belongs on the field that *is* the screen, not on the first of
+  /// several.
+  final bool autofocus;
+
+  /// Called with the current text when the user presses Enter, so a
+  /// sign-in form submits without reaching for its button.
+  final ValueChanged<String>? onSubmitted;
 
   @override
   State<PlinthPasswordInput> createState() => _PlinthPasswordInputState();
@@ -115,6 +127,8 @@ class _PlinthPasswordInputState extends State<PlinthPasswordInput> {
                     controller: widget.controller,
                     focusNode: _focusNode,
                     onChanged: widget.onChanged,
+                    onSubmitted: widget.onSubmitted,
+                    autofocus: widget.autofocus,
                     obscureText: !_visible,
                     enabled: widget.enabled,
                     style: TextStyle(fontSize: fontSize),

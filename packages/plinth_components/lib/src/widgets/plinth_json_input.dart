@@ -41,6 +41,7 @@ class PlinthJsonInput extends StatefulWidget {
     this.color,
     this.radius,
     this.enabled = true,
+    this.autofocus = false,
   });
 
   final String? value;
@@ -91,6 +92,15 @@ class PlinthJsonInput extends StatefulWidget {
       return text;
     }
   }
+
+  /// Takes focus when first built, forwarded to the underlying
+  /// [PlinthTextarea].
+  ///
+  /// **There is no `onSubmitted` here, deliberately.** JSON is edited
+  /// across lines, so this is multiline, and Flutter never calls
+  /// `onSubmitted` on a multiline field — Enter inserts a newline. Use
+  /// [onValidChanged] to react to the document becoming parseable.
+  final bool autofocus;
 
   @override
   State<PlinthJsonInput> createState() => _PlinthJsonInputState();
@@ -159,6 +169,7 @@ class _PlinthJsonInputState extends State<PlinthJsonInput> {
         error: widget.error ?? _parseError,
         controller: _controller,
         onChanged: widget.onChanged,
+        autofocus: widget.autofocus,
         minLines: widget.minLines,
         maxLines: widget.maxLines,
         size: widget.size,
