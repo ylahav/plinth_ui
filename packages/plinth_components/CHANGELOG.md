@@ -11,7 +11,12 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
-## Unreleased
+## 1.9.0
+
+**Everything here came from converting applications onto Plinth**, and
+one of them is a kind of finding this project had not seen before: not a
+missing widget, but a widget that lost something the Material one it
+replaced already had. Only substitution finds that.
 
 ### Added
 

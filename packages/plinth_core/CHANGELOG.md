@@ -11,6 +11,14 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.9.0
+
+No change in this package. Released in lockstep with
+`plinth_components` 1.9.0, which adds `autofocus` and `onSubmitted`
+across the input family — and deliberately withholds `onSubmitted` from
+four of them, where Enter already means something or Flutter never
+delivers it.
+
 ## 1.8.0
 
 No change in this package. Released in lockstep with

@@ -9,15 +9,22 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.8.0** | 1.8.0 |
-| `plinth_hooks` | **1.8.0** | 1.8.0 |
-| `plinth_components` | **1.8.0** | 1.8.0 |
+| `plinth_core` | **1.8.0** | 1.9.0 |
+| `plinth_hooks` | **1.8.0** | 1.9.0 |
+| `plinth_components` | **1.8.0** | 1.9.0 |
 | `plinth_blocks` | **0.4.0** | 0.4.0 |
 | `plinth_charts` | **0.1.1** | 0.1.1 |
 
 **1.3.0 shipped 21 Sep 2026**, in dependency order, alongside the first
 releases of `plinth_blocks` and `plinth_charts` — five packages in one
 sequence, the largest release so far.
+
+**1.9.0 is cut and unreleased.** `autofocus` and `onSubmitted` across
+the input family, in `plinth_components` only. `plinth_blocks` and
+`plinth_charts` do not move — no block or chart code changed, and blocks'
+`^1.7.0` constraint already admits 1.9.0 — so **this release is the three
+lockstep packages and nothing else, and the order among them does not
+matter** since none of them gained a dependency on the others.
 
 **1.8.0 shipped 30 Sep 2026**, carrying `PlinthClock`, the `PlinthImage`
 rewrite and `PlinthImageFallback` — the three things 1.7.0 was published
