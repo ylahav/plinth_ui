@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:plinth_core/plinth_core.dart';
@@ -45,6 +47,28 @@ class PlinthSegmentedControlItem<T> {
 /// ARIA calls this a radio group rather than a tab list, which changes
 /// what it announces — each segment reports being in a mutually
 /// exclusive group — but not how it is driven.
+///
+/// ## When it does not fit
+///
+/// **Segments shrink and their labels truncate.** Each takes its natural
+/// width while there is room; once there is not, the row divides what it
+/// has and labels ellipsize. Previously the row kept every segment at
+/// its label's width and overflowed — found by an app whose German
+/// labels did not fit the phone, and worked around in two places.
+///
+/// **This is deliberately not what [PlinthTabs] does.** A tab strip that
+/// outgrows its width pans horizontally, because a dozen tabs is
+/// ordinary and panning to reach one is the platform's own answer. A
+/// segmented control is two to four options forming a *single* choice,
+/// and panning would hide options the user is choosing between. A
+/// truncated label you can see beats a whole option you cannot.
+///
+/// The full label still reaches a screen reader, so truncation costs
+/// sighted users precision and costs assistive-technology users nothing.
+///
+/// In an unbounded width — inside a horizontal scroll view — segments
+/// keep their natural size, since there is no width to divide and
+/// nothing to overflow.
 class PlinthSegmentedControl<T> extends StatefulWidget {
   const PlinthSegmentedControl({
     super.key,
@@ -116,6 +140,27 @@ class _PlinthSegmentedControlState<T> extends State<PlinthSegmentedControl<T>> {
     _select(target.value);
   }
 
+  /// What a segment wants, in logical pixels: its label at the heavier
+  /// of the two weights, plus padding.
+  ///
+  /// Measured at **semibold** whichever segment is selected, so moving
+  /// the selection does not change any segment's width. Weighing a
+  /// selected label heavier than the others would make the control
+  /// twitch on every tap.
+  double _naturalWidth(
+    String label,
+    TextStyle style,
+    double horizontalPadding,
+  ) {
+    final painter = TextPainter(
+      text: TextSpan(text: label, style: style),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    return painter.width + horizontalPadding * 2;
+  }
+
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     if (event is KeyUpEvent) return KeyEventResult.ignored;
 
@@ -176,15 +221,58 @@ class _PlinthSegmentedControlState<T> extends State<PlinthSegmentedControl<T>> {
         ),
     ];
 
-    return Container(
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
-        color: theme.surfaceMuted,
-        borderRadius: BorderRadius.circular(resolvedRadius + 3),
-      ),
-      child: fullWidth
-          ? Row(children: [for (final s in segments) Expanded(child: s)])
-          : Row(mainAxisSize: MainAxisSize.min, children: segments),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Segments shrink and truncate rather than overflow — see the
+        // class doc for why this pans like `PlinthTabs` does not.
+        //
+        // `Flexible` only where the width is bounded, the same guard
+        // `PlinthTabs` uses: a flex child in an unbounded row is a
+        // layout error, and this control is small enough to sit inside
+        // a horizontal scroll view where there is no width to divide.
+        final canShrink = constraints.hasBoundedWidth;
+
+        // Flex weighted by what each segment wants, not shared equally.
+        // Equal shares truncate a long label while a short one keeps
+        // slack — and would truncate even when the total fits, because
+        // a segment wider than its 1/n share gets capped at it. Weighted
+        // by natural width, a row that fits is untouched and a row that
+        // does not shrinks every segment by the same proportion.
+        final weights = [
+          for (final item in items)
+            math.max(
+              1,
+              _naturalWidth(
+                item.label,
+                TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: theme.weight(PlinthWeight.semibold),
+                ),
+                horizontalPadding,
+              ).round(),
+            ),
+        ];
+
+        return Container(
+          padding: const EdgeInsets.all(3),
+          decoration: BoxDecoration(
+            color: theme.surfaceMuted,
+            borderRadius: BorderRadius.circular(resolvedRadius + 3),
+          ),
+          child: fullWidth
+              ? Row(children: [for (final s in segments) Expanded(child: s)])
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final (i, s) in segments.indexed)
+                      if (canShrink)
+                        Flexible(flex: weights[i], child: s)
+                      else
+                        s,
+                  ],
+                ),
+        );
+      },
     );
   }
 }
@@ -254,6 +342,14 @@ class _Segment<T> extends StatelessWidget {
             child: Text(
               item.label,
               textAlign: TextAlign.center,
+              // One line, clipped with an ellipsis. Without these a
+              // squeezed segment wraps to two lines and changes the
+              // control's height instead, which is the same bug wearing
+              // a different hat. The full label still reaches a screen
+              // reader — truncation is visual only.
+              maxLines: 1,
+              softWrap: false,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: fontSize,
                 fontWeight: selected

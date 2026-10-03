@@ -11,6 +11,41 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## Unreleased
+
+### Fixed
+
+- **`PlinthSegmentedControl` no longer overflows a narrow parent.**
+  Segments kept their labels' natural width and the row overflowed —
+  *"A RenderFlex overflowed by 511 pixels on the right"* for two German
+  labels in 160px. They now shrink and truncate with an ellipsis, one
+  line always, and the full label still reaches a screen reader.
+
+  **Found converting bClock**, which worked around it in two places. A
+  long translation and a 200% text scale compound, so this is the kind
+  of overflow that never shows up in the language the library was
+  written in.
+
+  The shrinking is **weighted by what each label wants**, not shared
+  equally. Equal shares caps every segment at `1/n`, which truncates a
+  long label while a short one keeps slack — and truncates even when the
+  total would have fit. Weighted, a row that fits is untouched and a row
+  that does not shrinks everything by the same proportion. A test holds
+  that distinction: an uneven pair inside a width that fits them must not
+  be ellipsised.
+
+  Widths are measured at semibold whichever segment is selected, so
+  moving the selection does not change any segment's width and the
+  control does not twitch on tap.
+
+  **Deliberately not what `PlinthTabs` does.** A tab strip that outgrows
+  its width pans, because a dozen tabs is ordinary and panning is the
+  platform's answer. A segmented control is a single choice among two to
+  four, and panning would hide options the user is choosing between. The
+  `hasBoundedWidth` guard is borrowed from `PlinthTabs` though — a flex
+  child in an unbounded row is a layout error, and this control can sit
+  inside a horizontal scroll view.
+
 ## 1.9.0
 
 **Everything here came from converting applications onto Plinth**, and

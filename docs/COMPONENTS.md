@@ -881,6 +881,24 @@ group rather than a tab list, which changes what it announces — each
 segment reports being in a mutually exclusive group — but not how it is
 driven.
 
+**When it does not fit**: segments shrink and labels truncate with an
+ellipsis. Each segment takes its natural width while there is room;
+once there is not, the row divides what it has *in proportion to what
+each label wants* — so a row that fits is never touched, and a row that
+does not shrinks everything by the same proportion rather than capping
+every segment at `1/n` and ellipsising a long label while a short one
+keeps slack. One line always, because wrapping would change the
+control's height instead. The full label still reaches a screen reader.
+
+This is deliberately **not** what `PlinthTabs` does. A tab strip that
+outgrows its width pans horizontally, because a dozen tabs is ordinary
+and panning to reach one is the platform's own answer. A segmented
+control is two to four options forming a single choice, and panning
+would hide options the user is choosing between — a truncated label you
+can see beats a whole option you cannot. In an unbounded width, inside a
+horizontal scroll view, segments keep their natural size; there is no
+width to divide and nothing to overflow.
+
 ### `PlinthNumberInput`
 `value` (`num`), `onChanged`, `min`, `max`, `step` (default `1`), `label`,
 `description`, `error`, `size`, `color`, `radius`, `enabled`,
