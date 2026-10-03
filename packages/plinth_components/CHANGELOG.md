@@ -11,7 +11,14 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
-## Unreleased
+## 1.10.0
+
+**A minor rather than a patch**, because it changes what an existing app
+looks like. A control whose labels did not fit used to overflow — loudly
+in debug, clipped in release — and now truncates them. That is strictly a
+bug fix, but any app relying on the old size is a judgement a version
+number should let people make, which is the same reasoning 1.5.0 used
+when the `border` contrast change moved every input outline.
 
 ### Fixed
 

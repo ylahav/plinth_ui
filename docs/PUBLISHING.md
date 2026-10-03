@@ -9,15 +9,30 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.9.0** | 1.9.0 |
-| `plinth_hooks` | **1.9.0** | 1.9.0 |
-| `plinth_components` | **1.9.0** | 1.9.0 |
+| `plinth_core` | **1.9.0** | 1.10.0 |
+| `plinth_hooks` | **1.9.0** | 1.10.0 |
+| `plinth_components` | **1.9.0** | 1.10.0 |
 | `plinth_blocks` | **0.4.0** | 0.4.0 |
 | `plinth_charts` | **0.1.1** | 0.1.1 |
 
 **1.3.0 shipped 21 Sep 2026**, in dependency order, alongside the first
 releases of `plinth_blocks` and `plinth_charts` — five packages in one
 sequence, the largest release so far.
+
+**1.10.0 is cut and unreleased.** `PlinthSegmentedControl` shrinks and
+truncates instead of overflowing, in `plinth_components` only. Blocks and
+charts do not move; blocks' `^1.7.0` already admits it, and the order
+among the three does not matter.
+
+**A minor rather than a patch, on purpose.** It changes what an existing
+app looks like — a control that used to overflow now ellipsises — and the
+version number is where people get to decide whether they care. Same
+reasoning as 1.5.0's `border` contrast change.
+
+**Watch the first version number.** `1.10.0` sorts after `1.9.0` under
+semver but *before* it as a string, so anything comparing these as text
+will disagree with pub. Nothing in this repo does, and the state-table
+test compares against the pubspec rather than ordering versions.
 
 **1.9.0 shipped 2 Oct 2026** — `autofocus` and `onSubmitted` across the
 input family, `plinth_components` only. `plinth_blocks` and

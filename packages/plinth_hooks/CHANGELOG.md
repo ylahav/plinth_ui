@@ -11,6 +11,13 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.10.0
+
+No change in this package. Released in lockstep with
+`plinth_components` 1.10.0, which stops `PlinthSegmentedControl`
+overflowing a parent too narrow for its labels — they shrink and
+truncate instead.
+
 ## 1.9.0
 
 No change in this package. Released in lockstep with
