@@ -59,8 +59,7 @@ Future<void> _pump(
   ));
 }
 
-Size _chipSize(WidgetTester tester) =>
-    tester.getSize(find.byType(PlinthChip));
+Size _chipSize(WidgetTester tester) => tester.getSize(find.byType(PlinthChip));
 
 void main() {
   group('a narrow parent no longer overflows', () {
@@ -76,8 +75,7 @@ void main() {
       expect(_chipSize(tester).width, lessThanOrEqualTo(120));
     });
 
-    testWidgets('selected, with the checkmark taking room too',
-        (tester) async {
+    testWidgets('selected, with the checkmark taking room too', (tester) async {
       await _pump(tester, width: 120, selected: true);
       expect(tester.takeException(), isNull);
       expect(find.byIcon(Icons.check), findsOneWidget);
