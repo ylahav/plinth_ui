@@ -11,6 +11,12 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.11.0
+
+No change in this package. Released in lockstep with
+`plinth_components` 1.11.0, which stops `PlinthChip` overflowing a slot
+too narrow for its label — the label truncates instead.
+
 ## 1.10.0
 
 No change in this package. Released in lockstep with

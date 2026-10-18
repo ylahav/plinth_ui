@@ -11,6 +11,32 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.11.0
+
+**A minor rather than a patch**, for the same reason as 1.10.0: it
+changes what an existing app looks like. A chip whose label did not fit
+used to overflow — loudly in debug, clipped in release — and now
+truncates it.
+
+### Fixed
+
+- **`PlinthChip` no longer overflows a narrow slot.** The label kept its
+  natural width in a row that could not shrink it — *"A RenderFlex
+  overflowed by 19 pixels on the right"* for a Hebrew tip title in a
+  `Wrap` on a phone. The label now truncates with an ellipsis on one
+  line, the chip keeps its height, and the full label still reaches a
+  screen reader.
+
+  **Found in CaptureGuide**, which had replaced `PlinthChip` with its own
+  link chip to get around it — the same pattern as bClock and the
+  segmented control in 1.10.0. Long translations are where this shows.
+
+  A chip that fits is untouched: the `Flexible` only applies in a bounded
+  width, behind the same `hasBoundedWidth` guard `PlinthTabs` and
+  `PlinthSegmentedControl` use, so a chip in a horizontal scroll view
+  keeps its natural width and does not throw. `plinth_chip_fit_test.dart`
+  holds both sides, including RTL and 200% text scale.
+
 ## 1.10.0
 
 **A minor rather than a patch**, because it changes what an existing app

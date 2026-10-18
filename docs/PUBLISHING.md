@@ -9,15 +9,28 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.10.0** | 1.10.0 |
-| `plinth_hooks` | **1.10.0** | 1.10.0 |
-| `plinth_components` | **1.10.0** | 1.10.0 |
+| `plinth_core` | **1.10.0** | 1.11.0 |
+| `plinth_hooks` | **1.10.0** | 1.11.0 |
+| `plinth_components` | **1.10.0** | 1.11.0 |
 | `plinth_blocks` | **0.4.0** | 0.4.0 |
 | `plinth_charts` | **0.1.1** | 0.1.1 |
 
 **1.3.0 shipped 21 Sep 2026**, in dependency order, alongside the first
 releases of `plinth_blocks` and `plinth_charts` — five packages in one
 sequence, the largest release so far.
+
+**1.11.0 is cut and unreleased.** `PlinthChip` truncates its label
+instead of overflowing, in `plinth_components` only — the same fix
+1.10.0 made to the segmented control, found the same way, by an app with
+long translated labels (CaptureGuide). Blocks and charts do not move;
+blocks' `^1.7.0` already admits it, and the order among the three does
+not matter.
+
+**The check for this release is the release's own claim**, as with
+1.10.0: CaptureGuide's case against the published archive — a long label
+in 120px and a Hebrew title in 160px RTL, asserting no exception — plus a
+grep of the published `plinth_chip.dart` for `maxLines: 1`,
+`softWrap: false`, `TextOverflow.ellipsis` and `hasBoundedWidth`.
 
 **1.10.0 shipped 3 Oct 2026.** `PlinthSegmentedControl` shrinks and
 truncates instead of overflowing, `plinth_components` only. Blocks and
