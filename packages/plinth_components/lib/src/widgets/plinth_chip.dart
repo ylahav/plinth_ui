@@ -28,6 +28,23 @@ import 'plinth_tap_target.dart';
 ///   ],
 /// )
 /// ```
+///
+/// ## When it does not fit
+///
+/// **The label truncates on one line.** A chip takes its label's natural
+/// width while there is room; in a narrower slot the label ellipsizes
+/// and the chip stays inside the width it was given. Previously the
+/// label kept its natural width in a row that could not shrink it, so a
+/// long label — a translation, a tip title in a `Wrap` on a phone —
+/// overflowed. Found in CaptureGuide, which worked around it with its
+/// own link chip.
+///
+/// The chip never wraps to a second line: that would change its height,
+/// which in a `Wrap` of chips is the same bug in a different place. The
+/// full label still reaches a screen reader.
+///
+/// In an unbounded width — a chip in a horizontal scroll view — there is
+/// nothing to divide, so the chip keeps its natural width as before.
 class PlinthChip extends StatelessWidget {
   const PlinthChip({
     super.key,
@@ -110,17 +127,19 @@ class PlinthChip extends StatelessWidget {
                   color: selected ? baseColor : theme.border,
                 ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (selected) ...[
-                    Icon(Icons.check,
-                        size: _fontSizes[size]! + 2,
-                        color: theme.contrastingOn(baseColor)),
-                    const SizedBox(width: 4),
-                  ],
-                  Text(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Truncate rather than overflow — see the class doc.
+                  //
+                  // `Flexible` only where the width is bounded, the same
+                  // guard `PlinthTabs` and `PlinthSegmentedControl` use:
+                  // a flex child in an unbounded row is a layout error,
+                  // and chips often sit in a horizontal scroll view.
+                  final text = Text(
                     label,
+                    maxLines: 1,
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: _fontSizes[size],
                       color: selected
@@ -130,8 +149,23 @@ class PlinthChip extends StatelessWidget {
                           ? theme.weight(PlinthWeight.semibold)
                           : theme.weight(PlinthWeight.regular),
                     ),
-                  ),
-                ],
+                  );
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (selected) ...[
+                        Icon(Icons.check,
+                            size: _fontSizes[size]! + 2,
+                            color: theme.contrastingOn(baseColor)),
+                        const SizedBox(width: 4),
+                      ],
+                      if (constraints.hasBoundedWidth)
+                        Flexible(child: text)
+                      else
+                        text,
+                    ],
+                  );
+                },
               ),
             ),
           ),

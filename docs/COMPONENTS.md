@@ -913,6 +913,12 @@ directly is also supported and clamped the same way.
 state and pass `selected` per chip, same controlled-component pattern as
 `PlinthCheckbox`/`PlinthRadio`.
 
+A label that does not fit **truncates on one line** — the chip stays inside
+its slot and keeps its height, and a screen reader still gets the whole
+label. In an unbounded width (a horizontal scroll view) the chip keeps its
+natural width. This used to overflow; it was found with long tip titles in
+a `Wrap` on a phone.
+
 ### `PlinthRating`
 `value` (fractional values like `3.5` render as partly filled stars),
 `onChanged`
