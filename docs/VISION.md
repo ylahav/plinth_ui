@@ -49,7 +49,7 @@ adopter has reported anything.
 | Candidate | What the apps show | Verdict |
 |---|---|---|
 | Large-data table | `financial-organizer` uses `PlinthTable` in 8 places. The ones read repeat a hand-written `LayoutBuilder` + horizontal scroll + minimum-width `SizedBox` (cashflow 640, portfolio 720, trade log 800). Rows are a year of trades at most — nothing needs virtualization or sorting | **Done (unreleased): `PlinthTable.minWidth`.** The gap was a scrolling table, not a big one. Sorting, filtering and a sticky header already exist; virtualization has no evidence |
-| Date / time pickers | 6 call sites of Material `showDatePicker` / `showTimePicker` across four apps, none Plinth. The only picker anywhere in the portfolio | **Open, small.** Most-repeated missing primitive; a themed, RTL-correct wrapper rather than a new picker |
+| Date / time pickers | 6 call sites of Material `showDatePicker` / `showTimePicker` across four apps, none Plinth. The only picker anywhere in the portfolio | **Not doing.** Run in `financial-organizer` on Windows (Hebrew, light theme, empty data): Material's picker takes the app's green and surface, and its RTL layout is correct. Nothing clashes. The only repeated code is `bClock`'s 24-hour builder, worth a helper only if a second app needs it. Dark mode and the time picker were not checked |
 | Stepper with validation | The setup wizard validates in its own `_next()` and uses `PlinthStepper` only as the indicator. The earlier finding stands: the controlled pattern "dropped into a wizard" | **Drop.** Validation belongs to the caller |
 | Rich text editor | No app uses one | **Not doing** |
 | Adaptive layout | `financial-organizer` hand-rolls `_kWideBreakpoint = 1000` with `MediaQuery` while also using `PlinthAppShell` | **Unclear.** Either Plinth's breakpoints are not discoverable or they do not fit. `gynescope-app` (41 adaptive sites, no Plinth) is the best next test |
@@ -60,13 +60,15 @@ system cannot fix them.
 
 ## Decisions this vision forces
 
-[ROADMAP.md](ROADMAP.md#not-doing) currently says *no `plinth_dates`* and
-*rich text is a separate project*, because both audiences already had them.
-A goal of "the complete system" reopens both. Neither is decided here; both
-sit in the *Unverified* table above until evidence moves them:
+[ROADMAP.md](ROADMAP.md#not-doing) said *no `plinth_dates`* and *rich text is
+a separate project*. "The complete system" reopened both; the check of the
+author's apps closed them again, on evidence rather than on the old reasoning:
 
-- **Date / time pickers** — open and small; a wrapper, not a new picker.
+- **Date / time pickers** — not doing. Material's picker already fits.
 - **Rich text editor** — not doing; no app has asked.
+
+Either returns if an outside adopter, or an app that converts later, reports
+a gap.
 
 ## What it will not be
 
