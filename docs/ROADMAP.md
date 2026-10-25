@@ -22,10 +22,11 @@ changes.** The audiences below and the thesis under *How this changed* are how
 that goal reaches people; they are not a separate goal.
 
 **Backlog it adds, from the 25 Oct 2026 check of the author's apps:** a table
-that scrolls horizontally on its own (**done**, `minWidth`, unreleased). Date / time
+that scrolls horizontally on its own (**done**, `minWidth`, unreleased) · a breakpoint
+query and builder (**open** — two apps hand-roll one; Plinth's breakpoints are
+reachable only through its grids). Date / time
 pickers, rich text, virtualization and stepper validation found no evidence
-(sorting and filtering already existed) and are out. Adaptive layout presets and UX
-guidance are unresolved — see
+(sorting and filtering already existed) and are out. UX guidance is unresolved — see
 [VISION.md](VISION.md#what-is-missing-in-flutter-and-where-plinth-stands).
 
 ---
