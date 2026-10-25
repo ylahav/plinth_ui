@@ -14,6 +14,21 @@ happened when it was tried); this file is what to do about it.
 
 ---
 
+## Goal
+
+*Set 25 Oct 2026 — see [VISION.md](VISION.md).* Plinth is **the enterprise
+design system Flutter does not have, where accessibility holds when the brand
+changes.** The audiences below and the thesis under *How this changed* are how
+that goal reaches people; they are not a separate goal.
+
+**Backlog it adds, in order:** large-data table (virtualized, sortable,
+filterable) · stepper with per-step validation. Date / time pickers, adaptive
+layout presets and rich text are *unverified* — see
+[VISION.md](VISION.md#what-is-missing-in-flutter-and-where-plinth-stands) for
+what to check before any of them is committed.
+
+---
+
 ## Who it is for
 
 **A — a Flutter team with an existing app and their own widgets.** They
@@ -273,7 +288,8 @@ submissions; adoption milestones as they happen.
 | | Why |
 |---|---|
 | A token *compiler* | Style Dictionary emits static constants, which cannot express `textScaler`, density, `WidgetStateProperty`, per-subtree overrides or `readableOn`. Consume the standard; do not rebuild the pipeline |
-| `plinth_form`, `plinth_dates` | Both audiences already have forms and dates |
+| `plinth_form` | Both audiences already have forms |
+| `plinth_dates` | **Reopened 25 Oct 2026** — a complete system needs date/time pickers; see [VISION.md](VISION.md). Undecided |
 | Charts, rich text | Separate projects |
 | ~30 DOM-only hooks | Web-only, in a library that is not |
 | Most of `plinth_hooks` | A team has its own state utilities. `use-focus-trap` and `use-roving-index` survive because roving focus needs them |
