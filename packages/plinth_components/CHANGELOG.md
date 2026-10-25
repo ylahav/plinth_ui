@@ -11,6 +11,15 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## Unreleased
+
+### Added
+
+- **`PlinthTable.minWidth`.** Below it the table keeps its width and
+  scrolls sideways instead of squeezing columns until cells overflow.
+  Found by converting `financial-organizer`, which wrapped three tables
+  in the same hand-written `LayoutBuilder` + scroll + `SizedBox`.
+
 ## 1.11.0
 
 **A minor rather than a patch**, for the same reason as 1.10.0: it

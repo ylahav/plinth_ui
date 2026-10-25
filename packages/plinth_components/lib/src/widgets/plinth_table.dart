@@ -92,6 +92,15 @@ import 'plinth_text.dart';
 /// when the height it needs is missing, which is a prop that can be
 /// set wrong. Below the ceiling the table is its natural height, so
 /// short tables don't grow to fill it.
+///
+/// ## A table wider than its slot
+///
+/// Set [minWidth] and the table stops squeezing its columns below that
+/// width, scrolling sideways instead:
+///
+/// ```dart
+/// PlinthTable.text(columns: columns, rows: rows, minWidth: 640)
+/// ```
 class PlinthTable extends StatefulWidget {
   /// A table whose cells are arbitrary widgets.
   const PlinthTable({
@@ -109,6 +118,7 @@ class PlinthTable extends StatefulWidget {
     this.emptyState,
     this.highlightOnHover = false,
     this.maxHeight,
+    this.minWidth,
   })  : _widgetRows = rows,
         _textRows = null,
         _sortValues = sortValues;
@@ -136,6 +146,7 @@ class PlinthTable extends StatefulWidget {
     this.emptyState,
     this.highlightOnHover = false,
     this.maxHeight,
+    this.minWidth,
   })  : _textRows = rows,
         _widgetRows = null,
         _sortValues = null;
@@ -186,6 +197,18 @@ class PlinthTable extends StatefulWidget {
   /// Caps the table's height and scrolls the rows under a header that
   /// stays. Null lets the table be as tall as its rows.
   final double? maxHeight;
+
+  /// The narrowest the table is allowed to get. Below it the table keeps
+  /// this width and scrolls sideways rather than squeezing its columns
+  /// until their cells overflow. Null lets the columns share whatever
+  /// width there is.
+  ///
+  /// Columns are equal-flex shares, so this is the whole of the "wide
+  /// table on a phone" answer: pick the width at which the widest column
+  /// stops being readable. The sideways scroll sits outside the
+  /// [maxHeight] one, so a capped table keeps its header in view while
+  /// it scrolls both ways.
+  final double? minWidth;
 
   /// How many rows the table was given, before any filtering.
   int get rowCount => _widgetRows?.length ?? _textRows!.length;
@@ -499,6 +522,20 @@ class _PlinthTableState extends State<PlinthTable> {
       result = ConstrainedBox(
         constraints: BoxConstraints(maxHeight: widget.maxHeight!),
         child: result,
+      );
+    }
+
+    final minWidth = widget.minWidth;
+    if (minWidth != null) {
+      final inner = result;
+      result = LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth >= minWidth) return inner;
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SizedBox(width: minWidth, child: inner),
+          );
+        },
       );
     }
 

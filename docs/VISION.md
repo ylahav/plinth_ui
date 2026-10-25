@@ -48,7 +48,7 @@ adopter has reported anything.
 
 | Candidate | What the apps show | Verdict |
 |---|---|---|
-| Large-data table | `financial-organizer` uses `PlinthTable` in 8 places. The ones read repeat a hand-written `LayoutBuilder` + horizontal scroll + minimum-width `SizedBox` (cashflow 640, portfolio 720, trade log 800). Rows are a year of trades at most — nothing needs virtualization or sorting | **Open, but the gap is a scrolling table, not a big one.** Virtualization and sorting have no evidence |
+| Large-data table | `financial-organizer` uses `PlinthTable` in 8 places. The ones read repeat a hand-written `LayoutBuilder` + horizontal scroll + minimum-width `SizedBox` (cashflow 640, portfolio 720, trade log 800). Rows are a year of trades at most — nothing needs virtualization or sorting | **Done (unreleased): `PlinthTable.minWidth`.** The gap was a scrolling table, not a big one. Sorting, filtering and a sticky header already exist; virtualization has no evidence |
 | Date / time pickers | 6 call sites of Material `showDatePicker` / `showTimePicker` across four apps, none Plinth. The only picker anywhere in the portfolio | **Open, small.** Most-repeated missing primitive; a themed, RTL-correct wrapper rather than a new picker |
 | Stepper with validation | The setup wizard validates in its own `_next()` and uses `PlinthStepper` only as the indicator. The earlier finding stands: the controlled pattern "dropped into a wizard" | **Drop.** Validation belongs to the caller |
 | Rich text editor | No app uses one | **Not doing** |

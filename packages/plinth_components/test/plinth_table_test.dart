@@ -474,6 +474,111 @@ void main() {
     });
   });
 
+  group('PlinthTable minWidth', () {
+    const columns = ['Month', 'Income', 'Expense', 'Net'];
+    const rows = [
+      ['Jan', '100', '60', '40'],
+      ['Feb', '120', '70', '50'],
+    ];
+
+    testWidgets('keeps its width and scrolls sideways in a narrow slot',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          const SizedBox(
+            width: 300,
+            child: PlinthTable.text(
+              columns: columns,
+              rows: rows,
+              minWidth: 640,
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
+      expect(tester.getSize(find.byType(Table)).width, 640);
+    });
+
+    testWidgets('fills the slot when it is wide enough', (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          const SizedBox(
+            width: 700,
+            child: PlinthTable.text(
+              columns: columns,
+              rows: rows,
+              minWidth: 640,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(SingleChildScrollView), findsNothing);
+      expect(tester.getSize(find.byType(Table)).width, 700);
+    });
+
+    testWidgets('does nothing when unset, as before', (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          const SizedBox(
+            width: 300,
+            child: PlinthTable.text(columns: columns, rows: rows),
+          ),
+        ),
+      );
+
+      expect(find.byType(SingleChildScrollView), findsNothing);
+      expect(tester.getSize(find.byType(Table)).width, 300);
+    });
+
+    testWidgets('a capped table scrolls both ways and keeps its header',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          SizedBox(
+            width: 300,
+            child: PlinthTable.text(
+              columns: columns,
+              rows: [
+                for (var i = 0; i < 40; i++) ['M$i', '1', '2', '3'],
+              ],
+              minWidth: 640,
+              maxHeight: 200,
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Month'), findsOneWidget);
+      expect(tester.getSize(find.byType(PlinthTable)).height,
+          lessThanOrEqualTo(200));
+    });
+
+    testWidgets('survives RTL', (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          const Directionality(
+            textDirection: TextDirection.rtl,
+            child: SizedBox(
+              width: 300,
+              child: PlinthTable.text(
+                columns: columns,
+                rows: rows,
+                minWidth: 640,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Month'), findsOneWidget);
+    });
+  });
+
   group('PlinthTable highlightOnHover', () {
     /// The decoration of the row holding [cell], read off the TableRow
     /// rather than the painted output — the colour is the assertion,

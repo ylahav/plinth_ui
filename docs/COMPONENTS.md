@@ -1625,7 +1625,7 @@ tell what was actually shown.
 
 ### `PlinthTable`
 `columns` (`List<String>`), `rows`, `striped`, `size`,
-`highlightOnHover`, `maxHeight`. Built on
+`highlightOnHover`, `maxHeight`, `minWidth`. Built on
 Flutter's low-level `Table` widget rather than `DataTable`, since
 `DataTable`'s built-in Material styling (fixed row heights,
 sort/selection chrome) fights against a themeable design system more
@@ -1646,6 +1646,13 @@ Each inner list must match `columns.length`. Columns share the
 available width, so a cell is width-bounded: a `Row` inside one needs a
 `Flexible` or `Expanded` around anything that can grow, or it overflows
 rather than ellipsizing.
+
+**A table wider than its slot.** `minWidth` stops the columns squeezing
+below that width; the table keeps it and scrolls sideways instead. It
+replaces the `LayoutBuilder` + horizontal scroll + fixed-width box that
+`financial-organizer` wrote by hand around three tables (640, 720 and
+800). With `maxHeight` the header stays in view while the table scrolls
+both ways.
 
 **Sorting and filtering.** `sortable` makes every header tappable with
 a direction caret; `filter` keeps only rows containing that text, case
