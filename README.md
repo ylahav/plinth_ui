@@ -1,12 +1,13 @@
 # Plinth UI
 
-**Build a Flutter app quickly, and keep it accessible when the brand
-changes.** 118 components, 43 blocks and four starter apps, on a token
-engine that resolves colour against a WCAG contrast floor.
+**The enterprise design system Flutter doesn't have — one where
+accessibility holds when the brand changes.** 118 components, 43 blocks
+and four starter apps, on a token engine that resolves colour against a
+WCAG contrast floor. See the [vision](docs/VISION.md).
 
-Two layers, one goal. The first gets the screen built; the second is why
-it is still correct after somebody changes the brand colour — and the
-second is the part no other Flutter kit does.
+A system, not a widget kit: the components and blocks get a screen built,
+and the token engine is why it is still correct after somebody changes the
+brand colour — the part no other Flutter kit does.
 
 ### What you build with
 
@@ -40,8 +41,8 @@ second is the part no other Flutter kit does.
 
 Those two halves meet in one place worth naming: **change `brandColor` in
 a starter's `theme.dart` and the whole app re-skins, contrast floor
-included.** Every other kit's blocks break AA the moment the brand
-changes, because their colours are shades rather than lookups.
+included.** Blocks built from fixed shades can break AA the moment the
+brand changes; these resolve their colours at lookup time instead.
 
 Mantine-inspired rather than a port: 112 components track
 `@mantine/core` because its answer was right, and five exist because
