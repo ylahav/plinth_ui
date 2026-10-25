@@ -40,19 +40,20 @@ Forui and Mix only.*
 shell; tree view; dashboard pieces (stat tiles, charts); multi-select and
 autocomplete.
 
-**Open — a confirmed gap in Plinth.**
-- Large-data table: virtualization, sorting, filtering. `PlinthTable` is
-  non-virtualized by design.
-- Stepper with per-step validation. `PlinthStepper` is visual-only.
+**Checked against the author's own apps, 25 Oct 2026.** Three apps use Plinth
+(`financial-organizer`, `bClock`, `stayAble`); `gynescope-app`, `ygym` and
+others do not. This carries the author-evidence discount described in
+[ROADMAP.md](ROADMAP.md#conversion-which-is-not-on-the-ladder), and no outside
+adopter has reported anything.
 
-**Unverified — decide after checking.**
-
-| Candidate | What to check first |
-|---|---|
-| Date / time pickers | Plinth has none. Flutter ships Material `showDatePicker`, so the question is whether a token-themed, range-capable picker is needed. Look for it in conversion findings |
-| Rich text editor | `flutter_quill` and `super_editor` exist. Only if a converted app needs one |
-| Adaptive layout presets | `AppShell` and the dashboard starter exist; whether a multi-pane preset is still missing is untested |
-| Written UX guidance (spacing, hierarchy, navigation) | [SHOWCASE.md](SHOWCASE.md) has none, but blocks and starters may teach it implicitly |
+| Candidate | What the apps show | Verdict |
+|---|---|---|
+| Large-data table | `financial-organizer` uses `PlinthTable` in 8 places. The ones read repeat a hand-written `LayoutBuilder` + horizontal scroll + minimum-width `SizedBox` (cashflow 640, portfolio 720, trade log 800). Rows are a year of trades at most — nothing needs virtualization or sorting | **Open, but the gap is a scrolling table, not a big one.** Virtualization and sorting have no evidence |
+| Date / time pickers | 6 call sites of Material `showDatePicker` / `showTimePicker` across four apps, none Plinth. The only picker anywhere in the portfolio | **Open, small.** Most-repeated missing primitive; a themed, RTL-correct wrapper rather than a new picker |
+| Stepper with validation | The setup wizard validates in its own `_next()` and uses `PlinthStepper` only as the indicator. The earlier finding stands: the controlled pattern "dropped into a wizard" | **Drop.** Validation belongs to the caller |
+| Rich text editor | No app uses one | **Not doing** |
+| Adaptive layout | `financial-organizer` hand-rolls `_kWideBreakpoint = 1000` with `MediaQuery` while also using `PlinthAppShell` | **Unclear.** Either Plinth's breakpoints are not discoverable or they do not fit. `gynescope-app` (41 adaptive sites, no Plinth) is the best next test |
+| Written UX guidance | Not testable from code | **Unverified** |
 
 Not Plinth's job: Flutter's state-management and rebuild pitfalls. A design
 system cannot fix them.
@@ -64,10 +65,8 @@ system cannot fix them.
 A goal of "the complete system" reopens both. Neither is decided here; both
 sit in the *Unverified* table above until evidence moves them:
 
-- **Date / time pickers** — an enterprise form without one is arguably not
-  complete, but Material ships one, so evidence comes first.
-- **Rich text editor** — a project of its own. Only if conversion evidence
-  asks for it.
+- **Date / time pickers** — open and small; a wrapper, not a new picker.
+- **Rich text editor** — not doing; no app has asked.
 
 ## What it will not be
 

@@ -21,11 +21,12 @@ design system Flutter does not have, where accessibility holds when the brand
 changes.** The audiences below and the thesis under *How this changed* are how
 that goal reaches people; they are not a separate goal.
 
-**Backlog it adds, in order:** large-data table (virtualized, sortable,
-filterable) · stepper with per-step validation. Date / time pickers, adaptive
-layout presets and rich text are *unverified* — see
-[VISION.md](VISION.md#what-is-missing-in-flutter-and-where-plinth-stands) for
-what to check before any of them is committed.
+**Backlog it adds, from the 25 Oct 2026 check of the author's apps:** a table
+that scrolls horizontally on its own (the hand-written wrapper repeats) · a
+themed date / time picker wrapper. Virtualization, sorting and stepper
+validation found no evidence; rich text is out. Adaptive layout presets and UX
+guidance are unresolved — see
+[VISION.md](VISION.md#what-is-missing-in-flutter-and-where-plinth-stands).
 
 ---
 
