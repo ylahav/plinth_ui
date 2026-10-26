@@ -12,7 +12,7 @@ deficiency (reproduced) · **[I]** inferred risk · **[U]** unverified.
 > committed (29daf8f). Item **2** (alpha-aware `validate()` and `textMuted` `0x8A` → `0x8C`) is done in the
 > working tree: the smallest alpha that clears 4.5:1 on all three surfaces is `0x8C`, not the ~`0x91`
 > estimated below — 4.55:1 worst case. Light goldens that paint muted text await regeneration on CI.
-> Item **3** (`readableOn` direction) is committed (05cc506). Item **4** (SDK floors) is done and measured: see C-4, which turned out larger than predicted. Item **6** (`validate()` in the four starters' tests) is done: with the old `0x8A` token all four fail on the 4.42 and 4.49 findings, so it would have caught this on the day it was introduced. Everything on the roadmap is now done except the `textMuted` goldens regeneration, which waits for CI.
+> Item **3** (`readableOn` direction) is committed (05cc506). Item **4** (SDK floors) is done and measured: see C-4, which turned out larger than predicted. Item **6** (`validate()` in the four starters' tests) is done: with the old `0x8A` token all four fail on the 4.42 and 4.49 findings, so it would have caught this on the day it was introduced. **Everything on the roadmap is done and shipped as 1.12.0 (26 Oct 2026)**: the four goldens were regenerated, and every claim above was re-verified against the published archives (`docs/PUBLISHING.md`).
 
 > **What the review changed.** The first draft proposed eleven improvements, five of them
 > new public APIs. The review kept **five**, none of which adds a public API, and removed
