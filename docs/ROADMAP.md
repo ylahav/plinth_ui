@@ -22,11 +22,12 @@ changes.** The audiences below and the thesis under *How this changed* are how
 that goal reaches people; they are not a separate goal.
 
 **Backlog it adds, from the 25 Oct 2026 check of the author's apps:** a table
-that scrolls horizontally on its own (**done**, `minWidth`, unreleased) · a breakpoint
-query and builder (**open** — two apps hand-roll one; Plinth's breakpoints are
-reachable only through its grids). Date / time
-pickers, rich text, virtualization and stepper validation found no evidence
-(sorting and filtering already existed) and are out. UX guidance is unresolved — see
+that scrolls horizontally on its own (**done**, `minWidth`, unreleased). That is the
+whole backlog. A breakpoint query and builder was proposed and dropped on review,
+and is **out** (see *Not doing*): three of the author's apps each write one
+`MediaQuery` comparison already. Date / time pickers, rich text,
+virtualization and stepper validation found no evidence (sorting and filtering
+already existed) and are out. UX guidance is unresolved — see
 [VISION.md](VISION.md#what-is-missing-in-flutter-and-where-plinth-stands).
 
 ---
@@ -113,6 +114,10 @@ you already have.** Four things neither competitor documents:
   the exact names an earlier draft of this roadmap proposed as our
   flagship. Build them — component tokens, interaction-state tokens,
   breakpoints in the core — as table stakes; do not claim them.
+  *Revisited 26 Oct 2026: the core gap analysis
+  ([PLINTH_CORE_GAP_ANALYSIS.md](PLINTH_CORE_GAP_ANALYSIS.md)) found no
+  conversion evidence for component tokens or breakpoints in the core, so
+  neither is planned; "do not claim them" stands.*
 - **Density.** Forui ships desktop/touch theme variants with per-platform
   font sizes and padding. Ours floors the tap target only, so it is the
   narrower answer.
@@ -296,6 +301,7 @@ submissions; adoption milestones as they happen.
 | ~30 DOM-only hooks | Web-only, in a library that is not |
 | Most of `plinth_hooks` | A team has its own state utilities. `use-focus-trap` and `use-roving-index` survive because roving focus needs them |
 | A component count target | Borrowed from another project's marketing. Components get built when an app needs one |
+| A breakpoint query / builder, or breakpoints as theme tokens | Three of the author's apps (`financial-organizer`, `gynescope-app`, the features page) each write a single `MediaQuery.sizeOf(context).width >= N`, which is Flutter's own answer. Their thresholds — 1000; 850 and 1100; 760 — match neither each other nor Mantine's, so a shared token would have helped none of them. It also needs layout context, so it would not be core. Reconsider if an adopter reports it |
 
 ---
 
