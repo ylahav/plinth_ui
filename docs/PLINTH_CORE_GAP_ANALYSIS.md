@@ -12,7 +12,7 @@ deficiency (reproduced) · **[I]** inferred risk · **[U]** unverified.
 > committed (29daf8f). Item **2** (alpha-aware `validate()` and `textMuted` `0x8A` → `0x8C`) is done in the
 > working tree: the smallest alpha that clears 4.5:1 on all three surfaces is `0x8C`, not the ~`0x91`
 > estimated below — 4.55:1 worst case. Light goldens that paint muted text await regeneration on CI.
-> Items 3, 4 and 6 are not started.
+> Item **3** (`readableOn` direction) is done in the working tree. Items 4 and 6 are not started.
 
 > **What the review changed.** The first draft proposed eleven improvements, five of them
 > new public APIs. The review kept **five**, none of which adds a public API, and removed

@@ -728,8 +728,24 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   }) {
     final target = minRatio ?? level.ratio;
     final start = shadeFor(from);
-    // Darken against a light background, lighten against a dark one.
-    final step = relativeLuminance(background) > 0.5 ? 1 : -1;
+    // Walk toward whichever end of the ramp contrasts more with the
+    // background. This used to be "darken if the background's luminance is
+    // above 0.5", but black and white contrast equally with a background at
+    // about 0.18, so for anything between 0.18 and 0.5 the walk headed for
+    // the light end while the dark end would have passed. Contrast against a
+    // ramp is greatest at one of its two ends, so if any shade clears the
+    // floor, the end chosen here does, and the walk reaches it.
+    //
+    // A tie keeps the old rule, which is also what a surface that is near
+    // white or near black has always got: no shipped call site moves.
+    final darkEnd = contrastRatio(color(name, 9), background);
+    final lightEnd = contrastRatio(color(name, 0), background);
+    final int step;
+    if (darkEnd == lightEnd) {
+      step = relativeLuminance(background) > 0.5 ? 1 : -1;
+    } else {
+      step = darkEnd > lightEnd ? 1 : -1;
+    }
 
     for (var shade = start; shade >= 0 && shade <= 9; shade += step) {
       final candidate = color(name, shade);

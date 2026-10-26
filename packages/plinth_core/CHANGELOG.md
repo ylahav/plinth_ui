@@ -36,6 +36,16 @@ changes; from `1.0.0` they cannot.
   4.55:1 on `surfaceSunken`, 4.74:1 on `surface`. About one grey level on
   screen. Every light golden image that paints muted text moves with it, and
   a derived `ThemeData` that copied the old value will disagree by one step.
+- **`readableOn` finds a passing shade whenever the ramp has one.** It chose
+  its direction by asking whether the background's luminance was above 0.5,
+  but black and white contrast equally at about 0.18, so on a background
+  between the two it walked toward the light end and returned a failing
+  colour while a passing one sat on the ramp — 209 misses in the dark theme's
+  sweep of every ramp over every grey, e.g. `violet` on `#909090` at 2.79:1.
+  It now walks toward whichever end contrasts more. **Nothing shipped
+  moves**: every surface, wash, ramp, starting shade and floor the library
+  paints on is pinned to the old answer. Only a palette colour placed on a
+  mid-tone fill changes, from a failing colour to a passing one.
 - **`PlinthDtcg.parse` no longer says "no Plinth token matches this path"
   for a path that is a Plinth token.** A DTCG 2025.10 `{value, unit}`
   dimension or duration on `spacing.md` was reported as an unknown path,
