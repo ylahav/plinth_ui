@@ -218,7 +218,15 @@ const Color kLightSurfaceSunken = Color(0xFFE9ECEF);
 const Color kLightBorder = Color(0xFF808890);
 const Color kLightBorderMuted = Color(0xFFDEE2E6);
 const Color kLightText = Color(0xDD000000);
-const Color kLightTextMuted = Color(0x8A000000);
+// 54.9 % black. Painted over the three light surfaces it is 4.55:1 on
+// `surfaceSunken`, the darkest, and 4.74:1 on `surface`. It was 54.1 %
+// (`0x8A`), which is 4.42:1 on `surfaceSunken` and 4.49:1 on
+// `surfaceMuted` — under the 4.5 body floor, by a margin nobody checking by
+// eye would catch. `validate()` could not see it either: it measured this
+// token as opaque black until it was taught to composite alpha, which is
+// the same lesson the dark theme's `textMuted` taught (4.36:1) and for the
+// same reason, two steps up the alpha scale.
+const Color kLightTextMuted = Color(0x8C000000);
 const Color kLightTextDisabled = Color(0x42000000);
 
 /// The same set for the dark theme, using Mantine's `dark` ramp.

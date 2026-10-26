@@ -82,7 +82,15 @@ extension PlinthThemeValidation on PlinthTheme {
       Color background,
       PlinthContrast level,
     ) {
-      final ratio = PlinthTheme.contrastRatio(foreground, background);
+      // Judge the colour that is painted, not the token. `contrastRatio`
+      // needs opaque colours and ignores alpha, so a translucent token such
+      // as the light theme's 54 % black `textMuted` was measured as pure
+      // black: 17-21:1 where the screen shows 4.4-4.6:1. Every background
+      // checked here is an opaque surface, so compositing is exact.
+      final painted = foreground.a < 1
+          ? Color.alphaBlend(foreground, background)
+          : foreground;
+      final ratio = PlinthTheme.contrastRatio(painted, background);
       if (ratio + 0.005 < level.ratio) {
         issues.add(PlinthContrastIssue(
           foreground: fg,

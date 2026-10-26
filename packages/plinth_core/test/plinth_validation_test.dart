@@ -114,6 +114,66 @@ void main() {
     });
   });
 
+  group('translucent tokens are judged as painted', () {
+    // The light theme's `text` and `textMuted` are 87 % and 54 % black, not
+    // opaque greys. `contrastRatio` documents that both colours must be
+    // opaque, and `validate()` handed it the translucent token anyway: it
+    // measured black on the surface (17-21:1) when the screen shows a grey
+    // that, over `surfaceSunken`, is 4.42:1. So the validator passed a theme
+    // with two real failures in it.
+
+    test('a faint translucent text is caught', () {
+      // 25 % black over white paints #BFBFBF: about 1.8:1. Un-composited it
+      // reads as black on white, 21:1, and nothing was reported.
+      final faint = PlinthTheme.defaultTheme.copyWith(
+        text: const Color(0x40000000),
+      );
+
+      final issues = faint
+          .validate(includeSeries: false)
+          .where((i) => i.foreground == 'text')
+          .toList();
+
+      expect(issues, isNotEmpty);
+      expect(issues.first.ratio, lessThan(2.5));
+    });
+
+    test('the ratio reported is the composited one', () {
+      // Pinned with an explicit token rather than the default, so this keeps
+      // meaning the same thing when the default is retuned.
+      final theme = PlinthTheme.defaultTheme.copyWith(
+        textMuted: const Color(0x8A000000),
+      );
+
+      final issue = theme.validate(includeSeries: false).firstWhere(
+            (i) =>
+                i.foreground == 'textMuted' && i.background == 'surfaceSunken',
+          );
+
+      expect(issue.ratio, closeTo(4.42, 0.01));
+      expect(issue.required, 4.5);
+    });
+
+    test('translucent and its opaque equivalent get the same verdict', () {
+      // Flattening by hand over a surface must not change what is said about
+      // that surface, or the composite is not what is being painted.
+      const translucent = Color(0x8A000000);
+      final theme = PlinthTheme.defaultTheme.copyWith(textMuted: translucent);
+      final flatOnSunken = Color.alphaBlend(translucent, theme.surfaceSunken);
+      final opaque = theme.copyWith(textMuted: flatOnSunken);
+
+      double? ratioOn(PlinthTheme t) => t
+          .validate(includeSeries: false)
+          .where((i) =>
+              i.foreground == 'textMuted' && i.background == 'surfaceSunken')
+          .map((i) => i.ratio)
+          .firstOrNull;
+
+      expect(ratioOn(theme), isNotNull);
+      expect(ratioOn(theme), closeTo(ratioOn(opaque)!, 1e-9));
+    });
+  });
+
   group('what it deliberately does not flag', () {
     test('textDisabled, which WCAG 1.4.3 exempts', () {
       // Flagging it would be flagging the guideline.

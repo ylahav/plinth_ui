@@ -24,6 +24,18 @@ changes; from `1.0.0` they cannot.
   `brightness: Brightness.dark`, and `dark_mode_setup_test.dart` builds the
   documented setup, with a control that fails without the brightness, and
   checks every place that shows it. No code changed.
+- **`theme.validate()` now judges translucent colours as painted.** It passed
+  a token with alpha straight to `contrastRatio`, which ignores it, so the
+  light theme's 54 % black `textMuted` was measured as pure black (17-21:1)
+  when the screen shows 4.42:1 on `surfaceSunken` and 4.49:1 on
+  `surfaceMuted` — under the 4.5:1 body floor. The validator reported
+  nothing. It composites over the opaque surface first; a faint translucent
+  `text` is now caught, and the ratio reported is the one painted.
+- **Light `textMuted` is `0x8C000000` (54.9 % black), was `0x8A000000`
+  (54.1 %).** The smallest step that clears 4.5:1 on every light surface:
+  4.55:1 on `surfaceSunken`, 4.74:1 on `surface`. About one grey level on
+  screen. Every light golden image that paints muted text moves with it, and
+  a derived `ThemeData` that copied the old value will disagree by one step.
 - **`PlinthDtcg.parse` no longer says "no Plinth token matches this path"
   for a path that is a Plinth token.** A DTCG 2025.10 `{value, unit}`
   dimension or duration on `spacing.md` was reported as an unknown path,

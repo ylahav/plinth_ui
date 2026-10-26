@@ -97,7 +97,8 @@ void main() {
       expect(theme.border, const Color(0xFF808890));
       expect(theme.borderMuted, const Color(0xFFDEE2E6));
       expect(theme.text, const Color(0xDD000000)); // was Colors.black87
-      expect(theme.textMuted, const Color(0x8A000000)); // was black54
+      expect(theme.textMuted,
+          const Color(0x8C000000)); // was black54, then raised to clear 4.5:1
       expect(theme.textDisabled, const Color(0x42000000)); // was black26
     });
 
