@@ -202,7 +202,11 @@ failing pair.** [D]
 - **A trap found while fixing it:** `sdk: ">=3.10.0"` is *refused* by Flutter 3.38.0, whose
   bundled Dart reports itself as `3.10.0-290.4.beta`, a pre-release that sorts below
   `3.10.0`. The `flutter:` constraint is the real gate, so the Dart bound for
-  components and blocks is `>=3.9.0`. Each new constraint was checked both ways: `pub get`
+  components and blocks is `>=3.6.0`, **not** higher: a first attempt at `>=3.9.0` made CI's
+  `dart format --set-exit-if-changed` fail on 181 of 221 files in components and 53 of 73 in blocks, because
+  `dart format` switches to its new "tall" style for any package whose language version is 3.7 or more. The
+  format style of a package is a decision, not a side effect of a floor correction. Each new constraint was
+  checked both ways: `pub get`
   refuses below the floor with a clear Flutter-version message and resolves at it.
 - **Limits of the fix:** versions already published (components 1.5–1.11) keep their wrong
   declarations, and pub can still fall back to one of them. Only releases from 1.12 on are
