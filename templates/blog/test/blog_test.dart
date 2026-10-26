@@ -22,6 +22,25 @@ Future<void> _pump(
 }
 
 void main() {
+  test('its themes clear their contrast floors', () {
+    // The first place in the ecosystem that runs `theme.validate()`. It checks
+    // the chrome a rebrand inherits and could override: text, muted text and
+    // borders against all three surfaces, in both themes. It does not check
+    // the brand colour itself; plinth_core's templates_shape_test does that,
+    // role by role.
+    for (final theme in [blogLight, blogDark]) {
+      final issues = theme.validate(includeSeries: false);
+      expect(issues, isEmpty, reason: issues.join('; '));
+    }
+  });
+
+  test('and that check can fail', () {
+    // The control: without it an always-empty validator would pass the test
+    // above and nobody would know.
+    final faint = blogLight.copyWith(text: const Color(0x40000000));
+    expect(faint.validate(includeSeries: false), isNotEmpty);
+  });
+
   testWidgets('the index lists every post', (tester) async {
     await _pump(tester);
 

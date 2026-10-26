@@ -12,7 +12,7 @@ deficiency (reproduced) · **[I]** inferred risk · **[U]** unverified.
 > committed (29daf8f). Item **2** (alpha-aware `validate()` and `textMuted` `0x8A` → `0x8C`) is done in the
 > working tree: the smallest alpha that clears 4.5:1 on all three surfaces is `0x8C`, not the ~`0x91`
 > estimated below — 4.55:1 worst case. Light goldens that paint muted text await regeneration on CI.
-> Item **3** (`readableOn` direction) is committed (05cc506). Item **4** (SDK floors) is done and measured: see C-4, which turned out larger than predicted. Item 6 is not started.
+> Item **3** (`readableOn` direction) is committed (05cc506). Item **4** (SDK floors) is done and measured: see C-4, which turned out larger than predicted. Item **6** (`validate()` in the four starters' tests) is done: with the old `0x8A` token all four fail on the 4.42 and 4.49 findings, so it would have caught this on the day it was introduced. Everything on the roadmap is now done except the `textMuted` goldens regeneration, which waits for CI.
 
 > **What the review changed.** The first draft proposed eleven improvements, five of them
 > new public APIs. The review kept **five**, none of which adds a public API, and removed
@@ -345,7 +345,7 @@ Do not assign dates. Each item is independent unless noted.
 | 3 | `readableOn`: choose direction by end-of-ramp contrast | P0 (minor) | XS | none | Adopter-facing only; no shipped widget moves |
 | 4 | ~~Verify the SDK floor~~ **Done:** measured on 3.24.5 / 3.27.0 / 3.32.0 / 3.35.0 / 3.38.0 / 3.41.0; four pubspecs corrected | P1 | XS | none | Cheap once verified |
 | 5 | DTCG: report "value shape not understood" instead of "no token matches this path"; add one README sentence naming the supported syntax | P2 | XS | none | Honesty fix |
-| 6 | *(Process, not code)* Run `theme.validate()` in the four starters' tests | P1 | XS | none | Gives the validator its first real caller |
+| 6 | ~~Run `theme.validate()` in the four starters' tests~~ **Done** | P1 | XS | none | The validator's first real caller; seen to fail on the old token |
 
 **Deferred, with a trigger:** DTCG 2025.10 *read* support — when a real design file is
 offered; reference/role validation — when an adopter reports a typo that rendered silently;

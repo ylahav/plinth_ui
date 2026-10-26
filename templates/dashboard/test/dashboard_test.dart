@@ -26,6 +26,28 @@ Future<void> _pumpAt(WidgetTester tester, Size size) async {
 }
 
 void main() {
+  test('its themes clear their contrast floors', () {
+    // The first place in the ecosystem that runs `theme.validate()`. It checks
+    // the chrome a rebrand inherits and could override: text, muted text and
+    // borders against all three surfaces, in both themes. It does not check
+    // the brand colour itself; plinth_core's templates_shape_test does that,
+    // role by role.
+    // Series colours are left out on purpose: the chart widgets lift them
+    // with `readableOn` at paint time, and the raw palette is a known,
+    // recorded exception in plinth_core's own validation tests.
+    for (final theme in [dashboardLight, dashboardDark]) {
+      final issues = theme.validate(includeSeries: false);
+      expect(issues, isEmpty, reason: issues.join('; '));
+    }
+  });
+
+  test('and that check can fail', () {
+    // The control: without it an always-empty validator would pass the test
+    // above and nobody would know.
+    final faint = dashboardLight.copyWith(text: const Color(0x40000000));
+    expect(faint.validate(includeSeries: false), isNotEmpty);
+  });
+
   testWidgets('the shell opens on the overview', (tester) async {
     await _pumpAt(tester, const Size(1400, 1000));
 
