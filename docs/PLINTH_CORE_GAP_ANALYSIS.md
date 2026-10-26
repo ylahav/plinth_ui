@@ -12,7 +12,7 @@ deficiency (reproduced) · **[I]** inferred risk · **[U]** unverified.
 > committed (29daf8f). Item **2** (alpha-aware `validate()` and `textMuted` `0x8A` → `0x8C`) is done in the
 > working tree: the smallest alpha that clears 4.5:1 on all three surfaces is `0x8C`, not the ~`0x91`
 > estimated below — 4.55:1 worst case. Light goldens that paint muted text await regeneration on CI.
-> Item **3** (`readableOn` direction) is done in the working tree. Items 4 and 6 are not started.
+> Item **3** (`readableOn` direction) is committed (05cc506). Item **4** (SDK floors) is done and measured: see C-4, which turned out larger than predicted. Item 6 is not started.
 
 > **What the review changed.** The first draft proposed eleven improvements, five of them
 > new public APIs. The review kept **five**, none of which adds a public API, and removed
@@ -179,11 +179,37 @@ failing pair.** [D]
   `plinth_pill.dart:66` use `shaded(color, 0)` and `shaded(color, 1)`, a light tint in the light theme and its mirrored dark in the dark one). No shipped widget calls
   it on a mid-tone fill.
 
-**C-4 — The SDK floor is almost certainly too low.** [I]
-- Declared `flutter >=3.22.0`; source uses `Color.r/.g/.b` (`:770`, `plinth_dtcg.dart:88`)
-  and `withValues` (`:97,745`), which arrived with Flutter 3.27's wide-gamut `Color`
-  ([migration guide](https://docs.flutter.dev/release/breaking-changes/wide-gamut-framework)).
-  CI tests only 3.44.8 (`ci.yml:30`). Not reproduced — I could not install 3.22–3.26.
+**C-4 — The declared SDK floor was wrong in four of five packages, and for
+`plinth_components` by sixteen Flutter releases.** [D] *(measured; was inferred)*
+- Every package declared `flutter >=3.22.0`, `sdk >=3.4.0`. I installed real SDKs side by
+  side and compiled each package's `lib/` (`flutter analyze lib`) from a clean `git archive`
+  of `HEAD`, so no lockfile or build output of the working tree was involved:
+
+  | Flutter | `plinth_core` | `plinth_components` | what is missing |
+  |---|---|---|---|
+  | 3.24.5 (last stable before 3.27) | **14 errors** | — | `Color.r/.g/.b/.a`, `Color.withValues` |
+  | 3.27.0 | clean | **9 errors** | `Color.toARGB32` (7), `supportsAnnounceOf`, `sendAnnouncement` |
+  | 3.32.0 | clean | **2 errors** | `supportsAnnounceOf`, `sendAnnouncement` |
+  | 3.35.0 | clean | **1 error** | `sendAnnouncement` |
+  | 3.38.0 | clean | clean | — |
+  | 3.41.0 | clean | clean | — |
+
+  `plinth_hooks` passes its tests on 3.24.5 and `plinth_charts` is clean on 3.27.0, so
+  hooks keeps its floor and charts follows core.
+- **Measured floors:** `plinth_core` and `plinth_charts` **3.27.0**; `plinth_components`
+  and `plinth_blocks` (which builds on it) **3.38.0**; `plinth_hooks` unchanged. CI tested
+  only 3.44.8 (`ci.yml:30`), which is why none of this was ever seen.
+- **A trap found while fixing it:** `sdk: ">=3.10.0"` is *refused* by Flutter 3.38.0, whose
+  bundled Dart reports itself as `3.10.0-290.4.beta`, a pre-release that sorts below
+  `3.10.0`. The `flutter:` constraint is the real gate, so the Dart bound for
+  components and blocks is `>=3.9.0`. Each new constraint was checked both ways: `pub get`
+  refuses below the floor with a clear Flutter-version message and resolves at it.
+- **Limits of the fix:** versions already published (components 1.5–1.11) keep their wrong
+  declarations, and pub can still fall back to one of them. Only releases from 1.12 on are
+  protected.
+- **Side finding, dev-only:** `flutter_lints >=6.0.0` in `dev_dependencies` needs Dart 3.8,
+  so contributors need a Flutter newer than 3.32 to run `pub get` in the repo. It does not
+  reach consumers.
 
 **C-5 — DTCG import mislabels a valid path.** [D]
 - Probe G: `spacing.md` as `{value: 18, unit: px}` and `duration.sm` as
@@ -276,7 +302,7 @@ and does it belong in core?*
 |---|---|---|---|---|---|
 | 1 | Alpha-aware `validate()` + fix light `textMuted` | **Yes.** 4.49 / 4.42 verified; a shipped widget (segmented control) paints the pair | (a) make the light tokens opaque, so no alpha reaches the validator; (b) only nudge the alpha | **Yes** — validator and tokens both live here | **KEEP, reshaped.** Composite alpha in `validate()` (3 lines) *and* fix the token. (a) alone is rejected: an adopter's own translucent tokens would still fool the validator, which is the product |
 | 2 | Fix `readableOn` direction | **Yes, adopters only** (0 shipped call sites on mid-tones) | Pick the direction by comparing the contrast at the two ramp ends; no new API | **Yes** — it is a bug in a documented contract ("first shade that clears the floor") | **KEEP, lower urgency.** A few lines; no golden impact; no API |
-| 3 | Correct and test the SDK floor | **Probably** [I] — unverified | Edit the constraint number; skip the CI matrix | **Yes** — `pubspec.yaml` | **KEEP as verify-then-edit.** Compile once on 3.26 and 3.27 by hand (~30 min); only then edit four pubspecs. **Drop the CI matrix cell** until a second reason appears |
+| 3 | Correct and test the SDK floor | **Probably** [I] — unverified | Edit the constraint number; skip the CI matrix | **Yes** — `pubspec.yaml` | **KEEP as verify-then-edit.** Compile once on 3.26 and 3.27 by hand (~30 min); only then edit four pubspecs. **Drop the CI matrix cell** until a second reason appears *(revisited after measuring: the floors were off by up to sixteen releases, so a cheap job that runs `flutter analyze lib` on core at 3.27.0 and on components at 3.38.0 is now justified; the tests cannot run there, they use `toARGB32`. Not added)* |
 | 4a | `validate()` checks roles resolve | **No evidence.** `readableOn` already walks to a passing shade; a role that cannot pass needs an impossible floor | A test in the adopter's own suite using `contrastRatio` | Marginal | **REMOVE** |
 | 4b | `validate()` checks references (primary / role / series ramps exist) | **Weak.** One documented footgun, no incident | `hasColor()` already exists | Yes, but it is a new surface | **REMOVE.** Reopen on a real report |
 | 4c | Brightness mismatch in `colorSchemeDisagreements` | **Yes, but wrong fix.** Nobody calls `colorSchemeDisagreements` (§2); the real cause is the docs (C-1) | Fix the README snippet; pin it with a test | Docs | **REPLACED by C-1's docs fix** |
@@ -317,7 +343,7 @@ Do not assign dates. Each item is independent unless noted.
 | 1 | Fix the dark-mode snippet in three places; add a test that builds it | P0 | XS | none | Worst finding, cheapest fix, no golden impact. Also *explains* the gynescope failure |
 | 2 | Composite alpha in `validate()`; then raise light `textMuted` until all three surfaces clear 4.5 | P0 | S | none | Order matters: land the validator change first and watch it fail, then fix the token |
 | 3 | `readableOn`: choose direction by end-of-ramp contrast | P0 (minor) | XS | none | Adopter-facing only; no shipped widget moves |
-| 4 | Verify the SDK floor on Flutter 3.26 / 3.27 by hand; edit four pubspecs if confirmed | P1 | XS | none | Cheap once verified; no CI cell |
+| 4 | ~~Verify the SDK floor~~ **Done:** measured on 3.24.5 / 3.27.0 / 3.32.0 / 3.35.0 / 3.38.0 / 3.41.0; four pubspecs corrected | P1 | XS | none | Cheap once verified |
 | 5 | DTCG: report "value shape not understood" instead of "no token matches this path"; add one README sentence naming the supported syntax | P2 | XS | none | Honesty fix |
 | 6 | *(Process, not code)* Run `theme.validate()` in the four starters' tests | P1 | XS | none | Gives the validator its first real caller |
 

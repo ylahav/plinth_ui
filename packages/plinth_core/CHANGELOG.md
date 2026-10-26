@@ -13,6 +13,15 @@ changes; from `1.0.0` they cannot.
 
 ## Unreleased
 
+### Changed
+
+- **The declared minimum is now Flutter 3.27.0 / Dart 3.6.0; it was 3.22.0 /
+  3.4.0.** The old floor was never true. The source reads `Color.r`/`.g`/`.b`/`.a`
+  and calls `Color.withValues`, which arrived with Flutter 3.27's wide-gamut
+  `Color`, and Flutter went from 3.24 to 3.27 on stable. Measured: **14 compile
+  errors on 3.24.5**, clean on 3.27.0. Anyone on 3.22-3.24 could resolve the
+  package and then fail to build it; `pub` now refuses it instead.
+
 ### Fixed
 
 - **The documented dark-mode setup painted unreadable text.** Every README,

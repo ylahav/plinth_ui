@@ -13,6 +13,19 @@ Whether it joins, or versions on its own because a block catalogue will
 churn while a token engine does not, is a decision for the first
 release rather than one to inherit from the number below.
 
+## Unreleased
+
+### Changed
+
+- **The declared minimum is now Flutter 3.38.0; it was 3.22.0.** The old floor
+  was never true. `plinth_components`, which this package builds on, calls `SemanticsService.sendAnnouncement`,
+  `MediaQuery.supportsAnnounceOf` and `Color.toARGB32`. Measured against real
+  SDKs: it fails to compile on 3.27.0 (all three missing), on 3.32.0 (the two
+  announcement APIs) and on 3.35.0 (`sendAnnouncement`), and is clean on 3.38.0
+  and 3.41.0. The Dart bound is `>=3.9.0` rather than 3.10: Flutter 3.38 bundles
+  a Dart that reports itself as `3.10.0-290.4.beta`, a pre-release that a
+  `>=3.10.0` bound refuses, so the `flutter:` constraint does the gating.
+
 ## 0.4.0
 
 ### Added

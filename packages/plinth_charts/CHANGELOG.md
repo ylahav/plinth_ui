@@ -10,6 +10,18 @@ three keep from `1.0.0` — a chart catalogue will churn while a token
 engine does not. See
 [PUBLISHING.md](../../docs/PUBLISHING.md#plinth_blocks-is-outside-the-lockstep-for-now).
 
+## Unreleased
+
+### Changed
+
+- **The declared minimum is now Flutter 3.27.0 / Dart 3.6.0; it was 3.22.0 /
+  3.4.0.** The old floor was never true: `plinth_core`, which this package
+  depends on, reads `Color.r`/`.g`/`.b`/`.a` and calls `Color.withValues`, which
+  arrived with Flutter 3.27's wide-gamut `Color`, and Flutter went from 3.24 to
+  3.27 on stable. Measured: 14 compile errors in `plinth_core` on 3.24.5, clean
+  on 3.27.0. `pub` now refuses the package below 3.27 instead of resolving it
+  and failing to build.
+
 ## 0.1.1
 
 ### Added
