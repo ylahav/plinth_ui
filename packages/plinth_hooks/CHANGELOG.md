@@ -11,6 +11,13 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.12.0
+
+No change in this package. Released in lockstep with
+`plinth_components` 1.12.0, which adds `PlinthTable.minWidth` and, with
+`plinth_core` 1.12.0, makes the light theme's muted text clear the 4.5:1 body
+floor.
+
 ## 1.11.0
 
 No change in this package. Released in lockstep with

@@ -10,7 +10,7 @@ three keep from `1.0.0` — a chart catalogue will churn while a token
 engine does not. See
 [PUBLISHING.md](../../docs/PUBLISHING.md#plinth_blocks-is-outside-the-lockstep-for-now).
 
-## Unreleased
+## 0.2.0
 
 ### Changed
 

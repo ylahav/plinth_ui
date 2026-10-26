@@ -11,7 +11,7 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
-## Unreleased
+## 1.12.0
 
 ### Added
 
@@ -22,6 +22,12 @@ changes; from `1.0.0` they cannot.
 
 ### Changed
 
+- **Light-theme muted text is a shade darker.** `plinth_core` 1.12.0 raises
+  `kLightTextMuted` from 54.1 % to 54.9 % black, so every muted label here
+  clears the 4.5:1 body floor on all three light surfaces: segmented-control
+  labels were 4.49:1 on their `surfaceMuted` track, and field descriptions and
+  captions were 4.42:1 where they sat on `surfaceSunken`. About one grey level
+  on screen. Needs `plinth_core` ^1.12.0, which this release now requires.
 - **The declared minimum is now Flutter 3.38.0; it was 3.22.0.** The old floor
   was never true. `plinth_components` calls `SemanticsService.sendAnnouncement`,
   `MediaQuery.supportsAnnounceOf` and `Color.toARGB32`. Measured against real

@@ -9,15 +9,59 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.11.0** | 1.11.0 |
-| `plinth_hooks` | **1.11.0** | 1.11.0 |
-| `plinth_components` | **1.11.0** | 1.11.0 |
-| `plinth_blocks` | **0.4.0** | 0.4.0 |
-| `plinth_charts` | **0.1.1** | 0.1.1 |
+| `plinth_core` | **1.11.0** | 1.12.0 |
+| `plinth_hooks` | **1.11.0** | 1.12.0 |
+| `plinth_components` | **1.11.0** | 1.12.0 |
+| `plinth_blocks` | **0.4.0** | 0.5.0 |
+| `plinth_charts` | **0.1.1** | 0.2.0 |
 
 **1.3.0 shipped 21 Sep 2026**, in dependency order, alongside the first
 releases of `plinth_blocks` and `plinth_charts` — five packages in one
 sequence, the largest release so far.
+
+**1.12.0 is cut and unreleased, and it is mostly corrections.** Nothing
+here is a new capability except `PlinthTable.minWidth`; the rest is things
+that were wrong and are now measured:
+
+- **The dark-mode snippet.** Every README, the `darkTheme` dartdoc and the
+  four `example/` apps registered the dark extension on a `ThemeData` left
+  light, which paints body text at 1.01:1. They now set
+  `brightness: Brightness.dark`, and a test builds the documented setup.
+- **`validate()` composites alpha, and light `textMuted` is `0x8C`.** The
+  validator measured the 54 % black token as opaque black and missed 4.42:1 on
+  `surfaceSunken` and 4.49:1 on `surfaceMuted`. The four starters now call it.
+- **`readableOn` walks toward the end of the ramp that contrasts more.** It
+  missed a passing shade on mid-tone backgrounds; nothing the library paints
+  moves.
+- **The Flutter floors are real.** `plinth_core` and `plinth_charts` need
+  **3.27.0**, `plinth_components` and `plinth_blocks` need **3.38.0**; every
+  package said 3.22. Measured by compiling `lib/` on 3.24.5, 3.27.0, 3.32.0,
+  3.35.0, 3.38.0 and 3.41.0. `plinth_hooks` is unchanged.
+- **`PlinthDtcg.parse`** stops calling a real path with an unreadable value
+  "no Plinth token matches this path".
+
+**Constraints were raised, so the order is not optional:** `plinth_core`
+`^1.12.0` in components and charts, `plinth_components` `^1.12.0` in blocks.
+Core first, then hooks, then components, then charts and blocks — and the
+workspace will not tell you if you get it wrong (see below).
+
+**Before the cut can be published:** the light golden images that paint muted
+text move with the token, and goldens are skipped off Linux. Run
+`regenerate-goldens.yml`, review the diff and commit it, or CI's golden step
+fails.
+
+**The check is the release's own claims,** each against the *published*
+archive, because "did it resolve" has never been the question: the README dark
+snippet's painted text clears 4.5:1; `PlinthTheme.defaultTheme.validate()` is
+empty and a faint translucent `text` is caught; `readableOn('violet',
+Color(0xFF909090))` clears 4.5:1; `kLightTextMuted` is `0x8C000000`; and the
+floors hold in both directions — `pub get` refuses components on Flutter
+3.35.0 and core on 3.24.5, and resolves them on 3.38.0 and 3.27.0.
+
+**A minor rather than a patch, on purpose.** Muted text is a shade darker and
+two packages stop resolving on SDKs they could not build on anyway; both are
+things a consumer should get to decide about. `plinth_blocks` and
+`plinth_charts` take their first minor for the same reason.
 
 **1.11.0 shipped 18 Oct 2026.** `PlinthChip` truncates its label
 instead of overflowing, in `plinth_components` only — the same fix
