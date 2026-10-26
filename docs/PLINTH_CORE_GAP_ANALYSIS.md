@@ -180,7 +180,7 @@ failing pair.** [D]
   it on a mid-tone fill.
 
 **C-4 — The declared SDK floor was wrong in four of five packages, and for
-`plinth_components` by sixteen Flutter releases.** [D] *(measured; was inferred)*
+`plinth_components` by sixteen minor versions (3.22 to 3.38).** [D] *(measured; was inferred)*
 - Every package declared `flutter >=3.22.0`, `sdk >=3.4.0`. I installed real SDKs side by
   side and compiled each package's `lib/` (`flutter analyze lib`) from a clean `git archive`
   of `HEAD`, so no lockfile or build output of the working tree was involved:
@@ -302,7 +302,7 @@ and does it belong in core?*
 |---|---|---|---|---|---|
 | 1 | Alpha-aware `validate()` + fix light `textMuted` | **Yes.** 4.49 / 4.42 verified; a shipped widget (segmented control) paints the pair | (a) make the light tokens opaque, so no alpha reaches the validator; (b) only nudge the alpha | **Yes** — validator and tokens both live here | **KEEP, reshaped.** Composite alpha in `validate()` (3 lines) *and* fix the token. (a) alone is rejected: an adopter's own translucent tokens would still fool the validator, which is the product |
 | 2 | Fix `readableOn` direction | **Yes, adopters only** (0 shipped call sites on mid-tones) | Pick the direction by comparing the contrast at the two ramp ends; no new API | **Yes** — it is a bug in a documented contract ("first shade that clears the floor") | **KEEP, lower urgency.** A few lines; no golden impact; no API |
-| 3 | Correct and test the SDK floor | **Probably** [I] — unverified | Edit the constraint number; skip the CI matrix | **Yes** — `pubspec.yaml` | **KEEP as verify-then-edit.** Compile once on 3.26 and 3.27 by hand (~30 min); only then edit four pubspecs. **Drop the CI matrix cell** until a second reason appears *(revisited after measuring: the floors were off by up to sixteen releases, so a cheap job that runs `flutter analyze lib` on core at 3.27.0 and on components at 3.38.0 is now justified; the tests cannot run there, they use `toARGB32`. Not added)* |
+| 3 | Correct and test the SDK floor | **Probably** [I] — unverified | Edit the constraint number; skip the CI matrix | **Yes** — `pubspec.yaml` | **KEEP as verify-then-edit.** Compile once on 3.26 and 3.27 by hand (~30 min); only then edit four pubspecs. **Drop the CI matrix cell** until a second reason appears *(revisited after measuring: the floors were off by up to sixteen minor versions, so a cheap job that runs `flutter analyze lib` on core at 3.27.0 and on components at 3.38.0 is now justified; the tests cannot run there, they use `toARGB32`. Not added)* |
 | 4a | `validate()` checks roles resolve | **No evidence.** `readableOn` already walks to a passing shade; a role that cannot pass needs an impossible floor | A test in the adopter's own suite using `contrastRatio` | Marginal | **REMOVE** |
 | 4b | `validate()` checks references (primary / role / series ramps exist) | **Weak.** One documented footgun, no incident | `hasColor()` already exists | Yes, but it is a new surface | **REMOVE.** Reopen on a real report |
 | 4c | Brightness mismatch in `colorSchemeDisagreements` | **Yes, but wrong fix.** Nobody calls `colorSchemeDisagreements` (§2); the real cause is the docs (C-1) | Fix the README snippet; pin it with a test | Docs | **REPLACED by C-1's docs fix** |
