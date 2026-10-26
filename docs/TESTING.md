@@ -277,6 +277,12 @@ about 44 pixels of corner antialiasing per widget — a failure that
 looks exactly like a visual regression and isn't one. **Bump both
 workflows together**, and regenerate the images when you do.
 
+The runner image is pinned for the same reason: both workflows say
+`runs-on: ubuntu-24.04` rather than `ubuntu-latest`, because GitHub moves
+that label (to Ubuntu 26 from late October 2026) and a move between
+regenerating the goldens and the next CI run fails the golden step with
+no visual change to blame. Keep the two in step, and bump them together.
+
 **Platform sensitivity — read this before regenerating goldens locally.**
 Golden images are sensitive to the platform they were generated on: font
 hinting and anti-aliasing differ slightly between Windows, macOS, and

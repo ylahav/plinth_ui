@@ -18,7 +18,10 @@ on:
 
 jobs:
   update-goldens:
-    runs-on: ubuntu-latest
+    # MUST match ci.yml's runner image, for the same reason as the Flutter
+    # pin below: these images are only accepted by CI if CI renders on the
+    # image that produced them. Bump both together, then regenerate.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
 

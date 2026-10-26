@@ -14,7 +14,14 @@ on:
 
 jobs:
   analyze-and-test:
-    runs-on: ubuntu-latest
+    # Pinned, like flutter-version below, and for the same reason: the golden
+    # images are only valid on the image that rendered them. `ubuntu-latest`
+    # is migrating to Ubuntu 26, and a label that moves between regenerating
+    # the goldens and the next CI run produces failures that look exactly like
+    # visual regressions and are not. Keep this in step with
+    # regenerate-goldens.yml, and bump both together, regenerating the images
+    # when you do.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
 
