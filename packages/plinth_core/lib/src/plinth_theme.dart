@@ -964,7 +964,10 @@ class PlinthTheme extends ThemeExtension<PlinthTheme> {
   /// ```dart
   /// MaterialApp(
   ///   theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
-  ///   darkTheme: ThemeData(extensions: [PlinthTheme.darkTheme]),
+  ///   darkTheme: ThemeData(
+  ///     brightness: Brightness.dark,
+  ///     extensions: [PlinthTheme.darkTheme],
+  ///   ),
   /// )
   /// ```
   static final PlinthTheme darkTheme = PlinthTheme(

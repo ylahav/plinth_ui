@@ -111,9 +111,17 @@ you already have:
 ```dart
 MaterialApp(
   theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
-  darkTheme: ThemeData(extensions: [PlinthTheme.darkTheme]),
+  darkTheme: ThemeData(
+    brightness: Brightness.dark,
+    extensions: [PlinthTheme.darkTheme],
+  ),
 )
 ```
+
+Set `brightness` on the dark `ThemeData` too. Plinth text with no colour of
+its own inherits Material's, which follows `ThemeData.brightness`; left
+light, body text paints near-black on `PlinthTheme.darkTheme`'s surface
+(about 1:1).
 
 Then read it from any `BuildContext` with `context.plinth`.
 

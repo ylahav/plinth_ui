@@ -136,6 +136,45 @@ void main() {
       expect(result.ignored, contains('typography.heading'));
     });
 
+    test(
+        'a real Plinth path with an unreadable value says the value is the '
+        'problem', () {
+      // DTCG 2025.10 writes dimensions and durations as `{value, unit}`.
+      // This reader takes the string forms, and used to answer a perfectly
+      // good `spacing.md` with "no Plinth token matches this path" — a
+      // message that sends the reader looking for a typo.
+      final result = PlinthDtcg.parse({
+        'spacing': {
+          'md': {
+            r'$type': 'dimension',
+            r'$value': {'value': 18, 'unit': 'px'},
+          },
+        },
+        'duration': {
+          'sm': {
+            r'$type': 'duration',
+            r'$value': {'value': 120, 'unit': 'ms'},
+          },
+        },
+      });
+
+      expect(result.applied, isEmpty);
+      for (final path in ['spacing.md', 'duration.sm']) {
+        expect(result.ignored[path], contains('does not understand its value'),
+            reason: '$path is a Plinth token; its value was the problem');
+        expect(result.ignored[path], isNot(contains('no Plinth token')));
+      }
+    });
+
+    test('an unknown size on a known family is still an unknown path', () {
+      final result = PlinthDtcg.parse({
+        'spacing': {
+          'gigantic': {r'$type': 'dimension', r'$value': '99px'},
+        },
+      });
+      expect(result.ignored['spacing.gigantic'], contains('no Plinth token'));
+    });
+
     test('reads a dimension however it is written', () {
       for (final written in <Object>['16px', '16', 16]) {
         final result = PlinthDtcg.parse({

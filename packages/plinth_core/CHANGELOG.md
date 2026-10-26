@@ -11,6 +11,26 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## Unreleased
+
+### Fixed
+
+- **The documented dark-mode setup painted unreadable text.** Every README,
+  the `PlinthTheme.darkTheme` dartdoc and the four published examples
+  registered the dark extension on a `ThemeData` left at its default,
+  light, brightness. Plinth text with no colour of its own inherits
+  Material's, which follows that brightness, so body text came out
+  `#1D1B20` on a `#1A1B1E` surface — 1.01:1. The snippets now set
+  `brightness: Brightness.dark`, and `dark_mode_setup_test.dart` builds the
+  documented setup, with a control that fails without the brightness, and
+  checks every place that shows it. No code changed.
+- **`PlinthDtcg.parse` no longer says "no Plinth token matches this path"
+  for a path that is a Plinth token.** A DTCG 2025.10 `{value, unit}`
+  dimension or duration on `spacing.md` was reported as an unknown path,
+  sending the reader to look for a typo. It now says the token is real and
+  its value is not in a form this reader understands. Reading those forms is
+  still unsupported.
+
 ## 1.11.0
 
 No change in this package. Released in lockstep with

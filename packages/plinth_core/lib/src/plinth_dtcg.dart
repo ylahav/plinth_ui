@@ -271,6 +271,27 @@ abstract final class PlinthDtcg {
               'geometry round-trips through `elevations` directly';
           continue;
         }
+
+        // The path is a real Plinth token and the *value* was the problem.
+        // Saying "no token matches" here sends the reader looking for a
+        // typo that is not there — which is what a 2025.10 `{value, unit}`
+        // dimension used to produce for a perfectly good `spacing.md`.
+        final sizeFamily = const {
+          'spacing',
+          'radius',
+          'fontSize',
+          'borderWidth',
+          'duration',
+        }.contains(parts.first);
+        final knownRole = (parts.first == 'fontWeight' &&
+                PlinthWeight.values.any((w) => w.name == parts[1])) ||
+            (parts.first == 'curve' &&
+                PlinthCurve.values.any((c) => c.name == parts[1]));
+        if ((sizeFamily && size != null) || knownRole) {
+          ignored[path] = 'a Plinth token, but this reader does not '
+              'understand its value: $raw';
+          continue;
+        }
       }
 
       ignored[path] = 'no Plinth token matches this path';

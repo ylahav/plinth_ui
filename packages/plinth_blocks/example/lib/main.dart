@@ -22,7 +22,10 @@ class BlocksExampleApp extends StatelessWidget {
         // One registration. Every block below resolves its colour,
         // spacing and radius from this and nothing else.
         theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
-        darkTheme: ThemeData(extensions: [PlinthTheme.darkTheme]),
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          extensions: [PlinthTheme.darkTheme],
+        ),
         home: const _Demo(),
       );
 }

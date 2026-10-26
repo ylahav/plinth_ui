@@ -28,9 +28,16 @@ tokens to read:
 ```dart
 MaterialApp(
   theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
-  darkTheme: ThemeData(extensions: [PlinthTheme.darkTheme]),
+  darkTheme: ThemeData(
+    brightness: Brightness.dark,
+    extensions: [PlinthTheme.darkTheme],
+  ),
 )
 ```
+
+The dark `ThemeData` needs `brightness: Brightness.dark` as well as the
+extension, or text that takes its colour from Material is near-black on a dark
+surface.
 
 ## What's here
 

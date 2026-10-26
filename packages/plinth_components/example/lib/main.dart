@@ -29,7 +29,10 @@ class _PlinthExampleAppState extends State<PlinthExampleApp> {
       // Register the theme once. Every component reads from it, so a
       // single swap restyles the whole app — including dark mode.
       theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
-      darkTheme: ThemeData(extensions: [PlinthTheme.darkTheme]),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        extensions: [PlinthTheme.darkTheme],
+      ),
       home: SignUpPage(
         onToggleTheme: () => setState(
           () => _mode =

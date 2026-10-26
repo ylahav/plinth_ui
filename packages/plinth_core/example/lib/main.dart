@@ -29,7 +29,10 @@ class _TokenExampleAppState extends State<TokenExampleApp> {
       // Register the theme once, as a ThemeData extension. Everything
       // below reaches it through `context.plinth`.
       theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
-      darkTheme: ThemeData(extensions: [PlinthTheme.darkTheme]),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        extensions: [PlinthTheme.darkTheme],
+      ),
       home: TokenDemoPage(
         onToggleTheme: () => setState(
           () => _mode =

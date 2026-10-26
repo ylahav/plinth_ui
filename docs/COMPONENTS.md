@@ -14,9 +14,16 @@ For dark mode, register `PlinthTheme.darkTheme` as well:
 ```dart
 MaterialApp(
   theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
-  darkTheme: ThemeData(extensions: [PlinthTheme.darkTheme]),
+  darkTheme: ThemeData(
+    brightness: Brightness.dark,
+    extensions: [PlinthTheme.darkTheme],
+  ),
 )
 ```
+
+Set `brightness: Brightness.dark` on the dark `ThemeData` too: Plinth text with no
+colour of its own inherits Material's, which follows the brightness, and left
+light it is near-black on the dark surface.
 
 Shared enums used throughout: `PlinthSize` (`xs, sm, md, lg, xl`) and
 `PlinthVariant` (`filled, light, outline, subtle, transparent, defaultVariant`).

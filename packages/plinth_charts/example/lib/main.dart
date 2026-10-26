@@ -24,7 +24,10 @@ class ChartsExampleApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
         title: 'plinth_charts',
         theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
-        darkTheme: ThemeData(extensions: [PlinthTheme.darkTheme]),
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          extensions: [PlinthTheme.darkTheme],
+        ),
         home: const _Demo(),
       );
 }

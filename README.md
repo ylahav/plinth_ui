@@ -138,15 +138,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(extensions: [PlinthTheme.defaultTheme]),
-      darkTheme: ThemeData(extensions: [PlinthTheme.darkTheme]),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        extensions: [PlinthTheme.darkTheme],
+      ),
       home: const SignUpPage(),
     );
   }
 }
 ```
 
-Registering `darkTheme` is all dark mode takes. The palette ramps are
-shared between the two — a blue button is the same blue either way —
+Registering `darkTheme` **with `brightness: Brightness.dark`** is all dark
+mode takes. The brightness is not decoration: Plinth text with no colour of
+its own inherits Material's, which follows `ThemeData.brightness` — leave it
+light and body text paints near-black on the dark surface (about 1:1). The
+palette ramps are shared between the two — a blue button is the same blue either way —
 and only the neutral chrome inverts.
 
 ### 2. Build with the components
