@@ -7,16 +7,34 @@ import 'plinth_text.dart';
 class PlinthAccordionItem {
   const PlinthAccordionItem({
     required this.value,
-    required this.title,
+    this.title,
+    this.header,
     required this.content,
     this.icon,
-  });
+    this.toggleLabel,
+  }) : assert(
+          (title == null) != (header == null),
+          'Give an item either a title or a header, not both and not neither.',
+        );
 
   /// Unique identifier for this item, used to track open/closed state.
   final String value;
-  final String title;
+
+  /// The label of the item. The whole row is the toggle.
+  final String? title;
+
+  /// A header of your own, for when it holds controls (buttons, links)
+  /// that must stay separately tappable. The row is then not a button:
+  /// a small chevron at its end toggles the item, and a button inside a
+  /// button would mis-handle taps and read wrongly to a screen reader.
+  /// [icon] is not drawn in this case; put it in the header.
+  final Widget? header;
   final Widget content;
   final Widget? icon;
+
+  /// What a screen reader calls the chevron of a [header] item, such as
+  /// "Show patients". Unused with a [title], where the title is the label.
+  final String? toggleLabel;
 }
 
 /// An expandable/collapsible list matching Mantine's `Accordion`.
@@ -132,39 +150,69 @@ class _AccordionTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Semantics(
-            button: true,
-            // The probe found the trigger labelled but roleless, so it
-            // announced as text: reachable, tappable, and giving no
-            // clue that it is a control or that it opens something.
-            expanded: isOpen,
-            child: InkWell(
-              onTap: onTap,
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: theme.spacing[PlinthSize.sm]!,
-                  vertical: theme.spacing[PlinthSize.sm]!,
-                ),
-                child: Row(
-                  children: [
-                    if (item.icon != null) ...[
-                      item.icon!,
-                      SizedBox(width: theme.spacing[PlinthSize.xs]!),
+          if (item.header case final header?)
+            Padding(
+              padding: EdgeInsets.only(left: theme.spacing[PlinthSize.sm]!),
+              child: Row(
+                children: [
+                  Expanded(child: header),
+                  Semantics(
+                    button: true,
+                    expanded: isOpen,
+                    label: item.toggleLabel,
+                    excludeSemantics: item.toggleLabel != null,
+                    child: InkWell(
+                      onTap: onTap,
+                      child: Padding(
+                        padding: EdgeInsets.all(theme.spacing[PlinthSize.sm]!),
+                        child: AnimatedRotation(
+                          turns: isOpen ? 0.5 : 0,
+                          duration: theme.duration(PlinthSize.sm),
+                          child: const Icon(
+                            Icons.keyboard_arrow_down,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else
+            Semantics(
+              button: true,
+              // The probe found the trigger labelled but roleless, so it
+              // announced as text: reachable, tappable, and giving no
+              // clue that it is a control or that it opens something.
+              expanded: isOpen,
+              child: InkWell(
+                onTap: onTap,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: theme.spacing[PlinthSize.sm]!,
+                    vertical: theme.spacing[PlinthSize.sm]!,
+                  ),
+                  child: Row(
+                    children: [
+                      if (item.icon != null) ...[
+                        item.icon!,
+                        SizedBox(width: theme.spacing[PlinthSize.xs]!),
+                      ],
+                      Expanded(
+                        child: PlinthText(item.title!,
+                            weight: theme.weight(PlinthWeight.semibold)),
+                      ),
+                      AnimatedRotation(
+                        turns: isOpen ? 0.5 : 0,
+                        duration: theme.duration(PlinthSize.sm),
+                        child: const Icon(Icons.keyboard_arrow_down, size: 20),
+                      ),
                     ],
-                    Expanded(
-                      child: PlinthText(item.title,
-                          weight: theme.weight(PlinthWeight.semibold)),
-                    ),
-                    AnimatedRotation(
-                      turns: isOpen ? 0.5 : 0,
-                      duration: theme.duration(PlinthSize.sm),
-                      child: const Icon(Icons.keyboard_arrow_down, size: 20),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
           // Deliberately *not* PlinthCollapse. That keeps its child
           // mounted so state survives, which is right for a filter
           // panel but wrong here: an accordion holds page content, and

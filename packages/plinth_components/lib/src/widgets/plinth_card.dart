@@ -62,7 +62,12 @@ class PlinthCard extends StatelessWidget {
             Padding(padding: EdgeInsets.all(spacing), child: header),
             const Divider(height: 1),
           ],
-          Padding(padding: EdgeInsets.all(spacing), child: child),
+          // Flexible so a body that scrolls (or is a ListView) is given the
+          // height the card has, rather than none. Where the card's height
+          // is unbounded nothing changes: it still wraps its content.
+          Flexible(
+            child: Padding(padding: EdgeInsets.all(spacing), child: child),
+          ),
           if (footer != null) ...[
             const Divider(height: 1),
             Padding(padding: EdgeInsets.all(spacing), child: footer),

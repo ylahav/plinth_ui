@@ -155,17 +155,17 @@ values and the same readers.
 | `fontSize.xs` | primitive | 12 | 12 | 1 |
 | `borderWidth.xs` | primitive | 1 | 1 | 1 |
 | `duration.xs` | primitive | 100ms | 100ms | 1 |
-| `spacing.sm` | primitive | 12 | 12 | 22 |
+| `spacing.sm` | primitive | 12 | 12 | 23 |
 | `radius.sm` | primitive | 4 | 4 | 3 |
 | `fontSize.sm` | primitive | 14 | 14 | 1 |
 | `borderWidth.sm` | primitive | 1.5 | 1.5 | 1 |
 | `duration.sm` | primitive | 150ms | 150ms | 6 |
-| `spacing.md` | primitive | 16 | 16 | 6 |
+| `spacing.md` | primitive | 16 | 16 | 7 |
 | `radius.md` | primitive | 8 | 8 | — |
 | `fontSize.md` | primitive | 16 | 16 | — |
 | `borderWidth.md` | primitive | 2 | 2 | 8 |
 | `duration.md` | primitive | 200ms | 200ms | 3 |
-| `spacing.lg` | primitive | 20 | 20 | 3 |
+| `spacing.lg` | primitive | 20 | 20 | 4 |
 | `radius.lg` | primitive | 16 | 16 | — |
 | `fontSize.lg` | primitive | 18 | 18 | — |
 | `borderWidth.lg` | primitive | 3 | 3 | 1 |
@@ -177,7 +177,7 @@ values and the same readers.
 | `duration.xl` | primitive | 500ms | 500ms | — |
 | `fontWeight.regular` | primitive | w400 | w400 | 7 |
 | `fontWeight.medium` | primitive | w500 | w500 | — |
-| `fontWeight.semibold` | primitive | w600 | w600 | 22 |
+| `fontWeight.semibold` | primitive | w600 | w600 | 23 |
 | `fontWeight.bold` | primitive | w700 | w700 | 11 |
 | `curve.standard` | primitive | Cubic(0.00, 0.00, 0.58, 1.00) | Cubic(0.00, 0.00, 0.58, 1.00) | 4 |
 | `curve.emphasized` | primitive | Cubic(0.21, 0.61, 0.35, 1.00) | Cubic(0.21, 0.61, 0.35, 1.00) | 1 |
@@ -196,10 +196,10 @@ values and the same readers.
 | `series.7` | primitive | `#a4500a` | `#a4500a` | — |
 | `series.8` | primitive | `#d7ebba` | `#d7ebba` | — |
 | `series.9` | primitive | `#ea86a9` | `#ea86a9` | — |
-| `surface` | semantic | `#ffffff` | `#1a1b1e` | 45 |
+| `surface` | semantic | `#ffffff` | `#1a1b1e` | 46 |
 | `surfaceMuted` | semantic | `#f1f3f5` | `#25262b` | 24 |
 | `surfaceSunken` | semantic | `#e9ecef` | `#2c2e33` | 15 |
-| `border` | semantic | `#808890` | `#71777f` | 24 |
+| `border` | semantic | `#808890` | `#71777f` | 25 |
 | `borderMuted` | semantic | `#dee2e6` | `#2c2e33` | 5 |
 | `text` | semantic | `#000000` | `#c1c2c5` | 18 |
 | `textMuted` | semantic | `#000000` | `#939599` | 15 |
@@ -216,7 +216,7 @@ values and the same readers.
 
 | Token | Components |
 |---|---|
-| `border` | **24 components**, including FieldChrome, PlinthActionIcon, PlinthAutocomplete, PlinthButton |
+| `border` | **25 components**, including FieldChrome, PlinthActionIcon, PlinthAppBar, PlinthAutocomplete |
 | `borderMuted` | PlinthActionIcon, PlinthButton, PlinthFloatingWindow, PlinthKbd, PlinthTable |
 | `borderWidth.lg` | PlinthBlockquote |
 | `borderWidth.md` | **8 components**, including FocusRing, PlinthAnchor, PlinthColorSwatch, PlinthPinInput |
@@ -232,18 +232,18 @@ values and the same readers.
 | `fontSize.xs` | SliderMarks |
 | `fontWeight.bold` | **11 components**, including PlinthAlert, PlinthBadge, PlinthDialog, PlinthDrawer |
 | `fontWeight.regular` | **7 components**, including PlinthChip, PlinthNavLink, PlinthPagination, PlinthSegmentedControl |
-| `fontWeight.semibold` | **22 components**, including FieldChrome, PlinthAccordion, PlinthAvatar, PlinthButton |
+| `fontWeight.semibold` | **23 components**, including FieldChrome, PlinthAccordion, PlinthAppBar, PlinthAvatar |
 | `onFilled` | PlinthBackgroundImage, PlinthSwitch, PlinthTooltip |
 | `radius.sm` | FocusRing, PlinthBackgroundImage, PlinthUnstyledButton |
 | `radius.xs` | PlinthColorInput, PlinthColorPicker, PlinthTree |
 | `scrim` | PlinthBackgroundImage |
 | `shadow` | ColorSliderBase, PlinthCombobox, PlinthDialog, PlinthFloatingWindow, PlinthSwitch |
-| `spacing.lg` | PlinthDrawer, PlinthEmptyState, PlinthNavLink |
-| `spacing.md` | PlinthAlert, PlinthBlockquote, PlinthDialog, PlinthEmptyState, PlinthStepper, PlinthTimeline |
-| `spacing.sm` | **22 components**, including PlinthAccordion, PlinthAlert, PlinthAutocomplete, PlinthBlockquote |
+| `spacing.lg` | PlinthDrawer, PlinthEmptyState, PlinthModal, PlinthNavLink |
+| `spacing.md` | **7 components**, including PlinthAlert, PlinthBlockquote, PlinthDialog, PlinthEmptyState |
+| `spacing.sm` | **23 components**, including PlinthAccordion, PlinthAlert, PlinthAppBar, PlinthAutocomplete |
 | `spacing.xl` | PlinthEmptyState |
 | `spacing.xs` | **39 components**, including FieldChrome, PlinthAccordion, PlinthAlert, PlinthAutocomplete |
-| `surface` | **45 components**, including ColorSliderBase, FocusRing, PlinthActionIcon, PlinthAnchor |
+| `surface` | **46 components**, including ColorSliderBase, FocusRing, PlinthActionIcon, PlinthAnchor |
 | `surfaceMuted` | **24 components**, including PlinthActionIcon, PlinthAutocomplete, PlinthBackgroundImage, PlinthBadge |
 | `surfaceSunken` | **15 components**, including ColorSliderBase, PlinthAccordion, PlinthAngleSlider, PlinthCarousel |
 | `text` | **18 components**, including PlinthActionIcon, PlinthAlert, PlinthBadge, PlinthButton |

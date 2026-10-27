@@ -39,7 +39,7 @@ What needs attention is where the package's own *claims* are softest:
    style, so the text painted on a Plinth dark surface is `#1D1B20` on `#1A1B1E`:
    **1.01:1**, invisible. All four starter apps avoid it by setting
    `brightness: plinth.brightness`; the README does not. This is the failure I hit
-   converting `gynescope-app`.
+   converting a production clinical app.
 2. **`validate()` is blind to translucent text, and a shipped widget lands on the failing
    pair [D].** Light `textMuted` is 54 % black. Composited, it is 4.49:1 on `surfaceMuted`
    and 4.42:1 on `surfaceSunken`, under the 4.5:1 body floor. `validate()` returns `[]`
@@ -146,7 +146,7 @@ zero users**, against 134 non-const `.space()` calls. Version constraints:
   (`templates/*/lib/src/theme.dart`, e.g. `blog` line 36).
 - *Why nothing caught it:* no test builds the README snippet. `plinth_readme_claims_test.dart`
   pins the *numbers* the README quotes, not the snippets' behaviour.
-- *Real-world hit:* converting `gynescope-app` produced black text on a dark page until its
+- *Real-world hit:* converting a production clinical app produced black text on a dark page until its
   `ThemeData` got `brightness: Brightness.dark`.
 
 **C-2 — `validate()` cannot see translucent tokens, and a shipped widget lands on the
@@ -344,7 +344,7 @@ Do not assign dates. Each item is independent unless noted.
 
 | Order | Change | Class | Size | Public API | Why this order |
 |---|---|---|---|---|---|
-| 1 | Fix the dark-mode snippet in three places; add a test that builds it | P0 | XS | none | Worst finding, cheapest fix, no golden impact. Also *explains* the gynescope failure |
+| 1 | Fix the dark-mode snippet in three places; add a test that builds it | P0 | XS | none | Worst finding, cheapest fix, no golden impact. Also *explains* that failure |
 | 2 | Composite alpha in `validate()`; then raise light `textMuted` until all three surfaces clear 4.5 | P0 | S | none | Order matters: land the validator change first and watch it fail, then fix the token |
 | 3 | `readableOn`: choose direction by end-of-ramp contrast | P0 (minor) | XS | none | Adopter-facing only; no shipped widget moves |
 | 4 | ~~Verify the SDK floor~~ **Done:** measured on 3.24.5 / 3.27.0 / 3.32.0 / 3.35.0 / 3.38.0 / 3.41.0; four pubspecs corrected | P1 | XS | none | Cheap once verified |

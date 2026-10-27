@@ -11,6 +11,62 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## Unreleased
+
+### Added
+
+- **`PlinthScrollArea.controller`.** Pass your own `ScrollController` when
+  something outside also scrolls the area. Without one it still makes and
+  disposes its own.
+- **`PlinthAppBar`** for `Scaffold.appBar`: a title (string or widget),
+  `leading`, `actions`, and a back button that stands in when the page can
+  be popped. Themed surface with a hairline border; sits below the status
+  bar. `PlinthStrings.back` names the back button.
+- **`PlinthAccordionItem.header` and `toggleLabel`.** An item can take a
+  widget header instead of a `title`, for rows that carry their own buttons.
+  The header is not a toggle then (a button inside a button mis-taps and
+  mis-reads); a chevron at its end is, and reports itself as an expandable
+  button labelled `toggleLabel`. `title` is now nullable, with an assert
+  that exactly one of the two is given; existing code that passes `title`
+  is unchanged, code that reads `item.title` now gets a `String?`.
+- **`showPlinthModal<T>` and `showPlinthConfirm`.** `PlinthModal` is driven
+  by a controller and cannot hand an answer back, which is the one thing a
+  modal is most often asked for: "delete this?" followed by `if (await ...)`.
+  `showPlinthModal` is the same surface as a route, completing with whatever
+  it is popped with (`null` if dismissed); `showPlinthConfirm` is the yes/no
+  case on top of it, completing `true` only on the confirm button and `false`
+  for cancel, the close button, the backdrop and Escape, so it is safe in
+  front of anything that cannot be undone. `destructive: true` makes the
+  confirm button red. Found converting a production clinical app, whose thirty dialogs
+  are all `showDialog` + `Navigator.pop(value)` and so all kept Material's
+  `Dialog`.
+- **`PlinthStrings.cancel` and `PlinthStrings.confirm`.** The default labels
+  of `showPlinthConfirm`. The first strings in `PlinthStrings` that are
+  visible button text rather than screen-reader labels.
+- **`PlinthModal` and `showPlinthModal` take `maxWidth` and `scrollable`.**
+  `size` stops at 720 px; a table or a two-column form needs more, and
+  `maxWidth` says so. `scrollable` scrolls the body under a fixed title row
+  when it is taller than the screen, off by default as in Material's
+  `AlertDialog`, because a body that is a `ListView` or has `Expanded`
+  children needs the bounded height it gets when nothing scrolls it.
+  Found by moving a production clinical app's 48 `showDialog` calls onto the modal.
+
+### Fixed
+
+- **`PlinthCard` gives its body the height it has.** The body sat in a
+  `Column` as a plain child, so it was handed unbounded height: a card in a
+  fixed-height slot holding a scrolling body overflowed instead of
+  scrolling, and a `ListView` inside threw. The body is now `Flexible`;
+  where the card's own height is unbounded it still wraps its content.
+  Found moving a production clinical app's 23 Material `Card`s onto it.
+
+### Changed
+
+- `PlinthModal.show` and the new functions share one route and one surface.
+  The modal now keeps a `md` margin from the screen edge (it used to touch
+  it at phone widths) and moves up with the keyboard. `PlinthModal`'s
+  behaviour is covered by tests that did not exist before.
+
 ## 1.12.0
 
 ### Added

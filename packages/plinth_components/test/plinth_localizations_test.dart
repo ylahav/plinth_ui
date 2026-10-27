@@ -76,7 +76,7 @@ void main() {
       expect(find.bySemanticsLabel('Clear selection'), findsNothing);
     });
 
-    testWidgets('overriding one string leaves the other twenty alone',
+    testWidgets('overriding one string leaves the others alone',
         (tester) async {
       // Every field has a default, so a caller who cares about two
       // strings writes two lines rather than a file.
@@ -163,6 +163,9 @@ void main() {
         decrease: marker,
         increase: marker,
         passwordStrength: marker,
+        cancel: marker,
+        confirm: marker,
+        back: marker,
       );
 
       // A no-op copy must be equal to what it copied.

@@ -16,22 +16,34 @@ import 'package:flutter/material.dart';
 /// )
 /// ```
 class PlinthScrollArea extends StatefulWidget {
-  const PlinthScrollArea(
-      {super.key, required this.child, this.direction = Axis.vertical});
+  const PlinthScrollArea({
+    super.key,
+    required this.child,
+    this.direction = Axis.vertical,
+    this.controller,
+  });
 
   final Widget child;
   final Axis direction;
+
+  /// Use this controller instead of creating one, for a caller that also
+  /// scrolls the area itself (to the top after a reload, to an error). The
+  /// caller owns it and disposes it.
+  final ScrollController? controller;
 
   @override
   State<PlinthScrollArea> createState() => _PlinthScrollAreaState();
 }
 
 class _PlinthScrollAreaState extends State<PlinthScrollArea> {
-  final _controller = ScrollController();
+  ScrollController? _own;
+
+  ScrollController get _controller =>
+      widget.controller ?? (_own ??= ScrollController());
 
   @override
   void dispose() {
-    _controller.dispose();
+    _own?.dispose();
     super.dispose();
   }
 

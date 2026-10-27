@@ -71,6 +71,32 @@ void main() {
       final scrollbar = tester.widget<Scrollbar>(find.byType(Scrollbar));
       expect(scrollbar.thumbVisibility, isTrue);
     });
+
+    testWidgets('scrolls with a controller the caller gives it',
+        (tester) async {
+      final controller = ScrollController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        _wrap(
+          SizedBox(
+            height: 100,
+            child: PlinthScrollArea(
+              controller: controller,
+              child: Column(
+                  children: [for (var i = 0; i < 20; i++) Text('Item $i')]),
+            ),
+          ),
+        ),
+      );
+
+      expect(controller.position.pixels, 0);
+      controller.jumpTo(50);
+      await tester.pump();
+      expect(controller.position.pixels, 50);
+      // The area leaves the caller's controller alone when it goes away.
+      await tester.pumpWidget(_wrap(const SizedBox()));
+      expect(() => controller.addListener(() {}), returnsNormally);
+    });
   });
 
   group('PlinthPortal', () {

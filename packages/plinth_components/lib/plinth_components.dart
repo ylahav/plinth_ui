@@ -12,6 +12,7 @@ export 'src/widgets/plinth_alpha_slider.dart';
 export 'src/widgets/plinth_anchor.dart';
 export 'src/widgets/plinth_angle_slider.dart';
 export 'src/widgets/plinth_announce.dart';
+export 'src/widgets/plinth_app_bar.dart';
 export 'src/widgets/plinth_app_shell.dart';
 export 'src/widgets/plinth_aspect_ratio.dart';
 export 'src/widgets/plinth_autocomplete.dart';

@@ -41,7 +41,7 @@ shell; tree view; dashboard pieces (stat tiles, charts); multi-select and
 autocomplete.
 
 **Checked against the author's own apps, 25 Oct 2026.** Three apps use Plinth
-(`financial-organizer`, `bClock`, `stayAble`); `gynescope-app`, `ygym` and
+(`financial-organizer`, `bClock`, `stayAble`); a production clinical app, `ygym` and
 others do not. This carries the author-evidence discount described in
 [ROADMAP.md](ROADMAP.md#conversion-which-is-not-on-the-ladder), and no outside
 adopter has reported anything.
@@ -52,7 +52,7 @@ adopter has reported anything.
 | Date / time pickers | 6 call sites of Material `showDatePicker` / `showTimePicker` across four apps, none Plinth. The only picker anywhere in the portfolio | **Not doing.** Run in `financial-organizer` on Windows (Hebrew, light theme, empty data): Material's picker takes the app's green and surface, and its RTL layout is correct. Nothing clashes. The only repeated code is `bClock`'s 24-hour builder, worth a helper only if a second app needs it. Dark mode and the time picker were not checked |
 | Stepper with validation | The setup wizard validates in its own `_next()` and uses `PlinthStepper` only as the indicator. The earlier finding stands: the controlled pattern "dropped into a wizard" | **Drop.** Validation belongs to the caller |
 | Rich text editor | No app uses one | **Not doing** |
-| Adaptive layout | Two apps hand-roll the same thing with `MediaQuery`: `financial-organizer` a single `_kWideBreakpoint = 1000`; `gynescope-app` (read only, not converted) a `Responsive` widget with `isMobile / isTablet / isDesktop` at 850 / 1100. Plinth has Mantine's breakpoints (`kDefaultBreakpoints`, 576–1408) but only inside `PlinthGrid` and `PlinthSimpleGrid`: there is no way to ask "which breakpoint am I at?" or to build one layout per breakpoint. Neither app's thresholds match Plinth's | **Not doing.** Reviewed 26 Oct 2026 ([PLINTH_CORE_GAP_ANALYSIS.md](PLINTH_CORE_GAP_ANALYSIS.md)): each app already writes one `MediaQuery` comparison, which is Flutter's own answer, and the three thresholds (1000; 850 / 1100; 760) match neither each other nor Plinth's, so a shared token would have helped none. Most of `gynescope-app`'s other 40-odd sites are screen-fraction sizing (`width * .8`), which a design system should not encourage rather than serve. Reconsider if an adopter asks |
+| Adaptive layout | Two apps hand-roll the same thing with `MediaQuery`: `financial-organizer` a single `_kWideBreakpoint = 1000`; a production clinical app (read only, not converted) a `Responsive` widget with `isMobile / isTablet / isDesktop` at 850 / 1100. Plinth has Mantine's breakpoints (`kDefaultBreakpoints`, 576–1408) but only inside `PlinthGrid` and `PlinthSimpleGrid`: there is no way to ask "which breakpoint am I at?" or to build one layout per breakpoint. Neither app's thresholds match Plinth's | **Not doing.** Reviewed 26 Oct 2026 ([PLINTH_CORE_GAP_ANALYSIS.md](PLINTH_CORE_GAP_ANALYSIS.md)): each app already writes one `MediaQuery` comparison, which is Flutter's own answer, and the three thresholds (1000; 850 / 1100; 760) match neither each other nor Plinth's, so a shared token would have helped none. Most of a production clinical app's other 40-odd sites are screen-fraction sizing (`width * .8`), which a design system should not encourage rather than serve. Reconsider if an adopter asks |
 | Written UX guidance | Not testable from code | **Unverified** |
 
 Not Plinth's job: Flutter's state-management and rebuild pitfalls. A design

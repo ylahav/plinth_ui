@@ -68,11 +68,11 @@ void main() {
           reason: '$file no longer states the Mantine-tracking count');
     }
 
-    // The three buckets are 112 / 5 / 1 against a documented total.
-    expect(112 + 5 + 1, documented,
+    // The three buckets are 112 / 5 / 2 against a documented total.
+    expect(112 + 5 + 2, documented,
         reason: 'COMPONENTS.md documents $documented components, but the '
             'attribution split quoted in README.md and docs/ROADMAP.md '
-            'sums to ${112 + 5 + 1}. One of them is now wrong — a new '
+            'sums to ${112 + 5 + 2}. One of them is now wrong — a new '
             'component belongs in a bucket, and the prose has to say '
             'which');
   });

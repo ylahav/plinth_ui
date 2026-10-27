@@ -255,7 +255,7 @@ not the fourth.
 | | What it is | Notes |
 |---|---|---|
 | **CLI** | `plinth theme create` — scaffold a light/dark theme from one seed colour | A thin shell over `PlinthTheme.fromSeed`, which does not exist yet either. Forui already ships a CLI, so this is catch-up |
-| ~~**i18n / l10n**~~ | **The seam is in.** `PlinthLocalizations` + `PlinthStrings`, with every widget falling back to it and every explicit label parameter still winning | Twenty-one strings were hardcoded, and **every one was a screen-reader label** — an English string a Spanish user could not see was wrong. Those are now overridable. **No translations ship, and no `intl` dependency was taken**: the library provides the seam an app cannot add from outside, and the app provides the language. Still open: locale-aware **number and date formatting** (10 `toStringAsFixed` sites), and **plurals** in the four interpolated announcements, both of which genuinely need `intl` and belong in the app |
+| ~~**i18n / l10n**~~ | **The seam is in.** `PlinthLocalizations` + `PlinthStrings`, with every widget falling back to it and every explicit label parameter still winning | Twenty-one strings were hardcoded, and **every one was a screen-reader label** — an English string a Spanish user could not see was wrong. Those are now overridable (two more, `cancel` and `confirm`, arrived with `showPlinthConfirm`; they are visible button labels, the first strings here that are). **No translations ship, and no `intl` dependency was taken**: the library provides the seam an app cannot add from outside, and the app provides the language. Still open: locale-aware **number and date formatting** (10 `toStringAsFixed` sites), and **plurals** in the four interpolated announcements, both of which genuinely need `intl` and belong in the app |
 | **Theme previewer** | Try seed colours against real components in a browser before installing | Mostly the token explorer below, with a component view attached. Reuse the Widgetbook build |
 
 ### Tokens
@@ -301,7 +301,7 @@ submissions; adoption milestones as they happen.
 | ~30 DOM-only hooks | Web-only, in a library that is not |
 | Most of `plinth_hooks` | A team has its own state utilities. `use-focus-trap` and `use-roving-index` survive because roving focus needs them |
 | A component count target | Borrowed from another project's marketing. Components get built when an app needs one |
-| A breakpoint query / builder, or breakpoints as theme tokens | Three of the author's apps (`financial-organizer`, `gynescope-app`, the features page) each write a single `MediaQuery.sizeOf(context).width >= N`, which is Flutter's own answer. Their thresholds — 1000; 850 and 1100; 760 — match neither each other nor Mantine's, so a shared token would have helped none of them. It also needs layout context, so it would not be core. Reconsider if an adopter reports it |
+| A breakpoint query / builder, or breakpoints as theme tokens | Three of the author's apps (`financial-organizer`, a production clinical app, and its features page) each write a single `MediaQuery.sizeOf(context).width >= N`, which is Flutter's own answer. Their thresholds — 1000; 850 and 1100; 760 — match neither each other nor Mantine's, so a shared token would have helped none of them. It also needs layout context, so it would not be core. Reconsider if an adopter reports it |
 
 ---
 
@@ -347,8 +347,8 @@ purpose.
 **Do not publish interaction-state or variant language** — it does not
 exist here, and it is Mix's, by name.
 
-Today's checkable claim: *118 components on a shared token system — 112
-tracking `@mantine/core`, five answering questions only Flutter has, one
+Today's checkable claim: *119 components on a shared token system — 112
+tracking `@mantine/core`, five answering questions only Flutter has, two
 found by converting an app onto it — with 43 golden images and 87 test
 files behind them.*
 

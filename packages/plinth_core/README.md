@@ -164,7 +164,7 @@ covers the rest of what that migration cost.
 This package is the foundation, and there are three layers on it you can
 take or leave:
 
-- **Components** — buttons, inputs, cards, and 115 others, in
+- **Components** — buttons, inputs, cards, and 116 others, in
   [`plinth_components`](https://pub.dev/packages/plinth_components).
 - **Blocks** — whole arrangements rather than primitives, in
   [`plinth_blocks`](https://pub.dev/packages/plinth_blocks).

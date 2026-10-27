@@ -51,6 +51,9 @@ class PlinthStrings {
     this.decrease = 'Decrease',
     this.increase = 'Increase',
     this.passwordStrength = 'Password strength',
+    this.cancel = 'Cancel',
+    this.confirm = 'Confirm',
+    this.back = 'Back',
   });
 
   final String dismissAlert;
@@ -81,9 +84,16 @@ class PlinthStrings {
   final String increase;
   final String passwordStrength;
 
+  /// The two buttons of `showPlinthConfirm`, when the caller gives no label.
+  final String cancel;
+  final String confirm;
+
+  /// The back button of `PlinthAppBar`.
+  final String back;
+
   /// Every field, in order, for equality and hashing.
   ///
-  /// A list rather than twenty-one `&&` clauses, because the next
+  /// A list rather than twenty-four `&&` clauses, because the next
   /// string added would have to be remembered in three places and
   /// would be forgotten in at least one. Here it is remembered in two,
   /// and forgetting shows up as a delegate that reloads when it should
@@ -110,6 +120,9 @@ class PlinthStrings {
         decrease,
         increase,
         passwordStrength,
+        cancel,
+        confirm,
+        back,
       ];
 
   @override
@@ -149,6 +162,9 @@ class PlinthStrings {
     String? decrease,
     String? increase,
     String? passwordStrength,
+    String? cancel,
+    String? confirm,
+    String? back,
   }) =>
       PlinthStrings(
         dismissAlert: dismissAlert ?? this.dismissAlert,
@@ -173,6 +189,9 @@ class PlinthStrings {
         decrease: decrease ?? this.decrease,
         increase: increase ?? this.increase,
         passwordStrength: passwordStrength ?? this.passwordStrength,
+        cancel: cancel ?? this.cancel,
+        confirm: confirm ?? this.confirm,
+        back: back ?? this.back,
       );
 }
 
@@ -213,7 +232,7 @@ class PlinthLocalizations {
   /// )
   /// ```
   ///
-  /// Every field has a default, so overriding two of twenty-one is two
+  /// Every field has a default, so overriding two of twenty-four is two
   /// lines rather than a file.
   static LocalizationsDelegate<PlinthLocalizations> override(
     PlinthStrings strings,

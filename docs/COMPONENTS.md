@@ -1427,7 +1427,8 @@ custom loading/empty state with your own content. Renders via
 ancestor; place it as a sibling of whatever it should dim.
 
 ### `PlinthScrollArea`
-`child`, `direction` (default `Axis.vertical`). A scrollable region
+`child`, `direction` (default `Axis.vertical`), `controller` (optional,
+the caller's own; the caller disposes it). A scrollable region
 with a themed, always-visible, draggable scrollbar — a thin wrapper
 around `Scrollbar` + `SingleChildScrollView`, since Flutter's default
 scrollbar is platform-styled and easy to miss on desktop/web. Good fit
@@ -1709,11 +1710,24 @@ than information.
 
 ## Navigation
 
+### `PlinthAppBar`
+For `Scaffold.appBar`. `title` (string) or `titleWidget`, `leading`,
+`actions`, `automaticallyImplyLeading` (default `true`: a back button when
+the page can be popped and there is no `leading`), `height` (default 56,
+plus the status-bar inset). Its `PreferredSize` is `height`, so a
+`Scaffold` places it without help. The back button's label is
+`PlinthStrings.back`. Not `PlinthAppShell.header`, which is a region of
+a shell rather than a Scaffold slot.
+
 ### `PlinthAccordion` + `PlinthAccordionItem`
 `items` (`List<PlinthAccordionItem>`), `multiple` (default `false` — only
 one item open at a time), `initiallyOpen` (`Set<String>` of item
 `value`s), `color`. Each `PlinthAccordionItem` has `value` (unique id),
-`title`, `content`, `icon`. Manages its own open/closed state
+`content`, `icon`, and either a `title` (the whole row toggles) or a
+`header` widget of your own, for rows that hold buttons or links of their
+own: the header is then not a toggle, a chevron at its end is, and
+`toggleLabel` is what a screen reader calls it. Exactly one of `title`
+and `header`, asserted. Manages its own open/closed state
 internally — unlike the overlay components, there's no external
 controller, since expanded state is presentation-local to the widget.
 
@@ -1945,6 +1959,44 @@ should react to it in `PlinthModalHost(modal: ..., child: ...)`, which
 calls `modal.show(context)` automatically whenever the controller opens
 (via `showGeneralDialog` under the hood). Auto-closes the controller on
 dismissal (backdrop tap or `Navigator.pop`).
+
+### `showPlinthModal<T>` and `showPlinthConfirm`
+When the modal has to *answer* — "delete this?", a rename form, a picker —
+a controller is the wrong shape, because the answer has to come back to the
+line that asked. `showPlinthModal<T>(context, title:, builder:, size:,
+radius:, closeOnBackdropTap:)` shows the same surface as a route and
+completes with whatever `builder`'s context pops with
+(`Navigator.pop(context, value)`), or `null` if it is dismissed.
+
+`showPlinthConfirm(context, title:, message: | content:, confirmLabel:,
+cancelLabel:, destructive:, size:)` is the yes/no case. It returns a
+`Future<bool>` that is `true` only for the confirm button; cancel, the close
+button, the backdrop and Escape are all `false`, so
+`if (await showPlinthConfirm(...))` is safe in front of anything that cannot
+be undone. `destructive: true` paints the confirm button red. Labels default
+to `PlinthStrings.confirm` / `cancel`.
+
+```dart
+if (await showPlinthConfirm(
+  context,
+  title: 'Delete station?',
+  message: 'Its history is deleted with it.',
+  confirmLabel: 'Delete',
+  destructive: true,
+)) {
+  await repository.delete(station);
+}
+```
+
+`size` stops at 720 px: pass `maxWidth` for wider content. A body taller
+than the screen overflows unless `scrollable: true`, which scrolls the body
+under the title row; it is off by default, as in Material's `AlertDialog`,
+because a `ListView` or `Expanded` child needs the bounded height it gets
+when nothing scrolls it. `showPlinthConfirm` scrolls.
+
+Neither autofocuses a button: `PlinthButton` has no `autofocus`, so a
+destructive confirm is reached by Tab like any other control. That is a
+known gap, not a decision.
 
 ### `PlinthDrawer` + `PlinthDrawerHost`
 Same shape as Modal, plus `position` (`PlinthDrawerPosition`: `left,

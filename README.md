@@ -1,7 +1,7 @@
 # Plinth UI
 
 **The enterprise design system Flutter doesn't have — one where
-accessibility holds when the brand changes.** 118 components, 43 blocks
+accessibility holds when the brand changes.** 119 components, 43 blocks
 and four starter apps, on a token engine that resolves colour against a
 WCAG contrast floor. See the [vision](docs/VISION.md).
 
@@ -11,9 +11,9 @@ brand colour — the part no other Flutter kit does.
 
 ### What you build with
 
-- **118 components** — inputs, tables, overlays, navigation. 112 track
-  `@mantine/core`, five answer questions only Flutter has, and one exists
-  because an app needed it.
+- **119 components** — inputs, tables, overlays, navigation. 112 track
+  `@mantine/core`, five answer questions only Flutter has, and two exist
+  because an app needed them.
 - **43 blocks** in [`plinth_blocks`](packages/plinth_blocks) — whole
   arrangements, not primitives: a sign-in form, a sidebar, a stat grid, a
   comment thread, a page with its heading levels already right.
@@ -52,9 +52,11 @@ Flutter asked a question a web library never had to — `PlinthLtr`,
 pattern: the web spells a live region as an attribute, so Mantine never
 needed a component for it and Flutter has nothing at all.
 
-The 118th came from neither list. `PlinthClock` exists because an app
-being converted onto Plinth needed a rest timer, and a countdown set in
-proportional digits shifts sideways every second. That is the shape of
+The 118th and 119th came from neither list. `PlinthClock` exists because
+an app being converted onto Plinth needed a rest timer, and a countdown
+set in proportional digits shifts sideways every second. `PlinthAppBar`
+exists because the same conversion reached fifteen `Scaffold.appBar`
+slots and Plinth had nothing to put in one. That is the shape of
 the third source now: not what Mantine has, and not what Flutter lacks,
 but what using the library turns up.
 
@@ -211,7 +213,7 @@ pixel values, so `spacing`, `radius`, and `fontSizes` can be retuned in
 one place.
 
 **[docs/COMPONENTS.md](docs/COMPONENTS.md)** is the full prop reference
-for all 118 components, and the theme-token table there explains which
+for all 119 components, and the theme-token table there explains which
 color method to reach for (`shaded`, `contrastingOn`, `readableOn`)
 when you build your own widget on the same foundation.
 
@@ -482,7 +484,7 @@ the sidebar.
   shared between them (a blue button is the same blue either way); only
   the chrome inverts. See
   **[docs/COMPONENTS.md § Theme tokens](docs/COMPONENTS.md#theme-tokens)**.
-- **118 components** across Primitives, Forms, Feedback, Data Display,
+- **119 components** across Primitives, Forms, Feedback, Data Display,
   Navigation, Surfaces, and Overlays — full list with props in
   **[docs/COMPONENTS.md](docs/COMPONENTS.md)**, kept current every round
   rather than duplicated here. A few architectural patterns worth
@@ -503,7 +505,7 @@ the sidebar.
     caller rather than managing it internally.
 - **Widgetbook gallery** (`widgetbook/`) — manual (non-codegen)
   registration of every component's key states as browsable use cases,
-  with a knob-driven **Playground** for 108 of the 118 components
+  with a knob-driven **Playground** for 108 of the 119 components
   alongside the static variant grids (the two answer different
   questions: a playground explores combinations, a grid compares
   options side by side). A smoke test builds all 238 use cases in CI,
