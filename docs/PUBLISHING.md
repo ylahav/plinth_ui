@@ -9,9 +9,9 @@ now covers releasing an update.
 
 | Package | pub.dev | In this repo |
 |---|---|---|
-| `plinth_core` | **1.12.0** | 1.12.0 |
-| `plinth_hooks` | **1.12.0** | 1.12.0 |
-| `plinth_components` | **1.12.0** | 1.12.0 |
+| `plinth_core` | **1.12.0** | 1.13.0 |
+| `plinth_hooks` | **1.12.0** | 1.13.0 |
+| `plinth_components` | **1.12.0** | 1.13.0 |
 | `plinth_blocks` | **0.5.0** | 0.5.0 |
 | `plinth_charts` | **0.2.0** | 0.2.0 |
 

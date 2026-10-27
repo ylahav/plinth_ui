@@ -11,6 +11,13 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## 1.13.0
+
+No change in this package. Released in lockstep with `plinth_components`
+1.13.0, which adds `showPlinthModal`, `showPlinthConfirm`, `PlinthAppBar`
+and a header slot on `PlinthAccordionItem`, and fixes `PlinthCard`'s body
+height.
+
 ## 1.12.0
 
 No change in this package. Released in lockstep with
