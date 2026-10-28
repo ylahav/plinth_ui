@@ -11,6 +11,21 @@ A release where this package itself did not change says so rather than
 inventing one. Before `1.0.0`, minor bumps could carry breaking
 changes; from `1.0.0` they cannot.
 
+## Unreleased
+
+### Added
+
+- **`PlinthFormController`**, Mantine's `useForm` as a `ChangeNotifier`:
+  named values (`value`, `setValue`, `values`), per-field errors (`error`,
+  `errors`, `setError`), validation (`validate`, `validateField`, with
+  validators that also see the other values), `isDirty`, and `reset`.
+  Widget-free: bind it to any input by name. Errors show after `validate()`,
+  and, once a field has been edited, on every later edit
+  (`validateOnChange`, on by default). `register` lets an input declare its
+  own starting value and rule when it is built. Found converting a
+  production clinical app off `flutter_form_builder`, the last non-Plinth
+  widget dependency it had: Plinth had inputs but nothing to hold a form.
+
 ## 1.13.0
 
 No change in this package. Released in lockstep with `plinth_components`

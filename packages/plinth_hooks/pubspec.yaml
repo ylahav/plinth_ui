@@ -5,7 +5,7 @@ homepage: https://github.com/ylahav/plinth_ui
 repository: https://github.com/ylahav/plinth_ui
 issue_tracker: https://github.com/ylahav/plinth_ui/issues
 
-# Max five. Kept narrow and honest: this package is one disclosure
+# Max five. Kept narrow and honest: a disclosure controller and a form
 # controller, not a hooks library.
 topics:
   - hooks

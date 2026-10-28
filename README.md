@@ -279,7 +279,7 @@ plinth_ui/
     plinth_core/            # PlinthTheme, design tokens (colors, spacing, radius)
     plinth_components/       # Widgets — see docs/COMPONENTS.md for the full,
     │                          up-to-date list with props for each one
-    plinth_hooks/             # PlinthDisclosureController (useDisclosure equivalent)
+    plinth_hooks/             # PlinthDisclosureController, PlinthFormController (useDisclosure, useForm)
     plinth_blocks/            # Composed sections — a sign-in card, a navbar.
     │                           Whole arrangements rather than the components
     │                           they are made of. See docs/SHOWCASE.md

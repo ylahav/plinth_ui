@@ -295,7 +295,7 @@ submissions; adoption milestones as they happen.
 | | Why |
 |---|---|
 | A token *compiler* | Style Dictionary emits static constants, which cannot express `textScaler`, density, `WidgetStateProperty`, per-subtree overrides or `readableOn`. Consume the standard; do not rebuild the pipeline |
-| `plinth_form` | Both audiences already have forms |
+| `plinth_form` | A form *package* or form widgets: both audiences already have forms. The state half moved in as `PlinthFormController` in `plinth_hooks`, once a production app had converted every input to Plinth and the one thing left was a form-state package from outside |
 | `plinth_dates` | Reconsidered 25 Oct 2026 and kept out: the Material picker was run inside a Plinth app and fits; see [VISION.md](VISION.md) |
 | Charts, rich text | Separate projects |
 | ~30 DOM-only hooks | Web-only, in a library that is not |

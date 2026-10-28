@@ -2,3 +2,4 @@
 library plinth_hooks;
 
 export 'src/disclosure_controller.dart';
+export 'src/form_controller.dart';

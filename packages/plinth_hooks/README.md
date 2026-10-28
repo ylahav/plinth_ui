@@ -29,5 +29,26 @@ void dispose() {
   take one of these to manage their visibility, so a single controller
   can coordinate a trigger button and the overlay it opens.
 
+- `PlinthFormController` — form state without widgets: named values,
+  errors, validation, dirty tracking, reset (`useForm`).
+
+  ```dart
+  final form = PlinthFormController(
+    initialValues: {'email': ''},
+    validators: {'email': (v, _) => '$v'.contains('@') ? null : 'Not an email'},
+  );
+
+  ListenableBuilder(
+    listenable: form,
+    builder: (context, _) => PlinthTextInput(
+      label: 'Email',
+      error: form.error('email'),
+      onChanged: (v) => form.setValue('email', v),
+    ),
+  );
+
+  if (form.validate()) save(form.values);
+  ```
+
 See the [full documentation](https://github.com/ylahav/plinth_ui) for
 the complete component reference and a live example app.

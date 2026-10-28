@@ -40,6 +40,7 @@ Every component reads from `PlinthTheme` and follows the token system.
 State utilities required by components:
 
 - `PlinthDisclosureController` (open/close state for overlays)
+- `PlinthFormController` (named values, errors, validation, reset; no widgets)
 - Roving focus helpers for dropdowns and segmented controls
 
 ---
